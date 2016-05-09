@@ -16,18 +16,22 @@ class CreateTournamentsTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->dateTime('date');
-            $table->string('location_country');
+            $table->integer('location_country')->unsigned();
+            $table->integer('location_us_state')->unsigned();
             $table->string('location_city');
             $table->string('location_store');
+            $table->string('location_address');
             $table->integer('players_number')->unsigned();
             $table->text('description');
-            $table->boolean('top');
+            $table->integer('top')->unsigned();
             $table->integer('creator');   // TODO: foreign key for user
             $table->boolean('approved')->nullable();
             $table->integer('tournament_type_id')->unsigned();
             $table->foreign('tournament_type_id')->references('id')->on('tournament_types');
+            $table->foreign('location_country')->references('id')->on('countries');
+            $table->foreign('location_us_state')->references('id')->on('us_states');
             $table->timestamps();
-//             TODO: cardpool, location
+//             TODO: cardpool
         });
     }
 

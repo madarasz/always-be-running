@@ -1,12 +1,13 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
-    "license": "MIT",
+    "name": "necro/gott",
+    "description": "Game of Thrones tournaments",
+    "keywords": ["game of thrones", "card game", "lcg", "tournament", "deck", "results"],
+    "license": "proprietary",
     "type": "project",
     "require": {
         "php": ">=5.5.9",
-        "laravel/framework": "5.2.*"
+        "laravel/framework": "5.2.*",
+        "webpatser/laravel-countries": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
