@@ -18,6 +18,9 @@ class TournamentsController extends Controller
             'players_number' => 'integer|between:1,1000',
             'top_number' => 'integer|between:0,1000',
             'location_country' => 'not_in:0',
+        ], [
+            'date_format' => 'Please enter the date using YYYY.mm.dd. format.',
+            'not_in' => 'Please select a country.'
         ]);
 
         DB::table('tournaments')->insert([
