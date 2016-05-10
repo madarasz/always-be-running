@@ -25,7 +25,7 @@ class PagesController extends Controller
     {
         $tournament_types = DB::table('tournament_types')->get();
         $countries = DB::table('countries')->orderBy('name')->get();
-        $us_states = DB::table('us_states')->get();
+        $us_states = DB::table('us_states')->orderBy('name')->get();
         return view('create', compact('tournament_types', 'countries', 'us_states'));
     }
 }

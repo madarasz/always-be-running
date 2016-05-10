@@ -60,5 +60,10 @@ class UsStateSeeder extends Seeder
                 array('name' => 'Wisconsin', 'code' => 'WI'),
                 array('name' => 'Wyoming', 'code' => 'WY')
             ));
+
+        DB::table('us_states')->insert([
+            'id' => 0,
+            'name' => '---'
+        ]);
     }
 }

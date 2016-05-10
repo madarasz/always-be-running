@@ -39,7 +39,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li><a href="/">Create</a></li>
+                    <li><a href="/create">Create</a></li>
                     <li><a href="/">My Tournaments</a></li>
                 </ul>
             </div>

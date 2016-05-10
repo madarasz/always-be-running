@@ -17,6 +17,7 @@ elixir(function(mix) {
         .copy(bootstrapPath + '/javascripts/bootstrap.min.js', 'resources/assets/js')
         .sass('app.scss')
         .scripts([
+            "main.js",
             "jquery-2.2.3.min.js",
             "bootstrap.min.js"
         ])

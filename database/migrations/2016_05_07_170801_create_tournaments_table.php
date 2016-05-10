@@ -15,15 +15,18 @@ class CreateTournamentsTable extends Migration
         Schema::create('tournaments', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
-            $table->dateTime('date');
+            $table->string('date');
+            $table->string('time');
             $table->integer('location_country')->unsigned();
             $table->integer('location_us_state')->unsigned();
             $table->string('location_city');
             $table->string('location_store');
             $table->string('location_address');
             $table->integer('players_number')->unsigned();
+            $table->integer('top_number')->unsigned();
             $table->text('description');
-            $table->integer('top')->unsigned();
+            $table->boolean('concluded');
+            $table->boolean('decklist');
             $table->integer('creator');   // TODO: foreign key for user
             $table->boolean('approved')->nullable();
             $table->integer('tournament_type_id')->unsigned();

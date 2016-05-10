@@ -6,3 +6,5 @@ Homestead.json
 .env
 .idea
 node_modules
+public/js
+public/css
