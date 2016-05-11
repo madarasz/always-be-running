@@ -22,7 +22,7 @@ elixir(function(mix) {
             "bootstrap.min.js"
         ])
         .styles([
-            '../../../public/css/app.css',
-            'main.css'
+            'main.css',
+            '../../../public/css/app.css'
         ]);
 });

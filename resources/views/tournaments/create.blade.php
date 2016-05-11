@@ -3,9 +3,13 @@
 @section('content')
     <h3 class="page-header">Create new tournament</h3>
     @if (count($errors))
-        @foreach($errors->all() as $error)
-            <div class="alert alert-danger">{{ $error }}</div>
-        @endforeach
+        <div class="alert alert-danger">
+            <ul>
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+            </ul>
+        </div>
     @endif
     <form method="post" type="POST" action="/tournaments">
         {{ csrf_field() }}

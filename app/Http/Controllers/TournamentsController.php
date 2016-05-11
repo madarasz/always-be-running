@@ -10,7 +10,7 @@ use App\Http\Requests;
 
 class TournamentsController extends Controller
 {
-    public function create(Request $request) {
+    public function store(Request $request) {
         $this->validate($request, [
             'title' => 'required',
             'date' => 'required|date_format:Y.m.d.',
@@ -19,7 +19,7 @@ class TournamentsController extends Controller
             'top_number' => 'integer|between:0,1000',
             'location_country' => 'not_in:0',
         ], [
-            'date_format' => 'Please enter the date using YYYY.mm.dd. format.',
+            'date_format' => 'Please enter the date using YYYY.MM.DD. format.',
             'not_in' => 'Please select a country.'
         ]);
 
@@ -34,8 +34,8 @@ class TournamentsController extends Controller
             'location_store' => $request->location_store,
             'location_address' => $request->location_address,
             'concluded' => $request->concluded === '' ? 1 : 0,
-            'players_number' => $request->concluded === '' ? $request->has('players_number') : 0,
-            'top_number' => $request->concluded === '' ? $request->has('top_number') : 0,
+            'players_number' => $request->concluded === '' ? $request->players_number : 0,
+            'top_number' => $request->concluded === '' ? $request->top_number : 0,
             'description' => $request->description,
             'decklist' => $request->decklist === '' ? 1 : 0,
             'creator' => 0 // TODO: creator
@@ -44,8 +44,21 @@ class TournamentsController extends Controller
         return $request->all(); // TODO: page redirect
     }
 
-    public function edit(Tournament $tournament) {
-        return view('meh', compact('tournament'));
+    public function index() {
+        return view('home');    // TODO: page redirect
+    }
+
+    public function create()
+    {
+        $tournament_types = DB::table('tournament_types')->get();
+        $countries = DB::table('countries')->orderBy('name')->get();
+        $us_states = DB::table('us_states')->orderBy('name')->get();
+        return view('tournaments.create', compact('tournament_types', 'countries', 'us_states'));
+    }
+
+    public function edit($id) {
+        $tournament = Tournament::findOrFail($id);
+        return view('tournaments.edit', compact('tournament'));  // TODO: page redirect
     }
 
     public function update(Request $request, Tournament $tournament) {

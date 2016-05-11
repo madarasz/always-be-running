@@ -11,8 +11,7 @@ class PagesController extends Controller
 {
     public function home()
     {
-        $people = ['a', 'b', 'c'];
-        return view('welcome', compact('people'));
+        return view('home');
     }
 
     public function about()
@@ -21,11 +20,10 @@ class PagesController extends Controller
         return view('about', compact('tournament_types'));
     }
 
-    public function create()
+    public function my()
     {
-        $tournament_types = DB::table('tournament_types')->get();
-        $countries = DB::table('countries')->orderBy('name')->get();
-        $us_states = DB::table('us_states')->orderBy('name')->get();
-        return view('create', compact('tournament_types', 'countries', 'us_states'));
+        $user = 0;  // TODO
+        $created = DB::table('tournaments')->where('creator', $user)->get();
+        return view('my', compact('user', 'created'));
     }
 }
