@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Country;
 use App\Tournament;
+use App\TournamentType;
+use App\UsState;
 use Illuminate\Http\Request;
 use DB;
 
@@ -33,11 +36,11 @@ class TournamentsController extends Controller
             'location_city' => $request->location_city,
             'location_store' => $request->location_store,
             'location_address' => $request->location_address,
-            'concluded' => $request->concluded === '' ? 1 : 0,
-            'players_number' => $request->concluded === '' ? $request->players_number : 0,
-            'top_number' => $request->concluded === '' ? $request->top_number : 0,
+            'concluded' => $request->concluded == 1 ? 1 : 0,
+            'players_number' => $request->concluded == 1 ? $request->players_number : 0,
+            'top_number' => $request->concluded == 1 ? $request->top_number : 0,
             'description' => $request->description,
-            'decklist' => $request->decklist === '' ? 1 : 0,
+            'decklist' => $request->decklist == 1 ? 1 : 0,
             'creator' => 0 // TODO: creator
 
         ]);
@@ -50,9 +53,9 @@ class TournamentsController extends Controller
 
     public function create()
     {
-        $tournament_types = DB::table('tournament_types')->get();
-        $countries = DB::table('countries')->orderBy('name')->get();
-        $us_states = DB::table('us_states')->orderBy('name')->get();
+        $tournament_types = TournamentType::lists('type_name', 'id')->all();
+        $countries = Country::orderBy('name')->lists('name', 'id')->all();
+        $us_states = UsState::orderBy('name')->lists('name', 'id')->all();
         return view('tournaments.create', compact('tournament_types', 'countries', 'us_states'));
     }
 

@@ -9,3 +9,4 @@ node_modules
 public/js
 public/css
 public/fonts
+!vendor/illuminate/html/HtmlServiceProvider.php
