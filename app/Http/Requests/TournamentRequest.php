@@ -39,4 +39,28 @@ class TournamentRequest extends Request
             'not_in' => 'Please select a country.'
         ];
     }
+
+    public function sanitize_data()
+    {
+        $input = array_map('trim', $this->all());
+        if (array_key_exists('concluded', $input))
+        {
+            $input['concluded'] = 1;
+        } else {
+            $input['concluded'] = 0;
+            $input['players_number'] = null;
+            $input['top_number'] = null;
+        }
+
+        if (array_key_exists('decklist', $input))
+        {
+            $input['decklist'] = 1;
+        } else {
+            $input['decklist'] = 0;
+        }
+
+        $input['creator'] = 0;  // TODO remove
+
+        $this->replace($input);
+    }
 }

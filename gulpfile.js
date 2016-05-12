@@ -1,4 +1,6 @@
 var elixir = require('laravel-elixir');
+var gulp = require("gulp");
+var shell = require("gulp-shell");
 
 /*
  |--------------------------------------------------------------------------
@@ -25,4 +27,9 @@ elixir(function(mix) {
             'main.css',
             '../../../public/css/app.css'
         ]);
+
+    gulp.task("test", function() {
+        shell('nightwatch -c tests/nightwatch/nightwatch.json');
+    });
 });
+

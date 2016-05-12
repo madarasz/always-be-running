@@ -16,14 +16,14 @@ class CreateTournamentsTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->string('date');
-            $table->string('time');
+            $table->string('start_time');
             $table->integer('location_country')->unsigned();
             $table->integer('location_us_state')->unsigned();
             $table->string('location_city');
             $table->string('location_store');
             $table->string('location_address');
-            $table->integer('players_number')->unsigned();
-            $table->integer('top_number')->unsigned();
+            $table->integer('players_number')->unsigned()->nullable();
+            $table->integer('top_number')->unsigned()->nullable();
             $table->text('description');
             $table->boolean('concluded');
             $table->boolean('decklist');

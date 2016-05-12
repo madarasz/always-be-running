@@ -10,3 +10,6 @@ public/js
 public/css
 public/fonts
 !vendor/illuminate/html/HtmlServiceProvider.php
+tests/nightwatch/bin
+selenium-debug.log
+tests/nightwatch/reports

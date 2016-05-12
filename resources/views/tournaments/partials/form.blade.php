@@ -13,13 +13,13 @@
                         <div class="form-group">
                             {!! Form::label('tournament_type_id', 'Type') !!}
                             {!! Form::select('tournament_type_id', $tournament_types,
-                                old('tournament_type_id', $tournament->tournament_type_id) || 1, ['class' => 'form-control']) !!}
+                                old('tournament_type_id', $tournament->tournament_type_id), ['class' => 'form-control']) !!}
                         </div>
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <div class="form-group">
                             <br/>
-                            {!! Form::checkbox('decklist', 1, old('decklist', $tournament->decklist) == 1) !!}
+                            {!! Form::checkbox('decklist', null, old('decklist') == 'on' || $tournament->decklist == 1) !!}
                             {!! Form::label('decklist', 'decklist is mandatory') !!}
                         </div>
                     </div>
@@ -35,7 +35,7 @@
             <div class="panel-heading">conclusion</div>
             <div class="panel-body">
                 <div class="form-group">
-                    {!! Form::checkbox('concluded', 1, old('concluded', $tournament->concluded) == 1,
+                    {!! Form::checkbox('concluded', null, old('concluded') == 'on' || $tournament->concluded == 1,
                         ['onclick' => "showDiv('#player-numbers','concluded')", 'id' => 'concluded']) !!}
                     {!! Form::label('concluded', 'tournament is over') !!}
                 </div>
@@ -68,8 +68,8 @@
                                  ['class' => 'form-control', 'required' => '', 'placeholder' => 'YYYY.MM.DD.']) !!}
                 </div>
                 <div class="form-group">
-                    {!! Form::label('time', 'Starting time') !!}
-                    {!! Form::text('time', old('time', $tournament->time), ['class' => 'form-control', 'placeholder' => 'HH:MM']) !!}
+                    {!! Form::label('start_time', 'Starting time') !!}
+                    {!! Form::text('start_time', old('start_time', $tournament->start_time), ['class' => 'form-control', 'placeholder' => 'HH:MM']) !!}
                 </div>
                 <div class="form-group">
                     {!! Html::decode(Form::label('location_country', 'Country<sup class="text-danger">*</sup>')) !!}
@@ -83,7 +83,7 @@
                 </div>
                 <div class="form-group">
                     {!! Html::decode(Form::label('location_city', 'City<sup class="text-danger">*</sup>')) !!}
-                    {!! Form::text('location_city', old('time', $tournament->time),
+                    {!! Form::text('location_city', old('time', $tournament->location_city),
                         ['class' => 'form-control', 'placeholder' => 'city', 'required' => '']) !!}
                 </div>
                 <div class="form-group">
