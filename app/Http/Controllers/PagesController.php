@@ -23,7 +23,10 @@ class PagesController extends Controller
     public function my()
     {
         $user = 0;  // TODO
-        $created = DB::table('tournaments')->where('creator', $user)->get();
-        return view('my', compact('user', 'created'));
+        $nowdate = date('Y.m.d.');
+        $created = DB::table('tournaments')->where('creator', $user)->where('deleted_at', null)->get();
+        $registered = [];
+        $message = session()->has('message') ? session('message') : '';
+        return view('my', compact('user', 'created', 'nowdate', 'registered', 'message'));
     }
 }

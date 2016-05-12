@@ -34,6 +34,7 @@ class CreateTournamentsTable extends Migration
             $table->foreign('location_country')->references('id')->on('countries');
             $table->foreign('location_us_state')->references('id')->on('us_states');
             $table->timestamps();
+            $table->softDeletes();
 //             TODO: cardpool
         });
     }
