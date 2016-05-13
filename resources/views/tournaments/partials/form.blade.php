@@ -19,7 +19,7 @@
                     <div class="col-md-6 col-xs-12">
                         <div class="form-group">
                             <br/>
-                            {!! Form::checkbox('decklist', null, old('decklist') == 'on' || $tournament->decklist == 1) !!}
+                            {!! Form::checkbox('decklist', null, in_array(old('decklist', $tournament->decklist), [1, 'on'], true)) !!}
                             {!! Form::label('decklist', 'decklist is mandatory') !!}
                         </div>
                     </div>
@@ -35,11 +35,11 @@
             <div class="panel-heading">conclusion</div>
             <div class="panel-body">
                 <div class="form-group">
-                    {!! Form::checkbox('concluded', null, old('concluded') == 'on' || $tournament->concluded == 1,
+                    {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), [1, 'on'], true),
                         ['onclick' => "showDiv('#player-numbers','concluded')", 'id' => 'concluded']) !!}
                     {!! Form::label('concluded', 'tournament is over') !!}
                 </div>
-                <div class="row {{ old('concluded') == 1  || $tournament->concluded == 1 ? '' : 'hidden' }}" id="player-numbers">
+                <div class="row" id="player-numbers">
                     <div class="col-md-6 col-xs-12">
                         <div class="form-group">
                             {!! Html::decode(Form::label('players_number', 'Number of players<sup class="text-danger">*</sup>')) !!}
@@ -107,3 +107,8 @@
 <div class="row text-center">
     {!! Form::submit($submitButton, ['class' => 'btn btn-primary']) !!}
 </div>
+<script type="text/javascript">
+    if (!document.getElementById('concluded').checked) {
+        document.getElementById('player-numbers').classList.add('hidden');
+    }
+</script>

@@ -27,7 +27,7 @@ class CreateTournamentsTable extends Migration
             $table->text('description');
             $table->boolean('concluded');
             $table->boolean('decklist');
-            $table->integer('creator');   // TODO: foreign key for user
+            $table->integer('creator');   // TODO: username instead
             $table->boolean('approved')->nullable();
             $table->integer('tournament_type_id')->unsigned();
             $table->foreign('tournament_type_id')->references('id')->on('tournament_types');

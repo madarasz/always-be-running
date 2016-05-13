@@ -10,6 +10,7 @@
                 <thead>
                     <th>title</th>
                     <th>date</th>
+                    <th>cardpool</th>
                     <th>approval</th>
                     <th>conclusion</th>
                     <th class="text-center">players</th>
@@ -20,7 +21,7 @@
                 </thead>
                 <tbody>
                     @if (count($created) == 0)
-                        <tr><td colspan="9" class="text-center"><em>no tournaments created yet</em></td></tr>
+                        <tr><td colspan="10" class="text-center"><em>no tournaments created yet</em></td></tr>
                     @endif
                     @foreach ($created as $tournament)
                         <tr>
