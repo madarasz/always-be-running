@@ -5,7 +5,7 @@
     @include('partials.message')
     <div class="row">
         <div class="col-md-10 col-md-offset-1 col-xs-12">
-            <h4>Tournaments created by me</h4>
+            <h4>Pending tournaments</h4>
             <table class="table table-condensed table-striped">
                 <thead>
                     <th>title</th>
@@ -15,6 +15,8 @@
                     <th>conclusion</th>
                     <th class="text-center">players</th>
                     <th class="text-center">decks</th>
+                    <th></th>
+                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -54,6 +56,8 @@
                             <td></td>
                             <td><a href="/tournaments/{{ $tournament->id }}">view</a></td>
                             <td><a href="/tournaments/{{ $tournament->id }}/edit">edit</a></td>
+                            <td><a href="/tournaments/{{ $tournament->id }}/approve" class="btn btn-success btn-xs">approve</a></td>
+                            <td><a href="/tournaments/{{ $tournament->id }}/reject" class="btn btn-danger btn-xs">reject</a></td>
                             <td>
                                 {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id"]) !!}
                                     {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
@@ -63,7 +67,7 @@
                     @endforeach
                 </tbody>
             </table>
-            <h4>Tournaments I registered to</h4>
+            <h4>Deleted tournaments</h4>
             <table class="table table-condensed table-striped">
                 <thead>
                 <th>title</th>
