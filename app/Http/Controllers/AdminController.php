@@ -15,10 +15,11 @@ class AdminController extends Controller
     {
         $user = 0;  // TODO
         $nowdate = date('Y.m.d.');
-        $created = DB::table('tournaments')->where('approved', null)->where('deleted_at', null)->get();
+        $created = Tournament::where('approved', null)->where('deleted_at', null)->get();
+        $deleted = Tournament::onlyTrashed()->get();
         $registered = [];
         $message = session()->has('message') ? session('message') : '';
-        return view('admin', compact('user', 'created', 'nowdate', 'registered', 'message'));
+        return view('admin', compact('user', 'created', 'deleted', 'nowdate', 'registered', 'message'));
     }
 
     public function approve($id)
@@ -37,5 +38,11 @@ class AdminController extends Controller
         $tournament->approved = $outcome;
         $tournament->save();
         redirect()->action('AdminController@lister')->with('message', $message);
+    }
+
+    public function restore($id)
+    {
+        Tournament::withTrashed()->where('id', $id)->restore();
+        redirect()->action('AdminController@lister')->with('message', 'Tournament restored');
     }
 }

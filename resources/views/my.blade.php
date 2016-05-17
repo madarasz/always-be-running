@@ -29,7 +29,7 @@
                             <td>{{ $tournament->date }}</td>
                             <td></td>
                             <td>
-                                @if ($tournament->approved === '')
+                                @if ($tournament->approved === null)
                                     <span class="label label-warning">pending</span>
                                 @elseif ($tournament->approved == 1)
                                     <span class="label label-success">approved</span>
