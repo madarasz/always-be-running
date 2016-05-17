@@ -19,7 +19,7 @@
                     <div class="col-md-6 col-xs-12">
                         <div class="form-group">
                             <br/>
-                            {!! Form::checkbox('decklist', null, in_array(old('decklist', $tournament->decklist), [1, 'on'], true)) !!}
+                            {!! Form::checkbox('decklist', null, in_array(old('decklist', $tournament->decklist), [1, 'on'], true), ['id' => 'decklist']) !!}
                             {!! Form::label('decklist', 'decklist is mandatory') !!}
                         </div>
                     </div>

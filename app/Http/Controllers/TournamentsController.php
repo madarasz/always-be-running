@@ -48,7 +48,7 @@ class TournamentsController extends Controller
         $tournament = Tournament::findorFail($id);
         $request->sanitize_data();
         $tournament->update($request->all());
-        return back()->with('message', 'Tournament updated.');
+        return redirect()->action('PagesController@my')->with('message', 'Tournament updated.');
     }
 
     public function show($id)

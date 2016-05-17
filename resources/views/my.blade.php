@@ -8,11 +8,13 @@
             @include('tournaments.partials.table',
                 ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
                     'action_view', 'action_edit', 'action_delete' ],
-                'data' => $created, 'title' => 'Tournaments created by me', 'empty_message' => 'no tournaments created yet'])
+                'data' => $created, 'title' => 'Tournaments created by me',
+                'empty_message' => 'no tournaments created yet', 'id' => 'created'])
             @include('tournaments.partials.table',
                 ['columns' => ['title', 'date', 'cardpool', 'conclusion', 'players', 'decks',
                     'action_view'  ],
-                'data' => $registered, 'title' => 'Tournaments I registered to', 'empty_message' => 'no tournaments registered to yet'])
+                'data' => $registered, 'title' => 'Tournaments I registered to',
+                'empty_message' => 'no tournaments registered to yet', 'id' => 'registered'])
         </div>
     </div>
 @stop

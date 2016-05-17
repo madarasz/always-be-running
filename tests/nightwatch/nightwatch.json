@@ -2,7 +2,7 @@
   "src_folders" : ["./tests/nightwatch/tests"],
   "output_folder" : "./tests/nightwatch/reports",
   "custom_commands_path" : "./tests/nightwatch/commands",
-  "custom_assertions_path" : "",
+  "custom_assertions_path" : "./tests/nightwatch/assertions",
   "page_objects_path" : "",
   "globals_path" : "",
   "test_workers" : {"enabled" : false, "workers" : "auto"},
@@ -14,8 +14,9 @@
     "host" : "127.0.0.1",
     "port" : 4444,
     "cli_args" : {
-      "webdriver.chrome.driver" : "",
-      "webdriver.ie.driver" : ""
+      "webdriver.chrome.driver" : "./tests/nightwatch/bin/chromedriver",
+      "webdriver.ie.driver" : "",
+      "webdriver.firefox.profile" : "webdriver"
     }
   },
 

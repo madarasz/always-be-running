@@ -1,5 +1,5 @@
 <h4>{{ $title }}</h4>
-<table class="table table-condensed table-striped">
+<table class="table table-condensed table-striped" id="{{ $id }}">
     <thead>
         @if( in_array('title', $columns) )
             <th>title</th>

@@ -195,15 +195,7 @@ module.exports = {
     },
     'Tournament A delete' : function (browser) {
         browser
-            .url(browser.launchUrl)
-            .useXpath()
-            .waitForElementVisible('//body', 3000)
-            .windowMaximize('current')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .waitForElementVisible('//body', 3000)
-            .waitForElementVisible("//td[contains(text(), '" + title2 + "')]", 1000)
-            .click("//input[@value='delete']")
-            .assert.elementNotPresent("//td[contains(text(), '" + title2 + "')]")
+            .deleteTournament(title2)
             .end();
     },
     'Tournament B create - validation' : function (browser) {
@@ -363,15 +355,7 @@ module.exports = {
     },
     'Tournament B delete' : function (browser) {
         browser
-            .url(browser.launchUrl)
-            .useXpath()
-            .waitForElementVisible('//body', 3000)
-            .windowMaximize('current')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .waitForElementVisible('//body', 3000)
-            .waitForElementVisible("//td[contains(text(), '" + title + "')]", 1000)
-            .click("//input[@value='delete']")
-            .assert.elementNotPresent("//td[contains(text(), '" + title + "')]")
+            .deleteTournament(title)
             .end();
     }
 };

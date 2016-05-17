@@ -8,11 +8,13 @@
             @include('tournaments.partials.table',
                 ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
                     'action_view', 'action_edit', 'action_approve', 'action_reject', 'action_delete' ],
-                'data' => $to_approve, 'title' => 'Pending tournaments', 'empty_message' => 'no pending tournaments'])
+                'data' => $to_approve, 'title' => 'Pending tournaments',
+                'empty_message' => 'no pending tournaments', 'id' => 'pending'])
             @include('tournaments.partials.table',
                 ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
                     'action_view', 'action_edit', 'action_restore'],
-                'data' => $deleted, 'title' => 'Deleted tournaments', 'empty_message' => 'no deleted tournaments'])
+                'data' => $deleted, 'title' => 'Deleted tournaments',
+                'empty_message' => 'no deleted tournaments', 'id' => 'deleted'])
         </div>
     </div>
 @stop
