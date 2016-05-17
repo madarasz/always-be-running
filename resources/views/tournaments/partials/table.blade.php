@@ -89,21 +89,22 @@
                     <td></td>
                 @endif
                 @if( in_array('action_view', $columns) )
-                    <td><a href="/tournaments/{{ $row->id }}">view</a></td>
+                    <td><a href="/tournaments/{{ $row->id }}" class="btn btn-info btn-xs"><i class="fa fa-eye" aria-hidden="true"></i> view</a></td>
                 @endif
                 @if( in_array('action_edit', $columns) )
-                    <td><a href="/tournaments/{{ $row->id }}/edit">edit</a></td>
+                    <td><a href="/tournaments/{{ $row->id }}/edit" class="btn btn-info btn-xs"><i class="fa fa-pencil" aria-hidden="true"></i> edit</a></td>
                 @endif
                 @if( in_array('action_approve', $columns) )
-                    <td><a href="/tournaments/{{ $row->id }}/approve" class="btn btn-success btn-xs">approve</a></td>
+                    <td><a href="/tournaments/{{ $row->id }}/approve" class="btn btn-success btn-xs"><i class="fa fa-thumbs-up" aria-hidden="true"></i> approve</a></td>
                 @endif
                 @if( in_array('action_reject', $columns) )
-                    <td><a href="/tournaments/{{ $row->id }}/reject" class="btn btn-danger btn-xs">reject</a></td>
+                    <td><a href="/tournaments/{{ $row->id }}/reject" class="btn btn-danger btn-xs"><i class="fa fa-thumbs-down" aria-hidden="true"></i> reject</a></td>
                 @endif
                 @if( in_array('action_delete', $columns) )
                     <td>
                         {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$row->id"]) !!}
-                        {!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}
+                            {{--{!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}--}}
+                            {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> delete', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}
                         {!! Form::close() !!}
                     </td>
                 @endif

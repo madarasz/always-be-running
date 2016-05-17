@@ -48,7 +48,7 @@ class TournamentsController extends Controller
         $tournament = Tournament::findorFail($id);
         $request->sanitize_data();
         $tournament->update($request->all());
-        return redirect()->action('PagesController@my')->with('message', 'Tournament updated.');
+        return back()->with('message', 'Tournament updated.');
     }
 
     public function show($id)
@@ -70,6 +70,6 @@ class TournamentsController extends Controller
     {
         //TODO: auth!!!
         Tournament::destroy($id);
-        return redirect()->action('PagesController@my')->with('message', 'Tournament deleted.');
+        return back()->with('message', 'Tournament deleted.');
     }
 }

@@ -24,12 +24,12 @@ class AdminController extends Controller
 
     public function approve($id)
     {
-        $this->approval($id, 1, 'Tournament approved.');
+        return $this->approval($id, 1, 'Tournament approved.');
     }
 
     public function reject($id)
     {
-        $this->approval($id, 0, 'Tournament rejected.');
+        return $this->approval($id, 0, 'Tournament rejected.');
     }
 
     private function approval($id, $outcome, $message)
@@ -37,12 +37,12 @@ class AdminController extends Controller
         $tournament = Tournament::findorFail($id);
         $tournament->approved = $outcome;
         $tournament->save();
-        redirect()->action('AdminController@lister')->with('message', $message);
+        return back()->with('message', $message);
     }
 
     public function restore($id)
     {
         Tournament::withTrashed()->where('id', $id)->restore();
-        redirect()->action('AdminController@lister')->with('message', 'Tournament restored');
+        return back()->with('message', 'Tournament restored');
     }
 }

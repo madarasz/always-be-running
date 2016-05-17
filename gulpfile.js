@@ -15,7 +15,8 @@ var shell = require("gulp-shell");
 
 elixir(function(mix) {
     var bootstrapPath = 'node_modules/bootstrap-sass/assets';
-    mix.copy(bootstrapPath + '/fonts', 'public/fonts')
+    mix.copy('resources/assets/fonts', 'public/fonts')
+        .copy(bootstrapPath + '/fonts', 'public/fonts')
         .copy(bootstrapPath + '/javascripts/bootstrap.min.js', 'resources/assets/js')
         .sass('app.scss')
         .scripts([
@@ -25,6 +26,7 @@ elixir(function(mix) {
         ])
         .styles([
             'main.css',
+            'font-awesome.css',
             '../../../public/css/app.css'
         ]);
 
