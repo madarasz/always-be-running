@@ -157,7 +157,8 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         'Webpatser\Countries\CountriesServiceProvider',
-        Illuminate\Html\HtmlServiceProvider::class
+        Illuminate\Html\HtmlServiceProvider::class,
+        Artdarek\OAuth\OAuthServiceProvider::class,
     ],
 
     /*
@@ -205,7 +206,8 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Countries' => 'Webpatser\Countries\CountriesFacade',
         'Form' => Illuminate\Html\FormFacade::class,
-        'Html' => Illuminate\Html\HtmlFacade::class
+        'Html' => Illuminate\Html\HtmlFacade::class,
+        'OAuth2' => Artdarek\OAuth\Facade\OAuth::class,
     ],
 
 ];
