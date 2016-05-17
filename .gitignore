@@ -13,3 +13,4 @@ public/fonts
 tests/nightwatch/bin
 selenium-debug.log
 tests/nightwatch/reports
+!vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/Thrones.php

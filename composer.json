@@ -8,7 +8,8 @@
         "php": ">=5.5.9",
         "laravel/framework": "5.2.*",
         "webpatser/laravel-countries": "dev-master",
-        "illuminate/html": "^5.0"
+        "illuminate/html": "^5.0",
+        "oriceon/oauth-5-laravel": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
