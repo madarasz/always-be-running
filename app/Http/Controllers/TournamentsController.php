@@ -6,7 +6,7 @@ use App\Country;
 use App\Tournament;
 use App\TournamentType;
 use App\UsState;
-use DB;
+use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
@@ -14,7 +14,8 @@ class TournamentsController extends Controller
 {
     public function store(Requests\TournamentRequest $request)
     {
-        $request->sanitize_data();
+        $this->authorize('store', Tournament::class, $request->user());
+        $request->sanitize_data($request->user()->id);
         Tournament::create($request->all());
         return redirect()->action('PagesController@my')->with('message', 'Tournament created.');
     }
@@ -24,8 +25,9 @@ class TournamentsController extends Controller
         return view('home');    // TODO: page redirect
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $this->authorize('store', Tournament::class, $request->user());
         $tournament_types = TournamentType::lists('type_name', 'id')->all();
         $countries = Country::orderBy('name')->lists('name', 'id')->all();
         $us_states = UsState::orderBy('name')->lists('name', 'id')->all();
@@ -34,9 +36,10 @@ class TournamentsController extends Controller
         return view('tournaments.create', compact('tournament_types', 'countries', 'us_states', 'tournament'));
     }
 
-    public function edit($id)
+    public function edit($id, Request $request)
     {
         $tournament = Tournament::findOrFail($id);
+        $this->authorize('update', $tournament, $request->user());
         $tournament_types = TournamentType::lists('type_name', 'id')->all();
         $countries = Country::orderBy('name')->lists('name', 'id')->all();
         $us_states = UsState::orderBy('name')->lists('name', 'id')->all();
@@ -46,6 +49,7 @@ class TournamentsController extends Controller
     public function update($id, Requests\TournamentRequest $request)
     {
         $tournament = Tournament::findorFail($id);
+        $this->authorize('update', $tournament, $request->user());
         $request->sanitize_data();
         $tournament->update($request->all());
         return redirect()->action('PagesController@my')->with('message', 'Tournament updated.');
@@ -66,9 +70,10 @@ class TournamentsController extends Controller
         return view('tournaments.view', compact('tournament', 'country_name', 'state_name', 'message'));
     }
 
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
-        //TODO: auth!!!
+        $tournament = Tournament::findorFail($id);
+        $this->authorize('destroy', $tournament, $request->user());
         Tournament::destroy($id);
         return back()->with('message', 'Tournament deleted.');
     }

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use DB;
+use App\Tournament;
 
 use App\Http\Requests;
 
@@ -11,20 +11,16 @@ class PagesController extends Controller
 {
     public function home()
     {
-        return view('home');
+        $message = session()->has('message') ? session('message') : '';
+        return view('home', compact('message'));
     }
 
-    public function about()
+    public function my(Request $request)
     {
-        $tournament_types = DB::table('tournament_types')->get();
-        return view('about', compact('tournament_types'));
-    }
-
-    public function my()
-    {
-        $user = 0;  // TODO
+        $this->authorize('list_my', Tournament::class, $request->user());
+        $user = $request->user()->id;
         $nowdate = date('Y.m.d.');
-        $created = DB::table('tournaments')->where('creator', $user)->where('deleted_at', null)->get();
+        $created = Tournament::where('creator', $user)->where('deleted_at', null)->get();
         $registered = [];
         $message = session()->has('message') ? session('message') : '';
         return view('my', compact('user', 'created', 'nowdate', 'registered', 'message'));

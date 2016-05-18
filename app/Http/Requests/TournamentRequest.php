@@ -40,7 +40,7 @@ class TournamentRequest extends Request
         ];
     }
 
-    public function sanitize_data()
+    public function sanitize_data($user_id = null)
     {
         $input = array_map('trim', $this->all());
         if (array_key_exists('concluded', $input))
@@ -59,7 +59,9 @@ class TournamentRequest extends Request
             $input['decklist'] = 0;
         }
 
-        $input['creator'] = 0;  // TODO remove
+        if (!is_null($user_id)) {
+            $input['creator'] = $user_id;
+        }
 
         $this->replace($input);
     }

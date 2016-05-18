@@ -89,10 +89,10 @@
                     <td></td>
                 @endif
                 @if( in_array('action_view', $columns) )
-                    <td><a href="/tournaments/{{ $row->id }}" class="btn btn-info btn-xs"><i class="fa fa-eye" aria-hidden="true"></i> view</a></td>
+                    <td><a href="/tournaments/{{ $row->id }}" class="btn btn-primary btn-xs"><i class="fa fa-eye" aria-hidden="true"></i> view</a></td>
                 @endif
                 @if( in_array('action_edit', $columns) )
-                    <td><a href="/tournaments/{{ $row->id }}/edit" class="btn btn-info btn-xs"><i class="fa fa-pencil" aria-hidden="true"></i> edit</a></td>
+                    <td><a href="/tournaments/{{ $row->id }}/edit" class="btn btn-primary btn-xs"><i class="fa fa-pencil" aria-hidden="true"></i> edit</a></td>
                 @endif
                 @if( in_array('action_approve', $columns) )
                     <td><a href="/tournaments/{{ $row->id }}/approve" class="btn btn-success btn-xs"><i class="fa fa-thumbs-up" aria-hidden="true"></i> approve</a></td>
@@ -109,7 +109,7 @@
                     </td>
                 @endif
                 @if( in_array('action_restore', $columns) )
-                    <td><a href="/tournaments/{{ $row->id }}/restore" class="btn btn-info btn-xs">restore</a></td>
+                    <td><a href="/tournaments/{{ $row->id }}/restore" class="btn btn-primary btn-xs">restore</a></td>
                 @endif
             </tr>
         @endforeach

@@ -16,6 +16,7 @@ var shell = require("gulp-shell");
 elixir(function(mix) {
     var bootstrapPath = 'node_modules/bootstrap-sass/assets';
     mix.copy('resources/assets/fonts', 'public/fonts')
+        .copy('resources/assets/img', 'public/img')
         .copy(bootstrapPath + '/fonts', 'public/fonts')
         .copy(bootstrapPath + '/javascripts/bootstrap.min.js', 'resources/assets/js')
         .sass('app.scss')
