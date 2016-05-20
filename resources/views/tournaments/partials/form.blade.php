@@ -27,7 +27,7 @@
                 <div class="form-group">
                     {!! Form::label('description', 'Description') !!}
                     {!! Form::textarea('description', old('description', $tournament->description),
-                        ['rows' => 6, 'cols' => '', 'class' => 'form-control']) !!}
+                        ['rows' => 6, 'cols' => '', 'class' => 'form-control', 'placeholder' => 'additional information and rules, prizepool, TO contact, etc.']) !!}
                 </div>
             </div>
         </div>

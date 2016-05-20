@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Country;
+use App\Entry;
 use App\Tournament;
 use App\TournamentType;
 use App\UsState;
@@ -14,10 +15,10 @@ class TournamentsController extends Controller
 {
     public function store(Requests\TournamentRequest $request)
     {
-        $this->authorize('store', Tournament::class, $request->user());
+        $this->authorize('logged_in', Tournament::class, $request->user());
         $request->sanitize_data($request->user()->id);
         Tournament::create($request->all());
-        return redirect()->action('PagesController@my')->with('message', 'Tournament created.');
+        return redirect()->action('TournamentsController@my')->with('message', 'Tournament created.');
     }
 
     public function index()
@@ -27,7 +28,7 @@ class TournamentsController extends Controller
 
     public function create(Request $request)
     {
-        $this->authorize('store', Tournament::class, $request->user());
+        $this->authorize('logged_in', Tournament::class, $request->user());
         $tournament_types = TournamentType::lists('type_name', 'id')->all();
         $countries = Country::orderBy('name')->lists('name', 'id')->all();
         $us_states = UsState::orderBy('name')->lists('name', 'id')->all();
@@ -39,7 +40,7 @@ class TournamentsController extends Controller
     public function edit($id, Request $request)
     {
         $tournament = Tournament::findOrFail($id);
-        $this->authorize('update', $tournament, $request->user());
+        $this->authorize('own', $tournament, $request->user());
         $tournament_types = TournamentType::lists('type_name', 'id')->all();
         $countries = Country::orderBy('name')->lists('name', 'id')->all();
         $us_states = UsState::orderBy('name')->lists('name', 'id')->all();
@@ -49,32 +50,49 @@ class TournamentsController extends Controller
     public function update($id, Requests\TournamentRequest $request)
     {
         $tournament = Tournament::findorFail($id);
-        $this->authorize('update', $tournament, $request->user());
+        $this->authorize('own', $tournament, $request->user());
         $request->sanitize_data();
         $tournament->update($request->all());
-        return redirect()->action('PagesController@my')->with('message', 'Tournament updated.');
+        return redirect()->action('TournamentsController@my')->with('message', 'Tournament updated.');
     }
 
-    public function show($id)
+    public function show($id, Request $request)
     {
         $tournament = Tournament::findorFail($id);
-        $country_name = Country::findorFail($tournament->location_country)->name;
+        $type = $tournament->tournament_type->type_name;
+        $country_name = $tournament->country->name;
         $message = session()->has('message') ? session('message') : '';
-        if ($tournament->location_us_state == 52)
-        {
-            $state_name = '';
-        } else
-        {
-            $state_name = UsState::findorFail($tournament->location_us_state)->name;
-        }
-        return view('tournaments.view', compact('tournament', 'country_name', 'state_name', 'message'));
+        $nowdate = date('Y.m.d.');
+        $user = $request->user();
+//        $entries = $tournament->entries; TODO
+        $entries = Entry::where('tournament_id', $tournament->id)->get();
+        $user_entry = Entry::where('tournament_id', $tournament->id)->where('user', $user->id)->first();
+        $state_name = $tournament->location_us_state == 52 ? '' : UsState::findorFail($tournament->location_us_state)->name;
+        return view('tournaments.view',
+            compact('tournament', 'country_name', 'state_name', 'message', 'type', 'nowdate', 'user', 'entries', 'user_entry'));
     }
 
     public function destroy($id, Request $request)
     {
         $tournament = Tournament::findorFail($id);
-        $this->authorize('destroy', $tournament, $request->user());
+        $this->authorize('own', $tournament, $request->user());
         Tournament::destroy($id);
         return back()->with('message', 'Tournament deleted.');
+    }
+
+    public function my(Request $request)
+    {
+        $this->authorize('logged_in', Tournament::class, $request->user());
+        $user = $request->user()->id;
+        $nowdate = date('Y.m.d.');
+        $created = Tournament::where('creator', $user)->where('deleted_at', null)->get();
+        $registered = [];
+        $message = session()->has('message') ? session('message') : '';
+        return view('my', compact('user', 'created', 'nowdate', 'registered', 'message'));
+    }
+
+    public function register(Request $request, $id)
+    {
+        $this->authorize('logged_in', Tournament::class, $request->user());
     }
 }

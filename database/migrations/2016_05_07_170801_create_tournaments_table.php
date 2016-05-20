@@ -27,13 +27,14 @@ class CreateTournamentsTable extends Migration
             $table->text('description');
             $table->boolean('concluded');
             $table->boolean('decklist');
-            $table->integer('creator');   // TODO: username instead
+            $table->integer('creator')->unsigned();
             $table->boolean('approved')->nullable();
             $table->string('reject_reason');
             $table->integer('tournament_type_id')->unsigned();
             $table->foreign('tournament_type_id')->references('id')->on('tournament_types');
             $table->foreign('location_country')->references('id')->on('countries');
             $table->foreign('location_us_state')->references('id')->on('us_states');
+            $table->foreign('creator')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
 //             TODO: cardpool

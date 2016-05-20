@@ -15,14 +15,18 @@ class Tournament extends Model
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
     public function tournament_type() {
-        return $this->hasOne(TournamentType::class);
+        return $this->hasOne(TournamentType::class, 'id', 'tournament_type_id');
     }
 
-    public function entry() {
-        return $this->hasMany(Entry::class);
+    public function user() {
+        return $this->hasOne(User::class, 'id', 'creator');
     }
 
-    public function location_country() {
-        return $this->hasOne(Country::class);
+    public function entries() {
+        return $this->hasMany(Entry::class, 'id', 'tournament_id');
+    }
+
+    public function country() {
+        return $this->hasOne(Country::class, 'id', 'location_country');
     }
 }

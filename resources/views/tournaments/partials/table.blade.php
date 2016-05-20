@@ -103,7 +103,6 @@
                 @if( in_array('action_delete', $columns) )
                     <td>
                         {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$row->id"]) !!}
-                            {{--{!! Form::submit('delete', ['class' => 'btn btn-danger btn-xs']) !!}--}}
                             {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> delete', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}
                         {!! Form::close() !!}
                     </td>

@@ -11,12 +11,20 @@ use Illuminate\Support\Facades\Auth;
 
 class ThronesController extends Controller
 {
+
+    protected $oauth;
+
+    public function __construct()
+    {
+        $this->oauth = \OAuth2::consumer('Thrones', 'http://localhost:8000/oauth2/redirect');
+    }
+
     function login(Request $request) {
         $code = $request->get('code');
-        $thrones = \OAuth2::consumer('Thrones', 'http://localhost:8000/oauth2/redirect');
+//        $oauth = \OAuth2::consumer('Thrones', 'http://localhost:8000/oauth2/redirect');
         if ( ! is_null($code)) {
-            $token = $thrones->requestAccessToken($code);
-            $user_id = $this->getUserId($thrones);
+            $token = $this->oauth->requestAccessToken($code);
+            $user_id = $this->getUserId();
             if ($user_id > 0) {
                 $auth_user = $this->findOrCreateUser($user_id);
                 Auth::login($auth_user, true);
@@ -25,7 +33,7 @@ class ThronesController extends Controller
                 return redirect()->action('PagesController@home')->with('message', 'You cannot login because you have no deck saved in ThronesDB. Please save a deck in ThronesDB first.');
             }
         } else {
-            $url = $thrones->getAuthorizationUri();
+            $url = $this->oauth->getAuthorizationUri();
             return redirect((string)$url);
         }
     }
@@ -35,9 +43,14 @@ class ThronesController extends Controller
         return redirect()->action('PagesController@home');
     }
 
-    private function getUserId($consumer) {
+    public function getDeckData() {
+        return $this->oauth->request('https://thronesdb.com/api/oauth2/decks');
+
+    }
+
+    private function getUserId() {
         try {
-            $result = json_decode($consumer->request('https://thronesdb.com/api/oauth2/decks'), true);
+            $result = json_decode($this->oauth->request('https://thronesdb.com/api/oauth2/decks'), true);
         } catch (TokenResponseException $e) {
             return -1;
         }

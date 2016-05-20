@@ -2,11 +2,9 @@
 
 namespace App\Policies;
 
-use App\Tournament;
-use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class TournamentPolicy
+class EntryPolicy
 {
     use HandlesAuthorization;
 
@@ -25,17 +23,7 @@ class TournamentPolicy
         }
     }
 
-    public function logged_in(User $user) {
-        return !is_null($user);
+    public function own(User $user, Entry $entry) {
+        return $user->id === $entry->user;
     }
-
-    public function own(User $user, Tournament $tournament) {
-        return $user->id === $tournament->creator;
-    }
-
-    public function admin() {
-        // just for admin, handled in before call
-        return false;
-    }
-
 }
