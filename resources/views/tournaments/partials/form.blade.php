@@ -49,7 +49,7 @@
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <div class="form-group">
-                            {!! Form::label('top_number', 'Number of players') !!}
+                            {!! Form::label('top_number', 'Number of players in top cut') !!}
                             {!! Form::text('top_number', old('top_number', $tournament->top_number),
                                  ['class' => 'form-control', 'placeholder' => 'number fo players in top cut']) !!}
                         </div>

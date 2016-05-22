@@ -12,8 +12,6 @@
         @endif
         {{ $tournament->title }}<br/>
         <small>{{ $type }} - <em>created by {{ $tournament->creator }}</em></small>
-
-
     </h3>
     @include('partials.message')
     <div class="row">
@@ -49,26 +47,114 @@
                     @if ($tournament->top_number)
                         <strong>Top cut players:</strong> {{ $tournament->top_number }}<br/>
                     @endif
+                    {{--User claim--}}
                     @if ($user)
                         <hr/>
-                        <a href="" class="btn btn-success"><i class="fa fa-check-square-o" aria-hidden="true"></i> Claim spot</a>
-                        {{--<a href="" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i> Remove claim</a>--}}
+                        @if ($user_entry && $user_entry->rank)
+                                <div class="text-center">
+                                    <a href="{{ "/tournaments/$tournament->id/unclaim" }}" class="btn btn-danger">
+                                        <i class="fa fa-trash" aria-hidden="true"></i> Remove claim
+                                    </a>
+                                </div>
+                        @else
+                            {!! Form::open(['url' => "/tournaments/$tournament->id/claim"]) !!}
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-6">
+                                        <div class="form-group">
+                                            {!! Form::label('rank', 'rank after swiss rounds') !!}
+                                            <select class="form-control" id="rank" name="rank">
+                                                @foreach (range(1, $tournament->players_number) as $rank)
+                                                    <option value="{{ $rank }}">{{ $rank }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    @if ($tournament->top_number)
+                                        <div class="col-xs-12 col-md-6">
+                                            <div class="form-group">
+                                                {!! Form::label('rank_top', 'rank after top cut') !!}
+                                                <select class="form-control" id="rank_top" name="rank_top">
+                                                    <option value="">below top cut</option>
+                                                    @foreach (range(1, $tournament->top_number) as $rank)
+                                                        <option value="{{ $rank }}">{{ $rank }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="form-group">
+                                    {!! Form::label('corp_deck', 'corporation deck') !!}
+                                    <select class="form-control" id="corp_deck" name="corp_deck">
+                                        @foreach ($decks as $deck)
+                                            <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    {!! Form::label('runner_deck', 'runner deck') !!}
+                                    <select class="form-control" id="runner_deck" name="runner_deck">
+                                        @foreach ($decks as $deck)
+                                            <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fa fa-check-square-o" aria-hidden="true"></i> Claim spot
+                                    </button>
+                                </div>
+                            {!! Form::close() !!}
+                        @endif
                     @endif
 
                 </p>
                 <hr/>
+                {{--Tables of tournament ranks --}}
                 <p>
+                    @if ($tournament->top_number)
+                        <h5>Top cut</h5>
+                        <table class="table table-condensed table-striped">
+                            <thead>
+                            <th>rank</th>
+                            <th>player</th>
+                            <th>corp</th>
+                            <th>runner</th>
+                            </thead>
+                            <tbody>
+                            @for ($i = 1; $i <= $tournament->top_number; $i++)
+                                @if ($user_entry && $i == $user_entry->rank_top)
+                                    <tr class="info">
+                                @else
+                                    <tr>
+                                @endif
+                                    <td>{{ $i }}.</td>
+
+                                    <td></td>
+                                    <td><em>unclaimed</em></td>
+                                    <td><em>unclaimed</em></td>
+                                </tr>
+                            @endfor
+                            </tbody>
+                        </table>
+                        <h5>Swiss rounds</h5>
+                    @endif
                     <table class="table table-condensed table-striped">
                         <thead>
                             <th>rank</th>
+                            <th>player</th>
                             <th>corp</th>
                             <th>runner</th>
-                            <th></th>
                         </thead>
                         <tbody>
                             @for ($i = 1; $i <= $tournament->players_number; $i++)
-                                <tr>
+                                @if ($user_entry && $i == $user_entry->rank)
+                                    <tr class="info">
+                                @else
+                                    <tr>
+                                @endif
                                     <td>{{ $i }}.</td>
+                                    <td></td>
                                     <td><em>unclaimed</em></td>
                                     <td><em>unclaimed</em></td>
                                 </tr>
@@ -94,7 +180,12 @@
                 <div class="text-center">
                     @if ($user)
                         @if ($user_entry)
-                            <a href="{{"/tournaments/$tournament->id/unregister"}}" class="btn btn-danger"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</a>
+                            @if ($user_entry->rank)
+                                <span class="btn btn-danger disabled"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</span><br/>
+                                <small><em>remove your claim first</em></small>
+                            @else
+                                <a href="{{"/tournaments/$tournament->id/unregister"}}" class="btn btn-danger"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</a>
+                            @endif
                         @else
                             <a href="{{"/tournaments/$tournament->id/register"}}" class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i> Register</a>
                         @endif

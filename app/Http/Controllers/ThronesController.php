@@ -44,8 +44,12 @@ class ThronesController extends Controller
     }
 
     public function getDeckData() {
-        return $this->oauth->request('https://thronesdb.com/api/oauth2/decks');
-
+        $raw = json_decode($this->oauth->request('https://thronesdb.com/api/oauth2/decks'), true);
+        $result = [];
+        foreach ($raw as $deck) {
+            array_push($result, ['id' => $deck['id'], 'name' => $deck['name']]);
+        }
+        return $result;
     }
 
     private function getUserId() {

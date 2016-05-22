@@ -68,8 +68,13 @@ class TournamentsController extends Controller
         $entries = Entry::where('tournament_id', $tournament->id)->get();
         $user_entry = Entry::where('tournament_id', $tournament->id)->where('user', $user->id)->first();
         $state_name = $tournament->location_us_state == 52 ? '' : UsState::findorFail($tournament->location_us_state)->name;
+        $decks = [];
+        if (!is_null($user)) {
+            $decks = app('App\Http\Controllers\ThronesController')->getDeckData();
+        }
         return view('tournaments.view',
-            compact('tournament', 'country_name', 'state_name', 'message', 'type', 'nowdate', 'user', 'entries', 'user_entry'));
+            compact('tournament', 'country_name', 'state_name', 'message', 'type', 'nowdate', 'user', 'entries',
+                'user_entry', 'decks'));
     }
 
     public function destroy($id, Request $request)

@@ -16,9 +16,12 @@ class CreateEntriesTable extends Migration
             $table->increments('id');
             $table->integer('rank')->unsigned()->nullable();
             $table->integer('rank_top')->unsigned()->nullable();
-            $table->string('deck_title');
-            $table->integer('deck_id')->unsigned();
-            $table->string('deck_version');
+            $table->string('runner_deck_title');
+            $table->integer('runner_deck_id')->unsigned();
+            $table->integer('runner_deck_identity')->unsigned();
+            $table->string('corp_deck_title');
+            $table->integer('corp_deck_id')->unsigned();
+            $table->integer('corp_deck_identity')->unsigned();
             $table->boolean('approved')->nullable();
             $table->integer('user')->unsigned();
             $table->integer('tournament_id')->unsigned();
@@ -26,7 +29,7 @@ class CreateEntriesTable extends Migration
             $table->foreign('user')->references('id')->on('users');
             $table->timestamps();
             $table->unique(['user', 'id']);
-            // TODO: faction, agenda
+            // TODO: id foreign key
         });
     }
 

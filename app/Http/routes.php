@@ -1,6 +1,4 @@
 <?php
-use Illuminate\Http\Request;
-
 
 Route::get('/', 'PagesController@home');
 
@@ -14,9 +12,8 @@ Route::get('tournaments/{id}/restore', 'AdminController@restore');
 
 Route::get('tournaments/{id}/register', 'EntriesController@register');
 Route::get('tournaments/{id}/unregister', 'EntriesController@unregister');
+Route::post('tournaments/{id}/claim', 'EntriesController@claim');
+Route::get('tournaments/{id}/unclaim', 'EntriesController@unclaim');
 
 Route::get('/oauth2/redirect', 'ThronesController@login');
 Route::get('/logout', 'ThronesController@logout');
-
-
-Route::get('/try', 'ThronesController@getDeckData');
