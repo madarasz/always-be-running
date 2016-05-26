@@ -15,6 +15,8 @@
                     'action_view', 'action_edit', 'action_restore'],
                 'data' => $deleted, 'title' => 'Deleted tournaments',
                 'empty_message' => 'no deleted tournaments', 'id' => 'deleted'])
+            <hr/>
+            Identity count: {{ $count_ids }} (last: <em>{{ $last_id }}</em>) <a href="/admin/identities/update" class="btn-primary btn">Update Identities</a>
         </div>
     </div>
 @stop

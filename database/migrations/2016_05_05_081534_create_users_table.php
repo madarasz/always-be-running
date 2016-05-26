@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->timestamps();
             $table->boolean('admin')->default(0);
+            $table->boolean('sharing');
             $table->primary('id');
             $table->unique('id');
         });

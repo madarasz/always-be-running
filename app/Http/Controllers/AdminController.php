@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CardIdentity;
 use App\Tournament;
 use Illuminate\Http\Request;
 
@@ -17,7 +18,9 @@ class AdminController extends Controller
         $to_approve = Tournament::where('approved', null)->where('deleted_at', null)->get();
         $deleted = Tournament::onlyTrashed()->get();
         $message = session()->has('message') ? session('message') : '';
-        return view('admin', compact('user', 'to_approve', 'deleted', 'nowdate', 'message'));
+        $count_ids = CardIdentity::count();
+        $last_id = CardIdentity::orderBy('id', 'desc')->first()->title;
+        return view('admin', compact('user', 'to_approve', 'deleted', 'nowdate', 'message', 'count_ids', 'last_id'));
     }
 
     public function approve($id, Request $request)

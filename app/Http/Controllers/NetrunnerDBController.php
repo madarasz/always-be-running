@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\CardIdentity;
 use Illuminate\Http\Request;
 use App\User;
-use OAuth\Common\Http\Exception\TokenResponseException;
-
+use App\Tournament;
 use App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,7 +42,7 @@ class NetrunnerDBController extends Controller
         return redirect()->action('PagesController@home');
     }
 
-    public function getDeckData() {
+    function getDeckData() {
         $raw = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/private/decks'), true);
         $result = [];
         foreach ($raw['data'] as $deck) {
@@ -51,23 +51,47 @@ class NetrunnerDBController extends Controller
         return $result;
     }
 
-    private function getUser() {
-        try {
-            $result = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/private/account/info'), true);
-        } catch (TokenResponseException $e) {
-            return -1;
-        }
+    function getUser() {
+        $result = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/private/account/info'), true);
         return $result['data'][0];
     }
 
-    private function findOrCreateUser($userData) {
+    function findOrCreateUser($userData) {
         $user = User::find($userData['id']);
         if (is_null($user)) {
-            User::create(['id' => $userData['id'], 'name' => $userData['username']]);
+            User::create(['id' => $userData['id'], 'name' => $userData['username'], 'sharing' => $userData['sharing']]);
             $user = User::find($userData['id']);
         } else {
-            $user->update(['id' => $userData['id'], 'name' => $userData['username']]);
+            $user->update(['id' => $userData['id'], 'name' => $userData['username'], 'sharing' => $userData['sharing']]);
         }
         return $user;
+    }
+
+    function requestIdentities(Request $request) {
+        $this->authorize('admin', Tournament::class, $request->user());
+        $added = $this->updateIdentities();
+        return redirect()->action('AdminController@lister')->with('message', "$added new identities added.");
+    }
+
+    // not to be called from routes, no auth check, used directly by DB seeding
+    function updateIdentities() {
+        $raw = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/public/cards'), true);
+        $added = 0;
+        foreach ($raw['data'] as $card) {
+            if ($card['type_code'] === 'identity') {
+                $exists = CardIdentity::find($card['code']);
+                if (is_null($exists)) {
+                    $added++;
+                    CardIdentity::create([
+                        'id' => $card['code'],
+                        'pack_code' => $card['pack_code'],
+                        'faction_code' => $card['faction_code'],
+                        'runner' => $card['side_code'] === 'runner',
+                        'title' => $card['title']
+                    ]);
+                }
+            }
+        }
+        return $added;
     }
 }
