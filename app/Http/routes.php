@@ -9,9 +9,11 @@ Route::get('admin/cycles/update', 'NetrunnerDBController@requestCycles');
 Route::get('admin/packs/update', 'NetrunnerDBController@requestPacks');
 
 Route::resource('tournaments', 'TournamentsController');
-Route::get('tournaments/{id}/approve', 'AdminController@approve');
-Route::get('tournaments/{id}/reject', 'AdminController@reject');
-Route::get('tournaments/{id}/restore', 'AdminController@restore');
+Route::get('tournaments/{id}/approve', 'AdminController@approveTournament');
+Route::get('tournaments/{id}/reject', 'AdminController@rejectTournament');
+Route::get('tournaments/{id}/restore', 'AdminController@restoreTournament');
+Route::get('packs/{id}/enable', 'AdminController@enablePack');
+Route::get('packs/{id}/disable', 'AdminController@disablePack');
 
 Route::get('tournaments/{id}/register', 'EntriesController@register');
 Route::get('tournaments/{id}/unregister', 'EntriesController@unregister');

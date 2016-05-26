@@ -131,6 +131,7 @@ class NetrunnerDBController extends Controller
     function updatePacks() {
         $raw = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/public/packs'), true);
         $added = 0;
+        $nowdate = date('Y-m-d');
         foreach ($raw['data'] as $pack) {
             $exists = CardPack::find($pack['code']);
             if (is_null($exists)) {
@@ -140,7 +141,8 @@ class NetrunnerDBController extends Controller
                     'cycle_code' => $pack['cycle_code'],
                     'position' => $pack['position'],
                     'name' => $pack['name'],
-                    'date_release' => $pack['date_release']
+                    'date_release' => $pack['date_release'],
+                    'usable' => !is_null($pack['date_release']) && $pack['date_release'] <= $nowdate
                 ]);
             } else {
                 $exists->update([
