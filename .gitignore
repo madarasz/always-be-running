@@ -14,4 +14,5 @@ public/img
 tests/nightwatch/bin
 selenium-debug.log
 tests/nightwatch/reports
-!vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/Thrones.php
+!/vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/NetrunnerDB.php
+tests/nightwatch/globals/login-data.js

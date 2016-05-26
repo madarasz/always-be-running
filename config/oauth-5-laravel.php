@@ -18,9 +18,15 @@ return [
 	 */
 	'consumers' => [
 
-		'Thrones' => [
-			'client_id'     => env('THRONES_CLIENT_ID'),
-			'client_secret' => env('THRONES_CLIENT_SECRET'),
+		'ThronesDB' => [
+			'client_id'     => env('THRONESDB_CLIENT_ID'),
+			'client_secret' => env('THRONESDB_CLIENT_SECRET'),
+			'scope'         => [],
+		],
+
+		'NetrunnerDB' => [
+			'client_id'     => env('NETRUNNERDB_CLIENT_ID'),
+			'client_secret' => env('NETRUNNERDB_CLIENT_SECRET'),
 			'scope'         => [],
 		]
 

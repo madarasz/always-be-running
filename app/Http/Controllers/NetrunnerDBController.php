@@ -9,24 +9,23 @@ use OAuth\Common\Http\Exception\TokenResponseException;
 use App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
 
-class ThronesController extends Controller
+class NetrunnerDBController extends Controller
 {
 
     protected $oauth;
 
     public function __construct()
     {
-        $this->oauth = \OAuth2::consumer('Thrones', 'http://localhost:8000/oauth2/redirect');
+        $this->oauth = \OAuth2::consumer('NetrunnerDB', 'http://localhost:8000/oauth2/redirect');
     }
 
     function login(Request $request) {
         $code = $request->get('code');
-//        $oauth = \OAuth2::consumer('Thrones', 'http://localhost:8000/oauth2/redirect');
         if ( ! is_null($code)) {
             $token = $this->oauth->requestAccessToken($code);
-            $user_id = $this->getUserId();
-            if ($user_id > 0) {
-                $auth_user = $this->findOrCreateUser($user_id);
+            $user = $this->getUser();
+            if ($user > 0) {
+                $auth_user = $this->findOrCreateUser($user);
                 Auth::login($auth_user, true);
                 return redirect()->action('PagesController@home');
             } else {
@@ -44,28 +43,30 @@ class ThronesController extends Controller
     }
 
     public function getDeckData() {
-        $raw = json_decode($this->oauth->request('https://thronesdb.com/api/oauth2/decks'), true);
+        $raw = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/private/decks'), true);
         $result = [];
-        foreach ($raw as $deck) {
+        foreach ($raw['data'] as $deck) {
             array_push($result, ['id' => $deck['id'], 'name' => $deck['name']]);
         }
         return $result;
     }
 
-    private function getUserId() {
+    private function getUser() {
         try {
-            $result = json_decode($this->oauth->request('https://thronesdb.com/api/oauth2/decks'), true);
+            $result = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/private/account/info'), true);
         } catch (TokenResponseException $e) {
             return -1;
         }
-        return $result[0]['user_id'];
+        return $result['data'][0];
     }
 
-    private function findOrCreateUser($id) {
-        $user = User::find($id);
+    private function findOrCreateUser($userData) {
+        $user = User::find($userData['id']);
         if (is_null($user)) {
-            User::create(['id' => $id]);
-            $user = User::find($id);
+            User::create(['id' => $userData['id'], 'name' => $userData['username']]);
+            $user = User::find($userData['id']);
+        } else {
+            $user->update(['id' => $userData['id'], 'name' => $userData['username']]);
         }
         return $user;
     }

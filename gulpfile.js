@@ -26,9 +26,9 @@ elixir(function(mix) {
             "bootstrap.min.js"
         ])
         .styles([
-            'main.css',
             'font-awesome.css',
-            '../../../public/css/app.css'
+            '../../../public/css/app.css',
+            'main.css'
         ]);
 
     gulp.task("test", function() {

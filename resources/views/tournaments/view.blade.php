@@ -50,12 +50,27 @@
                     {{--User claim--}}
                     @if ($user)
                         <hr/>
+                        <strong>Your claim:</strong><br/><br/>
                         @if ($user_entry && $user_entry->rank)
-                                <div class="text-center">
-                                    <a href="{{ "/tournaments/$tournament->id/unclaim" }}" class="btn btn-danger">
-                                        <i class="fa fa-trash" aria-hidden="true"></i> Remove claim
-                                    </a>
-                                </div>
+                            <ul>
+                                @if ($tournament->top_number)
+                                    <li>Top cut rank:
+                                        @if ($user_entry->rank_top)
+                                            <strong>#{{ $user_entry->rank_top}}</strong>
+                                        @else
+                                            <em>none</em>
+                                        @endif
+                                    </li>
+                                @endif
+                                <li>Swiss rounds rank: <strong>#{{ $user_entry->rank }}</strong></li>
+                                <li>Corporation deck: <a>{{ $user_entry->corp_deck_title }}</a></li>
+                                <li>Runner deck: <a>{{ $user_entry->runner_deck_title }}</a></li>
+                            </ul>
+                            <div class="text-center">
+                                <a href="{{ "/tournaments/$tournament->id/unclaim" }}" class="btn btn-danger">
+                                    <i class="fa fa-trash" aria-hidden="true"></i> Remove claim
+                                </a>
+                            </div>
                         @else
                             {!! Form::open(['url' => "/tournaments/$tournament->id/claim"]) !!}
                                 <div class="row">
@@ -116,23 +131,28 @@
                         <h5>Top cut</h5>
                         <table class="table table-condensed table-striped">
                             <thead>
-                            <th>rank</th>
-                            <th>player</th>
-                            <th>corp</th>
-                            <th>runner</th>
+                                <th class="text-right">rank</th>
+                                <th>player</th>
+                                <th>corp</th>
+                                <th>runner</th>
                             </thead>
                             <tbody>
-                            @for ($i = 1; $i <= $tournament->top_number; $i++)
-                                @if ($user_entry && $i == $user_entry->rank_top)
+                            @for ($i = 0; $i < count($entries_top); $i++)
+                                @if ($user_entry && count($entries_top[$i]) && $entries_top[$i]->rank_top == $user_entry->rank_top)
                                     <tr class="info">
                                 @else
                                     <tr>
                                 @endif
-                                    <td>{{ $i }}.</td>
-
-                                    <td></td>
-                                    <td><em>unclaimed</em></td>
-                                    <td><em>unclaimed</em></td>
+                                    <td class="text-right">#{{ $i+1 }}</td>
+                                    @if (count($entries_top[$i]))
+                                        <td>{{ $entries_top[$i]->user }}</td>
+                                        <td><a>{{ $entries_top[$i]->corp_deck_title }}</a></td>
+                                        <td><a>{{ $entries_top[$i]->runner_deck_title }}</a></td>
+                                    @else
+                                        <td></td>
+                                        <td><em>unclaimed</em></td>
+                                        <td><em>unclaimed</em></td>
+                                    @endif
                                 </tr>
                             @endfor
                             </tbody>
@@ -141,22 +161,28 @@
                     @endif
                     <table class="table table-condensed table-striped">
                         <thead>
-                            <th>rank</th>
+                            <th class="text-right">rank</th>
                             <th>player</th>
                             <th>corp</th>
                             <th>runner</th>
                         </thead>
                         <tbody>
-                            @for ($i = 1; $i <= $tournament->players_number; $i++)
-                                @if ($user_entry && $i == $user_entry->rank)
+                        @for ($i = 0; $i < count($entries_swiss); $i++)
+                            @if ($user_entry && count($entries_swiss[$i]) && $entries_swiss[$i]->rank == $user_entry->rank)
                                     <tr class="info">
                                 @else
                                     <tr>
                                 @endif
-                                    <td>{{ $i }}.</td>
-                                    <td></td>
-                                    <td><em>unclaimed</em></td>
-                                    <td><em>unclaimed</em></td>
+                                    <td class="text-right">#{{ $i+1 }}</td>
+                                    @if (count($entries_swiss[$i]))
+                                        <td>{{ $entries_swiss[$i]->user }}</td>
+                                        <td><a>{{ $entries_swiss[$i]->corp_deck_title }}</a></td>
+                                        <td><a>{{ $entries_swiss[$i]->runner_deck_title }}</a></td>
+                                    @else
+                                        <td></td>
+                                        <td><em>unclaimed</em></td>
+                                        <td><em>unclaimed</em></td>
+                                    @endif
                                 </tr>
                             @endfor
                         </tbody>

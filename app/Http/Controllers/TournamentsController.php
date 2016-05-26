@@ -64,17 +64,55 @@ class TournamentsController extends Controller
         $message = session()->has('message') ? session('message') : '';
         $nowdate = date('Y.m.d.');
         $user = $request->user();
-//        $entries = $tournament->entries; TODO
+//        $entries = $tournament->entries; TODO not working for some reason
         $entries = Entry::where('tournament_id', $tournament->id)->get();
-        $user_entry = Entry::where('tournament_id', $tournament->id)->where('user', $user->id)->first();
+        $entries_swiss = [];
+        $entries_top = [];
+        if ($tournament->players_number) {
+            for ($i = 1; $i <= $tournament->players_number; $i++) {
+                $found = false;
+                foreach ($entries as $entry) {
+                    if ($entry->rank == $i) {
+                        array_push($entries_swiss, $entry);
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    array_push($entries_swiss, []);
+                }
+            }
+        }
+        if ($tournament->top_number) {
+            for ($i = 1; $i <= $tournament->top_number; $i++) {
+                $found = false;
+                foreach ($entries as $entry) {
+                    if ($entry->rank_top == $i) {
+                        array_push($entries_top, $entry);
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    array_push($entries_top, []);
+                }
+            }
+        }
+//        dd($entries_swiss);
+        if (is_null($user))
+        {
+            $user_entry = null;
+        } else {
+            $user_entry = Entry::where('tournament_id', $tournament->id)->where('user', $user->id)->first();
+        }
         $state_name = $tournament->location_us_state == 52 ? '' : UsState::findorFail($tournament->location_us_state)->name;
         $decks = [];
         if (!is_null($user)) {
-            $decks = app('App\Http\Controllers\ThronesController')->getDeckData();
+            $decks = app('App\Http\Controllers\NetrunnerDBController')->getDeckData();
         }
         return view('tournaments.view',
             compact('tournament', 'country_name', 'state_name', 'message', 'type', 'nowdate', 'user', 'entries',
-                'user_entry', 'decks'));
+                'user_entry', 'decks', 'entries_swiss', 'entries_top'));
     }
 
     public function destroy($id, Request $request)

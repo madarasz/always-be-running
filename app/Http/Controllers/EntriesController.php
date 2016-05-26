@@ -56,6 +56,16 @@ class EntriesController extends Controller
                 'runner_deck_title' => $runner_deck['title']
                 // TODO: identities
             ]);
+        } else {
+            $entry->update([
+                'rank' => $request->rank,
+                'rank_top' => $request->rank_top,
+                'corp_deck_id' => $corp_deck['id'],
+                'corp_deck_title' => $corp_deck['title'],
+                'runner_deck_id' => $runner_deck['id'],
+                'runner_deck_title' => $runner_deck['title']
+                // TODO: identities
+            ]);
         }
         return redirect()->back()->with('message', 'You have claimed a spot on the tournament.');
     }

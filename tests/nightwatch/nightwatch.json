@@ -4,7 +4,7 @@
   "custom_commands_path" : "./tests/nightwatch/commands",
   "custom_assertions_path" : "./tests/nightwatch/assertions",
   "page_objects_path" : "",
-  "globals_path" : "",
+  "globals_path" : "./tests/nightwatch/globals/login-data.js",
   "test_workers" : {"enabled" : false, "workers" : "auto"},
 
   "selenium" : {
