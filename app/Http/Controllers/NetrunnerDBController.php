@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\CardCycle;
 use App\CardIdentity;
+use App\CardPack;
 use Illuminate\Http\Request;
 use App\User;
 use App\Tournament;
@@ -73,6 +75,18 @@ class NetrunnerDBController extends Controller
         return redirect()->action('AdminController@lister')->with('message', "$added new identities added.");
     }
 
+    function requestCycles(Request $request) {
+        $this->authorize('admin', Tournament::class, $request->user());
+        $added = $this->updateCycles();
+        return redirect()->action('AdminController@lister')->with('message', "$added new card cycles added.");
+    }
+
+    function requestPacks(Request $request) {
+        $this->authorize('admin', Tournament::class, $request->user());
+        $added = $this->updatePacks();
+        return redirect()->action('AdminController@lister')->with('message', "$added new card packs added.");
+    }
+
     // not to be called from routes, no auth check, used directly by DB seeding
     function updateIdentities() {
         $raw = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/public/cards'), true);
@@ -90,6 +104,52 @@ class NetrunnerDBController extends Controller
                         'title' => $card['title']
                     ]);
                 }
+            }
+        }
+        return $added;
+    }
+
+    // not to be called from routes, no auth check, used directly by DB seeding
+    function updateCycles() {
+        $raw = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/public/cycles'), true);
+        $added = 0;
+        foreach ($raw['data'] as $cycle) {
+            $exists = CardCycle::find($cycle['code']);
+            if (is_null($exists)) {
+                $added++;
+                CardCycle::create([
+                    'id' => $cycle['code'],
+                    'name' => $cycle['name'],
+                    'position' => $cycle['position']
+                ]);
+            }
+        }
+        return $added;
+    }
+
+    // not to be called from routes, no auth check, used directly by DB seeding
+    function updatePacks() {
+        $raw = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/public/packs'), true);
+        $added = 0;
+        foreach ($raw['data'] as $pack) {
+            $exists = CardPack::find($pack['code']);
+            if (is_null($exists)) {
+                $added++;
+                CardPack::create([
+                    'id' => $pack['code'],
+                    'cycle_code' => $pack['cycle_code'],
+                    'position' => $pack['position'],
+                    'name' => $pack['name'],
+                    'date_release' => $pack['date_release']
+                ]);
+            } else {
+                $exists->update([
+                    'id' => $pack['code'],
+                    'cycle_code' => $pack['cycle_code'],
+                    'position' => $pack['position'],
+                    'name' => $pack['name'],
+                    'date_release' => $pack['date_release']
+                ]);
             }
         }
         return $added;

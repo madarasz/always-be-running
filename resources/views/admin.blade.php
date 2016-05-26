@@ -1,7 +1,7 @@
 @extends('layout.general')
 
 @section('content')
-    <h3 class="page-header">Tournament administration</h3>
+    <h3 class="page-header">Administration</h3>
     @include('partials.message')
     <div class="row">
         <div class="col-md-10 col-md-offset-1 col-xs-12">
@@ -16,7 +16,10 @@
                 'data' => $deleted, 'title' => 'Deleted tournaments',
                 'empty_message' => 'no deleted tournaments', 'id' => 'deleted'])
             <hr/>
-            Identity count: {{ $count_ids }} (last: <em>{{ $last_id }}</em>) <a href="/admin/identities/update" class="btn-primary btn">Update Identities</a>
+            <h4>Card data</h4>
+            <a href="/admin/identities/update" class="btn-primary btn">Update Identities</a> Identity count: {{ $count_ids }} (last: <em>{{ $last_id }}</em>)<br/>
+            <a href="/admin/packs/update" class="btn-primary btn">Update Card packs</a> Card pack count: {{ $count_packs }} (last: <em>{{ $last_pack }}</em>)<br/>
+            <a href="/admin/cycles/update" class="btn-primary btn">Update Card cycles</a> Card cycle count: {{ $count_cycles }} (last: <em>{{ $last_cycle }}</em>)
         </div>
     </div>
 @stop

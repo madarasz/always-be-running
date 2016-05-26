@@ -5,6 +5,8 @@ Route::get('/', 'PagesController@home');
 Route::get('my', 'TournamentsController@my');
 Route::get('admin', 'AdminController@lister');
 Route::get('admin/identities/update', 'NetrunnerDBController@requestIdentities');
+Route::get('admin/cycles/update', 'NetrunnerDBController@requestCycles');
+Route::get('admin/packs/update', 'NetrunnerDBController@requestPacks');
 
 Route::resource('tournaments', 'TournamentsController');
 Route::get('tournaments/{id}/approve', 'AdminController@approve');
