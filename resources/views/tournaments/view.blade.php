@@ -11,7 +11,7 @@
             </div>
         @endif
         {{ $tournament->title }}<br/>
-        <small>{{ $type }} - <em>created by {{ $tournament->creator }}</em></small>
+        <small>{{ $type }} - <em>created by {{ $tournament->user->name }}</em></small>
     </h3>
     @include('partials.message')
     <div class="row">
@@ -21,6 +21,7 @@
              - {{ $tournament->date }}<br/>
 
             </h4>
+            <p><strong>Legal cardpool up to:</strong> {{ $tournament->cardpool->name }}</p>
             @unless($tournament->description === '')
                 <p>{!! nl2br(e($tournament->description)) !!}</p>
             @endunless
@@ -98,21 +99,53 @@
                                         </div>
                                     @endif
                                 </div>
-                                <div class="form-group">
-                                    {!! Form::label('corp_deck', 'corporation deck') !!}
-                                    <select class="form-control" id="corp_deck" name="corp_deck">
-                                        @foreach ($decks as $deck)
-                                            <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    {!! Form::label('runner_deck', 'runner deck') !!}
-                                    <select class="form-control" id="runner_deck" name="runner_deck">
-                                        @foreach ($decks as $deck)
-                                            <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
-                                        @endforeach
-                                    </select>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-6">
+                                        <div class="form-group">
+                                            {!! Form::label('corp_deck', 'corporation deck') !!}
+                                            <select class="form-control" id="corp_deck" name="corp_deck">
+                                                @if ($decks_two_types)
+                                                    <optgroup label="Public decklists">
+                                                @endif
+                                                @foreach ($decks['public']['corp'] as $deck)
+                                                    <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
+                                                @endforeach
+                                                @if ($decks_two_types)
+                                                    </optgroup>
+                                                    <optgroup label="Shared private decklists">
+                                                @endif
+                                                @foreach ($decks['private']['corp'] as $deck)
+                                                    <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
+                                                @endforeach
+                                                @if ($decks_two_types)
+                                                    </optgroup>
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-md-6">
+                                        <div class="form-group">
+                                            {!! Form::label('runner_deck', 'runner deck') !!}
+                                            <select class="form-control" id="runner_deck" name="runner_deck">
+                                                @if ($decks_two_types)
+                                                    <optgroup label="Public decklists">
+                                                @endif
+                                                @foreach ($decks['public']['runner'] as $deck)
+                                                    <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
+                                                @endforeach
+                                                @if ($decks_two_types)
+                                                    </optgroup>
+                                                    <optgroup label="Shared private decklists">
+                                                @endif
+                                                @foreach ($decks['private']['runner'] as $deck)
+                                                    <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
+                                                @endforeach
+                                                @if ($decks_two_types)
+                                                    </optgroup>
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="text-center">
                                     <button type="submit" class="btn btn-success">
@@ -129,64 +162,10 @@
                 <p>
                     @if ($tournament->top_number)
                         <h5>Top cut</h5>
-                        <table class="table table-condensed table-striped">
-                            <thead>
-                                <th class="text-right">rank</th>
-                                <th>player</th>
-                                <th>corp</th>
-                                <th>runner</th>
-                            </thead>
-                            <tbody>
-                            @for ($i = 0; $i < count($entries_top); $i++)
-                                @if ($user_entry && count($entries_top[$i]) && $entries_top[$i]->rank_top == $user_entry->rank_top)
-                                    <tr class="info">
-                                @else
-                                    <tr>
-                                @endif
-                                    <td class="text-right">#{{ $i+1 }}</td>
-                                    @if (count($entries_top[$i]))
-                                        <td>{{ $entries_top[$i]->user }}</td>
-                                        <td><a>{{ $entries_top[$i]->corp_deck_title }}</a></td>
-                                        <td><a>{{ $entries_top[$i]->runner_deck_title }}</a></td>
-                                    @else
-                                        <td></td>
-                                        <td><em>unclaimed</em></td>
-                                        <td><em>unclaimed</em></td>
-                                    @endif
-                                </tr>
-                            @endfor
-                            </tbody>
-                        </table>
+                        @include('tournaments.partials.entries', ['entries' => $entries_top, 'user_entry' => $user_entry, 'rank' => 'rank_top'])
                         <h5>Swiss rounds</h5>
                     @endif
-                    <table class="table table-condensed table-striped">
-                        <thead>
-                            <th class="text-right">rank</th>
-                            <th>player</th>
-                            <th>corp</th>
-                            <th>runner</th>
-                        </thead>
-                        <tbody>
-                        @for ($i = 0; $i < count($entries_swiss); $i++)
-                            @if ($user_entry && count($entries_swiss[$i]) && $entries_swiss[$i]->rank == $user_entry->rank)
-                                    <tr class="info">
-                                @else
-                                    <tr>
-                                @endif
-                                    <td class="text-right">#{{ $i+1 }}</td>
-                                    @if (count($entries_swiss[$i]))
-                                        <td>{{ $entries_swiss[$i]->user }}</td>
-                                        <td><a>{{ $entries_swiss[$i]->corp_deck_title }}</a></td>
-                                        <td><a>{{ $entries_swiss[$i]->runner_deck_title }}</a></td>
-                                    @else
-                                        <td></td>
-                                        <td><em>unclaimed</em></td>
-                                        <td><em>unclaimed</em></td>
-                                    @endif
-                                </tr>
-                            @endfor
-                        </tbody>
-                    </table>
+                    @include('tournaments.partials.entries', ['entries' => $entries_swiss, 'user_entry' => $user_entry, 'rank' => 'rank'])
                 </p>
             @endif
             <hr/>
@@ -197,7 +176,7 @@
                     <br/>
                     <ul>
                     @foreach ($entries as $entry)
-                        <li>{{ $entry->player->id }}</li>
+                        <li>{{ $entry->player->name }}</li>
                     @endforeach
                     </ul>
                 @else

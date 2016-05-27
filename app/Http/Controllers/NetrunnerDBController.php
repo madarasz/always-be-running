@@ -21,44 +21,102 @@ class NetrunnerDBController extends Controller
         $this->oauth = \OAuth2::consumer('NetrunnerDB', 'http://localhost:8000/oauth2/redirect');
     }
 
-    function login(Request $request) {
+    /**
+     * Logs in user via OAuth
+     * @param Request $request
+     * @return redirects to home page
+     */
+    function login(Request $request)
+    {
         $code = $request->get('code');
-        if ( ! is_null($code)) {
+        if (!is_null($code))
+        {
             $token = $this->oauth->requestAccessToken($code);
             $user = $this->getUser();
-            if ($user > 0) {
+            if ($user > 0)
+            {
                 $auth_user = $this->findOrCreateUser($user);
                 Auth::login($auth_user, true);
                 return redirect()->action('PagesController@home');
-            } else {
+            } else
+            {
                 return redirect()->action('PagesController@home')->with('message', 'You cannot login because you have no deck saved in ThronesDB. Please save a deck in ThronesDB first.');
             }
-        } else {
+        } else
+        {
             $url = $this->oauth->getAuthorizationUri();
             return redirect((string)$url);
         }
     }
 
-    function logout() {
+    /**
+     * Logs out user.
+     * @return redirects to home page.
+     */
+    function logout()
+    {
         Auth::logout();
         return redirect()->action('PagesController@home');
     }
 
-    function getDeckData() {
-        $raw = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/private/decks'), true);
-        $result = [];
-        foreach ($raw['data'] as $deck) {
-            array_push($result, ['id' => $deck['id'], 'name' => $deck['name']]);
-        }
+    /**
+     * Gets deck data of logged in user from Netrunner DB.
+     * Includes public decklists.
+     * Also includes private decks if user is set to sharing.
+     * @return array
+     */
+    function getDeckData()
+    {
+        $result = ['public' => ['runner' => [], 'corp' => []], 'private' => ['runner' => [], 'corp' => []]];
+        $runner_ids = CardIdentity::where('runner', 1)->get()->pluck('id')->all();
+        $corp_ids = CardIdentity::where('runner', 1)->get()->pluck('id')->all();
+        $public = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/private/decklists'), true);
+        $this->sortDecks($public['data'], $result['public'], $runner_ids, $corp_ids);
+        // TODO: enable if performance is ok
+//        if (Auth::user()->sharing)
+//        {
+//            $private = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/private/decks'), true);
+//            $this->sortDecks($private['data'], $result['private'], $runner_ids, $corp_ids);
+//        }
         return $result;
     }
 
-    function getUser() {
+    private function sortDecks(&$deckSource, &$target, &$runner_ids, &$corp_ids)
+    {
+        foreach ($deckSource as $deck)
+        {
+            $side = $this->isDeckRunner($deck, $runner_ids, $corp_ids);
+            $data = ['id' => $deck['id'], 'name' => $deck['name'], 'date_update' => $deck['date_update']];
+            if ($side == true)  // TODO: include null
+            {
+                array_push($target['runner'], $data);
+            }
+            if ($side == false) // TODO: include null
+            {
+                array_push($target['corp'], $data);
+            }
+        }
+        usort($target['runner'], array($this, 'sortByDateUpdate'));
+        usort($target['corp'], array($this, 'sortByDateUpdate'));
+    }
+
+    /**
+     * Get user details from NetrunnerDB.
+     * @return user details
+     */
+    function getUser()
+    {
         $result = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/private/account/info'), true);
         return $result['data'][0];
     }
 
-    function findOrCreateUser($userData) {
+    /**
+     * Tries to find user in User DB table. Creates or updates user data in DB.
+     * @param $userData
+     * @return user data
+     */
+    function findOrCreateUser($userData)
+    {
         $user = User::find($userData['id']);
         if (is_null($user)) {
             User::create(['id' => $userData['id'], 'name' => $userData['username'], 'sharing' => $userData['sharing']]);
@@ -69,26 +127,45 @@ class NetrunnerDBController extends Controller
         return $user;
     }
 
-    function requestIdentities(Request $request) {
+    /**
+     * Downloads cards which are identities from NetrunnerDB, stores them in DB.
+     * @param Request $request
+     * @return redirects to admin page
+     */
+    function requestIdentities(Request $request)
+    {
         $this->authorize('admin', Tournament::class, $request->user());
         $added = $this->updateIdentities();
         return redirect()->action('AdminController@lister')->with('message', "$added new identities added.");
     }
 
-    function requestCycles(Request $request) {
+    /**
+     * Downloads card cycles from NetrunnerDB, stores them in DB.
+     * @param Request $request
+     * @return redirects to admin page
+     */
+    function requestCycles(Request $request)
+    {
         $this->authorize('admin', Tournament::class, $request->user());
         $added = $this->updateCycles();
         return redirect()->action('AdminController@lister')->with('message', "$added new card cycles added.");
     }
 
-    function requestPacks(Request $request) {
+    /**
+     * Downloads card cycles from NetrunnerDB, stores them in DB.
+     * @param Request $request
+     * @return redirects to admin page
+     */
+    function requestPacks(Request $request)
+    {
         $this->authorize('admin', Tournament::class, $request->user());
         $added = $this->updatePacks();
         return redirect()->action('AdminController@lister')->with('message', "$added new card packs added.");
     }
 
     // not to be called from routes, no auth check, used directly by DB seeding
-    function updateIdentities() {
+    private function updateIdentities()
+    {
         $raw = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/public/cards'), true);
         $added = 0;
         foreach ($raw['data'] as $card) {
@@ -110,7 +187,8 @@ class NetrunnerDBController extends Controller
     }
 
     // not to be called from routes, no auth check, used directly by DB seeding
-    function updateCycles() {
+    private function updateCycles()
+    {
         $raw = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/public/cycles'), true);
         $added = 0;
         foreach ($raw['data'] as $cycle) {
@@ -128,7 +206,8 @@ class NetrunnerDBController extends Controller
     }
 
     // not to be called from routes, no auth check, used directly by DB seeding
-    function updatePacks() {
+    private function updatePacks()
+    {
         $raw = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/public/packs'), true);
         $added = 0;
         $nowdate = date('Y-m-d');
@@ -136,24 +215,46 @@ class NetrunnerDBController extends Controller
             $exists = CardPack::find($pack['code']);
             if (is_null($exists)) {
                 $added++;
-                CardPack::create([
-                    'id' => $pack['code'],
-                    'cycle_code' => $pack['cycle_code'],
-                    'position' => $pack['position'],
-                    'name' => $pack['name'],
-                    'date_release' => $pack['date_release'],
-                    'usable' => !is_null($pack['date_release']) && $pack['date_release'] <= $nowdate
-                ]);
+                CardPack::create($this->packToArray($pack, $nowdate));
             } else {
-                $exists->update([
-                    'id' => $pack['code'],
-                    'cycle_code' => $pack['cycle_code'],
-                    'position' => $pack['position'],
-                    'name' => $pack['name'],
-                    'date_release' => $pack['date_release']
-                ]);
+                $exists->update($this->packToArray($pack, $nowdate));
             }
         }
         return $added;
     }
+
+    private function packToArray($pack, $nowdate)
+    {
+        $cycle_position = CardCycle::find($pack['cycle_code'])->position;
+        return [
+            'id' => $pack['code'],
+            'cycle_code' => $pack['cycle_code'],
+            'position' => $pack['position'],
+            'name' => $pack['name'],
+            'date_release' => $pack['date_release'],
+            'usable' => !is_null($pack['date_release']) && $pack['date_release'] <= $nowdate,
+            'cycle_position' => $cycle_position
+        ];
+    }
+
+    private function sortByDateUpdate($a, $b)
+    {
+        return $a['date_update'] < $b['date_update'];
+    }
+
+    private function isDeckRunner($deck, $runner_ids, $corp_ids)
+    {
+        foreach ($deck['cards'] as $key => $card)
+        {
+            if (in_array($key, $runner_ids))
+            {
+                return true;
+            } elseif (in_array($key, $corp_ids))
+            {
+                return false;
+            }
+        }
+        return null;
+    }
 }
+

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\CardPack;
 use App\Country;
 use App\Entry;
+use App\User;
 use App\Tournament;
 use App\TournamentType;
 use App\UsState;
@@ -29,22 +31,24 @@ class TournamentsController extends Controller
     public function create(Request $request)
     {
         $this->authorize('logged_in', Tournament::class, $request->user());
-        $tournament_types = TournamentType::lists('type_name', 'id')->all();
-        $countries = Country::orderBy('name')->lists('name', 'id')->all();
-        $us_states = UsState::orderBy('name')->lists('name', 'id')->all();
+        $tournament_types = TournamentType::pluck('type_name', 'id')->all();
+        $countries = Country::orderBy('name')->pluck('name', 'id')->all();
+        $us_states = UsState::orderBy('name')->pluck('name', 'id')->all();
+        $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $tournament = new Tournament();
         $tournament->location_country = 0;
-        return view('tournaments.create', compact('tournament_types', 'countries', 'us_states', 'tournament'));
+        return view('tournaments.create', compact('tournament_types', 'countries', 'us_states', 'tournament', 'cardpools'));
     }
 
     public function edit($id, Request $request)
     {
         $tournament = Tournament::findOrFail($id);
         $this->authorize('own', $tournament, $request->user());
-        $tournament_types = TournamentType::lists('type_name', 'id')->all();
-        $countries = Country::orderBy('name')->lists('name', 'id')->all();
-        $us_states = UsState::orderBy('name')->lists('name', 'id')->all();
-        return view('tournaments.edit', compact('tournament', 'id', 'tournament_types', 'countries', 'us_states'));
+        $tournament_types = TournamentType::pluck('type_name', 'id')->all();
+        $countries = Country::orderBy('name')->pluck('name', 'id')->all();
+        $us_states = UsState::orderBy('name')->pluck('name', 'id')->all();
+        $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
+        return view('tournaments.edit', compact('tournament', 'id', 'tournament_types', 'countries', 'us_states', 'cardpools'));
     }
 
     public function update($id, Requests\TournamentRequest $request)
@@ -68,6 +72,7 @@ class TournamentsController extends Controller
         $entries = Entry::where('tournament_id', $tournament->id)->get();
         $entries_swiss = [];
         $entries_top = [];
+        // TODO: refaction to function
         if ($tournament->players_number) {
             for ($i = 1; $i <= $tournament->players_number; $i++) {
                 $found = false;
@@ -98,7 +103,6 @@ class TournamentsController extends Controller
                 }
             }
         }
-//        dd($entries_swiss);
         if (is_null($user))
         {
             $user_entry = null;
@@ -107,12 +111,14 @@ class TournamentsController extends Controller
         }
         $state_name = $tournament->location_us_state == 52 ? '' : UsState::findorFail($tournament->location_us_state)->name;
         $decks = [];
+        $decks_two_types = false;
         if (!is_null($user)) {
             $decks = app('App\Http\Controllers\NetrunnerDBController')->getDeckData();
+            $decks_two_types = count($decks['public']['corp']) > 0 && count($decks['private']['corp']) > 0;
         }
         return view('tournaments.view',
             compact('tournament', 'country_name', 'state_name', 'message', 'type', 'nowdate', 'user', 'entries',
-                'user_entry', 'decks', 'entries_swiss', 'entries_top'));
+                'user_entry', 'decks', 'entries_swiss', 'entries_top', 'decks_two_types'));
     }
 
     public function destroy($id, Request $request)

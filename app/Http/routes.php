@@ -22,3 +22,5 @@ Route::get('tournaments/{id}/unclaim', 'EntriesController@unclaim');
 
 Route::get('/oauth2/redirect', 'NetrunnerDBController@login');
 Route::get('/logout', 'NetrunnerDBController@logout');
+
+Route::get('/try', 'NetrunnerDBController@getDeckData');

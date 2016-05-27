@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CardPack extends Model
 {
-    protected $fillable = ['id', 'cycle_code', 'name', 'position', 'date_release', 'usable'];
+    protected $fillable = ['id', 'cycle_code', 'name', 'position', 'date_release', 'usable', 'cycle_position'];
     public $timestamps = false;
     public $incrementing = false;
 

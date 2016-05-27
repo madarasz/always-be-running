@@ -29,7 +29,8 @@ class CreateTournamentsTable extends Migration
             $table->boolean('decklist');
             $table->integer('creator')->unsigned();
             $table->boolean('approved')->nullable();
-            $table->string('reject_reason');
+            //$table->string('reject_reason'); do I need this?
+            $table->string('cardpool_id');
             $table->integer('tournament_type_id')->unsigned();
             $table->foreign('tournament_type_id')->references('id')->on('tournament_types');
             $table->foreign('location_country')->references('id')->on('countries');
@@ -37,7 +38,6 @@ class CreateTournamentsTable extends Migration
             $table->foreign('creator')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
-//             TODO: cardpool
         });
     }
 

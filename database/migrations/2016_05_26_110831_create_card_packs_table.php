@@ -17,6 +17,7 @@ class CreateCardPacksTable extends Migration
             $table->string('cycle_code', 30);
             $table->string('name');
             $table->integer('position');
+            $table->integer('cycle_position')->nullable();
             $table->string('date_release', 10)->nullable();
             $table->boolean('usable');
         });

@@ -18,11 +18,15 @@
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <div class="form-group">
-                            <br/>
-                            {!! Form::checkbox('decklist', null, in_array(old('decklist', $tournament->decklist), [1, 'on'], true), ['id' => 'decklist']) !!}
-                            {!! Form::label('decklist', 'decklist is mandatory') !!}
+                            {!! Form::label('cardpool_id', 'Legal cardpool up to') !!}
+                            {!! Form::select('cardpool_id', $cardpools,
+                                        old('cardpool_id', $tournament->cardpool_name), ['class' => 'form-control']) !!}
                         </div>
                     </div>
+                </div>
+                <div class="form-group">
+                    {!! Form::checkbox('decklist', null, in_array(old('decklist', $tournament->decklist), [1, 'on'], true), ['id' => 'decklist']) !!}
+                    {!! Form::label('decklist', 'decklist is mandatory') !!}
                 </div>
                 <div class="form-group">
                     {!! Form::label('description', 'Description') !!}
