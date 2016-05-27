@@ -11,7 +11,7 @@
                 'data' => $created, 'title' => 'Tournaments created by me',
                 'empty_message' => 'no tournaments created yet', 'id' => 'created'])
             @include('tournaments.partials.table',
-                ['columns' => ['title', 'date', 'cardpool', 'conclusion', 'players', 'decks',
+                ['columns' => ['title', 'date', 'cardpool', 'claim', 'conclusion', 'players', 'decks',
                     'action_view'  ],
                 'data' => $registered, 'title' => 'Tournaments I registered to',
                 'empty_message' => 'no tournaments registered to yet', 'id' => 'registered'])

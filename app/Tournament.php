@@ -23,7 +23,7 @@ class Tournament extends Model
     }
 
     public function entries() {
-        return $this->hasMany(Entry::class, 'id', 'tournament_id');
+        return $this->hasMany(Entry::class, 'tournament_id', 'id');
     }
 
     public function country() {

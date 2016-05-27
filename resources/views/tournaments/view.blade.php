@@ -1,6 +1,7 @@
 @extends('layout.general')
 
 @section('content')
+    {{--Header--}}
     <h3 class="page-header">
         @if ($user && ($user->admin || $user->id == $tournament->creator))
             <div class="pull-right">
@@ -15,13 +16,14 @@
     </h3>
     @include('partials.message')
     <div class="row">
+        {{--Tournament info--}}
         <div class="col-md-4 col-xs-12">
             <h4>
                 {{ $tournament->location_city }}, {{$tournament->location_country == 840 && $tournament->location_us_state !=52 ? "$state_name, " : ''}}{{ $country_name }}
              - {{ $tournament->date }}<br/>
 
             </h4>
-            <p><strong>Legal cardpool up to:</strong> {{ $tournament->cardpool->name }}</p>
+            <p><strong>Legal cardpool up to:</strong> <em>{{ $tournament->cardpool->name }}</em></p>
             @unless($tournament->description === '')
                 <p>{!! nl2br(e($tournament->description)) !!}</p>
             @endunless
@@ -41,6 +43,7 @@
             </p>
 
         </div>
+        {{--Standings and claims--}}
         <div class="col-md-8 col-xs-12">
             @if ($tournament->concluded)
                 <p>
@@ -52,6 +55,7 @@
                     @if ($user)
                         <hr/>
                         <strong>Your claim:</strong><br/><br/>
+                        {{--Existing claim--}}
                         @if ($user_entry && $user_entry->rank)
                             <ul>
                                 @if ($tournament->top_number)
@@ -64,14 +68,25 @@
                                     </li>
                                 @endif
                                 <li>Swiss rounds rank: <strong>#{{ $user_entry->rank }}</strong></li>
-                                <li>Corporation deck: <a>{{ $user_entry->corp_deck_title }}</a></li>
-                                <li>Runner deck: <a>{{ $user_entry->runner_deck_title }}</a></li>
+                                <li>
+                                    Corporation deck:
+                                    <a href="{{ "https://netrunnerdb.com/en/decklist/".$user_entry->corp_deck_id }}">
+                                        {{ $user_entry->corp_deck_title }}
+                                    </a>
+                                </li>
+                                <li>
+                                    Runner deck:
+                                    <a  href="{{ "https://netrunnerdb.com/en/decklist/".$user_entry->runner_deck_id }}">
+                                        {{ $user_entry->runner_deck_title }}
+                                    </a>
+                                </li>
                             </ul>
                             <div class="text-center">
                                 <a href="{{ "/tournaments/$tournament->id/unclaim" }}" class="btn btn-danger">
                                     <i class="fa fa-trash" aria-hidden="true"></i> Remove claim
                                 </a>
                             </div>
+                        {{--Creating new claim--}}
                         @else
                             {!! Form::open(['url' => "/tournaments/$tournament->id/claim"]) !!}
                                 <div class="row">
@@ -99,6 +114,7 @@
                                         </div>
                                     @endif
                                 </div>
+                                {{--Dropdown selectors for decks--}}
                                 <div class="row">
                                     <div class="col-xs-12 col-md-6">
                                         <div class="form-group">
@@ -158,7 +174,7 @@
 
                 </p>
                 <hr/>
-                {{--Tables of tournament ranks --}}
+                {{--Tables of tournament standings --}}
                 <p>
                     @if ($tournament->top_number)
                         <h5>Top cut</h5>
@@ -169,6 +185,7 @@
                 </p>
             @endif
             <hr/>
+            {{--List of registered players--}}
             <p>
                 <strong>Registered players</strong>
                 @if (count($entries) > 0)

@@ -7,7 +7,7 @@
     <div class="container">
         <div class="navbar-header">
             <a class="navbar-brand" href="/#"><img src="" /></a>
-            <a class="navbar-brand" href="/#">GoT Tournaments</a>
+            <a class="navbar-brand" href="/#">Keep Running</a>
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
@@ -28,7 +28,7 @@
                     @endif
                     <li><a href="/logout">Logout</a></li>
                 @else
-                    <li><a href="/oauth2/redirect">Login via ThronesDB</a></li>
+                    <li><a href="/oauth2/redirect">Login via NetrunnerDB</a></li>
                 @endif
             </ul>
         </div>

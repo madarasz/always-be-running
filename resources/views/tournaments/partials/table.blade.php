@@ -13,6 +13,9 @@
         @if( in_array('approval', $columns) )
             <th>approval</th>
         @endif
+        @if( in_array('claim', $columns) )
+            <th>claim</th>
+        @endif
         @if( in_array('conclusion', $columns) )
             <th>conclusion</th>
         @endif
@@ -54,7 +57,7 @@
                     <td>{{ $row->date }}</td>
                 @endif
                 @if( in_array('cardpool', $columns) )  
-                    <td></td>
+                    <td>{{ $row->cardpool->name }}</td>
                 @endif
                 @if( in_array('approval', $columns) )
                     <td>
@@ -64,6 +67,17 @@
                             <span class="label label-success">approved</span>
                         @else
                             <span class="label label-danger">rejected</span>
+                        @endif
+                    </td>
+                @endif
+                @if( in_array('claim', $columns) )
+                    <td>
+                        @if ($row->claim)
+                            <span class="label label-success">claimed</span>
+                        @elseif ($row->concluded)
+                            <span class="label label-danger">please claim</span>
+                        @else
+                            <span class="label label-info">registered</span>
                         @endif
                     </td>
                 @endif
@@ -86,7 +100,7 @@
                     </td>
                 @endif
                 @if( in_array('decks', $columns) )
-                    <td></td>
+                    <td class="text-center">{{ count($row->entries) }}</td>
                 @endif
                 @if( in_array('action_view', $columns) )
                     <td><a href="/tournaments/{{ $row->id }}" class="btn btn-primary btn-xs"><i class="fa fa-eye" aria-hidden="true"></i> view</a></td>

@@ -12,7 +12,7 @@ class Entry extends Model
     protected $dates = ['created_at', 'updated_at'];
 
     public function tournament() {
-        return $this->belongsTo(Tournament::class, 'id', 'tournament_id');
+        return $this->belongsTo(Tournament::class, 'tournament_id', 'id');
     }
 
     public function player() {
