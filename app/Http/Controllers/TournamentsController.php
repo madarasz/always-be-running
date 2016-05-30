@@ -137,17 +137,13 @@ class TournamentsController extends Controller
     private function pushEntries($row_number, &$entries, &$target, $rank)
     {
         for ($i = 1; $i <= $row_number; $i++) {
-            $found = false;
+            $current = [];
             foreach ($entries as $entry) {
                 if ($entry[$rank] == $i) {
-                    array_push($target, $entry);
-                    $found = true;
-                    break;
+                    array_push($current, $entry);   // also works with conflicts
                 }
             }
-            if (!$found) {
-                array_push($target, []);
-            }
+            array_push($target, $current);
         }
     }
 

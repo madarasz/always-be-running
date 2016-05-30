@@ -97,9 +97,9 @@
                                 </li>
                             </ul>
                             <div class="text-center">
-                                <a href="{{ "/tournaments/$tournament->id/unclaim" }}" class="btn btn-danger">
-                                    <i class="fa fa-trash" aria-hidden="true"></i> Remove claim
-                                </a>
+                                {!! Form::open(['method' => 'DELETE', 'url' => "/entries/$user_entry->id"]) !!}
+                                    {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove my claim', array('type' => 'submit', 'class' => 'btn btn-danger')) !!}
+                                {!! Form::close() !!}
                             </div>
                         {{--Creating new claim--}}
                         @else
@@ -201,10 +201,14 @@
                 <p>
                     @if ($tournament->top_number)
                         <h5>Top cut</h5>
-                        @include('tournaments.partials.entries', ['entries' => $entries_top, 'user_entry' => $user_entry, 'rank' => 'rank_top'])
+                        @include('tournaments.partials.entries',
+                            ['entries' => $entries_top, 'user_entry' => $user_entry, 'rank' => 'rank_top',
+                            'creator' => $tournament->creator])
                         <h5>Swiss rounds</h5>
                     @endif
-                    @include('tournaments.partials.entries', ['entries' => $entries_swiss, 'user_entry' => $user_entry, 'rank' => 'rank'])
+                    @include('tournaments.partials.entries',
+                        ['entries' => $entries_swiss, 'user_entry' => $user_entry, 'rank' => 'rank',
+                        'creator' => $tournament->creator])
                 </p>
                 <hr/>
             @endif

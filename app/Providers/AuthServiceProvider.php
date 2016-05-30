@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Entry;
+use App\Policies\EntryPolicy;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -14,7 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         'App\Tournament' => 'App\Policies\TournamentPolicy',
-        'App\Entry' => 'App\Policies\EntryPolicy',
+        Entry::class => EntryPolicy::class,
         'App\Model' => 'App\Policies\ModelPolicy',
     ];
 

@@ -73,9 +73,8 @@ class EntriesController extends Controller
 
     public function unclaim(Request $request, $id)
     {
-        $this->authorize('logged_in', Tournament::class, $request->user());
-        $user_id = $request->user()->id;
-        $entry = Entry::where('user', $user_id)->where('tournament_id', $id)->first();
+        $entry = Entry::where('id', $id)->first();
+        $this->authorize('unclaim', $entry, $request->user());
         if (!is_null($entry)) {
             $entry->rank = null;
             $entry->rank_top = null;
