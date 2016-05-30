@@ -12,6 +12,7 @@ use App\UsState;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\Auth;
 
 class TournamentsController extends Controller
 {

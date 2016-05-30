@@ -70,7 +70,7 @@ class NetrunnerDBController extends Controller
         $result = ['public' => ['runner' => [], 'corp' => []], 'private' => ['runner' => [], 'corp' => []]];
         $runner_ids = CardIdentity::where('runner', 1)->get()->pluck('id')->all();
         $corp_ids = CardIdentity::where('runner', 1)->get()->pluck('id')->all();
-        $public = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/private/decklists'), true);
+        $public = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/private/decklists'), true);
         $this->sortDecks($public['data'], $result['public'], $runner_ids, $corp_ids);
         // TODO: enable if performance is ok
 //        if (Auth::user()->sharing)
@@ -106,7 +106,7 @@ class NetrunnerDBController extends Controller
      */
     function getUser()
     {
-        $result = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/private/account/info'), true);
+        $result = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/private/account/info'), true);
         return $result['data'][0];
     }
 
@@ -166,7 +166,7 @@ class NetrunnerDBController extends Controller
     // not to be called from routes, no auth check, used directly by DB seeding
     private function updateIdentities()
     {
-        $raw = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/public/cards'), true);
+        $raw = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/public/cards'), true);
         $added = 0;
         foreach ($raw['data'] as $card) {
             if ($card['type_code'] === 'identity') {
@@ -189,7 +189,7 @@ class NetrunnerDBController extends Controller
     // not to be called from routes, no auth check, used directly by DB seeding
     private function updateCycles()
     {
-        $raw = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/public/cycles'), true);
+        $raw = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/public/cycles'), true);
         $added = 0;
         foreach ($raw['data'] as $cycle) {
             $exists = CardCycle::find($cycle['code']);
@@ -208,7 +208,7 @@ class NetrunnerDBController extends Controller
     // not to be called from routes, no auth check, used directly by DB seeding
     private function updatePacks()
     {
-        $raw = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/public/packs'), true);
+        $raw = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/public/packs'), true);
         $added = 0;
         $nowdate = date('Y-m-d');
         foreach ($raw['data'] as $pack) {
