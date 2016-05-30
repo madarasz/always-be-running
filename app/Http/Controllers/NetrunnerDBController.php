@@ -38,9 +38,6 @@ class NetrunnerDBController extends Controller
                 $auth_user = $this->findOrCreateUser($user);
                 Auth::login($auth_user, true);
                 return redirect()->action('PagesController@home');
-            } else
-            {
-                return redirect()->action('PagesController@home')->with('message', 'You cannot login because you have no deck saved in ThronesDB. Please save a deck in ThronesDB first.');
             }
         } else
         {

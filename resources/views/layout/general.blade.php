@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tournaments - Decklists - Game of Thrones</title>
+    <title>AlwaysBeRunning.Net - Tournaments - Decklists - Netrunner</title>
     <link rel="stylesheet" href="/css/all.css">
 
 </head>
