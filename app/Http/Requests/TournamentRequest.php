@@ -23,20 +23,30 @@ class TournamentRequest extends Request
      */
     public function rules()
     {
-        return [
-            'title' => 'required',
-            'date' => 'required|date_format:Y.m.d.',
-            'location_city' => 'required',
-            'players_number' => 'integer|between:1,1000',
-            'top_number' => 'integer|between:0,1000',
-            'location_country' => 'not_in:0'
-        ];
+        if (Request::get('tournament_type_id') == 6)
+        {
+            return [
+                'title' => 'required',
+                'date' => 'required|date_format:Y.m.d.',
+                'players_number' => 'integer|between:1,1000',
+                'top_number' => 'integer|between:0,1000',
+            ];
+        } else {
+            return [
+                'title' => 'required',
+                'date' => 'required|date_format:Y.m.d.',
+                'location_city' => 'required',
+                'players_number' => 'integer|between:1,1000',
+                'top_number' => 'integer|between:0,1000',
+                'location_country' => 'not_in:0'
+            ];
+        }
     }
 
     public function messages() {
         return [
             'date_format' => 'Please enter the date using YYYY.MM.DD. format.',
-            'not_in' => 'Please select a country.'
+            'not_in' => 'The location country field is required.'
         ];
     }
 
@@ -59,8 +69,18 @@ class TournamentRequest extends Request
             $input['decklist'] = 0;
         }
 
-        if (!is_null($user_id)) {
+        if (!is_null($user_id))
+        {
             $input['creator'] = $user_id;
+        }
+
+        if ($input['tournament_type_id'] == 6)
+        {
+            $input['location_country'] = '';
+            $input['location_us_state'] = '';
+            $input['location_city'] = '';
+            $input['location_store'] = '';
+            $input['location_address'] = '';
         }
 
         $this->replace($input);

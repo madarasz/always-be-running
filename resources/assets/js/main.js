@@ -13,3 +13,12 @@ function showUsState() {
         $('#select_state').addClass('hidden');
     }
 }
+
+function showLocation() {
+    if ($("#tournament_type_id option:selected").html() === 'online event') {
+        $('#select_location').addClass('hidden');
+    } else {
+        $('#select_location').removeClass('hidden');
+    }
+
+}

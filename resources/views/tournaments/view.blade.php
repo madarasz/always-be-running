@@ -19,9 +19,10 @@
         {{--Tournament info--}}
         <div class="col-md-4 col-xs-12">
             <h4>
-                {{ $tournament->location_city }}, {{$tournament->location_country == 840 && $tournament->location_us_state !=52 ? "$state_name, " : ''}}{{ $country_name }}
-             - {{ $tournament->date }}<br/>
-
+                @unless($tournament->tournament_type_id == 6)
+                    {{ $tournament->location_city }}, {{$tournament->location_country == 840 && $tournament->location_us_state !=52 ? "$state_name, " : ''}}{{ $country_name }} -
+                @endunless
+                {{ $tournament->date }}<br/>
             </h4>
             <p><strong>Legal cardpool up to:</strong> <em>{{ $tournament->cardpool->name }}</em></p>
             @unless($tournament->description === '')
@@ -183,8 +184,8 @@
                     @endif
                     @include('tournaments.partials.entries', ['entries' => $entries_swiss, 'user_entry' => $user_entry, 'rank' => 'rank'])
                 </p>
+                <hr/>
             @endif
-            <hr/>
             {{--List of registered players--}}
             <p>
                 <strong>Registered players</strong>

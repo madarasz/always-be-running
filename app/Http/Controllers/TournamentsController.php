@@ -113,7 +113,7 @@ class TournamentsController extends Controller
         } else {
             $user_entry = Entry::where('tournament_id', $tournament->id)->where('user', $user->id)->first();
         }
-        $state_name = $tournament->location_us_state == 52 ? '' : UsState::findorFail($tournament->location_us_state)->name;
+        $state_name = $tournament->location_us_state == 52 || $tournament->tournament_type_id == 6 ? '' : UsState::find($tournament->location_us_state)->name;
         $decks = [];
         $decks_two_types = false;
         if (!is_null($user))
