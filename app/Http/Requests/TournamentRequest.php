@@ -69,6 +69,13 @@ class TournamentRequest extends Request
             $input['decklist'] = 0;
         }
 
+        if (array_key_exists('display_map', $input))
+        {
+            $input['display_map'] = 1;
+        } else {
+            $input['display_map'] = 0;
+        }
+
         if (!is_null($user_id))
         {
             $input['creator'] = $user_id;

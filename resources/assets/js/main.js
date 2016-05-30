@@ -22,3 +22,29 @@ function showLocation() {
     }
 
 }
+
+function calculateAddress(country, state, city, store, address) {
+    var q = country;
+    if (state !== '') {
+        q = q + ', ' + state;
+    }
+    if (city !== '') {
+        q = q + ', ' + city;
+    }
+    if (address !== '') {
+        q = q + ', ' + address;
+    } else {
+        if (store !== '') {
+            q = q + ' ' + store;
+        }
+    }
+    return q;
+}
+
+var delay = (function(){
+    var timer = 0;
+    return function(callback, ms){
+        clearTimeout (timer);
+        timer = setTimeout(callback, ms);
+    };
+})();

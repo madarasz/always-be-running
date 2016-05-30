@@ -26,7 +26,7 @@
             </h4>
             <p><strong>Legal cardpool up to:</strong> <em>{{ $tournament->cardpool->name }}</em></p>
             @unless($tournament->description === '')
-                <p>{!! nl2br(e($tournament->description)) !!}</p>
+                <div class="panel panel-default"><div class="panel-body">{!! nl2br(e($tournament->description)) !!}</div></div>
             @endunless
             @if($tournament->decklist == 1)
                 <p><strong><u>decklist is mandatory!</u></strong></p>
@@ -42,7 +42,19 @@
                     <strong>Address</strong>: {{ $tournament->location_address }}<br/>
                 @endunless
             </p>
-
+            @if($tournament->display_map)
+                <iframe id="map" width="100%" frameborder="0" style="border:0" allowfullscreen></iframe>
+                <script type="text/javascript">
+                    function initPage() {
+                        document.getElementById('map').src = "https://www.google.com/maps/embed/v1/search?q=" +
+                                encodeURIComponent(calculateAddress('{{ $tournament->country->name }}',
+                                        '{{ $tournament->state->name }}', '{{ $tournament->location_city }}',
+                                        '{{ $tournament->location_store }}', '{{ $tournament->location_address }}')) +
+                                "&key=" + '{{ ENV('GOOGLE_MAPS_API') }}';
+                    }
+                    window.addEventListener("load", initPage, false);
+                </script>
+            @endif
         </div>
         {{--Standings and claims--}}
         <div class="col-md-8 col-xs-12">
