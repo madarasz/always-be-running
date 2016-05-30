@@ -62,7 +62,9 @@
                 <p>
                     <strong>Number of players</strong>: {{ $tournament->players_number }}<br/>
                     @if ($tournament->top_number)
-                        <strong>Top cut players:</strong> {{ $tournament->top_number }}<br/>
+                        <strong>Top cut players</strong>: {{ $tournament->top_number }}<br/>
+                    @else
+                        <em>only swiss rounds, no top cut</em><br/>
                     @endif
                     {{--User claim--}}
                     @if ($user)
@@ -101,28 +103,26 @@
                             </div>
                         {{--Creating new claim--}}
                         @else
+                            @include('errors.list')
                             {!! Form::open(['url' => "/tournaments/$tournament->id/claim"]) !!}
+                                {!! Form::hidden('top_number', $tournament->top_number) !!}
                                 <div class="row">
                                     <div class="col-xs-12 col-md-6">
                                         <div class="form-group">
                                             {!! Form::label('rank', 'rank after swiss rounds') !!}
-                                            <select class="form-control" id="rank" name="rank">
-                                                @foreach (range(1, $tournament->players_number) as $rank)
-                                                    <option value="{{ $rank }}">{{ $rank }}</option>
-                                                @endforeach
-                                            </select>
+                                            {!! Form::select('rank', array_combine(range(1, $tournament->players_number),
+                                                range(1, $tournament->players_number)), old('rank'), ['class' => 'form-control']) !!}
                                         </div>
                                     </div>
                                     @if ($tournament->top_number)
                                         <div class="col-xs-12 col-md-6">
                                             <div class="form-group">
                                                 {!! Form::label('rank_top', 'rank after top cut') !!}
-                                                <select class="form-control" id="rank_top" name="rank_top">
-                                                    <option value="">below top cut</option>
-                                                    @foreach (range(1, $tournament->top_number) as $rank)
-                                                        <option value="{{ $rank }}">{{ $rank }}</option>
-                                                    @endforeach
-                                                </select>
+                                                {!! Form::select('rank_top',
+                                                    array_combine(
+                                                        array_merge([0],range(1, $tournament->top_number)),
+                                                        array_merge(['below top cut'], range(1, $tournament->top_number))),
+                                                    old('rank_top'), ['class' => 'form-control']) !!}
                                             </div>
                                         </div>
                                     @endif
@@ -132,47 +132,57 @@
                                     <div class="col-xs-12 col-md-6">
                                         <div class="form-group">
                                             {!! Form::label('corp_deck', 'corporation deck') !!}
-                                            <select class="form-control" id="corp_deck" name="corp_deck">
-                                                @if ($decks_two_types)
-                                                    <optgroup label="Public decklists">
-                                                @endif
-                                                @foreach ($decks['public']['corp'] as $deck)
-                                                    <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
-                                                @endforeach
-                                                @if ($decks_two_types)
-                                                    </optgroup>
-                                                    <optgroup label="Shared private decklists">
-                                                @endif
-                                                @foreach ($decks['private']['corp'] as $deck)
-                                                    <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
-                                                @endforeach
-                                                @if ($decks_two_types)
-                                                    </optgroup>
-                                                @endif
-                                            </select>
+                                            @if (count($decks['public']['corp'])>0)
+                                                <select class="form-control" id="corp_deck" name="corp_deck">
+                                                    {{--@if ($decks_two_types)--}}
+                                                        {{--<optgroup label="Public decklists">--}}
+                                                    {{--@endif--}}
+                                                    @foreach ($decks['public']['corp'] as $deck)
+                                                        <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
+                                                    @endforeach
+                                                    {{--@if ($decks_two_types)--}}
+                                                        {{--</optgroup>--}}
+                                                        {{--<optgroup label="Shared private decklists">--}}
+                                                    {{--@endif--}}
+                                                    {{--@foreach ($decks['private']['corp'] as $deck)--}}
+                                                        {{--<option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>--}}
+                                                    {{--@endforeach--}}
+                                                    {{--@if ($decks_two_types)--}}
+                                                        {{--</optgroup>--}}
+                                                    {{--@endif--}}
+                                                </select>
+                                            @else
+                                                <br/>
+                                                <em>You don't have any published decklist on NetrunnerDB.</em>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-md-6">
                                         <div class="form-group">
                                             {!! Form::label('runner_deck', 'runner deck') !!}
-                                            <select class="form-control" id="runner_deck" name="runner_deck">
-                                                @if ($decks_two_types)
-                                                    <optgroup label="Public decklists">
-                                                @endif
-                                                @foreach ($decks['public']['runner'] as $deck)
-                                                    <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
-                                                @endforeach
-                                                @if ($decks_two_types)
-                                                    </optgroup>
-                                                    <optgroup label="Shared private decklists">
-                                                @endif
-                                                @foreach ($decks['private']['runner'] as $deck)
-                                                    <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
-                                                @endforeach
-                                                @if ($decks_two_types)
-                                                    </optgroup>
-                                                @endif
-                                            </select>
+                                            @if (count($decks['public']['runner'])>0)
+                                                <select class="form-control" id="runner_deck" name="runner_deck">
+                                                    {{--@if ($decks_two_types)--}}
+                                                        {{--<optgroup label="Public decklists">--}}
+                                                    {{--@endif--}}
+                                                    @foreach ($decks['public']['runner'] as $deck)
+                                                        <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
+                                                    @endforeach
+                                                    {{--@if ($decks_two_types)--}}
+                                                        {{--</optgroup>--}}
+                                                        {{--<optgroup label="Shared private decklists">--}}
+                                                    {{--@endif--}}
+                                                    {{--@foreach ($decks['private']['runner'] as $deck)--}}
+                                                        {{--<option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>--}}
+                                                    {{--@endforeach--}}
+                                                    {{--@if ($decks_two_types)--}}
+                                                        {{--</optgroup>--}}
+                                                    {{--@endif--}}
+                                                </select>
+                                            @else
+                                                <br/>
+                                                <em>You don't have any published decklist on NetrunnerDB.</em>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EntryRequest;
 use App\Tournament;
 use App\Entry;
 use Illuminate\Http\Request;
@@ -36,7 +37,7 @@ class EntriesController extends Controller
         return redirect()->back()->with('message', 'You have unregistered from the tournament.');
     }
 
-    public function claim(Request $request, $id)
+    public function claim(EntryRequest $request, $id)
     {
         $this->authorize('logged_in', Tournament::class, $request->user());
         $user_id = $request->user()->id;

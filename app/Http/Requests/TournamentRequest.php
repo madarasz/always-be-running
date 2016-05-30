@@ -13,7 +13,7 @@ class TournamentRequest extends Request
      */
     public function authorize()
     {
-        return true; //TODO
+        return true;
     }
 
     /**
