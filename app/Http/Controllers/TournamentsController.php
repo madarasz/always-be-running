@@ -100,13 +100,14 @@ class TournamentsController extends Controller
         $entries = $tournament->entries;
         $entries_swiss = [];
         $entries_top = [];
+        $clash = false;
         if ($tournament->players_number)
         {
-            $this->pushEntries($tournament->players_number, $entries, $entries_swiss, 'rank');
+            $this->pushEntries($tournament->players_number, $entries, $entries_swiss, 'rank', $clash);
         }
         if ($tournament->top_number)
         {
-            $this->pushEntries($tournament->top_number, $entries, $entries_top, 'rank_top');
+            $this->pushEntries($tournament->top_number, $entries, $entries_top, 'rank_top', $clash);
         }
         if (is_null($user))
         {
@@ -124,7 +125,7 @@ class TournamentsController extends Controller
         }
         return view('tournaments.view',
             compact('tournament', 'country_name', 'state_name', 'message', 'type', 'nowdate', 'user', 'entries',
-                'user_entry', 'decks', 'entries_swiss', 'entries_top', 'decks_two_types'));
+                'user_entry', 'decks', 'entries_swiss', 'entries_top', 'decks_two_types', 'clash'));
     }
 
     /**
@@ -134,7 +135,7 @@ class TournamentsController extends Controller
      * @param $target target array for entry rows
      * @param $rank rank string to consider on entry object (rank / rank_top)
      */
-    private function pushEntries($row_number, &$entries, &$target, $rank)
+    private function pushEntries($row_number, &$entries, &$target, $rank, &$clash)
     {
         for ($i = 1; $i <= $row_number; $i++) {
             $current = [];
@@ -144,6 +145,9 @@ class TournamentsController extends Controller
                 }
             }
             array_push($target, $current);
+            if (count($current) > 1) {
+                $clash = true;
+            }
         }
     }
 

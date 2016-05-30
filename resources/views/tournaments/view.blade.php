@@ -60,6 +60,13 @@
         <div class="col-md-8 col-xs-12">
             @if ($tournament->concluded)
                 <p>
+                    @if ($clash)
+                        <div class="alert alert-danger">
+                            <i class="fa fa-exclamation-triangle text-danger" title="conflict"></i>
+                            This tournament has conflicting claims.<br/>
+                            Claims can be removed by the tournament creator, admins or claim owners.
+                        </div>
+                    @endif
                     <strong>Number of players</strong>: {{ $tournament->players_number }}<br/>
                     @if ($tournament->top_number)
                         <strong>Top cut players</strong>: {{ $tournament->top_number }}<br/>
