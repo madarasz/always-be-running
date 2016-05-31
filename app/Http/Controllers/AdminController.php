@@ -17,7 +17,9 @@ class AdminController extends Controller
     {
         $this->authorize('admin', Tournament::class, $request->user());
         $nowdate = date('Y.m.d.');
-        $to_approve = Tournament::where('approved', '!=', 1)->where('deleted_at', null)->get();
+        $to_approve = Tournament::where(function($query) {
+                $query->where('approved', 0)->orWhereNull('approved');
+            })->where('deleted_at', null)->get();
         $deleted = Tournament::onlyTrashed()->get();
         $message = session()->has('message') ? session('message') : '';
         $cycles = CardCycle::orderBy('position', 'desc')->get();
