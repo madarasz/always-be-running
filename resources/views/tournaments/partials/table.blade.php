@@ -133,7 +133,7 @@
                     </td>
                 @endif
                 @if( in_array('action_restore', $columns) )
-                    <td><a href="/tournaments/{{ $row->id }}/restore" class="btn btn-primary btn-xs">restore</a></td>
+                    <td><a href="/tournaments/{{ $row->id }}/restore" class="btn btn-primary btn-xs"><i class="fa fa-recycle" aria-hidden="true"></i> restore</a></td>
                 @endif
             </tr>
         @endforeach

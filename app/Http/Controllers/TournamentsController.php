@@ -180,7 +180,7 @@ class TournamentsController extends Controller
         foreach ($entries as $entry)
         {
             $stuff = $entry->tournament;
-            if ($stuff->approved !== 0)
+            if ($stuff && $stuff->approved !== 0)
             {
                 $stuff['claim'] = $entry->rank > 0;
                 array_push($registered, $stuff);
