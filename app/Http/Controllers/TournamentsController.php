@@ -174,8 +174,8 @@ class TournamentsController extends Controller
         $this->authorize('logged_in', Tournament::class, $request->user());
         $user = $request->user()->id;
         $nowdate = date('Y.m.d.');
-        $created = Tournament::where('creator', $user)->where('deleted_at', null)->get();
-        $entries = Entry::where('user', $user)->get();
+        $created = Tournament::where('creator', $user)->where('deleted_at', null)->orderBy('date', 'desc')->get();
+        $entries = Entry::where('user', $user)->orderBy('updated_at', 'desc')->get();
         $registered = [];
         foreach ($entries as $entry)
         {

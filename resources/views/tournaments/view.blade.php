@@ -33,14 +33,14 @@
             </h4>
             {{--Approval--}}
             @if ($tournament->approved === null)
-                <div class="alert alert-warning">
+                <div class="alert alert-warning" id="approval-needed">
                     <i class="fa fa-question-circle-o" aria-hidden="true"></i>
                     This tournament haven't been approved by the admins yet.
                     You can already share it, though it's not appearing in any tournament lists.
                 </div>
             @elseif ($tournament->approved == 0)
                 <div class="alert alert-danger">
-                    <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                    <i class="fa fa-thumbs-down" aria-hidden="true" id="approval-rejected"></i>
                     This tournament has been rejected by an admin.
                     Only the tournament creator and the admins can see this tournament.
                     Please try to fix the issue.

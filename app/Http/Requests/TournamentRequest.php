@@ -88,6 +88,7 @@ class TournamentRequest extends Request
             $input['location_city'] = '';
             $input['location_store'] = '';
             $input['location_address'] = '';
+            $input['display_map'] = 0;
         }
 
         $this->replace($input);

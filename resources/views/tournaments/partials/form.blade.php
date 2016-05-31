@@ -24,7 +24,7 @@
                         <div class="form-group">
                             {!! Form::label('cardpool_id', 'Legal cardpool up to') !!}
                             {!! Form::select('cardpool_id', $cardpools,
-                                        old('cardpool_id', $tournament->cardpool_name), ['class' => 'form-control']) !!}
+                                        old('cardpool_id', $tournament->cardpool_id), ['class' => 'form-control']) !!}
                         </div>
                     </div>
                 </div>
@@ -123,6 +123,7 @@
                         ['onclick' => "showDiv('#map','display_map'); updateMap();", 'id' => 'display_map']) !!}
                         {!! Form::label('display_map', 'display map') !!}
                     </div>
+                    {{-- TODO: do not load when not needed--}}
                     <iframe id="map" width="100%" frameborder="0" style="border:0" class="hidden"
                             src="{{ "https://www.google.com/maps/embed/v1/search?q=Europe&key=".ENV('GOOGLE_MAPS_API') }}" allowfullscreen></iframe>
                 </div>
