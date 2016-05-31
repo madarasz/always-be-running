@@ -23,7 +23,7 @@
             <th class="text-center">players</th>
         @endif
         @if( in_array('decks', $columns) )
-            <th class="text-center">decks</th>
+            <th class="text-center">claims</th>
         @endif
         @if( in_array('action_view', $columns) )
             <th></th>
@@ -62,10 +62,12 @@
                 @if( in_array('approval', $columns) )
                     <td>
                         @if ($row->approved === null)
+                            <i class="fa fa-question-circle-o text-warning" aria-hidden="true"></i>
                             <span class="label label-warning">pending</span>
                         @elseif ($row->approved == 1)
                             <span class="label label-success">approved</span>
                         @else
+                            <i class="fa fa-thumbs-down text-danger" aria-hidden="true"></i>
                             <span class="label label-danger">rejected</span>
                         @endif
                     </td>
@@ -86,6 +88,7 @@
                         @if ($row->concluded == 1)
                             <span class="label label-success">concluded</span>
                         @elseif ($row->date <= $nowdate)
+                            <i class="fa fa-clock-o text-danger" aria-hidden="true"></i>
                             <span class="label label-danger">due, pls update</span>
                         @else
                             <span class="label label-info">not yet</span>
@@ -100,7 +103,12 @@
                     </td>
                 @endif
                 @if( in_array('decks', $columns) )
-                    <td class="text-center">{{ count($row->entries) }}</td>
+                    <td class="text-center">
+                        @if ($row->conflict)
+                            <i class="fa fa-exclamation-triangle text-danger" title="conflict"></i>
+                        @endif
+                        {{ count($row->entries) }}
+                    </td>
                 @endif
                 @if( in_array('action_view', $columns) )
                     <td><a href="/tournaments/{{ $row->id }}" class="btn btn-primary btn-xs"><i class="fa fa-eye" aria-hidden="true"></i> view</a></td>

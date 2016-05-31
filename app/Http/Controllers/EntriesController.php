@@ -42,6 +42,9 @@ class EntriesController extends Controller
         $this->authorize('logged_in', Tournament::class, $request->user());
         $user_id = $request->user()->id;
         $entry = Entry::where('user', $user_id)->where('tournament_id', $id)->first();
+        $conflict = Entry::where('tournament_id', $id)->where('user', '!=', $user_id)->where(function($query) use($request) {
+            $query->where('rank', $request->rank)->orWhere('rank_top', $request->rank_top);
+        })->first();
         $corp_deck = json_decode(stripslashes($request->corp_deck), true);
         $runner_deck = json_decode(stripslashes($request->runner_deck), true);
         if (is_null($entry)) {
@@ -68,6 +71,11 @@ class EntriesController extends Controller
                 // TODO: identities
             ]);
         }
+        // create conflict
+        if (!is_null($conflict)) {
+            $tournament = Tournament::where('id', $id)->first();
+            $tournament->update(['conflict' => 1]);
+        }
         return redirect()->back()->with('message', 'You have claimed a spot on the tournament.');
     }
 
@@ -83,6 +91,16 @@ class EntriesController extends Controller
             $entry->corp_deck_title = '';
             $entry->runner_deck_title = '';
             $entry->save();
+        }
+        // remove conflict
+        $tournament = Tournament::where('id', $entry->tournament_id)->first();
+        if ($tournament->conflict)
+        {
+            $conflict_rank = Entry::where('tournament_id', $entry->tournament_id)->groupBy('rank')->havingRaw("COUNT(id) > 1")->get();
+            $conflict_rank_top = Entry::where('tournament_id', $entry->tournament_id)->groupBy('rank_top')->havingRaw("COUNT(id) > 1")->get();
+            if (count($conflict_rank) + count($conflict_rank_top) == 0) {
+                $tournament->update(['conflict' => 0]);
+            }
         }
         return redirect()->back()->with('message', 'You removed your claim from the tournament.');
     }

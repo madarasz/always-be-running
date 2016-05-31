@@ -6,7 +6,14 @@
         @if ($user && ($user->admin || $user->id == $tournament->creator))
             <div class="pull-right">
                 {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id"]) !!}
+                    {{--Edit--}}
                     <a href="{{ "/tournaments/$tournament->id/edit" }}" class="btn btn-primary"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                    {{--Approval --}}
+                    @if ($user && $user->admin)
+                        <a href="/tournaments/{{ $tournament->id }}/approve" class="btn btn-success"><i class="fa fa-thumbs-up" aria-hidden="true"></i> Approve</a>
+                        <a href="/tournaments/{{ $tournament->id }}/reject" class="btn btn-danger"><i class="fa fa-thumbs-down" aria-hidden="true"></i> Reject</a>
+                    @endif
+                    {{--Delete--}}
                     {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Delete tournament', array('type' => 'submit', 'class' => 'btn btn-danger')) !!}
                 {!! Form::close() !!}
             </div>
@@ -24,6 +31,22 @@
                 @endunless
                 {{ $tournament->date }}<br/>
             </h4>
+            {{--Approval--}}
+            @if ($tournament->approved === null)
+                <div class="alert alert-warning">
+                    <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+                    This tournament haven't been approved by the admins yet.
+                    You can already share it, though it's not appearing in any tournament lists.
+                </div>
+            @elseif ($tournament->approved == 0)
+                <div class="alert alert-danger">
+                    <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                    This tournament has been rejected by an admin.
+                    Only the tournament creator and the admins can see this tournament.
+                    Please try to fix the issue.
+                </div>
+            @endif
+            {{--Details--}}
             <p><strong>Legal cardpool up to:</strong> <em>{{ $tournament->cardpool->name }}</em></p>
             @unless($tournament->description === '')
                 <div class="panel panel-default"><div class="panel-body">{!! nl2br(e($tournament->description)) !!}</div></div>
@@ -60,13 +83,15 @@
         <div class="col-md-8 col-xs-12">
             @if ($tournament->concluded)
                 <p>
-                    @if ($clash)
+                    {{--Conflict--}}
+                    @if ($tournament->conflict)
                         <div class="alert alert-danger">
                             <i class="fa fa-exclamation-triangle text-danger" title="conflict"></i>
                             This tournament has conflicting claims.<br/>
                             Claims can be removed by the tournament creator, admins or claim owners.
                         </div>
                     @endif
+                    {{--Player numbers--}}
                     <strong>Number of players</strong>: {{ $tournament->players_number }}<br/>
                     @if ($tournament->top_number)
                         <strong>Top cut players</strong>: {{ $tournament->top_number }}<br/>
@@ -218,6 +243,13 @@
                         'creator' => $tournament->creator])
                 </p>
                 <hr/>
+            {{--Tournament is due--}}
+            @elseif($tournament->date <= $nowdate)
+                <div class="alert alert-warning">
+                    <i class="fa fa-clock-o" aria-hidden="true"></i>
+                    This tournament is due for completion.<br/>
+                    The tournament creator should set it to concluded and record player number, so players make claims.
+                </div>
             @endif
             {{--List of registered players--}}
             <p>

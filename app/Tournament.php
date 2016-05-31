@@ -11,7 +11,7 @@ class Tournament extends Model
     public $timestamps = true;
     protected $fillable = ['title', 'date', 'location_country', 'location_us_state', 'location_city', 'location_store',
         'location_address', 'players_number', 'description', 'concluded', 'decklist', 'top_number', 'creator',
-        'tournament_type_id', 'start_time', 'cardpool_id', 'display_map'];
+        'tournament_type_id', 'start_time', 'cardpool_id', 'display_map', 'conflict'];
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
     public function tournament_type() {

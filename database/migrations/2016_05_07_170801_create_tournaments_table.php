@@ -28,6 +28,7 @@ class CreateTournamentsTable extends Migration
             $table->boolean('concluded');
             $table->boolean('decklist');
             $table->boolean('display_map');
+            $table->boolean('conflict')->default(0);
             $table->integer('creator')->unsigned();
             $table->boolean('approved')->nullable();
             //$table->string('reject_reason'); do I need this?

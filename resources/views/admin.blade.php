@@ -8,7 +8,7 @@
             @include('tournaments.partials.table',
                 ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
                     'action_view', 'action_edit', 'action_approve', 'action_reject', 'action_delete' ],
-                'data' => $to_approve, 'title' => 'Pending tournaments',
+                'data' => $to_approve, 'title' => 'Pending/Rejected tournaments',
                 'empty_message' => 'no pending tournaments', 'id' => 'pending'])
             @include('tournaments.partials.table',
                 ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',

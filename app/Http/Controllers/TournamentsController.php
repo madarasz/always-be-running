@@ -5,14 +5,11 @@ namespace App\Http\Controllers;
 use App\CardPack;
 use App\Country;
 use App\Entry;
-use App\User;
 use App\Tournament;
 use App\TournamentType;
 use App\UsState;
-use Illuminate\Http\Request;
-
 use App\Http\Requests;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class TournamentsController extends Controller
 {
@@ -92,6 +89,12 @@ class TournamentsController extends Controller
     public function show($id, Request $request)
     {
         $tournament = Tournament::findorFail($id);
+        // rejected tournaments can only be seen by creator and admins
+        if ($tournament->approved === 0 &&
+            (!$request->user() || $request->user()->admin == 0 && $request->user()->id != $tournament->creator))
+        {
+            abort(403);
+        }
         $type = $tournament->tournament_type->type_name;
         $country_name = $tournament->country->name;
         $message = session()->has('message') ? session('message') : '';
@@ -100,14 +103,13 @@ class TournamentsController extends Controller
         $entries = $tournament->entries;
         $entries_swiss = [];
         $entries_top = [];
-        $clash = false;
         if ($tournament->players_number)
         {
-            $this->pushEntries($tournament->players_number, $entries, $entries_swiss, 'rank', $clash);
+            $this->pushEntries($tournament->players_number, $entries, $entries_swiss, 'rank');
         }
         if ($tournament->top_number)
         {
-            $this->pushEntries($tournament->top_number, $entries, $entries_top, 'rank_top', $clash);
+            $this->pushEntries($tournament->top_number, $entries, $entries_top, 'rank_top');
         }
         if (is_null($user))
         {
@@ -125,7 +127,7 @@ class TournamentsController extends Controller
         }
         return view('tournaments.view',
             compact('tournament', 'country_name', 'state_name', 'message', 'type', 'nowdate', 'user', 'entries',
-                'user_entry', 'decks', 'entries_swiss', 'entries_top', 'decks_two_types', 'clash'));
+                'user_entry', 'decks', 'entries_swiss', 'entries_top', 'decks_two_types'));
     }
 
     /**
@@ -135,7 +137,7 @@ class TournamentsController extends Controller
      * @param $target target array for entry rows
      * @param $rank rank string to consider on entry object (rank / rank_top)
      */
-    private function pushEntries($row_number, &$entries, &$target, $rank, &$clash)
+    private function pushEntries($row_number, &$entries, &$target, $rank)
     {
         for ($i = 1; $i <= $row_number; $i++) {
             $current = [];
@@ -145,9 +147,6 @@ class TournamentsController extends Controller
                 }
             }
             array_push($target, $current);
-            if (count($current) > 1) {
-                $clash = true;
-            }
         }
     }
 
