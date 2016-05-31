@@ -29,7 +29,6 @@ class CreateEntriesTable extends Migration
             $table->foreign('user')->references('id')->on('users');
             $table->timestamps();
             $table->unique(['user', 'id']);
-            // TODO: id foreign key
         });
     }
 

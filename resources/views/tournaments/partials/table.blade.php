@@ -11,13 +11,13 @@
             <th>cardpool</th>
         @endif
         @if( in_array('approval', $columns) )
-            <th>approval</th>
+            <th class="text-center">approval</th>
         @endif
         @if( in_array('claim', $columns) )
-            <th>claim</th>
+            <th class="text-center">claim</th>
         @endif
         @if( in_array('conclusion', $columns) )
-            <th>conclusion</th>
+            <th class="text-center">conclusion</th>
         @endif
         @if( in_array('players', $columns) )
             <th class="text-center">players</th>
@@ -60,7 +60,7 @@
                     <td>{{ $row->cardpool->name }}</td>
                 @endif
                 @if( in_array('approval', $columns) )
-                    <td>
+                    <td class="text-center">
                         @if ($row->approved === null)
                             <i class="fa fa-question-circle-o text-warning" aria-hidden="true"></i>
                             <span class="label label-warning">pending</span>
@@ -73,10 +73,11 @@
                     </td>
                 @endif
                 @if( in_array('claim', $columns) )
-                    <td>
+                    <td class="text-center">
                         @if ($row->claim)
                             <span class="label label-success">claimed</span>
                         @elseif ($row->concluded)
+                            <i class="fa fa-clock-o text-danger" aria-hidden="true"></i>
                             <span class="label label-danger">please claim</span>
                         @else
                             <span class="label label-info">registered</span>
@@ -84,7 +85,7 @@
                     </td>
                 @endif
                 @if( in_array('conclusion', $columns) )
-                    <td>
+                    <td class="text-center">
                         @if ($row->concluded == 1)
                             <span class="label label-success">concluded</span>
                         @elseif ($row->date <= $nowdate)
@@ -107,7 +108,9 @@
                         @if ($row->conflict)
                             <i class="fa fa-exclamation-triangle text-danger" title="conflict"></i>
                         @endif
-                        {{ count($row->entries) }}
+                        @if (count($row->entries))
+                            {{ count($row->entries) }}
+                        @endif
                     </td>
                 @endif
                 @if( in_array('action_view', $columns) )

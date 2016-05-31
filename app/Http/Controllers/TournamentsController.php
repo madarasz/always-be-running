@@ -180,8 +180,11 @@ class TournamentsController extends Controller
         foreach ($entries as $entry)
         {
             $stuff = $entry->tournament;
-            $stuff['claim'] = $entry->rank > 0;
-            array_push($registered, $stuff);
+            if ($stuff->approved !== 0)
+            {
+                $stuff['claim'] = $entry->rank > 0;
+                array_push($registered, $stuff);
+            }
         }
         $message = session()->has('message') ? session('message') : '';
         return view('my', compact('user', 'created', 'nowdate', 'registered', 'message'));
