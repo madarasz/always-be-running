@@ -15,7 +15,8 @@ exports.assertion = function(data) {
         var selectors = {
             location_us_state: "//select[@id='location_us_state']",
             players_number: "//input[@id='players_number']",
-            map: "//iframe[@id='map']"
+            map: "//iframe[@id='map']",
+            location: "//div[@id='select_location']"
         };
 
         this.api
@@ -23,7 +24,7 @@ exports.assertion = function(data) {
 
         if (data.hasOwnProperty('visible')) {
             data.visible.forEach(function(item) {
-                client.api.waitForElementVisible(selectors[item], 1000);
+                client.api.waitForElementVisible(selectors[item], 3000);
             });
         }
 
