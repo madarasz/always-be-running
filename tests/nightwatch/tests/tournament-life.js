@@ -68,7 +68,6 @@ module.exports = {
             .log('*** Logging in ***')
             .login(regularLogin.username, regularLogin.password)
             .waitForElementVisible('//body', 3000)
-            .windowMaximize('current')
 
             // create tournament
             .log('*** Creating Tournament A ***')
@@ -248,7 +247,6 @@ module.exports = {
             .log('*** Logging in ***')
             .login(regularLogin.username, regularLogin.password)
             .waitForElementVisible('//body', 3000)
-            .windowMaximize('current')
 
             // create tournament
             .log('*** Creating Tournament B ***')
@@ -417,7 +415,6 @@ module.exports = {
             .log('*** Logging in ***')
             .login(regularLogin.username, regularLogin.password)
             .waitForElementVisible('//body', 3000)
-            .windowMaximize('current')
 
             // create tournament
             .log('*** Creating Tournament C ***')
