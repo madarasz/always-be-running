@@ -4,7 +4,7 @@
     {{--Header--}}
     <h3 class="page-header">
         @if ($user && ($user->admin || $user->id == $tournament->creator))
-            <div class="pull-right">
+            <div class="pull-right" id="control-buttons">
                 {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id"]) !!}
                     {{--Edit--}}
                     <a href="{{ "/tournaments/$tournament->id/edit" }}" class="btn btn-primary"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
@@ -39,8 +39,8 @@
                     You can already share it, though it's not appearing in any tournament lists.
                 </div>
             @elseif ($tournament->approved == 0)
-                <div class="alert alert-danger">
-                    <i class="fa fa-thumbs-down" aria-hidden="true" id="approval-rejected"></i>
+                <div class="alert alert-danger" id="approval-rejected">
+                    <i class="fa fa-thumbs-down" aria-hidden="true"></i>
                     This tournament has been rejected by an admin.
                     Only the tournament creator and the admins can see this tournament.
                     Please try to fix the issue.
