@@ -1,5 +1,8 @@
 exports.assertion = function(data) {
 
+    var util;
+    util = require('util');
+
     this.message = 'Tournament view validation failed.';
     this.expected = true;
     this.pass = function(value) {
@@ -10,45 +13,40 @@ exports.assertion = function(data) {
     };
 
     this.command = function(callback) {
+        var selectors = {
+            title: "//h3[contains(., '%s')]",
+            ttype: "//h3/small[contains(., '%s')]",
+            description: "//div[contains(@class, 'panel-body') and contains(., '%s')]",
+            date: "//h4[contains(., '%s')]",
+            time: "//p[contains(., '%s')]",
+            country: "//h4[contains(., '%s')]",
+            state: "//h4[contains(., '%s')]",
+            city: "//h4[contains(., '%s')]",
+            store: "//p[contains(., '%s')]",
+            address: "//p[contains(., '%s')]",
+            map: "//iframe[@id='map']",
+            approvalNeed: "//div[@id='approval-needed']",
+            approvalRejected: "//div[@id='approval-rejected']",
+            editButton: "//div[@id='control-buttons']/form/a[contains(., 'Edit')]",
+            deleteButton: "//div[@id='control-buttons']/form/button[contains(., 'Delete')]",
+            approveButton: "//div[@id='control-buttons']/form/a[contains(., 'Approve')]",
+            rejectButton: "//div[@id='control-buttons']/form/a[contains(., 'Reject')]"
+        };
+
         this.api.waitForElementVisible('//body', 3000);
 
-        if (data.hasOwnProperty('title')) {
-            this.api.waitForElementVisible("//h3[contains(., '" + data.title + "')]", 1000);
-        }
-        if (data.hasOwnProperty('ttype')) {
-            this.api.waitForElementVisible("//h3/small[contains(., '" + data.ttype + "')]", 1000);
-        }
-        if (data.hasOwnProperty('description')) {
-            this.api.waitForElementVisible("//div[contains(@class, 'panel-body') and contains(., '" + data.description + "')]", 1000);
-        }
-        if (data.hasOwnProperty('date')) {
-            this.api.waitForElementVisible("//h4[contains(., '" + data.date + "')]", 1000);
-        }
-        if (data.hasOwnProperty('time')) {
-            this.api.waitForElementVisible("//p[contains(., '" + data.time + "')]", 1000);
-        }
-        if (data.hasOwnProperty('country')) {
-            this.api.waitForElementVisible("//h4[contains(., '" + data.country + "')]", 1000);
-        }
-        if (data.hasOwnProperty('state')) {
-            this.api.waitForElementVisible("//h4[contains(., '" + data.state + "')]", 1000);
-        }
-        if (data.hasOwnProperty('city')) {
-            this.api.waitForElementVisible("//h4[contains(., '" + data.city + "')]", 1000);
-        }
-        if (data.hasOwnProperty('store')) {
-            this.api.waitForElementVisible("//p[contains(., '" + data.store + "')]", 1000);
-        }
-        if (data.hasOwnProperty('address')) {
-            this.api.waitForElementVisible("//p[contains(., '" + data.address + "')]", 1000);
-        }
-        if (data.hasOwnProperty('map')) {
-            if (data.map) {
-                this.api.waitForElementVisible("//iframe[@id='map']", 1000);
-            } else {
-                this.api.verify.elementNotPresent("//iframe[@id='map']");
+        for (var property in data) {
+            if (data.hasOwnProperty(property)) {
+                if (data[property] === true) {
+                    this.api.waitForElementVisible(selectors[property], 1000);
+                } else if (data[property] === false) {
+                    this.api.verify.elementNotPresent(selectors[property]);
+                } else {
+                    this.api.waitForElementVisible(util.format(selectors[property], data[property]), 1000);
+                }
             }
         }
+
         return true;
     };
 

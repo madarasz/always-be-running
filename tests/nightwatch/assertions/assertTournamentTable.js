@@ -12,7 +12,7 @@ exports.assertion = function(table_id, title, data) {
     };
 
     this.command = function(callback) {
-        this.api.click("//a[contains(text(),'My Tournaments')]")
+        this.api
             .waitForElementVisible('//body', 3000)
             .waitForElementVisible("//table[@id='"+table_id+"']/tbody/tr/td[contains(.,'"+title+"')]", 1000);
 

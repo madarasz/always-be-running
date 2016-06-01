@@ -25,7 +25,8 @@ exports.command = function (username, password, callback) {
             }
         })
         .waitForElementVisible("//h3[contains(text(), 'NetrunnerDB Authorization')]", 1000)
-        .click("//input[@name='accepted']");
+        .click("//input[@name='accepted']")
+        .waitForElementVisible('//body', 3000);
 
     if (typeof callback === "function"){
         callback.call(client);

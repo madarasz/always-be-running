@@ -67,7 +67,6 @@ module.exports = {
             .url(browser.launchUrl)
             .log('*** Logging in ***')
             .login(regularLogin.username, regularLogin.password)
-            .waitForElementVisible('//body', 3000)
 
             // create tournament
             .log('*** Creating Tournament A ***')
@@ -125,6 +124,7 @@ module.exports = {
 
             // verify on My tournaments
             .log('*** Verifying on my tournaments table ***')
+            .click("//a[contains(text(),'My Tournaments')]")
             .assert.assertTournamentTable('created', tournamentA.title, {
                 texts: [tournamentA.date, tournamentA.cardpool],
                 labels: ['pending', 'not yet'], texts_missing: [tournamentB.players]
@@ -142,6 +142,7 @@ module.exports = {
 
             // edit tournament
             .log('*** Verifying data on edit form ***')
+            .click("//a[contains(text(),'My Tournaments')]")
             .selectTournament('created', tournamentA.title, 'edit')
             .assert.assertTournamentForm({
                 inputs: {
@@ -216,6 +217,7 @@ module.exports = {
 
             // verify on My tournaments
             .log('*** Verifying on my tournaments table ***')
+            .click("//a[contains(text(),'My Tournaments')]")
             .assert.assertTournamentTable('created', tournamentB.title, {
                 texts: [tournamentB.date, tournamentB.cardpool, tournamentB.players],
                 labels: ['pending', 'concluded']
@@ -233,6 +235,7 @@ module.exports = {
 
             // delete
             .log('*** Deleting ***')
+            .click("//a[contains(text(),'My Tournaments')]")
             .selectTournament('created', tournamentB.title, 'delete')
 
             .end();
@@ -246,7 +249,6 @@ module.exports = {
             .url(browser.launchUrl)
             .log('*** Logging in ***')
             .login(regularLogin.username, regularLogin.password)
-            .waitForElementVisible('//body', 3000)
 
             // create tournament
             .log('*** Creating Tournament B ***')
@@ -299,6 +301,7 @@ module.exports = {
 
             // verify on My tournaments
             .log('*** Verifying on my tournaments table ***')
+            .click("//a[contains(text(),'My Tournaments')]")
             .assert.assertTournamentTable('created', tournamentB.title, {
                 texts: [tournamentB.date, tournamentB.cardpool, tournamentB.players],
                 labels: ['pending', 'concluded']
@@ -316,6 +319,7 @@ module.exports = {
 
             // edit tournament
             .log('*** Verifying data on edit form ***')
+            .click("//a[contains(text(),'My Tournaments')]")
             .selectTournament('created', tournamentB.title, 'edit')
             .assert.assertTournamentForm({
                 inputs: {
@@ -387,6 +391,7 @@ module.exports = {
 
             // verify on My tournaments
             .log('*** Verifying on tournament details view ***')
+            .click("//a[contains(text(),'My Tournaments')]")
             .assert.assertTournamentTable('created', tournamentA.title, {
                 texts: [tournamentA.date, tournamentA.cardpool],
                 labels: ['pending', 'not yet'], texts_missing: [tournamentB.players]
@@ -404,6 +409,7 @@ module.exports = {
 
             // delete
             .log('*** Deleting ***')
+            .click("//a[contains(text(),'My Tournaments')]")
             .selectTournament('created', tournamentA.title, 'delete')
     },
     'Tournament C online - create, edit, view with validation' : function (browser) {
@@ -414,7 +420,6 @@ module.exports = {
             .url(browser.launchUrl)
             .log('*** Logging in ***')
             .login(regularLogin.username, regularLogin.password)
-            .waitForElementVisible('//body', 3000)
 
             // create tournament
             .log('*** Creating Tournament C ***')
@@ -456,6 +461,7 @@ module.exports = {
 
             // verify on My tournaments
             .log('*** Verifying on my tournaments table ***')
+            .click("//a[contains(text(),'My Tournaments')]")
             .assert.assertTournamentTable('created', tournamentC.title, {
                 texts: [tournamentC.date],
                 labels: ['pending', 'due']
@@ -470,6 +476,7 @@ module.exports = {
 
             // edit tournament
             .log('*** Verifying data on edit form ***')
+            .click("//a[contains(text(),'My Tournaments')]")
             .selectTournament('created', tournamentB.title, 'edit')
             .assert.assertTournamentForm({
                 inputs: {
@@ -537,6 +544,7 @@ module.exports = {
 
             // verify on My tournaments
             .log('*** Verifying on tournament details view ***')
+            .click("//a[contains(text(),'My Tournaments')]")
             .assert.assertTournamentTable('created', tournamentA.title, {
                 texts: [tournamentA.date, tournamentA.cardpool],
                 labels: ['pending', 'not yet'], texts_missing: [tournamentB.players]
@@ -554,6 +562,7 @@ module.exports = {
 
             // delete
             .log('*** Deleting ***')
+            .click("//a[contains(text(),'My Tournaments')]")
             .selectTournament('created', tournamentA.title, 'delete')
     }
 };
