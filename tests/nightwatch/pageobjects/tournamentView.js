@@ -10,11 +10,11 @@ var tournamentViewCommands = {
         for (var property in data) {
             if (data.hasOwnProperty(property)) {
                 if (data[property] === true) {
-                    this.waitForElementVisible('@'+property, 1000);
+                    this.verify.elementPresent('@'+property);
                 } else if (data[property] === false) {
                     this.verify.elementNotPresent('@'+property);
                 } else {
-                    this.api.useXpath().waitForElementVisible(util.format(this.elements[property].selector, data[property]), 1000);
+                    this.api.useXpath().verify.elementPresent(util.format(this.elements[property].selector, data[property]));
                 }
             }
         }
@@ -48,6 +48,53 @@ var tournamentViewCommands = {
         }
 
         return this.api;
+    },
+
+    assertClaim: function(username, rank, topRank, conflictRank, conflictTop, runnerDeck, corpDeck, client) {
+
+        this.log('*** Verifying claim for tournament ***');
+
+        var util = require('util');
+
+        this.api.useXpath().waitForElementVisible(this.elements.playerClaim.selector, 3000);
+
+        // verify swiss
+        var swissClass = conflictRank ? 'danger' : 'info';
+        this.api.useXpath().verify.elementPresent(
+            util.format(this.elements.verifySwissEntry.selector, swissClass, rank, username, runnerDeck, corpDeck));
+
+        // verify top
+        if (topRank > 0) {
+            var topClass = conflictTop ? 'danger' : 'info';
+            this.api.useXpath().verify.elementPresent(
+                util.format(this.elements.verifyTopEntry.selector, topClass, topRank, username, runnerDeck, corpDeck));
+        }
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this.api;
+    },
+
+    assertClaimRemoveButton: function(topTable, username, present, text, client) {
+
+        this.log('*** Verifying claim remove button for tournament ***');
+
+        var util = require('util'),
+            tableId = topTable ? 'entries-top' : 'entries-swiss';
+
+        if (present) {
+            this.api.useXpath().verify.elementPresent(util.format(this.elements.entryRemoveButton.selector, tableId, username, text));
+        } else {
+            this.api.useXpath().verify.elementNotPresent(util.format(this.elements.entryRemoveButton.selector, tableId, username, text));
+        }
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this.api;
     }
 };
 
@@ -66,6 +113,9 @@ module.exports = {
         store: "//p[contains(., '%s')]",
         address: "//p[contains(., '%s')]",
         registeredPlayer: "//ul[@id='registered-players']/li[contains(., '%s')]",
+        verifySwissEntry: "//table[@id='entries-swiss']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]",
+        verifyTopEntry: "//table[@id='entries-top']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]",
+        entryRemoveButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'%s')]",
         map: {
             selector: "//iframe[@id='map']",
             locateStrategy: 'xpath'
@@ -116,6 +166,10 @@ module.exports = {
         },
         submitClaim: {
             selector: "//button[@id='submit-claim']",
+            locateStrategy: 'xpath'
+        },
+        removeClaim: {
+            selector: "//button[@id='remove-claim']",
             locateStrategy: 'xpath'
         },
         claimError: {

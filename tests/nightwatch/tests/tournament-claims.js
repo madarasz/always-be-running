@@ -4,13 +4,21 @@ var tournament = {
     type_id: '6',
     date: '2001.01.01.',
     players_number: '20',
-    top_number: '4',
+    top_number: '4'
+}, claim1 = {
     wrong_rank1: '8',
     wrong_top1: '3',
     wrong_rank2: '2',
     wrong_top2: 'below top cut',
     claim_rank: '2',
-    claim_top: '3'
+    claim_top: '3',
+    runner_deck: 'New Runner Deck',
+    corp_deck: 'New Corp Deck, IG'
+}, claim2 = {
+    try1_rank: '2',
+    try1_toprank: '4',
+    runner_deck: 'Newdromeda',
+    corp_deck: 'Palacsinta'
 };
 
 // TODO: put in module
@@ -98,12 +106,13 @@ module.exports = {
                 conflictWarning: false, playerNumbers: true, topPlayerNumbers: true, playerClaim: false,
                 createClaimFrom: true, topEntriesTable: true, swissEntriesTable: true, dueWarning: false,
                 registeredPlayers: true, noRegisteredPlayers: false, unregisterButtonDisabled: false,
-                unregisterButton: true, registerButton: false, ownClaimInTable: false, conflictInTable: false
+                unregisterButton: true, registerButton: false, ownClaimInTable: false, conflictInTable: false,
+                removeClaim: false
             })
 
             // making a claim by creator with error
             .page.tournamentView().claim({
-                rank: tournament.wrong_rank1, rank_top: tournament.wrong_top1
+                rank: claim1.wrong_rank1, rank_top: claim1.wrong_top1
             })
             // validation error
             .page.tournamentView().assertView({
@@ -111,12 +120,12 @@ module.exports = {
                 conflictWarning: false, playerNumbers: true, topPlayerNumbers: true, playerClaim: false,
                 createClaimFrom: true, topEntriesTable: true, swissEntriesTable: true, dueWarning: false,
                 registeredPlayers: true, noRegisteredPlayers: false, unregisterButtonDisabled: false,
-                unregisterButton: true, registerButton: false, claimError: true,
+                unregisterButton: true, registerButton: false, claimError: true, removeClaim: false,
                 ownClaimInTable: false, conflictInTable: false
             })
             // making a claim by creator with error
             .page.tournamentView().claim({
-                rank: tournament.wrong_rank2, rank_top: tournament.wrong_top2
+                rank: claim1.wrong_rank2, rank_top: claim1.wrong_top2
             })
             // validation error
             .page.tournamentView().assertView({
@@ -124,12 +133,12 @@ module.exports = {
                 conflictWarning: false, playerNumbers: true, topPlayerNumbers: true, playerClaim: false,
                 createClaimFrom: true, topEntriesTable: true, swissEntriesTable: true, dueWarning: false,
                 registeredPlayers: true, noRegisteredPlayers: false, unregisterButtonDisabled: false,
-                unregisterButton: true, registerButton: false, claimError: true,
+                unregisterButton: true, registerButton: false, claimError: true, removeClaim: false,
                 ownClaimInTable: false, conflictInTable: false
             })
             // making correct claim
             .page.tournamentView().claim({
-                rank: tournament.claim_rank, rank_top: tournament.claim_top
+                rank: claim1.claim_rank, rank_top: claim1.claim_top, corp_deck: claim1.corp_deck, runner_deck: claim1.runner_deck
             })
             // validation
             .page.tournamentView().assertView({
@@ -137,13 +146,55 @@ module.exports = {
                 conflictWarning: false, playerNumbers: true, topPlayerNumbers: true, playerClaim: true,
                 createClaimFrom: false, topEntriesTable: true, swissEntriesTable: true, dueWarning: false,
                 registeredPlayers: true, noRegisteredPlayers: false, unregisterButtonDisabled: true,
-                unregisterButton: false, registerButton: false, claimError: false,
+                unregisterButton: false, registerButton: false, claimError: false, removeClaim: true,
                 ownClaimInTable: true, conflictInTable: false
             })
+            .page.tournamentView().assertClaim(
+                regularLogin.username, claim1.claim_rank, claim1.claim_top, false, false,
+                claim1.runner_deck, claim1.corp_deck)
+            .page.tournamentView().assertClaimRemoveButton(true, regularLogin.username, true, 'Remove my claim')
 
             .end();
     },
-    //
+
+    'Tournament claims - register, claim, conflict, claim delete by admin' : function (browser) {
+
+        var adminLogin = browser.globals.adminLogin;
+
+        browser
+            .url(browser.launchUrl)
+            .login(adminLogin.username, adminLogin.password)
+
+            // verify tournament details view
+            .page.mainMenu().selectMenu('admin')
+            .page.tournamentTable().selectTournament('pending', tournament.title, 'view')
+            .page.tournamentView().assertView({
+                title: tournament.title, ttype: tournament.type, date: tournament.date,
+                conflictWarning: false, playerNumbers: true, topPlayerNumbers: true, playerClaim: false,
+                createClaimFrom: true, topEntriesTable: true, swissEntriesTable: true, dueWarning: false,
+                registeredPlayers: true, noRegisteredPlayers: false, unregisterButtonDisabled: false,
+                unregisterButton: false, registerButton: true, claimError: false, removeClaim: false,
+                ownClaimInTable: false, conflictInTable: false
+            })
+
+            // making claim with conflict
+            .page.tournamentView().claim({
+                rank: claim2.try1_rank, rank_top: claim2.try1_toprank, corp_deck: claim2.corp_deck, runner_deck: claim2.runner_deck
+            })
+            .page.tournamentView().assertView({
+                title: tournament.title, ttype: tournament.type, date: tournament.date,
+                conflictWarning: true, playerNumbers: true, topPlayerNumbers: true, playerClaim: true,
+                createClaimFrom: false, topEntriesTable: true, swissEntriesTable: true, dueWarning: false,
+                registeredPlayers: true, noRegisteredPlayers: false, unregisterButtonDisabled: true,
+                unregisterButton: false, registerButton: false, claimError: false, removeClaim: true,
+                ownClaimInTable: true, conflictInTable: true
+            })
+
+            .end();
+
+    }
+
+        //
     //'Tournament approval - admin rejects' : function (browser) {
     //
     //    var adminLogin = browser.globals.adminLogin;

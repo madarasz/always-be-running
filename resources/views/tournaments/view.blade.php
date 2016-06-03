@@ -134,7 +134,8 @@
                             </ul>
                             <div class="text-center">
                                 {!! Form::open(['method' => 'DELETE', 'url' => "/entries/$user_entry->id"]) !!}
-                                    {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove my claim', array('type' => 'submit', 'class' => 'btn btn-danger')) !!}
+                                    {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove my claim',
+                                    array('type' => 'submit', 'class' => 'btn btn-danger', 'id' => 'remove-claim')) !!}
                                 {!! Form::close() !!}
                             </div>
                         {{--Creating new claim--}}

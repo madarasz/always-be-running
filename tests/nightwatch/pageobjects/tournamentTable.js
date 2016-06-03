@@ -10,13 +10,13 @@ var tableCommands = {
 
         if (data.hasOwnProperty('texts')) {
             data.texts.forEach(function(item) {
-                this.api.waitForElementVisible(util.format(this.elements.text.selector, table_id, title, item), 1000);
+                this.api.verify.elementPresent(util.format(this.elements.text.selector, table_id, title, item));
             }, this);
         }
 
         if (data.hasOwnProperty('labels')) {
             data.labels.forEach(function(item) {
-                this.api.waitForElementVisible(util.format(this.elements.label.selector, table_id, title, item), 1000);
+                this.api.verify.elementPresent(util.format(this.elements.label.selector, table_id, title, item));
             }, this);
         }
 
