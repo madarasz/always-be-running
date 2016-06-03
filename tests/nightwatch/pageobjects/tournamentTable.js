@@ -1,6 +1,8 @@
 var tableCommands = {
     assertTable: function(table_id, title, data, callback) {
 
+        this.log('*** Verifying tournament table ('+table_id+'): '+title+' ***');
+
         var util = require('util');
 
         this.api.useXpath()
@@ -32,6 +34,8 @@ var tableCommands = {
     },
 
     selectTournament: function(table_id, title, action, callback) {
+
+        this.log('*** Performing "'+action+'" on tournament table ('+table_id+'): '+title+' ***');
 
         var util = require('util');
 

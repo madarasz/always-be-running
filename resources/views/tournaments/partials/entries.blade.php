@@ -1,4 +1,4 @@
-<table class="table table-condensed table-striped" id="$id">
+<table class="table table-condensed table-striped" id="{{ $id }}">
     <thead>
         <th class="text-right">rank</th>
         <th>player</th>

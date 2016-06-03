@@ -108,7 +108,7 @@
                         <strong>Your claim:</strong><br/><br/>
                         {{--Existing claim--}}
                         @if ($user_entry && $user_entry->rank)
-                            <ul div="player-claim">
+                            <ul id="player-claim">
                                 @if ($tournament->top_number)
                                     <li>Top cut rank:
                                         @if ($user_entry->rank_top)
@@ -217,13 +217,13 @@
                                                 </select>
                                             @else
                                                 <br/>
-                                                <em>You don't have any published decklist on NetrunnerDB.</em>
+                                                <em id="no-decks">You don't have any published decklist on NetrunnerDB.</em>
                                             @endif
                                         </div>
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-success">
+                                    <button type="submit" class="btn btn-success" id="submit-claim">
                                         <i class="fa fa-check-square-o" aria-hidden="true"></i> Claim spot
                                     </button>
                                 </div>

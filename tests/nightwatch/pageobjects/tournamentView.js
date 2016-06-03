@@ -1,5 +1,8 @@
 var tournamentViewCommands = {
     assertView: function(data, client) {
+
+        this.log('*** Verifying tournament view ***');
+
         var util = require('util');
 
         this.api.useXpath().waitForElementVisible('//body', 3000);
@@ -15,6 +18,30 @@ var tournamentViewCommands = {
                 }
             }
         }
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this.api;
+    },
+
+    claim: function(data, client) {
+
+        this.log('*** Creating claim for tournament ***');
+
+        this.api.useXpath().waitForElementVisible(this.elements.createClaimFrom.selector, 3000);
+
+        // set form
+        for (var property in data) {
+            if (data.hasOwnProperty(property)) {
+                this.api.useXpath().click("//select[@id='" + property + "']")
+                    .setValue("//select[@id='" + property + "']", data[property])
+                    .keys(['\uE006']);
+            }
+        }
+        // save claim
+        this.click("@submitClaim");
 
         if (typeof callback === "function"){
             callback.call(client);
@@ -87,12 +114,28 @@ module.exports = {
             selector: "//form[@id='create-claim']",
             locateStrategy: 'xpath'
         },
+        submitClaim: {
+            selector: "//button[@id='submit-claim']",
+            locateStrategy: 'xpath'
+        },
+        claimError: {
+            selector: "//div[@id='error-list']",
+            locateStrategy: 'xpath'
+        },
         topEntriesTable: {
             selector: "//table[@id='entries-top']",
             locateStrategy: 'xpath'
         },
         swissEntriesTable: {
             selector: "//table[@id='entries-swiss']",
+            locateStrategy: 'xpath'
+        },
+        ownClaimInTable: {
+            selector: "//table/tbody/tr[@class='info']",
+            locateStrategy: 'xpath'
+        },
+        conflictInTable: {
+            selector: "//table/tbody/tr[@class='danger']",
             locateStrategy: 'xpath'
         },
         dueWarning: {

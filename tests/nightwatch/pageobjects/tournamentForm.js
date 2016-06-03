@@ -1,5 +1,8 @@
 var tournamentFromCommands = {
     assertForm: function(data, client) {
+
+        this.log('*** Verifying tournament form ***');
+
         var util;
         util = require('util');
 
@@ -64,6 +67,9 @@ var tournamentFromCommands = {
     },
 
     fillForm: function(data, client) {
+
+        this.log('*** Filling out tournament form ***');
+
         for (var property in data) {
             if (data.hasOwnProperty(property)) {
                 switch (property) {
