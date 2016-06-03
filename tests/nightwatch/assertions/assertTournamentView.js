@@ -30,7 +30,20 @@ exports.assertion = function(data) {
             editButton: "//div[@id='control-buttons']/form/a[contains(., 'Edit')]",
             deleteButton: "//div[@id='control-buttons']/form/button[contains(., 'Delete')]",
             approveButton: "//div[@id='control-buttons']/form/a[contains(., 'Approve')]",
-            rejectButton: "//div[@id='control-buttons']/form/a[contains(., 'Reject')]"
+            rejectButton: "//div[@id='control-buttons']/form/a[contains(., 'Reject')]",
+            conflictWarning: "//div[@id='conflict-warning']",
+            playerNumbers: "//div[@id='player-numbers']",
+            topPlayerNumbers: "//span[@id='top-player-numbers']",
+            playerClaim: "//ul[@id='player-claim']",
+            createClaimFrom: "//form[@id='create-claim']",
+            topEntriesTable: "//table[@id='entries-top']",
+            swissEntriesTable: "//table[@id='entries-swiss']",
+            dueWarning: "//div[@id='due-warning']",
+            registeredPlayers: "//ul[@id='registered-players']",
+            noRegisteredPlayers: "//em[@id='no-registered-players']",
+            unregisterButtonDisabled: "//span[@id='unregister-disabled']",
+            unregisterButton: "//a[@id='unregister']",
+            RegisterButton: "//a[@id='register']"
         };
 
         this.api.waitForElementVisible('//body', 3000);

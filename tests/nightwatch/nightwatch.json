@@ -3,7 +3,7 @@
   "output_folder" : "./tests/nightwatch/reports",
   "custom_commands_path" : "./tests/nightwatch/commands",
   "custom_assertions_path" : "./tests/nightwatch/assertions",
-  "page_objects_path" : "",
+  "page_objects_path" : "./tests/nightwatch/pageobjects",
   "globals_path" : "./tests/nightwatch/globals/login-data.js",
   "test_workers" : {"enabled" : false, "workers" : "auto"},
 

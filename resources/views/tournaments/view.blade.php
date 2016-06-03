@@ -7,14 +7,14 @@
             <div class="pull-right" id="control-buttons">
                 {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id"]) !!}
                     {{--Edit--}}
-                    <a href="{{ "/tournaments/$tournament->id/edit" }}" class="btn btn-primary"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                    <a href="{{ "/tournaments/$tournament->id/edit" }}" class="btn btn-primary" id="edit-button"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
                     {{--Approval --}}
                     @if ($user && $user->admin)
-                        <a href="/tournaments/{{ $tournament->id }}/approve" class="btn btn-success"><i class="fa fa-thumbs-up" aria-hidden="true"></i> Approve</a>
-                        <a href="/tournaments/{{ $tournament->id }}/reject" class="btn btn-danger"><i class="fa fa-thumbs-down" aria-hidden="true"></i> Reject</a>
+                        <a href="/tournaments/{{ $tournament->id }}/approve" class="btn btn-success" id="approve-button"><i class="fa fa-thumbs-up" aria-hidden="true"></i> Approve</a>
+                        <a href="/tournaments/{{ $tournament->id }}/reject" class="btn btn-danger" id="reject-button"><i class="fa fa-thumbs-down" aria-hidden="true"></i> Reject</a>
                     @endif
                     {{--Delete--}}
-                    {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Delete tournament', array('type' => 'submit', 'class' => 'btn btn-danger')) !!}
+                    {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Delete tournament', array('type' => 'submit', 'class' => 'btn btn-danger', 'id' => 'reject-button')) !!}
                 {!! Form::close() !!}
             </div>
         @endif
@@ -85,26 +85,30 @@
                 <p>
                     {{--Conflict--}}
                     @if ($tournament->conflict)
-                        <div class="alert alert-danger">
+                        <div class="alert alert-danger" id="conflict-warning">
                             <i class="fa fa-exclamation-triangle text-danger" title="conflict"></i>
                             This tournament has conflicting claims.<br/>
                             Claims can be removed by the tournament creator, admins or claim owners.
                         </div>
                     @endif
                     {{--Player numbers--}}
-                    <strong>Number of players</strong>: {{ $tournament->players_number }}<br/>
-                    @if ($tournament->top_number)
-                        <strong>Top cut players</strong>: {{ $tournament->top_number }}<br/>
-                    @else
-                        <em>only swiss rounds, no top cut</em><br/>
-                    @endif
+                    <div id="player-numbers">
+                        <strong>Number of players</strong>: {{ $tournament->players_number }}<br/>
+                        @if ($tournament->top_number)
+                            <span id="top-player-numbers">
+                                <strong>Top cut players</strong>: {{ $tournament->top_number }}
+                            </span><br/>
+                        @else
+                            <em>only swiss rounds, no top cut</em><br/>
+                        @endif
+                    </div>
                     {{--User claim--}}
                     @if ($user)
                         <hr/>
                         <strong>Your claim:</strong><br/><br/>
                         {{--Existing claim--}}
                         @if ($user_entry && $user_entry->rank)
-                            <ul>
+                            <ul div="player-claim">
                                 @if ($tournament->top_number)
                                     <li>Top cut rank:
                                         @if ($user_entry->rank_top)
@@ -136,7 +140,7 @@
                         {{--Creating new claim--}}
                         @else
                             @include('errors.list')
-                            {!! Form::open(['url' => "/tournaments/$tournament->id/claim"]) !!}
+                            {!! Form::open(['url' => "/tournaments/$tournament->id/claim", 'id' => 'create-claim']) !!}
                                 {!! Form::hidden('top_number', $tournament->top_number) !!}
                                 <div class="row">
                                     <div class="col-xs-12 col-md-6">
@@ -235,17 +239,17 @@
                         <h5>Top cut</h5>
                         @include('tournaments.partials.entries',
                             ['entries' => $entries_top, 'user_entry' => $user_entry, 'rank' => 'rank_top',
-                            'creator' => $tournament->creator])
+                            'creator' => $tournament->creator, 'id' => 'entries-top'])
                         <h5>Swiss rounds</h5>
                     @endif
                     @include('tournaments.partials.entries',
                         ['entries' => $entries_swiss, 'user_entry' => $user_entry, 'rank' => 'rank',
-                        'creator' => $tournament->creator])
+                        'creator' => $tournament->creator, 'id' => 'entries-swiss'])
                 </p>
                 <hr/>
             {{--Tournament is due--}}
             @elseif($tournament->date <= $nowdate)
-                <div class="alert alert-warning">
+                <div class="alert alert-warning" id="due-warning">
                     <i class="fa fa-clock-o" aria-hidden="true"></i>
                     This tournament is due for completion.<br/>
                     The tournament creator should set it to concluded and record player number, so players make claims.
@@ -257,25 +261,25 @@
                 @if (count($entries) > 0)
                     ({{count($entries)}})
                     <br/>
-                    <ul>
+                    <ul id="registered-players">
                     @foreach ($entries as $entry)
                         <li>{{ $entry->player->name }}</li>
                     @endforeach
                     </ul>
                 @else
-                    - <em>no players yet</em>
+                    - <em id="no-registered-players">no players yet</em>
                 @endif
                 <div class="text-center">
                     @if ($user)
                         @if ($user_entry)
                             @if ($user_entry->rank)
-                                <span class="btn btn-danger disabled"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</span><br/>
+                                <span class="btn btn-danger disabled" id="unregister-disabled"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</span><br/>
                                 <small><em>remove your claim first</em></small>
                             @else
-                                <a href="{{"/tournaments/$tournament->id/unregister"}}" class="btn btn-danger"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</a>
+                                <a href="{{"/tournaments/$tournament->id/unregister"}}" class="btn btn-danger" id="unregister"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</a>
                             @endif
                         @else
-                            <a href="{{"/tournaments/$tournament->id/register"}}" class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i> Register</a>
+                            <a href="{{"/tournaments/$tournament->id/register"}}" class="btn btn-primary" id="register"><i class="fa fa-plus-circle" aria-hidden="true"></i> Register</a>
                         @endif
                     @endif
                 </div>

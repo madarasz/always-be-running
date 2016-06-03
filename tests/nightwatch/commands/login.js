@@ -2,6 +2,7 @@ exports.command = function (username, password, callback) {
     var client = this;
 
     client
+        .log("Logging in with: " + username + " ***")
         .useXpath()
         .waitForElementVisible('//body', 3000)
         .windowMaximize('current')
@@ -21,7 +22,6 @@ exports.command = function (username, password, callback) {
                     .clearValue("//input[@id='password']")
                     .setValue("//input[@id='password']", password)
                     .click("//input[@type='submit']")
-                    .waitForElementVisible('//body', 3000)
             }
         })
         .waitForElementVisible("//h3[contains(text(), 'NetrunnerDB Authorization')]", 1000)
