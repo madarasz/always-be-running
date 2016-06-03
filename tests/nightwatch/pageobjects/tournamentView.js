@@ -1,21 +1,6 @@
 var tournamentViewCommands = {
     assertView: function(data, client) {
-        var util;
-        util = require('util');
-
-        var selectors = {
-            title: "//h3[contains(., '%s')]",
-            ttype: "//h3/small[contains(., '%s')]",
-            description: "//div[contains(@class, 'panel-body') and contains(., '%s')]",
-            date: "//h4[contains(., '%s')]",
-            time: "//p[contains(., '%s')]",
-            country: "//h4[contains(., '%s')]",
-            state: "//h4[contains(., '%s')]",
-            city: "//h4[contains(., '%s')]",
-            store: "//p[contains(., '%s')]",
-            address: "//p[contains(., '%s')]",
-            registeredPlayer: "//ul[@id='registered-players']/li[contains(., '%s')]"
-        };
+        var util = require('util');
 
         this.api.useXpath().waitForElementVisible('//body', 3000);
 
@@ -26,7 +11,7 @@ var tournamentViewCommands = {
                 } else if (data[property] === false) {
                     this.verify.elementNotPresent('@'+property);
                 } else {
-                    this.api.useXpath().waitForElementVisible(util.format(selectors[property], data[property]), 1000);
+                    this.api.useXpath().waitForElementVisible(util.format(this.elements[property].selector, data[property]), 1000);
                 }
             }
         }
@@ -43,6 +28,17 @@ var tournamentViewCommands = {
 module.exports = {
     commands: [tournamentViewCommands],
     elements: {
+        title: "//h3[contains(., '%s')]",
+        ttype: "//h3/small[contains(., '%s')]",
+        description: "//div[contains(@class, 'panel-body') and contains(., '%s')]",
+        date: "//h4[contains(., '%s')]",
+        time: "//p[contains(., '%s')]",
+        country: "//h4[contains(., '%s')]",
+        state: "//h4[contains(., '%s')]",
+        city: "//h4[contains(., '%s')]",
+        store: "//p[contains(., '%s')]",
+        address: "//p[contains(., '%s')]",
+        registeredPlayer: "//ul[@id='registered-players']/li[contains(., '%s')]",
         map: {
             selector: "//iframe[@id='map']",
             locateStrategy: 'xpath'

@@ -40,14 +40,14 @@ module.exports = {
             // verify on My tournaments
             .log('*** Verifying on my tournaments table ***')
             .page.mainMenu().selectMenu("my")
-            .assert.assertTournamentTable('created', tournament.title, {
+            .page.tournamentTable().assertTable('created', tournament.title, {
                 texts: [tournament.date],
                 labels: ['pending', 'due']
             })
 
             // verify tournament details view
             .log('*** Verifying on tournament details view ***')
-            .selectTournament('created', tournament.title, 'view')
+            .page.tournamentTable().selectTournament('created', tournament.title, 'view')
 
             .page.tournamentView().assertView({
                 title: tournament.title, ttype: tournament.type, date: tournament.date,
