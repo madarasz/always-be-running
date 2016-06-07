@@ -1,10 +1,43 @@
-@import url(https://fonts.googleapis.com/css?family=Open+Sans);
-
 body {
     padding-top: 50px;
     padding-bottom: 20px;
-    font-family: "Open Sans", sans-serif;
 }
 .panel-heading {
     font-style: italic;
+}
+
+.label {
+    font-style: italic;
+}
+
+.bracket{
+    position: relative;
+    padding: 0.5em 1em 1em 1em;
+    margin: 1em 0em;
+}
+.bracket:before, .bracket:after{
+    content: '';
+    display: block;
+    height: 100%;
+    width: 25px;
+    border: 2px solid #333;
+    position: absolute;
+    top: -5px;
+}
+.bracket:before{ left: 0; border-right: 0; pointer-events: none; }
+.bracket:after{ right: 0; border-left: 0; pointer-events: none; }
+
+.navbar-brand-image {
+    float: left;
+    height: 30px;
+    padding: 0;
+    margin: -5px 5px;
+}
+
+.page-header {
+    border-bottom: 2px solid #000;
+}
+
+.margin-tb {
+    margin: 2em;
 }

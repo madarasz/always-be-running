@@ -1,2 +1,36 @@
- @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+//$body-bg:                #000 !default;
+//$gray-base:              #75c7da !default;
+//$headings-color:         #75c7da;
+//$gray-highlight:         lighten($gray-base, 33.5%) !default;
+//$gray-darker:            darken($gray-base, 13.5%) !default;
+//$gray-dark:              darken($gray-base, 20%) !default;
+//$gray:                   darken($gray-base, 33.5%) !default;
+//$gray-light:             darken($gray-base, 46.7%) !default;
+//$gray-lighter:           darken($gray-base, 93.5%) !default;
+//
+//$brand-primary:         $gray !default;
+//$brand-success:         #5aa75a !default;
+//$brand-info:            $gray !default;
+//$brand-warning:         $gray !default; //#d1a238
+//$brand-danger:          #a61049 !default;
+//$alert-danger-text:     $brand-danger;
+//
+//$table-bg-accent: $gray-light;
+//$table-border-color: $gray-dark;
+//$label-color: $gray-highlight;
+//
+//$panel-bg: $gray-light;
+//$panel-default-text: $gray-base;
+//$panel-default-heading-bg: $gray;
+//$panel-default-border: $gray-base;
+//
+//$input-bg: $gray-lighter;
+//$input-color: $gray-base;
+//$input-border: $gray;
+//$input-border-focus: $gray-base;
+//
+//$navbar-inverse-link-active-bg: $gray-light !default;
+
+$font-family-sans-serif: 'Titillium Web' !default;
+@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 

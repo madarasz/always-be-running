@@ -25,12 +25,6 @@
     <div class="row">
         {{--Tournament info--}}
         <div class="col-md-4 col-xs-12">
-            <h4>
-                @unless($tournament->tournament_type_id == 6)
-                    {{ $tournament->location_city }}, {{$tournament->location_country == 840 && $tournament->location_us_state !=52 ? "$state_name, " : ''}}{{ $country_name }} -
-                @endunless
-                {{ $tournament->date }}<br/>
-            </h4>
             {{--Approval--}}
             @if ($tournament->approved === null)
                 <div class="alert alert-warning" id="approval-needed">
@@ -46,6 +40,13 @@
                     Please try to fix the issue.
                 </div>
             @endif
+            {{--Location, date--}}
+            <h4>
+                @unless($tournament->tournament_type_id == 6)
+                    {{ $tournament->location_city }}, {{$tournament->location_country == 840 && $tournament->location_us_state !=52 ? "$state_name, " : ''}}{{ $country_name }} -
+                @endunless
+                date: {{ $tournament->date }}<br/>
+            </h4>
             {{--Details--}}
             <p><strong>Legal cardpool up to:</strong> <em>{{ $tournament->cardpool->name }}</em></p>
             @unless($tournament->description === '')
@@ -82,7 +83,6 @@
         {{--Standings and claims--}}
         <div class="col-md-8 col-xs-12">
             @if ($tournament->concluded)
-                <p>
                     {{--Conflict--}}
                     @if ($tournament->conflict)
                         <div class="alert alert-danger" id="conflict-warning">
@@ -231,23 +231,18 @@
                             {!! Form::close() !!}
                         @endif
                     @endif
-
-                </p>
-                <hr/>
                 {{--Tables of tournament standings --}}
-                <p>
-                    @if ($tournament->top_number)
-                        <h5>Top cut</h5>
-                        @include('tournaments.partials.entries',
-                            ['entries' => $entries_top, 'user_entry' => $user_entry, 'rank' => 'rank_top',
-                            'creator' => $tournament->creator, 'id' => 'entries-top'])
-                        <h5>Swiss rounds</h5>
-                    @endif
+                @if ($tournament->top_number)
+                    <h5>Top cut</h5>
                     @include('tournaments.partials.entries',
-                        ['entries' => $entries_swiss, 'user_entry' => $user_entry, 'rank' => 'rank',
-                        'creator' => $tournament->creator, 'id' => 'entries-swiss'])
-                </p>
-                <hr/>
+                        ['entries' => $entries_top, 'user_entry' => $user_entry, 'rank' => 'rank_top',
+                        'creator' => $tournament->creator, 'id' => 'entries-top'])
+                    <hr/>
+                @endif
+                <h5>Swiss rounds</h5>
+                @include('tournaments.partials.entries',
+                    ['entries' => $entries_swiss, 'user_entry' => $user_entry, 'rank' => 'rank',
+                    'creator' => $tournament->creator, 'id' => 'entries-swiss'])
             {{--Tournament is due--}}
             @elseif($tournament->date <= $nowdate)
                 <div class="alert alert-warning" id="due-warning">

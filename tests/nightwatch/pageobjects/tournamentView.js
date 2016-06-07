@@ -95,6 +95,22 @@ var tournamentViewCommands = {
         }
 
         return this.api;
+    },
+
+    removeClaimOfUser: function(username, client) {
+
+        this.log('*** Removing claim of user: '+username+' ***');
+
+        var util = require('util');
+
+        this.api.useXpath().click(util.format(this.elements.entryRemoveButton.selector, 'entries-swiss', username, 'Remove'))
+            .pause(1000);
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this.api;
     }
 };
 
@@ -113,8 +129,8 @@ module.exports = {
         store: "//p[contains(., '%s')]",
         address: "//p[contains(., '%s')]",
         registeredPlayer: "//ul[@id='registered-players']/li[contains(., '%s')]",
-        verifySwissEntry: "//table[@id='entries-swiss']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]",
-        verifyTopEntry: "//table[@id='entries-top']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]",
+        verifySwissEntry: "//table[@id='entries-swiss']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
+        verifyTopEntry: "//table[@id='entries-top']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
         entryRemoveButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'%s')]",
         map: {
             selector: "//iframe[@id='map']",

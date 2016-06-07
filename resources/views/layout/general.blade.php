@@ -3,7 +3,7 @@
 <head>
     <title>AlwaysBeRunning.Net - Tournaments - Decklists - Netrunner</title>
     <link rel="stylesheet" href="/css/all.css">
-
+    <link href='https://fonts.googleapis.com/css?family=Titillium+Web' rel='stylesheet' type='text/css'>
 </head>
 <body>
 

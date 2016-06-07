@@ -1,8 +1,8 @@
 <div class="row">
     <div class="col-xs-12 col-md-8">
-        <div class="panel panel-default">
-            <div class="panel-heading">general</div>
-            <div class="panel-body">
+        <div class="bracket">
+            {{--<div class="panel-heading">general</div>--}}
+            {{--<div class="panel-body">--}}
                 {{--Title--}}
                 <div class="form-group">
                     {!! Html::decode(Form::label('title', 'Tournament title<sup class="text-danger">*</sup>')) !!}
@@ -39,11 +39,11 @@
                     {!! Form::textarea('description', old('description', $tournament->description),
                         ['rows' => 6, 'cols' => '', 'class' => 'form-control', 'placeholder' => 'additional information and rules, prizepool, TO contact, etc.']) !!}
                 </div>
-            </div>
+            {{--</div>--}}
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">conclusion</div>
-            <div class="panel-body">
+        <div class="bracket">
+            {{--<div class="panel-heading">conclusion</div>--}}
+            {{--<div class="panel-body">--}}
                 {{--Conclusion--}}
                 <div class="form-group">
                     {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), [1, 'on'], true),
@@ -68,13 +68,13 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            {{--</div>--}}
         </div>
     </div>
     <div class="col-xs-12 col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">date, time, location</div>
-            <div class="panel-body">
+        <div class="bracket">
+            {{--<div class="panel-heading">date, time, location</div>--}}
+            {{--<div class="panel-body">--}}
                 {{--Date--}}
                 <div class="form-group">
                     {!! Html::decode(Form::label('date', 'Date<sup class="text-danger">*</sup>')) !!}
@@ -127,7 +127,7 @@
                     <iframe id="map" width="100%" frameborder="0" style="border:0" class="hidden"
                             src="{{ "https://www.google.com/maps/embed/v1/search?q=Europe&key=".ENV('GOOGLE_MAPS_API') }}" allowfullscreen></iframe>
                 </div>
-            </div>
+            {{--</div>--}}
         </div>
     </div>
 

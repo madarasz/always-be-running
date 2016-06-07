@@ -2,7 +2,9 @@
 
 Route::get('/', 'PagesController@home');
 
-Route::get('my', 'TournamentsController@my');
+Route::get('organize', 'TournamentsController@organize');
+Route::get('discover', 'TournamentsController@discover');
+Route::get('results', 'TournamentsController@results');
 Route::get('admin', 'AdminController@lister');
 Route::get('admin/identities/update', 'NetrunnerDBController@requestIdentities');
 Route::get('admin/cycles/update', 'NetrunnerDBController@requestCycles');

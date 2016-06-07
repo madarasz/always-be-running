@@ -28,7 +28,17 @@ class TournamentsController extends Controller
 
     public function index()
     {
-        return view('home');    // TODO: page redirect
+        return view('home');
+    }
+
+    public function discover()
+    {
+        return view('discover');
+    }
+
+    public function results()
+    {
+        return view('results');
     }
 
     /**
@@ -169,7 +179,7 @@ class TournamentsController extends Controller
      * @param Request $request
      * @return view
      */
-    public function my(Request $request)
+    public function organize(Request $request)
     {
         $this->authorize('logged_in', Tournament::class, $request->user());
         $user = $request->user()->id;
@@ -187,7 +197,7 @@ class TournamentsController extends Controller
             }
         }
         $message = session()->has('message') ? session('message') : '';
-        return view('my', compact('user', 'created', 'nowdate', 'registered', 'message'));
+        return view('organize', compact('user', 'created', 'nowdate', 'registered', 'message'));
     }
 
 }
