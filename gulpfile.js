@@ -23,10 +23,13 @@ elixir(function(mix) {
         .scripts([
             "jquery-2.2.3.min.js",
             "main.js",
-            "bootstrap.min.js"
+            "bootstrap.min.js",
+            "jquery.calendario.js"
         ])
         .styles([
             'font-awesome.css',
+            'calendar.css',
+            'calendario_abr.css',
             '../../../public/css/app.css',
             'main.css'
         ]);

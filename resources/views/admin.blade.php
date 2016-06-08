@@ -8,14 +8,14 @@
             <div class="bracket">
             @include('tournaments.partials.table',
                 ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
-                    'action_view', 'action_edit', 'action_approve', 'action_reject', 'action_delete' ],
+                    'action_edit', 'action_approve', 'action_reject', 'action_delete' ],
                 'data' => $to_approve, 'title' => 'Pending/Rejected tournaments',
                 'empty_message' => 'no pending tournaments', 'id' => 'pending'])
             </div>
             <div class="bracket">
             @include('tournaments.partials.table',
                 ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
-                    'action_view', 'action_edit', 'action_restore'],
+                    'action_edit', 'action_restore'],
                 'data' => $deleted, 'title' => 'Deleted tournaments',
                 'empty_message' => 'no deleted tournaments', 'id' => 'deleted'])
             </div>

@@ -25,6 +25,7 @@
     <div class="row">
         {{--Tournament info--}}
         <div class="col-md-4 col-xs-12">
+            <div class="bracket">
             {{--Approval--}}
             @if ($tournament->approved === null)
                 <div class="alert alert-warning" id="approval-needed">
@@ -79,9 +80,11 @@
                     window.addEventListener("load", initPage, false);
                 </script>
             @endif
+            </div>
         </div>
         {{--Standings and claims--}}
         <div class="col-md-8 col-xs-12">
+            <div class="bracket">
             @if ($tournament->concluded)
                     {{--Conflict--}}
                     @if ($tournament->conflict)
@@ -252,34 +255,33 @@
                 </div>
             @endif
             {{--List of registered players--}}
-            <p>
-                <strong>Registered players</strong>
-                @if (count($entries) > 0)
-                    ({{count($entries)}})
-                    <br/>
-                    <ul id="registered-players">
-                    @foreach ($entries as $entry)
-                        <li>{{ $entry->player->name }}</li>
-                    @endforeach
-                    </ul>
-                @else
-                    - <em id="no-registered-players">no players yet</em>
-                @endif
-                <div class="text-center">
-                    @if ($user)
-                        @if ($user_entry)
-                            @if ($user_entry->rank)
-                                <span class="btn btn-danger disabled" id="unregister-disabled"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</span><br/>
-                                <small><em>remove your claim first</em></small>
-                            @else
-                                <a href="{{"/tournaments/$tournament->id/unregister"}}" class="btn btn-danger" id="unregister"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</a>
-                            @endif
+            <strong>Registered players</strong>
+            @if (count($entries) > 0)
+                ({{count($entries)}})
+                <br/>
+                <ul id="registered-players">
+                @foreach ($entries as $entry)
+                    <li>{{ $entry->player->name }}</li>
+                @endforeach
+                </ul>
+            @else
+                - <em id="no-registered-players">no players yet</em>
+            @endif
+            <div class="text-center">
+                @if ($user)
+                    @if ($user_entry)
+                        @if ($user_entry->rank)
+                            <span class="btn btn-danger disabled" id="unregister-disabled"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</span><br/>
+                            <small><em>remove your claim first</em></small>
                         @else
-                            <a href="{{"/tournaments/$tournament->id/register"}}" class="btn btn-primary" id="register"><i class="fa fa-plus-circle" aria-hidden="true"></i> Register</a>
+                            <a href="{{"/tournaments/$tournament->id/unregister"}}" class="btn btn-danger" id="unregister"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</a>
                         @endif
+                    @else
+                        <a href="{{"/tournaments/$tournament->id/register"}}" class="btn btn-primary" id="register"><i class="fa fa-plus-circle" aria-hidden="true"></i> Register</a>
                     @endif
-                </div>
-            </p>
+                @endif
+            </div>
+            </div>
         </div>
     </div>
 @stop

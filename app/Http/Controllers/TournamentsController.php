@@ -23,7 +23,7 @@ class TournamentsController extends Controller
         $this->authorize('logged_in', Tournament::class, $request->user());
         $request->sanitize_data($request->user()->id);
         Tournament::create($request->all());
-        return redirect()->action('TournamentsController@my')->with('message', 'Tournament created.');
+        return redirect()->action('TournamentsController@organize')->with('message', 'Tournament created.');
     }
 
     public function index()
@@ -33,12 +33,31 @@ class TournamentsController extends Controller
 
     public function discover()
     {
-        return view('discover');
+        $tournament_types = TournamentType::pluck('type_name', 'id')->all();
+        $countries = Country::orderBy('name')->pluck('name', 'id')->all();
+        $us_states = UsState::orderBy('name')->pluck('name', 'id')->all();
+        $message = session()->has('message') ? session('message') : '';
+        $tournaments = Tournament::orderBy('date')->get();
+        return view('discover', compact('message', 'tournament_types', 'countries', 'us_states', 'tournaments'));
     }
 
-    public function results()
+    public function results(Request $request)
     {
-        return view('results');
+        $user = $request->user()->id;
+        $entries = Entry::where('user', $user)->orderBy('updated_at', 'desc')->get();
+        $registered = [];
+        foreach ($entries as $entry)
+        {
+            $stuff = $entry->tournament;
+            if ($stuff && $stuff->approved !== 0)
+            {
+                $stuff['claim'] = $entry->rank > 0;
+                array_push($registered, $stuff);
+            }
+        }
+        $nowdate = date('Y.m.d.');
+        $message = session()->has('message') ? session('message') : '';
+        return view('results', compact('registered', 'message', 'nowdate'));
     }
 
     /**
@@ -87,7 +106,7 @@ class TournamentsController extends Controller
         $this->authorize('own', $tournament, $request->user());
         $request->sanitize_data();
         $tournament->update($request->all());
-        return redirect()->action('TournamentsController@my')->with('message', 'Tournament updated.');
+        return redirect()->action('TournamentsController@organize')->with('message', 'Tournament updated.');
     }
 
     /**
@@ -175,7 +194,7 @@ class TournamentsController extends Controller
     }
 
     /**
-     * Show my tournamnets page.
+     * Show organize tournamnets page.
      * @param Request $request
      * @return view
      */

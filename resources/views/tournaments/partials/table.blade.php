@@ -1,4 +1,9 @@
-<h4>{{ $title }}</h4>
+<h4>
+    @unless (empty($icon))
+        <i class="fa {{ $icon }}" aria-hidden="true"></i>
+    @endunless
+    {{ $title }}
+</h4>
 <table class="table table-condensed table-striped" id="{{ $id }}">
     <thead>
         @if( in_array('title', $columns) )
@@ -6,6 +11,9 @@
         @endif
         @if( in_array('date', $columns) )
             <th>date</th>
+        @endif
+        @if( in_array('location', $columns) )
+            <th>location</th>
         @endif
         @if( in_array('cardpool', $columns) )
             <th>cardpool</th>
@@ -51,10 +59,23 @@
         @foreach ($data as $row)
             <tr>
                 @if( in_array('title', $columns) )
-                    <td>{{ $row->title }}</td>
+                    <td><a href="/tournaments/{{ $row->id }}">{{ $row->title }}</a></td>
                 @endif
                 @if( in_array('date', $columns) )
                     <td>{{ $row->date }}</td>
+                @endif
+                @if( in_array('location', $columns) )
+                    <td>
+                        @if ($row->tournament_type_id == 6)
+                            <em>online</em>
+                        @else
+                            {{ $row->country->name }},
+                            @if ($row->location_us_state < 52)
+                                {{ $row->state->name }},
+                            @endif
+                            {{ $row->location_city }}
+                        @endif
+                    </td>
                 @endif
                 @if( in_array('cardpool', $columns) )  
                     <td>{{ $row->cardpool->name }}</td>
@@ -62,7 +83,7 @@
                 @if( in_array('approval', $columns) )
                     <td class="text-center">
                         @if ($row->approved === null)
-                            <i class="fa fa-question-circle-o text-warning" aria-hidden="true"></i>
+                            {{--<i class="fa fa-question-circle-o text-warning" aria-hidden="true"></i>--}}
                             <span class="label label-warning">pending</span>
                         @elseif ($row->approved == 1)
                             <span class="label label-success">approved</span>
@@ -100,6 +121,8 @@
                     <td class="text-center">
                         @if ($row->concluded == 1)
                             {{ $row->players_number }}
+                        @else
+                            {{ count($row->entries) }}
                         @endif
                     </td>
                 @endif

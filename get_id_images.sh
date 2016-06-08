@@ -1,5 +1,5 @@
 #!/bin/bash
-# download identity thumbnails from NetrunnerDB
+echo Downloading identity thumbnails from NetrunnerDB
 
 curl https://netrunnerdb.com/api/cards/ > cards.json
 cards=( $(cat cards.json | jq -r '.[].imagesrc' ) )

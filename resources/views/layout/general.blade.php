@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
     <title>AlwaysBeRunning.Net - Tournaments - Decklists - Netrunner</title>
     <link rel="stylesheet" href="/css/all.css">
     <link href='https://fonts.googleapis.com/css?family=Titillium+Web' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="/js/all.js"></script>
 </head>
 <body>
 
@@ -13,6 +14,5 @@
     @yield('content')
     </div>
 
-    <script type="text/javascript" src="/js/all.js"></script>
 </body>
 </html>
