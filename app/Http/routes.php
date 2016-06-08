@@ -24,3 +24,5 @@ Route::delete('entries/{id}', 'EntriesController@unclaim');
 
 Route::get('/oauth2/redirect', 'NetrunnerDBController@login');
 Route::get('/logout', 'NetrunnerDBController@logout');
+
+Route::get('/api/tournaments', 'TournamentsController@tournamentJSON');

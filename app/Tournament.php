@@ -37,4 +37,12 @@ class Tournament extends Model
     public function cardpool() {
         return $this->hasOne(CardPack::class, 'id', 'cardpool_id');
     }
+
+    public function registration_number() {
+        return $this->entries()->count();
+    }
+
+    public function claim_number() {
+        return $this->entries()->whereNotNull('rank')->count();
+    }
 }

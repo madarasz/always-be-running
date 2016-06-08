@@ -38,7 +38,8 @@ class TournamentsController extends Controller
         $us_states = UsState::orderBy('name')->pluck('name', 'id')->all();
         $message = session()->has('message') ? session('message') : '';
         $tournaments = Tournament::orderBy('date')->get();
-        return view('discover', compact('message', 'tournament_types', 'countries', 'us_states', 'tournaments'));
+        $nowdate = date('Y.m.d.'); // TODO: remove
+        return view('discover', compact('message', 'nowdate', 'tournament_types', 'countries', 'us_states', 'tournaments'));
     }
 
     public function results(Request $request)
@@ -217,6 +218,92 @@ class TournamentsController extends Controller
         }
         $message = session()->has('message') ? session('message') : '';
         return view('organize', compact('user', 'created', 'nowdate', 'registered', 'message'));
+    }
+
+    /**
+     * JSON API for listing tournaments.
+     * @param Request $request GET parameters:
+     *      approved, concluded, start, end, type, country, state, deleted, creator, user
+     * @return mixed JSON result
+     */
+    public function tournamentJSON(Request $request) {
+        // initial query
+        $tournaments = Tournament::orderBy('date')
+            ->with(array('country' => function($query){
+                $query->select('id', 'name');
+            }, 'tournament_type' => function($query){
+                $query->select('id', 'type_name');
+            }, 'state' => function($query){
+                $query->select('id', 'name');
+            }, 'cardpool' => function($query){
+                $query->select('id', 'name');
+            }));
+
+        // filtering
+        if (!is_null($request->input('approved'))) {
+            $tournaments = $tournaments->where('approved',$request->input('approved'));
+        }
+        if ($request->input('start')) {
+            $tournaments = $tournaments->where('date', '>=', $request->input('start'));
+        }
+        if ($request->input('end')) {
+            $tournaments = $tournaments->where('date', '<=', $request->input('end'));
+        }
+        if (!is_null($request->input('concluded'))) {
+            $tournaments = $tournaments->where('concluded', $request->input('concluded'));
+        }
+        if ($request->input('type')) {
+            $tournaments = $tournaments->where('tournament_type_id', $request->input('type'));
+        }
+        if ($request->input('country')) {
+            $tournaments = $tournaments->where('location_country', $request->input('country'));
+        }
+        if ($request->input('state')) {
+            $tournaments = $tournaments->where('location_us_state', $request->input('state'));
+        }
+        if ($request->input('creator')) {
+            $tournaments = $tournaments->where('creator', $request->input('creator'));
+        }
+        if ($request->input('deleted')) {
+            $tournaments = $tournaments->whereNotNull('deleted_at');
+        }
+
+        $tournaments = $tournaments->select('id', 'title', 'location_country', 'location_us_state', 'tournament_type_id', 'location_city',
+                'date', 'players_number', 'cardpool_id', 'concluded', 'approved', 'conflict')->get();
+
+        // modify and flatten result
+        $result = [];
+        foreach($tournaments as $tournament) {
+            if ($tournament->tournament_type_id == 6) {
+                $location = 'online';
+            } else if ($tournament->location_us_state < 52) {
+                $location = $tournament->country['name'].', '.$tournament->state['name'].', '.$tournament->location_city;
+            } else {
+                $location = $tournament->country['name'].', '.$tournament->location_city;
+            }
+            array_push($result, [
+                'id' => $tournament->id,
+                'title' => $tournament->title,
+                'type' => $tournament->tournament_type['type_name'],
+                'date' => $tournament->date,
+                'cardpool' => $tournament->cardpool['name'],
+                'location' => $location,
+                'concluded' => $tournament->concluded == 1,
+                'approved' => $tournament->approved == 1,
+                'players_count' => $tournament->players_number,
+                'registration_count' => $tournament->registration_number(),
+                'claim_count' => $tournament->claim_number(),
+                'claim_conflict' => $tournament->conflict == 1
+            ]);
+
+            // user specific claim
+            if ($request->input('user')) {
+                $entry = Entry::where('tournament_id', $tournament->id)->where('user', $request->input('user'))
+                    ->whereNotNull('rank')->first();
+                $result[count($result)-1]['user_claim'] = !is_null($entry);
+            }
+        }
+        return response()->json($result);
     }
 
 }

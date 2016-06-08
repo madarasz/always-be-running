@@ -37,10 +37,226 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="bracket">
-                @include('tournaments.partials.table',
-                ['columns' => ['title', 'location', 'date', 'players', 'cardpool' ],
+                @include('tournaments.partials.tabledin',
+                ['columns' => ['title', 'location', 'date', 'players', 'cardpool'],
                 'data' => $tournaments, 'title' => 'Upcoming tournaments',
-                'empty_message' => 'no tournaments to show', 'id' => 'discover-table', 'icon' => 'fa-list-alt'])
+                 'id' => 'discover-table', 'icon' => 'fa-list-alt'])
+                <script type="text/javascript">
+                    $.ajax({
+                        url: '/api/tournaments?user=1276',
+                        dataType: "json",
+                        async: true,
+                        success: function (data) {
+                            updateTournamentTable(data, ['title', 'date', 'location', 'cardpool', 'players'], 'no tournaments to show');
+                        }
+                    });
+
+                    function updateTournamentTable(data, columns, emptyMessage) {
+                        $('#discover-table').find('tbody').empty();
+                        $.each(data, function (index, element) {
+                            newrow = $('<tr>').appendTo('#discover-table > tbody');
+
+                            // if zero rows
+                            if (data.length == 0) {
+                                newrow.append($('<td>', {
+                                    text: emptyMessage,
+                                    colspan: columns.length,
+                                    'class': 'text-center'
+                                }));
+                                return 0;
+                            }
+
+                            // title
+                            if ($.inArray('title', columns) > -1) {
+                                newrow.append($('<td>').append($('<a>', {
+                                    text: element.title,
+                                    href: '/tournaments/' + element.id
+                                })));
+                            }
+                            // date
+                            if ($.inArray('date', columns) > -1) {
+                                newrow.append($('<td>', {
+                                    text: element.date
+                                }));
+                            }
+                            // location
+                            if ($.inArray('location', columns) > -1) {
+                                newrow.append($('<td>', {
+                                    text: element.location
+                                }));
+                            }
+                            // cardpool
+                            if ($.inArray('cardpool', columns) > -1) {
+                                newrow.append($('<td>', {
+                                    text: element.cardpool
+                                }));
+                            }
+                            // approved
+                            if ($.inArray('approval', columns) > -1) {
+                                cell = $('<td>', {
+                                    'class': 'text-center'
+                                }).appendTo(newrow);
+
+                                if (element.approved === null) {
+                                    cell.append($('<span>', {
+                                        text: 'pending',
+                                        'class': 'label label-warning'
+                                    }));
+                                } else if (element.approved) {
+                                    cell.append($('<span>', {
+                                        text: 'approved',
+                                        'class': 'label label-success'
+                                    }));
+                                } else {
+                                    cell.append($('<i>', {
+                                        'aria-hidden': true,
+                                        'class': 'fa fa-thumbs-down text-danger'
+                                    }), ' ', $('<span>', {
+                                        text: 'rejected',
+                                        'class': 'label label-danger'
+                                    }));
+                                }
+                            }
+                            // claim
+                            if ($.inArray('user_claim', columns) > -1) {
+                                cell = $('<td>', {
+                                    'class': 'text-center'
+                                }).appendTo(newrow);
+
+                                if (element.user_claim) {
+                                    cell.append($('<span>', {
+                                        text: 'claimed',
+                                        'class': 'label label-success'
+                                    }));
+                                } else if (element.concluded) {
+                                    cell.append($('<i>', {
+                                        'aria-hidden': true,
+                                        'class': 'fa fa-clock-o text-danger'
+                                    }), ' ', $('<span>', {
+                                        text: 'please claim',
+                                        'class': 'label label-danger'
+                                    }));
+                                } else {
+                                    cell.append($('<span>', {
+                                        text: 'registered',
+                                        'class': 'label label-info'
+                                    }));
+                                }
+                            }
+                            // conclusion
+                            if ($.inArray('conclusion', columns) > -1) {
+                                cell = $('<td>', {
+                                    'class': 'text-center'
+                                }).appendTo(newrow);
+
+                                if (element.concluded) {
+                                    cell.append($('<span>', {
+                                        text: 'concluded',
+                                        'class': 'label label-success'
+                                    }));
+                                } else if (element.date <= '{{ $nowdate }}') {
+                                    cell.append($('<i>', {
+                                        'aria-hidden': true,
+                                        'class': 'fa fa-clock-o text-danger'
+                                    }), ' ', $('<span>', {
+                                        text: 'due, pls update',
+                                        'class': 'label label-danger'
+                                    }));
+                                } else {
+                                    cell.append($('<span>', {
+                                        text: 'not yet',
+                                        'class': 'label label-info'
+                                    }));
+                                }
+                            }
+                            // players
+                            if ($.inArray('players', columns) > -1) {
+                                newrow.append($('<td>', {
+                                    text: element.concluded ? element.players_count : element.registration_count,
+                                    'class': 'text-center'
+                                }));
+                            }
+                            // claims
+                            if ($.inArray('claims', columns) > -1) {
+                                cell = $('<td>', {
+                                    'class': 'text-center'
+                                }).appendTo(newrow);
+
+                                if (element.claim_conflict) {
+                                    cell.append($('<i>', {
+                                        'title': 'conflict',
+                                        'class': 'fa fa-exclamation-triangle text-danger'
+                                    }), ' ');
+                                }
+
+                                cell.append(element.claim_count);
+
+                            }
+                            // action_edit
+                            if ($.inArray('action_edit', columns) > -1) {
+                                newrow.append($('<td>').append($('<a>', {
+                                    'class': 'btn btn-primary btn-xs',
+                                    href: '/tournaments/' + element.id + '/edit'
+                                }).append($('<i>', {
+                                    'class': 'fa fa-pencil',
+                                    'aria-hidden': true
+                                }), ' edit')));
+                            }
+                            // action_approve
+                            if ($.inArray('action_approve', columns) > -1) {
+                                newrow.append($('<td>').append($('<a>', {
+                                    'class': 'btn btn-success btn-xs',
+                                    href: '/tournaments/' + element.id + '/approve'
+                                }).append($('<i>', {
+                                    'class': 'fa fa-thumbs-up',
+                                    'aria-hidden': true
+                                }), ' approve')));
+                            }
+                            // action_reject
+                            if ($.inArray('action_reject', columns) > -1) {
+                                newrow.append($('<td>').append($('<a>', {
+                                    'class': 'btn btn-danger btn-xs',
+                                    href: '/tournaments/' + element.id + '/reject'
+                                }).append($('<i>', {
+                                    'class': 'fa fa-thumbs-down',
+                                    'aria-hidden': true
+                                }), ' reject')));
+                            }
+                            // action_restore
+                            if ($.inArray('action_restore', columns) > -1) {
+                                newrow.append($('<td>').append($('<a>', {
+                                    'class': 'btn btn-primary btn-xs',
+                                    href: '/tournaments/' + element.id + '/restore'
+                                }).append($('<i>', {
+                                    'class': 'fa fa-recycle',
+                                    'aria-hidden': true
+                                }), ' restore')));
+                            }
+                            // action_delete
+                            if ($.inArray('action_delete', columns) > -1) {
+                                newrow.append($('<td>').append($('<form>', {
+                                    method: 'POST',
+                                    action: '/tournaments/' + element.id
+                                }).append($('<input>', {
+                                    name: '_method',
+                                    type: 'hidden',
+                                    value: 'DELETE'
+                                }), $('<input>', {
+                                    name: '_token',
+                                    type: 'hidden',
+                                    value: '{{ csrf_token() }}'
+                                }), $('<button>', {
+                                    type: 'submit',
+                                    'class': 'btn btn-danger btn-xs'
+                                }).append($('<i>', {
+                                    'class': 'fa fa-trash',
+                                    'aria-hidden': true
+                                }), ' delete'))));
+                            }
+
+                        }, columns, emptyMessage);
+                    }
+                </script>
             </div>
         </div>
     </div>
