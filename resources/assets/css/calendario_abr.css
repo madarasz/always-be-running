@@ -258,7 +258,8 @@
 }
 
 .fc-calendar .fc-row > div > div a,
-.fc-calendar .fc-row > div > div span {
+.fc-calendar .fc-row > div > div span,
+.fc-calendar .fc-row > div > div small {
 	display: none;
 	font-size: 22px;
 }
