@@ -34,6 +34,7 @@ class TournamentsController extends Controller
     public function discover()
     {
         $tournament_types = TournamentType::pluck('type_name', 'id')->all();
+        $tournament_types = [0 => '---'] + $tournament_types;
         $countries = Country::orderBy('name')->pluck('name', 'id')->all();
         $us_states = UsState::orderBy('name')->pluck('name', 'id')->all();
         $message = session()->has('message') ? session('message') : '';
@@ -269,11 +270,12 @@ class TournamentsController extends Controller
         }
 
         $tournaments = $tournaments->select('id', 'title', 'location_country', 'location_us_state', 'tournament_type_id', 'location_city',
-                'date', 'players_number', 'cardpool_id', 'concluded', 'approved', 'conflict')->get();
+                'date', 'players_number', 'cardpool_id', 'concluded', 'approved', 'conflict', 'location_store', 'location_address')->get();
 
         // modify and flatten result
         $result = [];
         foreach($tournaments as $tournament) {
+            // location
             if ($tournament->tournament_type_id == 6) {
                 $location = 'online';
             } else if ($tournament->location_us_state < 52) {
@@ -281,6 +283,13 @@ class TournamentsController extends Controller
             } else {
                 $location = $tournament->country['name'].', '.$tournament->location_city;
             }
+            $location_full = $location;
+            if ($tournament->location_address) {
+                $location_full = $location_full.', '.$tournament->location_address;
+            } else if ($tournament->location_store) {
+                $location_full = $location_full.', '.$tournament->location_store;
+            }
+
             array_push($result, [
                 'id' => $tournament->id,
                 'title' => $tournament->title,
@@ -288,6 +297,7 @@ class TournamentsController extends Controller
                 'date' => $tournament->date,
                 'cardpool' => $tournament->cardpool['name'],
                 'location' => $location,
+                'location_full' => $location_full,
                 'concluded' => $tournament->concluded == 1,
                 'approved' => $tournament->approved == 1,
                 'players_count' => $tournament->players_number,
