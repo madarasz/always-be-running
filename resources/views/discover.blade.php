@@ -12,21 +12,21 @@
                         <div class="form-group">
                             {!! Form::label('tournament_type_id', 'Type') !!}
                             {!! Form::select('tournament_type_id', $tournament_types,
-                                null, ['class' => 'form-control', 'onchange' => '']) !!}
+                                null, ['class' => 'form-control', 'onchange' => 'filterDiscover()', 'disabled' => '']) !!}
                         </div>
                     </div>
                     <div class="col-md-4 col-xs-12">
                         <div class="form-group">
                             {!! Form::label('location_country', 'Country') !!}
                             {!! Form::select('location_country', $countries, null,
-                                ['class' => 'form-control', 'onchange' => '']) !!}
+                                ['class' => 'form-control', 'onchange' => 'filterDiscover()', 'disabled' => '']) !!}
                         </div>
                     </div>
                     <div class="col-md-4 col-xs-12">
                         <div class="form-group">
                             {!! Form::label('location_us_state', 'State') !!}
                             {!! Form::select('location_us_state', $us_states,
-                                        null, ['class' => 'form-control', 'onchange'=>'']) !!}
+                                        null, ['class' => 'form-control', 'onchange'=>'filterDiscover()', 'disabled' => '']) !!}
                         </div>
                     </div>
                 </div>
@@ -38,8 +38,8 @@
         <div class="col-xs-12">
             <div class="bracket">
                 @include('tournaments.partials.tabledin',
-                ['columns' => ['title', 'location', 'date', 'players', 'cardpool'],
-                'data' => $tournaments, 'title' => 'Upcoming tournaments',
+                ['columns' => ['title', 'location', 'date', 'players', 'cardpool', 'type'],
+                'title' => 'Upcoming tournaments',
                  'id' => 'discover-table', 'icon' => 'fa-list-alt'])
             </div>
         </div>
@@ -73,20 +73,43 @@
     </script>
     <script type="text/javascript">
 
-        getTournamentData('', function(data) {
-            updateTournamentTable('#discover-table', ['title', 'date', 'location', 'cardpool', 'players'], 'no tournaments to show', data);
-            updateTournamentCalendar(data);
-            codeAddress(data, map, geocoder);
-        });
-
         var geocoder;
         var map;
+        var default_filter = 'start={{ $nowdate }}&approved=1';
+
         function initializeMap() {
             map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 1,
                 center: {lat: 40.157053, lng: 19.329297}
             });
             geocoder = new google.maps.Geocoder();
+            $('.form-control').prop("disabled", false);
+            updateDiscover(default_filter);
+        }
+
+        function updateDiscover(filter) {
+            getTournamentData(filter, function(data) {
+                updateTournamentTable('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'], 'no tournaments to show', data);
+                updateTournamentCalendar(data);
+                codeAddress(data, map, geocoder);
+            });
+        }
+
+        function filterDiscover() {
+            var filter = default_filter,
+                    type = document.getElementById('tournament_type_id').value,
+                    country = document.getElementById('location_country').value,
+                    state = document.getElementById('location_us_state').value;
+            if (type > 0) {
+                filter = filter + '&type=' + type;
+            }
+            if (country > 0) {
+                filter = filter + '&country=' + country;
+                if (country == 840 && state < 52) {
+                    filter = filter + '&state=' + state;
+                }
+            }
+            updateDiscover(filter);
         }
 
     </script>
