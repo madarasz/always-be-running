@@ -100,6 +100,12 @@ function updateTournamentTable(elementID, columns, emptyMessage, data) {
                 text: element.cardpool
             }));
         }
+        // type
+        if ($.inArray('type', columns) > -1) {
+            newrow.append($('<td>').append($('<em>', {
+                text: element.type
+            })));
+        }
         // approved
         if ($.inArray('approval', columns) > -1) {
             cell = $('<td>', {
@@ -349,28 +355,37 @@ function updateTournamentCalendar(data) {
 }
 
 function codeAddress(data, map, geocoder) {
+    // delete markers
+    if (typeof map.markers != 'undefined') {
+        for (var i = 0; i < map.markers.length; i++) {
+            map.markers[i].setMap(null);
+        }
+    }
+    map.markers = [];
     var bounds = new google.maps.LatLngBounds();
     var u = 0;
     for (var i = 0; i < data.length; i++) {
-        geocoder.geocode({'address': data[i].location_full}, function (results, status) {
+        if (data[i].location_full !== 'online') {
+            geocoder.geocode({'address': data[i].location_full}, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    var marker = new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location,
+                    });
+                    map.markers.push(marker);
+                    bounds.extend(marker.getPosition());
 
-            if (status == google.maps.GeocoderStatus.OK) {
-                map.setCenter(results[0].geometry.location);
-                var marker = new google.maps.Marker({
-                    map: map,
-                    position: results[0].geometry.location,
-                    title: data[u].title
-                });
-                bounds.extend(marker.getPosition());
-
-            } else {
-                console.log('Geocode was not successful for the following address: ' + data[u].location_full);
-            }
+                } else {
+                    console.log('Geocode was not successful for the following address: ' + data[u].location_full);
+                }
+                u++;
+                if (u == data.length) {
+                    map.fitBounds(bounds);
+                }
+            });
+        } else {
             u++;
-            if (u == data.length) {
-                map.fitBounds(bounds);
-            }
-        });
+        }
     }
 }
 
