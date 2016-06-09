@@ -108,7 +108,7 @@
 
 .custom-content-reveal {
 	background: #f6f6f6;
-	background: rgba(246, 246, 246, 0.9);
+	background: rgba(246, 246, 246, 0.95);
 	width: 100%;
 	height: 100%;
 	position: absolute;
@@ -238,7 +238,7 @@
 	width: 20px;
 	margin-left: -10px;
 	position: absolute;
-	color: #DDD;
+	color: #31708f;
 	font-size: 70px;
 	line-height: 20px;
 	left: 50%;
@@ -250,7 +250,7 @@
 }
 
 .fc-calendar .fc-row > div.fc-content:hover:after{
-	color: #31708f;
+	color: #4CACD9;
 }
 
 .fc-calendar .fc-row > div.fc-today.fc-content:hover:after{
