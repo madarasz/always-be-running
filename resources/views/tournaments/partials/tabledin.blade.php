@@ -18,6 +18,9 @@
         @if( in_array('cardpool', $columns) )
             <th>cardpool</th>
         @endif
+        @if( in_array('type', $columns) )
+            <th>type</th>
+        @endif
         @if( in_array('approval', $columns) )
             <th class="text-center">approval</th>
         @endif
