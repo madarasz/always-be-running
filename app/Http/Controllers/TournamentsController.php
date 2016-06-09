@@ -33,14 +33,20 @@ class TournamentsController extends Controller
 
     public function discover()
     {
-        $tournament_types = TournamentType::pluck('type_name', 'id')->all();
-        $tournament_types = [0 => '---'] + $tournament_types;
-        $countries = Country::orderBy('name')->pluck('name', 'id')->all();
-        $us_states = UsState::orderBy('name')->pluck('name', 'id')->all();
-        $message = session()->has('message') ? session('message') : '';
-        $tournaments = Tournament::orderBy('date')->get();
         $nowdate = date('Y.m.d.'); // TODO: remove
-        return view('discover', compact('message', 'nowdate', 'tournament_types', 'countries', 'us_states', 'tournaments'));
+        $tournaments = Tournament::where('date', '>=', $nowdate)->where('approved', 1)->whereNull('deleted_at');
+        $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->all())->pluck('type_name', 'id')->all();
+        $countries = Country::whereIn('id', $tournaments->pluck('location_country')->all())->orderBy('name')->pluck('name', 'id')->all();
+        $us_states = UsState::whereIn('id', $tournaments->pluck('location_us_state')->all())->orderBy('name')->pluck('name', 'id')->all();
+        $message = session()->has('message') ? session('message') : '';
+        $tournament_types = [0 => '---'] + $tournament_types;
+        if (!array_key_exists(0, $countries)) {
+            $countries = [0 => '---'] + $countries;
+        }
+        if (!array_key_exists(52, $us_states)) {
+            $us_states = [52 => '---'] + $us_states;
+        }
+        return view('discover', compact('message', 'nowdate', 'tournament_types', 'countries', 'us_states'));
     }
 
     public function results(Request $request)
