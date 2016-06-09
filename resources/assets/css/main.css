@@ -41,3 +41,13 @@ body {
 .margin-tb {
     margin: 2em;
 }
+
+.map-wrapper {
+    height: 400px;
+    width: 100%;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+}

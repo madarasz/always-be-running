@@ -74,17 +74,32 @@
         <div class="col-md-6 col-xs-12">
             <div class="bracket">
                 <h4><i class="fa fa-globe" aria-hidden="true"></i> Map</h4>
-                <iframe id="map" width="100%" height="400px" frameborder="0" style="border:0"
-                        src="{{ "https://www.google.com/maps/embed/v1/search?q=Europe&key=".ENV('GOOGLE_MAPS_API') }}" allowfullscreen></iframe>
+                <div class="map-wrapper">
+                    <div id="map"></div>
+                </div>
             </div>
         </div>
     </div>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_MAPS_API')}}&callback=initializeMap">
+    </script>
     <script type="text/javascript">
 
         getTournamentData('', function(data) {
             updateTournamentTable('#discover-table', ['title', 'date', 'location', 'cardpool', 'players'], 'no tournaments to show', data);
             updateTournamentCalendar(data);
+            codeAddress(data, map, geocoder);
         });
+
+        var geocoder;
+        var map;
+        function initializeMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 1,
+                center: {lat: 40.157053, lng: 19.329297}
+            });
+            geocoder = new google.maps.Geocoder();
+        }
 
     </script>
 @stop

@@ -347,3 +347,30 @@ function updateTournamentCalendar(data) {
 
     });
 }
+
+function codeAddress(data, map, geocoder) {
+    var bounds = new google.maps.LatLngBounds();
+    var u = 0;
+    for (var i = 0; i < data.length; i++) {
+        geocoder.geocode({'address': data[i].location_full}, function (results, status) {
+
+            if (status == google.maps.GeocoderStatus.OK) {
+                map.setCenter(results[0].geometry.location);
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location,
+                    title: data[u].title
+                });
+                bounds.extend(marker.getPosition());
+
+            } else {
+                console.log('Geocode was not successful for the following address: ' + data[u].location_full);
+            }
+            u++;
+            if (u == data.length) {
+                map.fitBounds(bounds);
+            }
+        });
+    }
+}
+
