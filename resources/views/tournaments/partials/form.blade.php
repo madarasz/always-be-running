@@ -1,32 +1,5 @@
 <div class="row">
     <div class="col-xs-12 col-md-8">
-        {{--Conclusion--}}
-        <div class="bracket">
-            <label>Conclusion</label>
-            <div class="form-group">
-                {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), [1, 'on'], true),
-                    ['onclick' => 'conclusionCheck()', 'id' => 'concluded']) !!}
-                {!! Form::label('concluded', 'tournament has ended') !!}
-            </div>
-            <div class="row" id="player-numbers">
-                {{--Player number--}}
-                <div class="col-md-6 col-xs-12">
-                    <div class="form-group">
-                        {!! Html::decode(Form::label('players_number', 'Number of players<sup class="text-danger">*</sup>')) !!}
-                        {!! Form::text('players_number', old('players_number', $tournament->players_number),
-                             ['class' => 'form-control', 'placeholder' => 'number of players', 'disabled' => '']) !!}
-                    </div>
-                </div>
-                {{--Top number--}}
-                <div class="col-md-6 col-xs-12">
-                    <div class="form-group">
-                        {!! Form::label('top_number', 'Number of players in top cut') !!}
-                        {!! Form::text('top_number', old('top_number', $tournament->top_number),
-                             ['class' => 'form-control', 'placeholder' => 'number fo players in top cut', 'disabled' => '']) !!}
-                    </div>
-                </div>
-            </div>
-        </div>
         {{--General--}}
         <div class="bracket">
             {{--Title--}}
@@ -66,7 +39,33 @@
                     ['rows' => 6, 'cols' => '', 'class' => 'form-control', 'placeholder' => 'additional information and rules, prizepool, TO contact, etc.']) !!}
             </div>
         </div>
-
+        {{--Conclusion--}}
+        <div class="bracket">
+            <label>Conclusion</label>
+            <div class="form-group">
+                {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), [1, 'on'], true),
+                    ['onclick' => 'conclusionCheck()', 'id' => 'concluded']) !!}
+                {!! Form::label('concluded', 'tournament has ended') !!}
+            </div>
+            <div class="row" id="player-numbers">
+                {{--Player number--}}
+                <div class="col-md-6 col-xs-12">
+                    <div class="form-group">
+                        {!! Html::decode(Form::label('players_number', 'Number of players<sup class="text-danger">*</sup>')) !!}
+                        {!! Form::text('players_number', old('players_number', $tournament->players_number),
+                             ['class' => 'form-control', 'placeholder' => 'number of players', 'disabled' => '']) !!}
+                    </div>
+                </div>
+                {{--Top number--}}
+                <div class="col-md-6 col-xs-12">
+                    <div class="form-group">
+                        {!! Form::label('top_number', 'Number of players in top cut') !!}
+                        {!! Form::text('top_number', old('top_number', $tournament->top_number),
+                             ['class' => 'form-control', 'placeholder' => 'number fo players in top cut', 'disabled' => '']) !!}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="col-xs-12 col-md-4">
         <div class="bracket">
@@ -85,8 +84,8 @@
 
 
                     <div class="form-group">
-                        {!! Html::decode(Form::label('location_address', 'Location<sup class="text-danger">*</sup>')) !!}
-                        {!! Form::text('location_address', old('time', $tournament->location_city),
+                        {!! Html::decode(Form::label('location_search', 'Location<sup class="text-danger">*</sup>')) !!}
+                        {!! Form::text('location_search', null,
                             ['class' => 'form-control', 'placeholder' => 'city, address or store name']) !!}
 
                         {{--Google map--}}
@@ -105,6 +104,12 @@
                         <strong>City:</strong> <span id="city"></span><br/>
                         <strong>Store/Venue:</strong> <span id="store"></span><br/>
                         <strong>Address:</strong> <span id="address"></span><br/>
+                        {!! Form::hidden('location_country', old('location_country', $tournament->location_country), ['id' => 'location_country']) !!}
+                        {!! Form::hidden('location_state', old('location_state', $tournament->location_state), ['id' => 'location_state']) !!}
+                        {!! Form::hidden('location_city', old('location_city', $tournament->location_city), ['id' => 'location_city']) !!}
+                        {!! Form::hidden('location_store', old('location_store', $tournament->location_store), ['id' => 'location_store']) !!}
+                        {!! Form::hidden('location_address', old('location_address', $tournament->location_address), ['id' => 'location_address']) !!}
+                        {!! Form::hidden('location_place_id', old('location_place_id', $tournament->location_place_id), ['id' => 'location_place_id']) !!}
                     </div>
                 </div>
             {{--</div>--}}
@@ -123,9 +128,15 @@
 </script>
 <script type="text/javascript">
 
-    var map;
+    var map,
+        old_place_id = '{{old('location_place_id', $tournament->location_place_id)}}';
 
     conclusionCheck();
+    showLocation();
+
+    if (old_place_id.length > 0) {
+
+    }
 
     function conclusionCheck() {
         if (document.getElementById('concluded').checked) {
@@ -146,7 +157,7 @@
             mapTypeControl: false
         });
 
-        var input = document.getElementById('location_address');
+        var input = document.getElementById('location_search');
         var autocomplete = new google.maps.places.Autocomplete(input);
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
@@ -181,30 +192,48 @@
     }
 
     function refreshAddressInfo(place) {
+        // place id
+        if (typeof place.place_id !== 'undefined') {
+            document.getElementById('location_place_id').value = place.place_id;
+        } else {
+            document.getElementById('location_place_id').value = '';
+        }
+        // place name, address
         if (typeof place.types !== 'undefined' &&
                 ($.inArray('establishment', place.types) > -1 || ($.inArray('store', place.types) > -1))) {
             document.getElementById('store').innerHTML = place.name;
             document.getElementById('address').innerHTML = place.formatted_address;
+            document.getElementById('location_store').value = place.name;
+            document.getElementById('location_address').value = place.formatted_address;
         } else {
             document.getElementById('store').innerHTML = '';
             document.getElementById('address').innerHTML = '';
+            document.getElementById('location_store').value = '';
+            document.getElementById('location_address').value = '';
         }
+        // country, city, US state
         if (typeof place.address_components !== 'undefined') {
             document.getElementById('country').innerHTML = '';
             document.getElementById('city').innerHTML = '';
+            document.getElementById('location_country').value = '';
+            document.getElementById('location_city').value = '';
             place.address_components.forEach(function (comp) {
                 if (comp.types[0] === 'country') {
                     document.getElementById('country').innerHTML = comp.long_name;
+                    document.getElementById('location_country').value = comp.long_name;
                 }
                 if (comp.types[0] === 'locality') {
                     document.getElementById('city').innerHTML = comp.long_name;
+                    document.getElementById('location_city').value = comp.long_name;
                 }
                 if (comp.types[0] === 'administrative_area_level_1') {
                     document.getElementById('state').innerHTML = comp.long_name;
+                    document.getElementById('location_state').value = comp.long_name;
                 }
             });
             if (document.getElementById('country').innerHTML !== 'United States') {
                 document.getElementById('state').innerHTML = '';
+                document.getElementById('location_state').value = '';
             }
         }
     }

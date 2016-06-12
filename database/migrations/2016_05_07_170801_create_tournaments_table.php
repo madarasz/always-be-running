@@ -17,11 +17,12 @@ class CreateTournamentsTable extends Migration
             $table->string('title');
             $table->string('date');
             $table->string('start_time');
-            $table->integer('location_country')->unsigned();
-            $table->integer('location_us_state')->unsigned();
+            $table->string('location_country');
+            $table->string('location_state');
             $table->string('location_city');
             $table->string('location_store');
             $table->string('location_address');
+            $table->string('location_place_id');
             $table->integer('players_number')->unsigned()->nullable();
             $table->integer('top_number')->unsigned()->nullable();
             $table->text('description');

@@ -12,8 +12,6 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(TournamentTypeSeeder::class);
-        $this->call('CountriesSeeder');
-        $this->call(UsStateSeeder::class);
         $this->call(UsersSeeder::class);
         //$this->call(CardIdentitySeeder::class); TODO, cardpack, cycles as well
     }

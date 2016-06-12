@@ -78,12 +78,9 @@ class TournamentsController extends Controller
     {
         $this->authorize('logged_in', Tournament::class, $request->user());
         $tournament_types = TournamentType::pluck('type_name', 'id')->all();
-        $countries = Country::orderBy('name')->pluck('name', 'id')->all();
-        $us_states = UsState::orderBy('name')->pluck('name', 'id')->all();
         $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $tournament = new Tournament();
-        $tournament->location_country = 0;
-        return view('tournaments.create', compact('tournament_types', 'countries', 'us_states', 'tournament', 'cardpools'));
+        return view('tournaments.create', compact('tournament_types', 'tournament', 'cardpools'));
     }
 
     /**
