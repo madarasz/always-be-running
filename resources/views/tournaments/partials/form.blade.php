@@ -5,16 +5,16 @@
             <label>Conclusion</label>
             <div class="form-group">
                 {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), [1, 'on'], true),
-                    ['onclick' => "showDiv('#player-numbers','concluded')", 'id' => 'concluded']) !!}
+                    ['onclick' => 'conclusionCheck()', 'id' => 'concluded']) !!}
                 {!! Form::label('concluded', 'tournament has ended') !!}
             </div>
-            <div class="row hidden" id="player-numbers">
+            <div class="row" id="player-numbers">
                 {{--Player number--}}
                 <div class="col-md-6 col-xs-12">
                     <div class="form-group">
                         {!! Html::decode(Form::label('players_number', 'Number of players<sup class="text-danger">*</sup>')) !!}
                         {!! Form::text('players_number', old('players_number', $tournament->players_number),
-                             ['class' => 'form-control', 'placeholder' => 'number of players']) !!}
+                             ['class' => 'form-control', 'placeholder' => 'number of players', 'disabled' => '']) !!}
                     </div>
                 </div>
                 {{--Top number--}}
@@ -22,7 +22,7 @@
                     <div class="form-group">
                         {!! Form::label('top_number', 'Number of players in top cut') !!}
                         {!! Form::text('top_number', old('top_number', $tournament->top_number),
-                             ['class' => 'form-control', 'placeholder' => 'number fo players in top cut']) !!}
+                             ['class' => 'form-control', 'placeholder' => 'number fo players in top cut', 'disabled' => '']) !!}
                     </div>
                 </div>
             </div>
@@ -87,7 +87,7 @@
                     <div class="form-group">
                         {!! Html::decode(Form::label('location_address', 'Location<sup class="text-danger">*</sup>')) !!}
                         {!! Form::text('location_address', old('time', $tournament->location_city),
-                            ['class' => 'form-control', 'placeholder' => 'tournament location']) !!}
+                            ['class' => 'form-control', 'placeholder' => 'city, address or store name']) !!}
 
                         {{--Google map--}}
                         <div class="map-wrapper-small">
@@ -101,9 +101,10 @@
                     </div>
                     <div class="form-group">
                         <strong>Country:</strong> <span id="country"></span><br/>
-                        <strong>State:</strong> <span id="state"></span><br/>
+                        <strong>State (US):</strong> <span id="state"></span><br/>
                         <strong>City:</strong> <span id="city"></span><br/>
                         <strong>Store/Venue:</strong> <span id="store"></span><br/>
+                        <strong>Address:</strong> <span id="address"></span><br/>
                     </div>
                 </div>
             {{--</div>--}}
@@ -124,12 +125,16 @@
 
     var map;
 
-    initPage();
+    conclusionCheck();
 
-    function initPage() {
-        showLocation();
-        showUsState();
-        showDiv('#player-numbers','concluded');
+    function conclusionCheck() {
+        if (document.getElementById('concluded').checked) {
+            document.getElementById('players_number').removeAttribute('disabled');
+            document.getElementById('top_number').removeAttribute('disabled');
+        } else {
+            document.getElementById('players_number').setAttribute('disabled','');
+            document.getElementById('top_number').setAttribute('disabled','');
+        }
     }
 
     function initializeMap() {
@@ -142,68 +147,51 @@
         });
 
         var input = document.getElementById('location_address');
-        var searchBox = new google.maps.places.SearchBox(input);
+        var autocomplete = new google.maps.places.Autocomplete(input);
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
-        // Bias the SearchBox results towards current map's viewport.
-        map.addListener('bounds_changed', function() {
-            searchBox.setBounds(map.getBounds());
+        autocomplete.bindTo('bounds', map);
+
+        var marker = new google.maps.Marker({
+            map: map,
+            anchorPoint: new google.maps.Point(0, -29)
         });
 
-        var markers = [];
-        // Listen for the event fired when the user selects a prediction and retrieve
-        // more details for that place.
-        searchBox.addListener('places_changed', function() {
-            var places = searchBox.getPlaces();
-
-            if (places.length == 0) {
+        autocomplete.addListener('place_changed', function() {
+            marker.setVisible(false);
+            var place = autocomplete.getPlace();
+            if (!place.geometry) {
+                console.log("Autocomplete's returned place contains no geometry");
                 return;
             }
 
-            // Clear out the old markers.
-            markers.forEach(function(marker) {
-                marker.setMap(null);
-            });
-            markers = [];
-
-            // For each place, get the icon, name and location.
-            var bounds = new google.maps.LatLngBounds();
-            places.forEach(function(place) {
-
-                // Create a marker for each place.
-                markers.push(new google.maps.Marker({
-                    map: map,
-                    title: place.name,
-                    position: place.geometry.location
-                }));
-
-                if (place.geometry.viewport) {
-                    // Only geocodes have viewport.
-                    bounds.union(place.geometry.viewport);
-                } else {
-                    bounds.extend(place.geometry.location);
-                }
-
-                avoidTooMuchZoom(bounds);
-
-            });
-            map.fitBounds(bounds);
-            if (markers.length > 1) {
-                // multiple locations warning
-                $('#map-problem').removeClass('hidden');
+            // If the place has a geometry, then present it on a map.
+            if (place.geometry.viewport) {
+                map.fitBounds(place.geometry.viewport);
             } else {
-                $('#map-problem').addClass('hidden');
-                refreshAddressInfo(places[0]);
+                map.setCenter(place.geometry.location);
+                map.setZoom(15);
             }
+            marker.setPosition(place.geometry.location);
+            marker.setVisible(true);
+
+            refreshAddressInfo(place);
         });
 
-//        service = new google.maps.places.PlacesService(map);
-//        service.getDetails({placeId: 'ChIJIaFnNgzcQUcRnH7g2gqy2Xk'}, function(){});
     }
 
     function refreshAddressInfo(place) {
-        document.getElementById('store').innerHTML = place.name;
+        if (typeof place.types !== 'undefined' &&
+                ($.inArray('establishment', place.types) > -1 || ($.inArray('store', place.types) > -1))) {
+            document.getElementById('store').innerHTML = place.name;
+            document.getElementById('address').innerHTML = place.formatted_address;
+        } else {
+            document.getElementById('store').innerHTML = '';
+            document.getElementById('address').innerHTML = '';
+        }
         if (typeof place.address_components !== 'undefined') {
+            document.getElementById('country').innerHTML = '';
+            document.getElementById('city').innerHTML = '';
             place.address_components.forEach(function (comp) {
                 if (comp.types[0] === 'country') {
                     document.getElementById('country').innerHTML = comp.long_name;
@@ -215,16 +203,10 @@
                     document.getElementById('state').innerHTML = comp.long_name;
                 }
             });
+            if (document.getElementById('country').innerHTML !== 'United States') {
+                document.getElementById('state').innerHTML = '';
+            }
         }
     }
 
-    function avoidTooMuchZoom(bounds) {
-        var maxzoom = 0.002;
-        if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
-            var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat() + maxzoom, bounds.getNorthEast().lng() + maxzoom);
-            var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat() - maxzoom, bounds.getNorthEast().lng() - maxzoom);
-            bounds.extend(extendPoint1);
-            bounds.extend(extendPoint2);
-        }
-    }
 </script>
