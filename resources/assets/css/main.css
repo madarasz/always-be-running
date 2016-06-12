@@ -48,19 +48,11 @@ body {
 }
 
 .map-wrapper-small {
-    height: 150px;
+    height: 250px;
     width: 100%;
 }
 
 #map {
     height: 100%;
-    width: 100%;
-}
-
-.radio {
-    margin-top: 0;
-}
-
-.radio label {
     width: 100%;
 }

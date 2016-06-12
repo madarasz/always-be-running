@@ -6,7 +6,7 @@
             <div class="form-group">
                 {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), [1, 'on'], true),
                     ['onclick' => "showDiv('#player-numbers','concluded')", 'id' => 'concluded']) !!}
-                {!! Form::label('concluded', 'tournament is concluded') !!}
+                {!! Form::label('concluded', 'tournament has ended') !!}
             </div>
             <div class="row hidden" id="player-numbers">
                 {{--Player number--}}
@@ -82,71 +82,29 @@
                     {!! Form::text('start_time', old('start_time', $tournament->start_time), ['class' => 'form-control', 'placeholder' => 'HH:MM']) !!}
                 </div>
                 <div id="select_location">
-                    {{--Country--}}
-                    <div class="form-group">
-                        {!! Html::decode(Form::label('location_country', 'Country<sup class="text-danger">*</sup>')) !!}
-                        {!! Form::select('location_country', $countries, old('location_country', $tournament->location_country),
-                            ['class' => 'form-control', 'onchange' => 'showUsState(); updateMap();']) !!}
-                    </div>
-                    {{--US State--}}
-                    <div class="form-group {{ old('location_country') == 840 || $tournament->location_country == 840 ? '' : 'hidden'}}" id="select_state">
-                        {!! Form::label('location_us_state', 'State') !!}
-                        {!! Form::select('location_us_state', $us_states,
-                                    old('location_us_state', $tournament->location_us_state), ['class' => 'form-control', 'onchange' => 'updateMap()']) !!}
-                    </div>
-                    {{--City--}}
-                    <div class="form-group">
-                        {!! Html::decode(Form::label('location_city', 'City<sup class="text-danger">*</sup>')) !!}
-                        {!! Form::text('location_city', old('time', $tournament->location_city),
-                            ['class' => 'form-control', 'placeholder' => 'city', 'oninput' => 'delay(function(){ updateMap(); }, 2000)']) !!}
-                    </div>
-                    {{--Store/venue--}}
-                    {{--<div class="form-group">--}}
-                        {{--{!! Form::label('location_store', 'Store/venue') !!}--}}
-{{--                        {!! Form::text('location_store', old('location_store', $tournament->location_store),--}}
-{{--                            ['class' => 'form-control', 'placeholder' => 'store/venue name']) !!}--}}
-                    {{--</div>--}}
-                    {{--Address--}}
-                    {{--<div class="form-group">--}}
-                        {{--{!! Form::label('location_address', 'Address') !!}--}}
-                        {{--{!! Form::text('location_address', old('location_address', $tournament->location_address),--}}
-                            {{--['class' => 'form-control', 'placeholder' => 'address line', 'oninput' => 'delay(function(){ updateMap(); }, 2000)']) !!}--}}
-                    {{--</div>--}}
+
 
                     <div class="form-group">
-                        <label>
-                            Find location
-                        </label>
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="location_type" id="location_type" value="store" checked>
-                                <small>by store / venue name</small>
-                                {!! Form::text('location_store', old('location_store', $tournament->location_store),
-                            ['class' => 'form-control', 'placeholder' => 'store/venue name', 'id' => 'location_store']) !!}
-                            </label>
-                            <label>
-                                <input type="radio" name="location_type" id="location_type" value="address">
-                                <small>by address</small>
-                                {!! Form::text('location_address', old('location_address', $tournament->location_address),
-                            ['class' => 'form-control', 'placeholder' => 'address line', 'id' => 'location_address', 'disabled' => '']) !!}
-                            </label>
+                        {!! Html::decode(Form::label('location_address', 'Location<sup class="text-danger">*</sup>')) !!}
+                        {!! Form::text('location_address', old('time', $tournament->location_city),
+                            ['class' => 'form-control', 'placeholder' => 'tournament location']) !!}
+
+                        {{--Google map--}}
+                        <div class="map-wrapper-small">
+                            <div id="map"></div>
+                        </div>
+                        {{--Map problem--}}
+                        <div id="map-problem" class="text-danger hidden">
+                            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                            multiple locations
                         </div>
                     </div>
-
-
-                    {{--Google map--}}
-                    {{--<div class="form-group">--}}
-                        {{--{!! Form::checkbox('display_map', null, in_array(old('display_map', $tournament->display_map), [1, 'on'], true),--}}
-                        {{--['onclick' => "showDiv('#map','display_map'); updateMap();", 'id' => 'display_map']) !!}--}}
-                        {{--{!! Form::label('display_map', 'display map') !!}--}}
-                    {{--</div>--}}
-                    {{-- TODO: do not load when not needed--}}
-                    {{--<iframe id="map" width="100%" frameborder="0" style="border:0"--}}
-                            {{--src="{{ "https://www.google.com/maps/embed/v1/search?q=Europe&key=".ENV('GOOGLE_MAPS_API') }}" allowfullscreen></iframe>--}}
-                    <div class="map-wrapper-small">
-                        <div id="map"></div>
+                    <div class="form-group">
+                        <strong>Country:</strong> <span id="country"></span><br/>
+                        <strong>State:</strong> <span id="state"></span><br/>
+                        <strong>City:</strong> <span id="city"></span><br/>
+                        <strong>Store/Venue:</strong> <span id="store"></span><br/>
                     </div>
-
                 </div>
             {{--</div>--}}
         </div>
@@ -164,62 +122,109 @@
 </script>
 <script type="text/javascript">
 
-    var geocoder, map;
+    var map;
+
+    initPage();
 
     function initPage() {
         showLocation();
         showUsState();
         showDiv('#player-numbers','concluded');
-//        showDiv('#map','display_map');
-//        updateMap();
     }
 
     function initializeMap() {
         map = new google.maps.Map(document.getElementById('map'), {
             zoom: 1,
-            center: {lat: 40.157053, lng: 19.329297}
+            center: {lat: 40.157053, lng: 19.329297},
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            streetViewControl: false,
+            mapTypeControl: false
         });
-        geocoder = new google.maps.Geocoder();
-        $('.filter').prop("disabled", false);
-        updateMap();
 
-//        TODO: remove places library
-        service = new google.maps.places.PlacesService(map);
-        service.getDetails({placeId: 'ChIJIaFnNgzcQUcRnH7g2gqy2Xk'}, function(){});
-//        $.ajax({
-//            url: 'https://maps.googleapis.com/maps/api/place/details/json?placeid=ChIJIaFnNgzcQUcRnH7g2gqy2Xk&key=AIzaSyBqC1eggQzXpLIgnfAptXnG0cbICWJSKic',
-//            dataType: "json",
-//            async: true,
-//            success: function (data) {
-//                callback(data);
-//            }
-//        });
-    }
+        var input = document.getElementById('location_address');
+        var searchBox = new google.maps.places.SearchBox(input);
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
-    window.addEventListener("load", initPage, false);
+        // Bias the SearchBox results towards current map's viewport.
+        map.addListener('bounds_changed', function() {
+            searchBox.setBounds(map.getBounds());
+        });
 
-    function updateMap() {
-//        if (document.getElementById('display_map').checked) {
-            var country_field = document.getElementById('location_country');
-            if (country_field.selectedIndex > 0) {
-                var country= country_field.options[country_field.selectedIndex].text,
-                        city = document.getElementById('location_city').value,
-                        store = document.getElementById('location_store').value,
-                        address = document.getElementById('location_address').value,
-                        state = '';
-                if (country === 'United States') {
-                    var state_field = document.getElementById('location_us_state');
-                    if (state_field.selectedIndex < 52) {
-                        state = state_field.options[state_field.selectedIndex].text;
-                    }
+        var markers = [];
+        // Listen for the event fired when the user selects a prediction and retrieve
+        // more details for that place.
+        searchBox.addListener('places_changed', function() {
+            var places = searchBox.getPlaces();
+
+            if (places.length == 0) {
+                return;
+            }
+
+            // Clear out the old markers.
+            markers.forEach(function(marker) {
+                marker.setMap(null);
+            });
+            markers = [];
+
+            // For each place, get the icon, name and location.
+            var bounds = new google.maps.LatLngBounds();
+            places.forEach(function(place) {
+
+                // Create a marker for each place.
+                markers.push(new google.maps.Marker({
+                    map: map,
+                    title: place.name,
+                    position: place.geometry.location
+                }));
+
+                if (place.geometry.viewport) {
+                    // Only geocodes have viewport.
+                    bounds.union(place.geometry.viewport);
+                } else {
+                    bounds.extend(place.geometry.location);
                 }
 
-                codeAddress([{location_full: calculateAddress(country, state, city, store, address)}], map, geocoder);
+                avoidTooMuchZoom(bounds);
 
-                {{--document.getElementById('map').src = "https://www.google.com/maps/embed/v1/search?q=" +--}}
-                        {{--encodeURIComponent(calculateAddress(country, state, city, store, address)) +--}}
-                        {{--"&key=" + '{{ ENV('GOOGLE_MAPS_API') }}';--}}
+            });
+            map.fitBounds(bounds);
+            if (markers.length > 1) {
+                // multiple locations warning
+                $('#map-problem').removeClass('hidden');
+            } else {
+                $('#map-problem').addClass('hidden');
+                refreshAddressInfo(places[0]);
             }
-//        }
+        });
+
+//        service = new google.maps.places.PlacesService(map);
+//        service.getDetails({placeId: 'ChIJIaFnNgzcQUcRnH7g2gqy2Xk'}, function(){});
+    }
+
+    function refreshAddressInfo(place) {
+        document.getElementById('store').innerHTML = place.name;
+        if (typeof place.address_components !== 'undefined') {
+            place.address_components.forEach(function (comp) {
+                if (comp.types[0] === 'country') {
+                    document.getElementById('country').innerHTML = comp.long_name;
+                }
+                if (comp.types[0] === 'locality') {
+                    document.getElementById('city').innerHTML = comp.long_name;
+                }
+                if (comp.types[0] === 'administrative_area_level_1') {
+                    document.getElementById('state').innerHTML = comp.long_name;
+                }
+            });
+        }
+    }
+
+    function avoidTooMuchZoom(bounds) {
+        var maxzoom = 0.002;
+        if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
+            var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat() + maxzoom, bounds.getNorthEast().lng() + maxzoom);
+            var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat() - maxzoom, bounds.getNorthEast().lng() - maxzoom);
+            bounds.extend(extendPoint1);
+            bounds.extend(extendPoint2);
+        }
     }
 </script>
