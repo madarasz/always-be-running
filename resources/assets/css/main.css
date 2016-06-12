@@ -47,7 +47,20 @@ body {
     width: 100%;
 }
 
+.map-wrapper-small {
+    height: 150px;
+    width: 100%;
+}
+
 #map {
     height: 100%;
+    width: 100%;
+}
+
+.radio {
+    margin-top: 0;
+}
+
+.radio label {
     width: 100%;
 }

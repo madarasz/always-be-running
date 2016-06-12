@@ -30,7 +30,7 @@
             @if ($tournament->approved === null)
                 <div class="alert alert-warning" id="approval-needed">
                     <i class="fa fa-question-circle-o" aria-hidden="true"></i>
-                    This tournament haven't been approved by the admins yet.
+                    This tournament hasn't been approved by the admins yet.
                     You can already share it, though it's not appearing in any tournament lists.
                 </div>
             @elseif ($tournament->approved == 0)

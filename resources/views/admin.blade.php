@@ -12,6 +12,10 @@
                 'data' => $to_approve, 'title' => 'Pending/Rejected tournaments',
                 'empty_message' => 'no pending tournaments', 'id' => 'pending'])
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
             <div class="bracket">
             @include('tournaments.partials.table',
                 ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
@@ -20,6 +24,7 @@
                 'empty_message' => 'no deleted tournaments', 'id' => 'deleted'])
             </div>
         </div>
+    </div>
     <div class="row">
         <div class="col-md-6 col-xs-12">
             <div class="bracket">

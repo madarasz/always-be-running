@@ -12,21 +12,21 @@
                         <div class="form-group">
                             {!! Form::label('tournament_type_id', 'Type') !!}
                             {!! Form::select('tournament_type_id', $tournament_types,
-                                null, ['class' => 'form-control', 'onchange' => 'filterDiscover()', 'disabled' => '']) !!}
+                                null, ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder)', 'disabled' => '']) !!}
                         </div>
                     </div>
                     <div class="col-md-4 col-xs-12">
                         <div class="form-group">
                             {!! Form::label('location_country', 'Country') !!}
                             {!! Form::select('location_country', $countries, null,
-                                ['class' => 'form-control', 'onchange' => 'filterDiscover()', 'disabled' => '']) !!}
+                                ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder)', 'disabled' => '']) !!}
                         </div>
                     </div>
-                    <div class="col-md-4 col-xs-12">
+                    <div class="col-md-4 col-xs-12 hidden" id="select_state">
                         <div class="form-group">
-                            {!! Form::label('location_us_state', 'State') !!}
+                            {!! Form::label('location_us_state', 'US State') !!}
                             {!! Form::select('location_us_state', $us_states,
-                                        null, ['class' => 'form-control', 'onchange'=>'filterDiscover()', 'disabled' => '']) !!}
+                                        null, ['class' => 'form-control filter', 'onchange'=>'filterDiscover(default_filter, map, geocoder)', 'disabled' => '']) !!}
                         </div>
                     </div>
                 </div>
@@ -73,9 +73,8 @@
     </script>
     <script type="text/javascript">
 
-        var geocoder;
-        var map;
-        var default_filter = 'start={{ $nowdate }}&approved=1';
+        var geocoder, map,
+            default_filter = 'start={{ $nowdate }}&approved=1';
 
         function initializeMap() {
             map = new google.maps.Map(document.getElementById('map'), {
@@ -83,33 +82,8 @@
                 center: {lat: 40.157053, lng: 19.329297}
             });
             geocoder = new google.maps.Geocoder();
-            $('.form-control').prop("disabled", false);
-            updateDiscover(default_filter);
-        }
-
-        function updateDiscover(filter) {
-            getTournamentData(filter, function(data) {
-                updateTournamentTable('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'], 'no tournaments to show', data);
-                updateTournamentCalendar(data);
-                codeAddress(data, map, geocoder);
-            });
-        }
-
-        function filterDiscover() {
-            var filter = default_filter,
-                    type = document.getElementById('tournament_type_id').value,
-                    country = document.getElementById('location_country').value,
-                    state = document.getElementById('location_us_state').value;
-            if (type > 0) {
-                filter = filter + '&type=' + type;
-            }
-            if (country > 0) {
-                filter = filter + '&country=' + country;
-                if (country == 840 && state < 52) {
-                    filter = filter + '&state=' + state;
-                }
-            }
-            updateDiscover(filter);
+            $('.filter').prop("disabled", false);
+            updateDiscover(default_filter, map, geocoder);
         }
 
     </script>

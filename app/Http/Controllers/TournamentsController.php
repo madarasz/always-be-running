@@ -31,14 +31,15 @@ class TournamentsController extends Controller
         return view('home');
     }
 
-    public function discover()
+    public function discover(Request $request)
     {
-        $nowdate = date('Y.m.d.'); // TODO: remove
+        $nowdate = date('Y.m.d.', time() - 86400); // actually yesterday, to be on the safe side
         $tournaments = Tournament::where('date', '>=', $nowdate)->where('approved', 1)->whereNull('deleted_at');
         $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->all())->pluck('type_name', 'id')->all();
         $countries = Country::whereIn('id', $tournaments->pluck('location_country')->all())->orderBy('name')->pluck('name', 'id')->all();
         $us_states = UsState::whereIn('id', $tournaments->pluck('location_us_state')->all())->orderBy('name')->pluck('name', 'id')->all();
         $message = session()->has('message') ? session('message') : '';
+        // adding empty filters
         $tournament_types = [0 => '---'] + $tournament_types;
         if (!array_key_exists(0, $countries)) {
             $countries = [0 => '---'] + $countries;
@@ -292,9 +293,10 @@ class TournamentsController extends Controller
             $location_full = $location;
             if ($tournament->location_address) {
                 $location_full = $location_full.', '.$tournament->location_address;
-            } else if ($tournament->location_store) {
-                $location_full = $location_full.', '.$tournament->location_store;
             }
+//            else if ($tournament->location_store) {
+//                $location_full = $location_full.', '.$tournament->location_store;
+//            }
 
             array_push($result, [
                 'id' => $tournament->id,

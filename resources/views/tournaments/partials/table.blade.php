@@ -122,7 +122,7 @@
                         @if ($row->concluded == 1)
                             {{ $row->players_number }}
                         @else
-                            {{ count($row->entries) }}
+                            {{ $row->registration_number() }}
                         @endif
                     </td>
                 @endif
@@ -131,8 +131,8 @@
                         @if ($row->conflict)
                             <i class="fa fa-exclamation-triangle text-danger" title="conflict"></i>
                         @endif
-                        @if (count($row->entries))
-                            {{ count($row->entries) }}
+                        @if ($row->claim_number()))
+                            {{ $row->claim_number() }}
                         @endif
                     </td>
                 @endif

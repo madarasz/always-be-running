@@ -13,12 +13,12 @@ var tournament = {
     claim_rank: '2',
     claim_top: '3',
     runner_deck: 'New Runner Deck',
-    corp_deck: 'New Corp Deck, IG'
+    corp_deck: 'New Corp Deck'
 }, claim2 = {
     try1_rank: '2',
     try1_toprank: '4',
     runner_deck: 'Newdromeda',
-    corp_deck: 'Palacsinta'
+    corp_deck: 'Palancsinta'
 };
 
 // TODO: put in module
@@ -159,7 +159,8 @@ module.exports = {
 
     'Tournament claims - register, claim, conflict, claim delete by admin' : function (browser) {
 
-        var adminLogin = browser.globals.adminLogin;
+        var adminLogin = browser.globals.adminLogin,
+            regularLogin = browser.globals.regularLogin;
 
         browser
             .url(browser.launchUrl)
@@ -188,6 +189,22 @@ module.exports = {
                 registeredPlayers: true, noRegisteredPlayers: false, unregisterButtonDisabled: true,
                 unregisterButton: false, registerButton: false, claimError: false, removeClaim: true,
                 ownClaimInTable: true, conflictInTable: true
+            })
+            .page.tournamentView().assertClaim(
+                adminLogin.username, claim2.try1_rank, claim2.try1_toprank, true, false,
+                claim2.runner_deck, claim2.corp_deck)
+            .page.tournamentView().assertClaimRemoveButton(true, adminLogin.username, true, 'Remove my claim')
+            .page.tournamentView().assertClaimRemoveButton(true, regularLogin.username, true, 'Remove claim')
+
+            // removing claim of creator
+            .page.tournamentView().removeClaimOfUser(regularLogin.username)
+            .page.tournamentView().assertView({
+                title: tournament.title, ttype: tournament.type, date: tournament.date,
+                conflictWarning: false, playerNumbers: true, topPlayerNumbers: true, playerClaim: true,
+                createClaimFrom: false, topEntriesTable: true, swissEntriesTable: true, dueWarning: false,
+                registeredPlayers: true, noRegisteredPlayers: false, unregisterButtonDisabled: true,
+                unregisterButton: false, registerButton: false, claimError: false, removeClaim: true,
+                ownClaimInTable: false, conflictInTable: false
             })
 
             .end();

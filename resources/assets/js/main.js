@@ -33,11 +33,12 @@ function calculateAddress(country, state, city, store, address) {
     }
     if (address !== '') {
         q = q + ', ' + address;
-    } else {
-        if (store !== '') {
-            q = q + ' ' + store;
-        }
     }
+    //else {
+    //    if (store !== '') {
+    //        q = q + ' ' + store;
+    //    }
+    //}
     return q;
 }
 
@@ -364,7 +365,7 @@ function codeAddress(data, map, geocoder) {
     map.markers = [];
     var bounds = new google.maps.LatLngBounds();
     var u = 0;
-    for (var i = 0; i < data.length; i++) {
+    for (i = 0; i < data.length; i++) {
         if (data[i].location_full !== 'online') {
             geocoder.geocode({'address': data[i].location_full}, function (results, status) {
                 if (status == google.maps.GeocoderStatus.OK) {
@@ -379,7 +380,7 @@ function codeAddress(data, map, geocoder) {
                     console.log('Geocode was not successful for the following address: ' + data[u].location_full);
                 }
                 u++;
-                if (u == data.length) {
+                if (u == data.length && u > 1) {
                     map.fitBounds(bounds);
                 }
             });
@@ -387,5 +388,37 @@ function codeAddress(data, map, geocoder) {
             u++;
         }
     }
+}
+
+function updateDiscover(filter, map, geocoder) {
+    getTournamentData(filter, function(data) {
+        updateTournamentTable('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'], 'no tournaments to show', data);
+        updateTournamentCalendar(data);
+        codeAddress(data, map, geocoder);
+    });
+}
+
+function filterDiscover(default_filter, map, geocoder) {
+    var filter = default_filter,
+        type = document.getElementById('tournament_type_id').value,
+        country = document.getElementById('location_country').value,
+        state = document.getElementById('location_us_state').value;
+    if (type > 0) {
+        filter = filter + '&type=' + type;
+    }
+    if (country > 0) {
+        filter = filter + '&country=' + country;
+        if (country == 840) {
+            $('#select_state').removeClass('hidden');
+            if (state < 52) {
+                filter = filter + '&state=' + state;
+            }
+        }
+    }
+    if (country != 840) {
+        $('#select_state').addClass('hidden');
+    }
+
+    updateDiscover(filter, map, geocoder);
 }
 
