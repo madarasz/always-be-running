@@ -69,84 +69,82 @@
     </div>
     <div class="col-xs-12 col-md-4">
         <div class="bracket">
-                {{--Date--}}
-                <div class="form-group">
-                    {!! Html::decode(Form::label('date', 'Date<sup class="text-danger">*</sup>')) !!}
+            {{--Date--}}
+            <div class="form-group">
+                {!! Html::decode(Form::label('date', 'Date<sup class="text-danger">*</sup>')) !!}
+                <div class="input-group">
                     {!! Form::text('date', old('date', $tournament->date),
                                  ['class' => 'form-control', 'required' => '', 'placeholder' => 'YYYY.MM.DD.']) !!}
-                </div>
-                {{--Starting time--}}
-                <div class="form-group">
-                    {!! Form::label('start_time', 'Starting time') !!}
-                    {!! Form::text('start_time', old('start_time', $tournament->start_time), ['class' => 'form-control', 'placeholder' => 'HH:MM']) !!}
-                </div>
-                <div id="select_location">
-
-
-                    <div class="form-group">
-                        {!! Html::decode(Form::label('location_search', 'Location<sup class="text-danger">*</sup>')) !!}
-                        {!! Form::text('location_search', null,
-                            ['class' => 'form-control', 'placeholder' => 'city, address or store name']) !!}
-
-                        {{--Google map--}}
-                        <div class="map-wrapper-small">
-                            <div id="map"></div>
-                        </div>
-                        {{--Map problem--}}
-                        <div id="map-problem" class="text-danger hidden">
-                            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                            multiple locations
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <strong>Country:</strong> <span id="country"></span><br/>
-                        <strong>State (US):</strong> <span id="state"></span><br/>
-                        <strong>City:</strong> <span id="city"></span><br/>
-                        <strong>Store/Venue:</strong> <span id="store"></span><br/>
-                        <strong>Address:</strong> <span id="address"></span><br/>
-                        {!! Form::hidden('location_country', old('location_country', $tournament->location_country), ['id' => 'location_country']) !!}
-                        {!! Form::hidden('location_state', old('location_state', $tournament->location_state), ['id' => 'location_state']) !!}
-                        {!! Form::hidden('location_city', old('location_city', $tournament->location_city), ['id' => 'location_city']) !!}
-                        {!! Form::hidden('location_store', old('location_store', $tournament->location_store), ['id' => 'location_store']) !!}
-                        {!! Form::hidden('location_address', old('location_address', $tournament->location_address), ['id' => 'location_address']) !!}
-                        {!! Form::hidden('location_place_id', old('location_place_id', $tournament->location_place_id), ['id' => 'location_place_id']) !!}
+                    <div class="input-group-addon">
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
                     </div>
                 </div>
+            </div>
+
+            {{--<div class="input-group date form-group">--}}
+                {{--<input type="text" class="form-control" id="datepicker">--}}
+                {{--<div class="input-group-addon">--}}
+                    {{--<i class="fa fa-calendar" aria-hidden="true"></i>--}}
+                {{--</div>--}}
             {{--</div>--}}
+
+            {{--Starting time--}}
+            <div class="form-group">
+                {!! Form::label('start_time', 'Starting time') !!}
+                {!! Form::text('start_time', old('start_time', $tournament->start_time), ['class' => 'form-control', 'placeholder' => 'HH:MM']) !!}
+            </div>
+            <div id="select_location">
+                {{--Location--}}
+                <div class="form-group">
+                    {!! Html::decode(Form::label('location_search', 'Location<sup class="text-danger">*</sup>')) !!}
+                    {!! Form::text('location_search', null,
+                        ['class' => 'form-control', 'placeholder' => 'city, address or store name']) !!}
+                    {{--Google map--}}
+                    <div class="map-wrapper-small">
+                        <div id="map"></div>
+                    </div>
+                </div>
+                {{--Location info--}}
+                <div class="form-group">
+                    <strong>Country:</strong> <span id="country"></span><br/>
+                    <strong>State (US):</strong> <span id="state"></span><br/>
+                    <strong>City:</strong> <span id="city"></span><br/>
+                    <strong>Store/Venue:</strong> <span id="store"></span><br/>
+                    <strong>Address:</strong> <span id="address"></span><br/>
+                    {!! Form::hidden('location_country', old('location_country', $tournament->location_country), ['id' => 'location_country']) !!}
+                    {!! Form::hidden('location_state', old('location_state', $tournament->location_state), ['id' => 'location_state']) !!}
+                    {!! Form::hidden('location_city', old('location_city', $tournament->location_city), ['id' => 'location_city']) !!}
+                    {!! Form::hidden('location_store', old('location_store', $tournament->location_store), ['id' => 'location_store']) !!}
+                    {!! Form::hidden('location_address', old('location_address', $tournament->location_address), ['id' => 'location_address']) !!}
+                    {!! Form::hidden('location_place_id', old('location_place_id', $tournament->location_place_id), ['id' => 'location_place_id']) !!}
+                </div>
+            </div>
         </div>
     </div>
 
 </div>
-<p class="text-danger">
-    <sup>*</sup> required fields
-</p>
-<div class="row text-center">
-    {!! Form::submit($submitButton, ['class' => 'btn btn-primary']) !!}
+<div class="row">
+    <div class="col-xs-12">
+        <p class="text-danger">
+            <sup>*</sup> required fields
+        </p>
+        <p class="text-xs-center">
+        {!! Form::submit($submitButton, ['class' => 'btn btn-primary']) !!}
+            <br/>
+        </p>
+    </div>
 </div>
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_MAPS_API')}}&libraries=places&callback=initializeMap">
 </script>
 <script type="text/javascript">
 
-    var map,
+    var map, marker,
         old_place_id = '{{old('location_place_id', $tournament->location_place_id)}}';
 
     conclusionCheck();
     showLocation();
-
-    if (old_place_id.length > 0) {
-
-    }
-
-    function conclusionCheck() {
-        if (document.getElementById('concluded').checked) {
-            document.getElementById('players_number').removeAttribute('disabled');
-            document.getElementById('top_number').removeAttribute('disabled');
-        } else {
-            document.getElementById('players_number').setAttribute('disabled','');
-            document.getElementById('top_number').setAttribute('disabled','');
-        }
-    }
+    $('#date').datepicker({autoclose: true, format: 'yyyy.mm.dd.'});
 
     function initializeMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -163,7 +161,7 @@
 
         autocomplete.bindTo('bounds', map);
 
-        var marker = new google.maps.Marker({
+        marker = new google.maps.Marker({
             map: map,
             anchorPoint: new google.maps.Point(0, -29)
         });
@@ -175,66 +173,17 @@
                 console.log("Autocomplete's returned place contains no geometry");
                 return;
             }
+            renderPlace(place, marker, map);
 
-            // If the place has a geometry, then present it on a map.
-            if (place.geometry.viewport) {
-                map.fitBounds(place.geometry.viewport);
-            } else {
-                map.setCenter(place.geometry.location);
-                map.setZoom(15);
-            }
-            marker.setPosition(place.geometry.location);
-            marker.setVisible(true);
-
-            refreshAddressInfo(place);
         });
 
-    }
-
-    function refreshAddressInfo(place) {
-        // place id
-        if (typeof place.place_id !== 'undefined') {
-            document.getElementById('location_place_id').value = place.place_id;
-        } else {
-            document.getElementById('location_place_id').value = '';
-        }
-        // place name, address
-        if (typeof place.types !== 'undefined' &&
-                ($.inArray('establishment', place.types) > -1 || ($.inArray('store', place.types) > -1))) {
-            document.getElementById('store').innerHTML = place.name;
-            document.getElementById('address').innerHTML = place.formatted_address;
-            document.getElementById('location_store').value = place.name;
-            document.getElementById('location_address').value = place.formatted_address;
-        } else {
-            document.getElementById('store').innerHTML = '';
-            document.getElementById('address').innerHTML = '';
-            document.getElementById('location_store').value = '';
-            document.getElementById('location_address').value = '';
-        }
-        // country, city, US state
-        if (typeof place.address_components !== 'undefined') {
-            document.getElementById('country').innerHTML = '';
-            document.getElementById('city').innerHTML = '';
-            document.getElementById('location_country').value = '';
-            document.getElementById('location_city').value = '';
-            place.address_components.forEach(function (comp) {
-                if (comp.types[0] === 'country') {
-                    document.getElementById('country').innerHTML = comp.long_name;
-                    document.getElementById('location_country').value = comp.long_name;
-                }
-                if (comp.types[0] === 'locality') {
-                    document.getElementById('city').innerHTML = comp.long_name;
-                    document.getElementById('location_city').value = comp.long_name;
-                }
-                if (comp.types[0] === 'administrative_area_level_1') {
-                    document.getElementById('state').innerHTML = comp.long_name;
-                    document.getElementById('location_state').value = comp.long_name;
+        if (old_place_id.length > 0) {
+            var service = new google.maps.places.PlacesService(map);
+            service.getDetails({placeId: old_place_id}, function(place, status){
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    renderPlace(place, marker, map)
                 }
             });
-            if (document.getElementById('country').innerHTML !== 'United States') {
-                document.getElementById('state').innerHTML = '';
-                document.getElementById('location_state').value = '';
-            }
         }
     }
 

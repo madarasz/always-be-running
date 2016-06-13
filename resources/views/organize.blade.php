@@ -1,11 +1,11 @@
 @extends('layout.general')
 
 @section('content')
-    <h3 class="page-header">Organize</h3>
+    <h4 class="page-header">Organize</h4>
     @include('partials.message')
     <div class="row">
         <div class="col-md-4 col-xs-12">
-            <div class="bracket text-center">
+            <div class="bracket text-xs-center">
                 <a href="/tournaments/create" class="btn btn-primary margin-tb">Create Tournament</a>
             </div>
             <div class="bracket">

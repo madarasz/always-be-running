@@ -32,5 +32,10 @@
 //$navbar-inverse-link-active-bg: $gray-light !default;
 
 $font-family-sans-serif: 'Titillium Web' !default;
-@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+// bootstrap v3
+//@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+
+// bootstrap v4-alpha
+$enable-flex: true;
+@import "node_modules/bootstrap/scss/bootstrap";
 

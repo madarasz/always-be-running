@@ -2,10 +2,6 @@ body {
     padding-top: 50px;
     padding-bottom: 20px;
 }
-.panel-heading {
-    font-style: italic;
-}
-
 .label {
     font-style: italic;
 }
@@ -31,11 +27,20 @@ body {
     float: left;
     height: 30px;
     padding: 0;
-    margin: -5px 10px;
+    margin: 0 10px;
 }
 
 .page-header {
     border-bottom: 2px solid #000;
+    padding-bottom: 9px;
+    margin: 40px 0 20px;
+
+    /*font-size: 24px;*/
+
+    /*font-family: inherit;*/
+    /*font-weight: 500;*/
+    /*line-height: 1.1;*/
+    /*color: inherit;*/
 }
 
 .margin-tb {
@@ -55,4 +60,11 @@ body {
 #map {
     height: 100%;
     width: 100%;
+}
+
+.btn-xs {
+    padding: 1px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
 }

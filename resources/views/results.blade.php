@@ -1,7 +1,7 @@
 @extends('layout.general')
 
 @section('content')
-    <h3 class="page-header">Results</h3>
+    <h4 class="page-header">Results</h4>
     @include('partials.message')
     <div class="row">
         <div class="col-md-4 col-xs-12">

@@ -22,19 +22,19 @@
             <th>type</th>
         @endif
         @if( in_array('approval', $columns) )
-            <th class="text-center">approval</th>
+            <th class="text-xs-center">approval</th>
         @endif
         @if( in_array('user_claim', $columns) )
-            <th class="text-center">claim</th>
+            <th class="text-xs-center">claim</th>
         @endif
         @if( in_array('conclusion', $columns) )
-            <th class="text-center">conclusion</th>
+            <th class="text-xs-center">conclusion</th>
         @endif
         @if( in_array('players', $columns) )
-            <th class="text-center">players</th>
+            <th class="text-xs-center">players</th>
         @endif
         @if( in_array('claims', $columns) )
-            <th class="text-center">claims</th>
+            <th class="text-xs-center">claims</th>
         @endif
         @if( in_array('action_view', $columns) )
             <th></th>

@@ -55,7 +55,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, data) {
             newrow.append($('<td>', {
                 text: emptyMessage,
                 colspan: columns.length,
-                'class': 'text-center'
+                'class': 'text-xs-center'
             }));
             return 0;
         }
@@ -94,7 +94,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, data) {
         // approved
         if ($.inArray('approval', columns) > -1) {
             cell = $('<td>', {
-                'class': 'text-center'
+                'class': 'text-xs-center'
             }).appendTo(newrow);
 
             if (element.approved === null) {
@@ -120,7 +120,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, data) {
         // claim
         if ($.inArray('user_claim', columns) > -1) {
             cell = $('<td>', {
-                'class': 'text-center'
+                'class': 'text-xs-center'
             }).appendTo(newrow);
 
             if (element.user_claim) {
@@ -146,7 +146,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, data) {
         // conclusion
         if ($.inArray('conclusion', columns) > -1) {
             cell = $('<td>', {
-                'class': 'text-center'
+                'class': 'text-xs-center'
             }).appendTo(newrow);
 
             if (element.concluded) {
@@ -173,13 +173,13 @@ function updateTournamentTable(elementID, columns, emptyMessage, data) {
         if ($.inArray('players', columns) > -1) {
             newrow.append($('<td>', {
                 text: element.concluded ? element.players_count : element.registration_count,
-                'class': 'text-center'
+                'class': 'text-xs-center'
             }));
         }
         // claims
         if ($.inArray('claims', columns) > -1) {
             cell = $('<td>', {
-                'class': 'text-center'
+                'class': 'text-xs-center'
             }).appendTo(newrow);
 
             if (element.claim_conflict) {
@@ -406,3 +406,73 @@ function filterDiscover(default_filter, map, geocoder) {
     updateDiscover(filter, map, geocoder);
 }
 
+function conclusionCheck() {
+    if (document.getElementById('concluded').checked) {
+        document.getElementById('players_number').removeAttribute('disabled');
+        document.getElementById('top_number').removeAttribute('disabled');
+    } else {
+        document.getElementById('players_number').setAttribute('disabled','');
+        document.getElementById('top_number').setAttribute('disabled','');
+    }
+}
+
+function renderPlace(place, marker, map) {
+    // If the place has a geometry, then present it on a map.
+    if (place.geometry.viewport) {
+        map.fitBounds(place.geometry.viewport);
+    } else {
+        map.setCenter(place.geometry.location);
+        map.setZoom(15);
+    }
+    marker.setPosition(place.geometry.location);
+    marker.setVisible(true);
+
+    refreshAddressInfo(place);
+}
+
+function refreshAddressInfo(place) {
+    // place id
+    if (typeof place.place_id !== 'undefined') {
+        document.getElementById('location_place_id').value = place.place_id;
+    } else {
+        document.getElementById('location_place_id').value = '';
+    }
+    // place name, address
+    if (typeof place.types !== 'undefined' &&
+        ($.inArray('establishment', place.types) > -1 || ($.inArray('store', place.types) > -1))) {
+        document.getElementById('store').innerHTML = place.name;
+        document.getElementById('address').innerHTML = place.formatted_address;
+        document.getElementById('location_store').value = place.name;
+        document.getElementById('location_address').value = place.formatted_address;
+    } else {
+        document.getElementById('store').innerHTML = '';
+        document.getElementById('address').innerHTML = '';
+        document.getElementById('location_store').value = '';
+        document.getElementById('location_address').value = '';
+    }
+    // country, city, US state
+    if (typeof place.address_components !== 'undefined') {
+        document.getElementById('country').innerHTML = '';
+        document.getElementById('city').innerHTML = '';
+        document.getElementById('location_country').value = '';
+        document.getElementById('location_city').value = '';
+        place.address_components.forEach(function (comp) {
+            if (comp.types[0] === 'country') {
+                document.getElementById('country').innerHTML = comp.long_name;
+                document.getElementById('location_country').value = comp.long_name;
+            }
+            if (comp.types[0] === 'locality') {
+                document.getElementById('city').innerHTML = comp.long_name;
+                document.getElementById('location_city').value = comp.long_name;
+            }
+            if (comp.types[0] === 'administrative_area_level_1') {
+                document.getElementById('state').innerHTML = comp.long_name;
+                document.getElementById('location_state').value = comp.long_name;
+            }
+        });
+        if (document.getElementById('country').innerHTML !== 'United States') {
+            document.getElementById('state').innerHTML = '';
+            document.getElementById('location_state').value = '';
+        }
+    }
+}

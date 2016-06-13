@@ -14,23 +14,28 @@ var shell = require("gulp-shell");
  */
 
 elixir(function(mix) {
-    var bootstrapPath = 'node_modules/bootstrap-sass/assets';
+    var bootstrapPath = 'node_modules/bootstrap-sass/assets',
+        bootstrap4Path = 'node_modules/bootstrap/dist';
     mix.copy('resources/assets/fonts', 'public/fonts')
         .copy('resources/assets/img', 'public/img')
         .copy(bootstrapPath + '/fonts', 'public/fonts')
-        .copy(bootstrapPath + '/javascripts/bootstrap.min.js', 'resources/assets/js')
+        .copy(bootstrap4Path + '/js/bootstrap.min.js', 'resources/assets/js')
+        .copy('node_modules/tether/dist/js/tether.js', 'resources/assets/js')
         .sass('app.scss')
         .scripts([
-            "jquery-2.2.3.min.js",
+            "jquery-2.2.3.min.js",      // TODO: jquery from npm?
+            "tether.js",
             "main.js",
             "bootstrap.min.js",
-            "jquery.calendario.js"
+            "jquery.calendario.js",
+            "bootstrap-datepicker.js",
         ])
         .styles([
             'font-awesome.css',
             'calendar.css',
             'calendario_abr.css',
             '../../../public/css/app.css',
+            'bootstrap-datepicker.css',
             'main.css'
         ]);
 

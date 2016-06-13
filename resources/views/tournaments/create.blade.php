@@ -1,7 +1,7 @@
 @extends('layout.general')
 
 @section('content')
-    <h3 class="page-header">Create new tournament</h3>
+    <h4 class="page-header">Create new tournament</h4>
     @include('errors.list')
     {!! Form::open(['url' => '/tournaments']) !!}
         @include('tournaments.partials.form', ['submitButton' => 'Create tournament'])

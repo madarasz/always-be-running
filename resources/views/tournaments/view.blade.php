@@ -2,7 +2,7 @@
 
 @section('content')
     {{--Header--}}
-    <h3 class="page-header">
+    <h4 class="page-header">
         @if ($user && ($user->admin || $user->id == $tournament->creator))
             <div class="pull-right" id="control-buttons">
                 {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id"]) !!}
@@ -20,7 +20,7 @@
         @endif
         {{ $tournament->title }}<br/>
         <small>{{ $type }} - <em>created by {{ $tournament->user->name }}</em></small>
-    </h3>
+    </h4>
     @include('partials.message')
     <div class="row">
         {{--Tournament info--}}
@@ -135,7 +135,7 @@
                                     </a>
                                 </li>
                             </ul>
-                            <div class="text-center">
+                            <div class="text-xs-center">
                                 {!! Form::open(['method' => 'DELETE', 'url' => "/entries/$user_entry->id"]) !!}
                                     {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove my claim',
                                     array('type' => 'submit', 'class' => 'btn btn-danger', 'id' => 'remove-claim')) !!}
@@ -226,7 +226,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="text-center">
+                                <div class="text-xs-center">
                                     <button type="submit" class="btn btn-success" id="submit-claim">
                                         <i class="fa fa-check-square-o" aria-hidden="true"></i> Claim spot
                                     </button>
@@ -267,7 +267,7 @@
             @else
                 - <em id="no-registered-players">no players yet</em>
             @endif
-            <div class="text-center">
+            <div class="text-xs-center">
                 @if ($user)
                     @if ($user_entry)
                         @if ($user_entry->rank)
