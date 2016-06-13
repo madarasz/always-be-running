@@ -68,3 +68,6 @@ body {
     line-height: 1.5;
     border-radius: 3px;
 }
+.table th {
+    border: 0;
+}

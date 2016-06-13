@@ -121,16 +121,16 @@
 .datepicker table tr td.today:hover,
 .datepicker table tr td.today.disabled,
 .datepicker table tr td.today.disabled:hover {
-    background-color: #fde19a;
-    background-image: -moz-linear-gradient(to bottom, #fdd49a, #fdf59a);
-    background-image: -ms-linear-gradient(to bottom, #fdd49a, #fdf59a);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fdd49a), to(#fdf59a));
-    background-image: -webkit-linear-gradient(to bottom, #fdd49a, #fdf59a);
-    background-image: -o-linear-gradient(to bottom, #fdd49a, #fdf59a);
-    background-image: linear-gradient(to bottom, #fdd49a, #fdf59a);
+    background-color: #9be8fa;
+    background-image: -moz-linear-gradient(to bottom, #7bb9c7, #9aeafc);
+    background-image: -ms-linear-gradient(to bottom, #7bb9c7, #9aeafc);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#7bb9c7), to(#9aeafc));
+    background-image: -webkit-linear-gradient(to bottom, #7bb9c7, #9be8fa);
+    background-image: -o-linear-gradient(to bottom, #7bb9c7, #9be8fa);
+    background-image: linear-gradient(to bottom, #7bb9c7, #9be8fa);
     background-repeat: repeat-x;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdd49a', endColorstr='#fdf59a', GradientType=0);
-    border-color: #fdf59a #fdf59a #fbed50;
+    border-color: #7bb9c7 #7bb9c7 #9be8fa;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
     color: #000;
@@ -155,7 +155,7 @@
 .datepicker table tr td.today:hover[disabled],
 .datepicker table tr td.today.disabled[disabled],
 .datepicker table tr td.today.disabled:hover[disabled] {
-    background-color: #fdf59a;
+    background-color: #9aeafc;
 }
 .datepicker table tr td.today:active,
 .datepicker table tr td.today:hover:active,
@@ -165,7 +165,7 @@
 .datepicker table tr td.today:hover.active,
 .datepicker table tr td.today.disabled.active,
 .datepicker table tr td.today.disabled:hover.active {
-    background-color: #fbf069 \9;
+    background-color: #69dffa \9;
 }
 .datepicker table tr td.today:hover:hover {
     color: #000;

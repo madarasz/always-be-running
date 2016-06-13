@@ -81,13 +81,6 @@
                 </div>
             </div>
 
-            {{--<div class="input-group date form-group">--}}
-                {{--<input type="text" class="form-control" id="datepicker">--}}
-                {{--<div class="input-group-addon">--}}
-                    {{--<i class="fa fa-calendar" aria-hidden="true"></i>--}}
-                {{--</div>--}}
-            {{--</div>--}}
-
             {{--Starting time--}}
             <div class="form-group">
                 {!! Form::label('start_time', 'Starting time') !!}
@@ -144,7 +137,7 @@
 
     conclusionCheck();
     showLocation();
-    $('#date').datepicker({autoclose: true, format: 'yyyy.mm.dd.'});
+    $('#date').datepicker({autoclose: true, format: 'yyyy.mm.dd.', orientation: 'bottom', todayHighlight: true});
 
     function initializeMap() {
         map = new google.maps.Map(document.getElementById('map'), {
