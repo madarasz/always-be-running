@@ -89,9 +89,9 @@
             <div id="select_location">
                 {{--Location--}}
                 <div class="form-group">
-                    {!! Html::decode(Form::label('location_search', 'Location<sup class="text-danger">*</sup>')) !!}
+                    {!! Form::label('location_search', 'Location') !!}
                     {!! Form::text('location_search', null,
-                        ['class' => 'form-control', 'placeholder' => 'city, address or store name']) !!}
+                        ['class' => 'form-control', 'placeholder' => 'search city, address or store name']) !!}
                     {{--Google map--}}
                     <div class="map-wrapper-small">
                         <div id="map"></div>
@@ -99,9 +99,9 @@
                 </div>
                 {{--Location info--}}
                 <div class="form-group">
-                    <strong>Country:</strong> <span id="country"></span><br/>
+                    <strong>Country:<sup class="text-danger">*</sup></strong> <span id="country"></span><br/>
                     <strong>State (US):</strong> <span id="state"></span><br/>
-                    <strong>City:</strong> <span id="city"></span><br/>
+                    <strong>City:<sup class="text-danger">*</sup></strong> <span id="city"></span><br/>
                     <strong>Store/Venue:</strong> <span id="store"></span><br/>
                     <strong>Address:</strong> <span id="address"></span><br/>
                     {!! Form::hidden('location_country', old('location_country', $tournament->location_country), ['id' => 'location_country']) !!}

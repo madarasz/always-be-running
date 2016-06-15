@@ -1,29 +1,10 @@
 function showLocation() {
     if ($("#tournament_type_id option:selected").html() === 'online event') {
-        $('#select_location').addClass('hidden');
+        $('#select_location').addClass('hidden-xs-up');
     } else {
-        $('#select_location').removeClass('hidden');
+        $('#select_location').removeClass('hidden-xs-up');
     }
 
-}
-
-function calculateAddress(country, state, city, store, address) {
-    var q = country;
-    if (state !== '') {
-        q = q + ', ' + state;
-    }
-    if (city !== '') {
-        q = q + ', ' + city;
-    }
-    if (address !== '') {
-        q = q + ', ' + address;
-    }
-    //else {
-    //    if (store !== '') {
-    //        q = q + ' ' + store;
-    //    }
-    //}
-    return q;
 }
 
 var delay = (function(){
@@ -200,7 +181,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, data) {
             }).append($('<i>', {
                 'class': 'fa fa-pencil',
                 'aria-hidden': true
-            }), ' edit')));
+            }), ' update')));
         }
         // action_approve
         if ($.inArray('action_approve', columns) > -1) {
@@ -350,21 +331,30 @@ function codeAddress(data, map, geocoder) {
     var bounds = new google.maps.LatLngBounds();
     var u = 0;
     for (i = 0; i < data.length; i++) {
-        if (data[i].location_full !== 'online') {
-            geocoder.geocode({'address': data[i].location_full}, function (results, status) {
+        if (data[i].location !== 'online') {
+            var address = data[i].address.length > 0 ? data[i].address : data[i].location;
+            geocoder.geocode({'address': address}, function (results, status) {
                 if (status == google.maps.GeocoderStatus.OK) {
                     var marker = new google.maps.Marker({
                         map: map,
-                        position: results[0].geometry.location,
+                        position: results[0].geometry.location
                     });
                     map.markers.push(marker);
                     bounds.extend(marker.getPosition());
 
                 } else {
-                    console.log('Geocode was not successful for the following address: ' + data[u].location_full);
+                    console.log('Geocode was not successful for the following address: ' + data[u].address + '/' + data[u].location);
                 }
                 u++;
-                if (u == data.length && u > 1) {
+                if (u == data.length) {
+                    // avoiding to much zoom
+                    var zoombounds = 0.002;
+                    if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
+                        var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat() + zoombounds, bounds.getNorthEast().lng() + zoombounds);
+                        var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat() - zoombounds, bounds.getNorthEast().lng() - zoombounds);
+                        bounds.extend(extendPoint1);
+                        bounds.extend(extendPoint2);
+                    }
                     map.fitBounds(bounds);
                 }
             });
@@ -385,22 +375,24 @@ function updateDiscover(filter, map, geocoder) {
 function filterDiscover(default_filter, map, geocoder) {
     var filter = default_filter,
         type = document.getElementById('tournament_type_id').value,
-        country = document.getElementById('location_country').value,
-        state = document.getElementById('location_us_state').value;
+        countrySelector = document.getElementById('location_country'),
+        stateSelector = document.getElementById('location_state'),
+        country = countrySelector.options[countrySelector.value].innerHTML,
+        state = stateSelector.options[stateSelector.value].innerHTML;
     if (type > 0) {
         filter = filter + '&type=' + type;
     }
-    if (country > 0) {
+    if (country !== '---') {
         filter = filter + '&country=' + country;
-        if (country == 840) {
-            $('#select_state').removeClass('hidden');
-            if (state < 52) {
+        if (country === 'United States') {
+            $('#select_state').removeClass('hidden-xs-up');
+            if (state !== '---') {
                 filter = filter + '&state=' + state;
             }
         }
     }
-    if (country != 840) {
-        $('#select_state').addClass('hidden');
+    if (country !== 'United States') {
+        $('#select_state').addClass('hidden-xs-up');
     }
 
     updateDiscover(filter, map, geocoder);
@@ -467,7 +459,7 @@ function refreshAddressInfo(place) {
             }
             if (comp.types[0] === 'administrative_area_level_1') {
                 document.getElementById('state').innerHTML = comp.long_name;
-                document.getElementById('location_state').value = comp.long_name;
+                document.getElementById('location_state').value = comp.short_name;
             }
         });
         if (document.getElementById('country').innerHTML !== 'United States') {

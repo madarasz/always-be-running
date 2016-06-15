@@ -26,60 +26,51 @@
         {{--Tournament info--}}
         <div class="col-md-4 col-xs-12">
             <div class="bracket">
-            {{--Approval--}}
-            @if ($tournament->approved === null)
-                <div class="alert alert-warning" id="approval-needed">
-                    <i class="fa fa-question-circle-o" aria-hidden="true"></i>
-                    This tournament hasn't been approved by the admins yet.
-                    You can already share it, though it's not appearing in any tournament lists.
+                {{--Approval--}}
+                @if ($tournament->approved === null)
+                    <div class="alert alert-warning" id="approval-needed">
+                        <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+                        This tournament hasn't been approved by the admins yet.
+                        You can already share it, though it's not appearing in any tournament lists.
+                    </div>
+                @elseif ($tournament->approved == 0)
+                    <div class="alert alert-danger" id="approval-rejected">
+                        <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                        This tournament has been rejected by an admin.
+                        Only the tournament creator and the admins can see this tournament.
+                        Please try to fix the issue.
+                    </div>
+                @endif
+                {{--Location, date--}}
+                <h5>
+                    @unless($tournament->tournament_type_id == 6)
+                        {{ $tournament->location_city }}, {{$tournament->location_country === 'United States' ? $tournament->location_state : ''}}{{ $tournament->location_country }}<br/>
+                    @endunless
+                    {{ $tournament->date }}
+                </h5>
+                {{--Details--}}
+                <p><strong>Legal cardpool up to:</strong> <em>{{ $tournament->cardpool->name }}</em></p>
+                @unless($tournament->description === '')
+                    <div class="card"><div class="card-block">{!! nl2br(e($tournament->description)) !!}</div></div>
+                @endunless
+                @if($tournament->decklist == 1)
+                    <p><strong><u>decklist is mandatory!</u></strong></p>
+                @endif
+                <p>
+                    @unless($tournament->start_time === '')
+                        <strong>Starting time</strong>: {{ $tournament->start_time }} (local time)<br/>
+                    @endunless
+                    @unless($tournament->location_store === '')
+                        <strong>Store/venue</strong>: {{ $tournament->location_store }}<br/>
+                    @endunless
+                    @unless($tournament->location_address === '')
+                        <strong>Address</strong>: {{ $tournament->location_address }}<br/>
+                    @endunless
+                </p>
+                {{--Google map--}}
+                <div class="map-wrapper-small">
+                    <div id="map"></div>
                 </div>
-            @elseif ($tournament->approved == 0)
-                <div class="alert alert-danger" id="approval-rejected">
-                    <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                    This tournament has been rejected by an admin.
-                    Only the tournament creator and the admins can see this tournament.
-                    Please try to fix the issue.
-                </div>
-            @endif
-            {{--Location, date--}}
-            <h4>
-                @unless($tournament->tournament_type_id == 6)
-                    {{ $tournament->location_city }}, {{$tournament->location_country == 840 && $tournament->location_us_state !=52 ? "$state_name, " : ''}}{{ $country_name }} -
-                @endunless
-                date: {{ $tournament->date }}<br/>
-            </h4>
-            {{--Details--}}
-            <p><strong>Legal cardpool up to:</strong> <em>{{ $tournament->cardpool->name }}</em></p>
-            @unless($tournament->description === '')
-                <div class="panel panel-default"><div class="panel-body">{!! nl2br(e($tournament->description)) !!}</div></div>
-            @endunless
-            @if($tournament->decklist == 1)
-                <p><strong><u>decklist is mandatory!</u></strong></p>
-            @endif
-            <p>
-                @unless($tournament->start_time === '')
-                    <strong>Starting time</strong>: {{ $tournament->start_time }} (local time)<br/>
-                @endunless
-                @unless($tournament->location_store === '')
-                    <strong>Store/venue</strong>: {{ $tournament->location_store }}<br/>
-                @endunless
-                @unless($tournament->location_address === '')
-                    <strong>Address</strong>: {{ $tournament->location_address }}<br/>
-                @endunless
-            </p>
-            @if($tournament->display_map)
-                <iframe id="map" width="100%" frameborder="0" style="border:0" allowfullscreen></iframe>
-                <script type="text/javascript">
-                    function initPage() {
-                        document.getElementById('map').src = "https://www.google.com/maps/embed/v1/search?q=" +
-                                encodeURIComponent(calculateAddress('{{ $tournament->country->name }}',
-                                        '{{ $tournament->state->name }}', '{{ $tournament->location_city }}',
-                                        '{{ $tournament->location_store }}', '{{ $tournament->location_address }}')) +
-                                "&key=" + '{{ ENV('GOOGLE_MAPS_API') }}';
-                    }
-                    window.addEventListener("load", initPage, false);
-                </script>
-            @endif
             </div>
         </div>
         {{--Standings and claims--}}
@@ -108,7 +99,7 @@
                     {{--User claim--}}
                     @if ($user)
                         <hr/>
-                        <strong>Your claim:</strong><br/><br/>
+                        <h5>Your claim:</h5>
                         {{--Existing claim--}}
                         @if ($user_entry && $user_entry->rank)
                             <ul id="player-claim">
@@ -236,12 +227,13 @@
                     @endif
                 {{--Tables of tournament standings --}}
                 @if ($tournament->top_number)
+                    <hr/>
                     <h5>Top cut</h5>
                     @include('tournaments.partials.entries',
                         ['entries' => $entries_top, 'user_entry' => $user_entry, 'rank' => 'rank_top',
                         'creator' => $tournament->creator, 'id' => 'entries-top'])
-                    <hr/>
                 @endif
+                <hr/>
                 <h5>Swiss rounds</h5>
                 @include('tournaments.partials.entries',
                     ['entries' => $entries_swiss, 'user_entry' => $user_entry, 'rank' => 'rank',
@@ -255,17 +247,16 @@
                 </div>
             @endif
             {{--List of registered players--}}
-            <strong>Registered players</strong>
+            <hr/>
+            <h5>Registered players {{ count($entries) > 0 ? '('.count($entries).')' : '' }}</h5>
             @if (count($entries) > 0)
-                ({{count($entries)}})
-                <br/>
                 <ul id="registered-players">
                 @foreach ($entries as $entry)
                     <li>{{ $entry->player->name }}</li>
                 @endforeach
                 </ul>
             @else
-                - <em id="no-registered-players">no players yet</em>
+                <p><em id="no-registered-players">no players yet</em></p>
             @endif
             <div class="text-xs-center">
                 @if ($user)
@@ -284,5 +275,33 @@
             </div>
         </div>
     </div>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_MAPS_API')}}&libraries=places&callback=initializeMap">
+    </script>
+    <script type="text/javascript">
+        var map, marker;
+
+        function initializeMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 1,
+                center: {lat: 40.157053, lng: 19.329297},
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                streetViewControl: false,
+                mapTypeControl: false
+            });
+
+            marker = new google.maps.Marker({
+                map: map,
+                anchorPoint: new google.maps.Point(0, -29)
+            });
+
+            var service = new google.maps.places.PlacesService(map);
+            service.getDetails({placeId: '{{ $tournament->location_place_id }}'}, function(place, status){
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    renderPlace(place, marker, map)
+                }
+            });
+        }
+    </script>
 @stop
 

@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="bracket">
-                <h4><i class="fa fa-filter" aria-hidden="true"></i> Filter</h4>
+                <h5><i class="fa fa-filter" aria-hidden="true"></i> Filter</h5>
                 {!! Form::open(['url' => '/tournaments']) !!}
                 <div class="row">
                     <div class="col-md-4 col-xs-12">
@@ -22,10 +22,10 @@
                                 ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder)', 'disabled' => '']) !!}
                         </div>
                     </div>
-                    <div class="col-md-4 col-xs-12 hidden" id="select_state">
+                    <div class="col-md-4 col-xs-12 hidden-xs-up" id="select_state">
                         <div class="form-group">
-                            {!! Form::label('location_us_state', 'US State') !!}
-                            {!! Form::select('location_us_state', $us_states,
+                            {!! Form::label('location_state', 'US State') !!}
+                            {!! Form::select('location_state', $states,
                                         null, ['class' => 'form-control filter', 'onchange'=>'filterDiscover(default_filter, map, geocoder)', 'disabled' => '']) !!}
                         </div>
                     </div>
@@ -47,10 +47,10 @@
     <div class="row">
         <div class="col-md-6 col-xs-12">
             <div class="bracket">
-                <h4>
+                <h5>
                     <i class="fa fa-calendar" aria-hidden="true"></i> Upcoming calendar<br/>
                     <small>past events are hidden</small>
-                </h4>
+                </h5>
                 <style type="text/css">
                     .fc-past {
                         cursor: default !important; background: transparent !important;

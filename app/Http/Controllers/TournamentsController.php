@@ -35,19 +35,20 @@ class TournamentsController extends Controller
     {
         $nowdate = date('Y.m.d.', time() - 86400); // actually yesterday, to be on the safe side
         $tournaments = Tournament::where('date', '>=', $nowdate)->where('approved', 1)->whereNull('deleted_at');
-        $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->all())->pluck('type_name', 'id')->all();
-        $countries = Country::whereIn('id', $tournaments->pluck('location_country')->all())->orderBy('name')->pluck('name', 'id')->all();
-        $us_states = UsState::whereIn('id', $tournaments->pluck('location_us_state')->all())->orderBy('name')->pluck('name', 'id')->all();
+        $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->unique()->all())->pluck('type_name', 'id')->all();
+        $countries = $tournaments->pluck('location_country')->unique()->all();
+        $states = $tournaments->pluck('location_state')->unique()->all();
+        if(($states_key = array_search('', $states)) !== false) {
+            unset($states[$states_key]);
+        }
+        $countries = array_values($countries);
+        $states = array_values($states);
         $message = session()->has('message') ? session('message') : '';
         // adding empty filters
         $tournament_types = [0 => '---'] + $tournament_types;
-        if (!array_key_exists(0, $countries)) {
-            $countries = [0 => '---'] + $countries;
-        }
-        if (!array_key_exists(52, $us_states)) {
-            $us_states = [52 => '---'] + $us_states;
-        }
-        return view('discover', compact('message', 'nowdate', 'tournament_types', 'countries', 'us_states'));
+        $countries = [0 => '---'] + $countries;
+        $states = [0 => '---'] + $states;
+        return view('discover', compact('message', 'nowdate', 'tournament_types', 'countries', 'states'));
     }
 
     public function results(Request $request)
@@ -94,10 +95,8 @@ class TournamentsController extends Controller
         $tournament = Tournament::findOrFail($id);
         $this->authorize('own', $tournament, $request->user());
         $tournament_types = TournamentType::pluck('type_name', 'id')->all();
-        $countries = Country::orderBy('name')->pluck('name', 'id')->all();
-        $us_states = UsState::orderBy('name')->pluck('name', 'id')->all();
         $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
-        return view('tournaments.edit', compact('tournament', 'id', 'tournament_types', 'countries', 'us_states', 'cardpools'));
+        return view('tournaments.edit', compact('tournament', 'id', 'tournament_types', 'cardpools'));
     }
 
     /**
@@ -131,7 +130,6 @@ class TournamentsController extends Controller
             abort(403);
         }
         $type = $tournament->tournament_type->type_name;
-        $country_name = $tournament->country->name;
         $message = session()->has('message') ? session('message') : '';
         $nowdate = date('Y.m.d.');
         $user = $request->user();
@@ -152,7 +150,6 @@ class TournamentsController extends Controller
         } else {
             $user_entry = Entry::where('tournament_id', $tournament->id)->where('user', $user->id)->first();
         }
-        $state_name = $tournament->location_us_state == 52 || $tournament->tournament_type_id == 6 ? '' : UsState::find($tournament->location_us_state)->name;
         $decks = [];
         $decks_two_types = false;
         if (!is_null($user))
@@ -161,7 +158,7 @@ class TournamentsController extends Controller
             $decks_two_types = count($decks['public']['corp']) > 0 && count($decks['private']['corp']) > 0;
         }
         return view('tournaments.view',
-            compact('tournament', 'country_name', 'state_name', 'message', 'type', 'nowdate', 'user', 'entries',
+            compact('tournament', 'message', 'type', 'nowdate', 'user', 'entries',
                 'user_entry', 'decks', 'entries_swiss', 'entries_top', 'decks_two_types'));
     }
 
@@ -208,21 +205,8 @@ class TournamentsController extends Controller
     {
         $this->authorize('logged_in', Tournament::class, $request->user());
         $user = $request->user()->id;
-        $nowdate = date('Y.m.d.');
-        $created = Tournament::where('creator', $user)->where('deleted_at', null)->orderBy('date', 'desc')->get();
-        $entries = Entry::where('user', $user)->orderBy('updated_at', 'desc')->get();
-        $registered = [];
-        foreach ($entries as $entry)
-        {
-            $stuff = $entry->tournament;
-            if ($stuff && $stuff->approved !== 0)
-            {
-                $stuff['claim'] = $entry->rank > 0;
-                array_push($registered, $stuff);
-            }
-        }
         $message = session()->has('message') ? session('message') : '';
-        return view('organize', compact('user', 'created', 'nowdate', 'registered', 'message'));
+        return view('organize', compact('user', 'message'));
     }
 
     /**
@@ -234,12 +218,8 @@ class TournamentsController extends Controller
     public function tournamentJSON(Request $request) {
         // initial query
         $tournaments = Tournament::orderBy('date')
-            ->with(array('country' => function($query){
-                $query->select('id', 'name');
-            }, 'tournament_type' => function($query){
+            ->with(array('tournament_type' => function($query){
                 $query->select('id', 'type_name');
-            }, 'state' => function($query){
-                $query->select('id', 'name');
             }, 'cardpool' => function($query){
                 $query->select('id', 'name');
             }));
@@ -264,7 +244,7 @@ class TournamentsController extends Controller
             $tournaments = $tournaments->where('location_country', $request->input('country'));
         }
         if ($request->input('state')) {
-            $tournaments = $tournaments->where('location_us_state', $request->input('state'));
+            $tournaments = $tournaments->where('location_state', $request->input('state'));
         }
         if ($request->input('creator')) {
             $tournaments = $tournaments->where('creator', $request->input('creator'));
@@ -273,8 +253,9 @@ class TournamentsController extends Controller
             $tournaments = $tournaments->whereNotNull('deleted_at');
         }
 
-        $tournaments = $tournaments->select('id', 'title', 'location_country', 'location_us_state', 'tournament_type_id', 'location_city',
-                'date', 'players_number', 'cardpool_id', 'concluded', 'approved', 'conflict', 'location_store', 'location_address')->get();
+        $tournaments = $tournaments->select('id', 'title', 'location_country', 'location_state', 'tournament_type_id',
+            'location_city', 'date', 'players_number', 'cardpool_id', 'concluded', 'approved', 'conflict',
+            'location_store', 'location_address', 'location_place_id')->get();
 
         // modify and flatten result
         $result = [];
@@ -282,18 +263,11 @@ class TournamentsController extends Controller
             // location
             if ($tournament->tournament_type_id == 6) {
                 $location = 'online';
-            } else if ($tournament->location_us_state < 52) {
-                $location = $tournament->country['name'].', '.$tournament->state['name'].', '.$tournament->location_city;
+            } else if ($tournament->location_country === 'United States') {
+                $location = $tournament->location_country.', '.$tournament->location_state.', '.$tournament->location_city;
             } else {
-                $location = $tournament->country['name'].', '.$tournament->location_city;
+                $location = $tournament->location_country.', '.$tournament->location_city;
             }
-            $location_full = $location;
-            if ($tournament->location_address) {
-                $location_full = $location_full.', '.$tournament->location_address;
-            }
-//            else if ($tournament->location_store) {
-//                $location_full = $location_full.', '.$tournament->location_store;
-//            }
 
             array_push($result, [
                 'id' => $tournament->id,
@@ -302,9 +276,11 @@ class TournamentsController extends Controller
                 'date' => $tournament->date,
                 'cardpool' => $tournament->cardpool['name'],
                 'location' => $location,
-                'location_full' => $location_full,
+                'address' => $tournament->location_address,
+                'store' => $tournament->location_store,
+                'place_id' => $tournament->location_place_id,
                 'concluded' => $tournament->concluded == 1,
-                'approved' => $tournament->approved == 1,
+                'approved' => $tournament->approved,
                 'players_count' => $tournament->players_number,
                 'registration_count' => $tournament->registration_number(),
                 'claim_count' => $tournament->claim_number(),

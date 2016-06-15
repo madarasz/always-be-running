@@ -1,10 +1,10 @@
-<h4>
+<h5>
     @unless (empty($icon))
         <i class="fa {{ $icon }}" aria-hidden="true"></i>
     @endunless
     {{ $title }}
-</h4>
-<table class="table table-condensed table-striped" id="{{ $id }}">
+</h5>
+<table class="table table-sm table-striped" id="{{ $id }}">
     <thead>
         @if( in_array('title', $columns) )
             <th>title</th>
