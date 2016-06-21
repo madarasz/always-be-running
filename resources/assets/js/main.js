@@ -27,7 +27,7 @@ function getTournamentData(filters, callback) {
 }
 
 function updateTournamentTable(elementID, columns, emptyMessage, data) {
-    $(elementID).find('tbody').empty();
+    var nowdate = nowDate();
     $.each(data, function (index, element) {
         newrow = $('<tr>').appendTo(elementID + ' > tbody');
 
@@ -135,7 +135,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, data) {
                     text: 'concluded',
                     'class': 'label label-success'
                 }));
-            } else if (element.date <= '{{ $nowdate }}') {
+            } else if (element.date <= nowdate) {
                 cell.append($('<i>', {
                     'aria-hidden': true,
                     'class': 'fa fa-clock-o text-danger'
@@ -240,6 +240,22 @@ function updateTournamentTable(elementID, columns, emptyMessage, data) {
 
 function convertDateForCalendar(dataString) {
     return dataString.substr(5,2) + '-' + dataString.substr(8,2) + '-' + dataString.substr(0,4);
+}
+
+function nowDate() {
+    var date = new Date(),
+        day = date.getDate(),
+        monthIndex = date.getMonth() + 1,
+        result = date.getFullYear() + '.';
+    if (monthIndex < 10) {
+        result = result + '0';
+    }
+    result = result + monthIndex + '.';
+    if (day < 10) {
+        result = result + '0';
+    }
+    result = result + day + '.';
+    return result;
 }
 
 function leadingZero(number) {
@@ -365,7 +381,10 @@ function codeAddress(data, map, geocoder) {
 }
 
 function updateDiscover(filter, map, geocoder) {
+    $('.loader').removeClass('hidden-xs-up');
+    $('#discover-table').find('tbody').empty();
     getTournamentData(filter, function(data) {
+        $('.loader').addClass('hidden-xs-up');
         updateTournamentTable('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'], 'no tournaments to show', data);
         updateTournamentCalendar(data);
         codeAddress(data, map, geocoder);
@@ -401,9 +420,11 @@ function filterDiscover(default_filter, map, geocoder) {
 function conclusionCheck() {
     if (document.getElementById('concluded').checked) {
         document.getElementById('players_number').removeAttribute('disabled');
+        $('#pn-req').removeClass('hidden-xs-up');
         document.getElementById('top_number').removeAttribute('disabled');
     } else {
         document.getElementById('players_number').setAttribute('disabled','');
+        $('#pn-req').addClass('hidden-xs-up');
         document.getElementById('top_number').setAttribute('disabled','');
     }
 }
@@ -430,12 +451,16 @@ function refreshAddressInfo(place) {
         document.getElementById('location_place_id').value = '';
     }
     // place name, address
-    if (typeof place.types !== 'undefined' &&
-        ($.inArray('establishment', place.types) > -1 || ($.inArray('store', place.types) > -1))) {
-        document.getElementById('store').innerHTML = place.name;
-        document.getElementById('address').innerHTML = place.formatted_address;
-        document.getElementById('location_store').value = place.name;
-        document.getElementById('location_address').value = place.formatted_address;
+    if (typeof place.types !== 'undefined') {
+        if ($.inArray('establishment', place.types) > -1 || ($.inArray('store', place.types) > -1)) {
+            document.getElementById('store').innerHTML = place.name;
+            document.getElementById('location_store').value = place.name;
+        }
+        if ($.inArray('street_address', place.types) > -1 || $.inArray('store', place.types) > -1
+            || $.inArray('establishment', place.types) > -1) {
+            document.getElementById('address').innerHTML = place.formatted_address;
+            document.getElementById('location_address').value = place.formatted_address;
+        }
     } else {
         document.getElementById('store').innerHTML = '';
         document.getElementById('address').innerHTML = '';

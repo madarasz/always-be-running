@@ -16,16 +16,14 @@
             <ul class="nav navbar-nav pull-left">
                 <li class="nav-item"><a class="nav-link" href="/discover">Discover</a></li>
                 <li class="nav-item"><a class="nav-link" href="/results">Results</a></li>
-                @if (Auth::check())
-                    <li class="nav-item"><a class="nav-link" href="/organize">Organize</a></li>
-                    @if (Auth::user()->admin == 1)
-                        <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
-                    @endif
+                <li class="nav-item"><a class="nav-link" href="/organize">Organize</a></li>
+                @if (Auth::check() && Auth::user()->admin == 1)
+                    <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
                 @endif
             </ul>
             <ul class="nav navbar-nav pull-right">
                 @if (Auth::check())
-                    <li class="nav-item"><a class="nav-link" href="/profile/{{ Auth::user()->id }}">{{ Auth::user()->name }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/personal">{{ Auth::user()->name }}</a></li>
                     <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
                 @else
                     <li class="nav-item"><a class="nav-link" href="/oauth2/redirect">Login via NetrunnerDB</a></li>

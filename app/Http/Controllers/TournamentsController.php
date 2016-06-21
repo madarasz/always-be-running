@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\CardPack;
-use App\Country;
 use App\Entry;
 use App\Tournament;
 use App\TournamentType;
-use App\UsState;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 
@@ -23,51 +21,7 @@ class TournamentsController extends Controller
         $this->authorize('logged_in', Tournament::class, $request->user());
         $request->sanitize_data($request->user()->id);
         Tournament::create($request->all());
-        return redirect()->action('TournamentsController@organize')->with('message', 'Tournament created.');
-    }
-
-    public function index()
-    {
-        return view('home');
-    }
-
-    public function discover(Request $request)
-    {
-        $nowdate = date('Y.m.d.', time() - 86400); // actually yesterday, to be on the safe side
-        $tournaments = Tournament::where('date', '>=', $nowdate)->where('approved', 1)->whereNull('deleted_at');
-        $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->unique()->all())->pluck('type_name', 'id')->all();
-        $countries = $tournaments->pluck('location_country')->unique()->all();
-        $states = $tournaments->pluck('location_state')->unique()->all();
-        if(($states_key = array_search('', $states)) !== false) {
-            unset($states[$states_key]);
-        }
-        $countries = array_values($countries);
-        $states = array_values($states);
-        $message = session()->has('message') ? session('message') : '';
-        // adding empty filters
-        $tournament_types = [0 => '---'] + $tournament_types;
-        $countries = [0 => '---'] + $countries;
-        $states = [0 => '---'] + $states;
-        return view('discover', compact('message', 'nowdate', 'tournament_types', 'countries', 'states'));
-    }
-
-    public function results(Request $request)
-    {
-        $user = $request->user()->id;
-        $entries = Entry::where('user', $user)->orderBy('updated_at', 'desc')->get();
-        $registered = [];
-        foreach ($entries as $entry)
-        {
-            $stuff = $entry->tournament;
-            if ($stuff && $stuff->approved !== 0)
-            {
-                $stuff['claim'] = $entry->rank > 0;
-                array_push($registered, $stuff);
-            }
-        }
-        $nowdate = date('Y.m.d.');
-        $message = session()->has('message') ? session('message') : '';
-        return view('results', compact('registered', 'message', 'nowdate'));
+        return redirect()->action('PagesController@organize')->with('message', 'Tournament created.');
     }
 
     /**
@@ -111,7 +65,7 @@ class TournamentsController extends Controller
         $this->authorize('own', $tournament, $request->user());
         $request->sanitize_data();
         $tournament->update($request->all());
-        return redirect()->action('TournamentsController@organize')->with('message', 'Tournament updated.');
+        return redirect()->action('PagesController@organize')->with('message', 'Tournament updated.');
     }
 
     /**
@@ -194,19 +148,6 @@ class TournamentsController extends Controller
         $this->authorize('own', $tournament, $request->user());
         Tournament::destroy($id);
         return back()->with('message', 'Tournament deleted.');
-    }
-
-    /**
-     * Show organize tournamnets page.
-     * @param Request $request
-     * @return view
-     */
-    public function organize(Request $request)
-    {
-        $this->authorize('logged_in', Tournament::class, $request->user());
-        $user = $request->user()->id;
-        $message = session()->has('message') ? session('message') : '';
-        return view('organize', compact('user', 'message'));
     }
 
     /**

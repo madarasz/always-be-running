@@ -3,7 +3,14 @@
         <i class="fa {{ $icon }}" aria-hidden="true"></i>
     @endunless
     {{ $title }}
+    @unless (empty($subtitle))
+        <br/>
+        <small>{{ $subtitle }}</small>
+    @endunless
 </h5>
+@if ($loader)
+    <div class="loader">&nbsp;</div>
+@endif
 <table class="table table-sm table-striped" id="{{ $id }}">
     <thead>
         @if( in_array('title', $columns) )
@@ -55,6 +62,5 @@
             <th></th>
         @endif
     </thead>
-    <tbody>
-    </tbody>
+    <tbody></tbody>
 </table>

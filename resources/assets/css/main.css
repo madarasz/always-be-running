@@ -67,3 +67,47 @@ body {
 .table th {
     border: 0;
 }
+
+.form-group.row {
+    margin-bottom: 0;
+}
+
+.loader {
+    color: #000;
+    font-weight: bold;
+    opacity: 0.8;
+    min-height: 50px;
+    z-index: 10;
+    width: 100%;
+    position: absolute;
+    text-align: center;
+    margin-top: 3rem;
+}
+.loader:before {
+    content: '[';
+    display: inline-block;
+    -webkit-animation: pulse 0.4s alternate infinite ease-in-out;
+    animation: pulse 0.4s alternate infinite ease-in-out;
+}
+.loader:after {
+    content: ']';
+    display: inline-block;
+    -webkit-animation: pulse 0.4s alternate infinite ease-in-out;
+    animation: pulse 0.4s alternate infinite ease-in-out;
+    -webkit-animation-delay: 0.4s;
+    animation-delay: 0.4s;
+}
+@-webkit-keyframes pulse {
+    to {
+        -webkit-transform: scale(0.8);
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+}
+@keyframes pulse {
+    to {
+        -webkit-transform: scale(0.8);
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+}

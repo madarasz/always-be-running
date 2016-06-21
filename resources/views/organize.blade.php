@@ -14,8 +14,7 @@
             @include('tournaments.partials.tabledin',
                 ['columns' => ['title', 'date', 'location', 'cardpool', 'approval', 'conclusion', 'players', 'claims',
                     'action_edit', 'action_delete' ],
-                'title' => 'Tournaments created by me',
-                'empty_message' => 'no tournaments created yet', 'id' => 'created'])
+                'title' => 'Tournaments created by me', 'id' => 'created', 'icon' => 'fa-list-alt'])
             </div>
         </div>
     </div>

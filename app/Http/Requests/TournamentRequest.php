@@ -36,9 +36,9 @@ class TournamentRequest extends Request
                 'title' => 'required',
                 'date' => 'required|date_format:Y.m.d.',
                 'location_city' => 'required',
+                'location_country' => 'required',
                 'players_number' => 'integer|between:1,1000',
                 'top_number' => 'integer|between:0,1000',
-                'location_country' => 'not_in:0'
             ];
         }
     }
@@ -46,7 +46,6 @@ class TournamentRequest extends Request
     public function messages() {
         return [
             'date_format' => 'Please enter the date using YYYY.MM.DD. format.',
-            'not_in' => 'The location country field is required.'
         ];
     }
 

@@ -39,8 +39,7 @@
             <div class="bracket">
                 @include('tournaments.partials.tabledin',
                 ['columns' => ['title', 'location', 'date', 'players', 'cardpool', 'type'],
-                'title' => 'Upcoming tournaments',
-                 'id' => 'discover-table', 'icon' => 'fa-list-alt'])
+                'title' => 'Upcoming tournaments', 'id' => 'discover-table', 'icon' => 'fa-list-alt', 'loader' => true])
             </div>
         </div>
     </div>

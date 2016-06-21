@@ -2,9 +2,10 @@
 
 Route::get('/', 'PagesController@home');
 
-Route::get('organize', 'TournamentsController@organize');
-Route::get('discover', 'TournamentsController@discover');
-Route::get('results', 'TournamentsController@results');
+Route::get('discover', 'PagesController@discover');
+Route::get('results', 'PagesController@results');
+Route::get('organize', 'PagesController@organize');
+Route::get('personal', 'PagesController@personal');
 Route::get('admin', 'AdminController@lister');
 Route::get('admin/identities/update', 'NetrunnerDBController@requestIdentities');
 Route::get('admin/cycles/update', 'NetrunnerDBController@requestCycles');

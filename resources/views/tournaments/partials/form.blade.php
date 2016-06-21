@@ -51,7 +51,7 @@
                 {{--Player number--}}
                 <div class="col-md-6 col-xs-12">
                     <div class="form-group">
-                        {!! Html::decode(Form::label('players_number', 'Number of players<sup class="text-danger">*</sup>')) !!}
+                        {!! Html::decode(Form::label('players_number', 'Number of players<sup class="text-danger hidden-xs-up" id="pn-req">*</sup>')) !!}
                         {!! Form::text('players_number', old('players_number', $tournament->players_number),
                              ['class' => 'form-control', 'placeholder' => 'number of players', 'disabled' => '']) !!}
                     </div>
@@ -137,7 +137,13 @@
 
     conclusionCheck();
     showLocation();
-    $('#date').datepicker({autoclose: true, format: 'yyyy.mm.dd.', orientation: 'bottom', todayHighlight: true});
+    $('#date').datepicker({
+        autoclose: true,
+        format: 'yyyy.mm.dd.',
+        orientation: 'bottom',
+        todayHighlight: true,
+        weekStart: 1 //TODO: custom
+    });
 
     function initializeMap() {
         map = new google.maps.Map(document.getElementById('map'), {
