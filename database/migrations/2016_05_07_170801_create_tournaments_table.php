@@ -19,6 +19,7 @@ class CreateTournamentsTable extends Migration
             $table->string('start_time');
             $table->string('location_country');
             $table->string('location_state');
+            $table->string('contact');
             $table->string('location_city');
             $table->string('location_store');
             $table->string('location_address');

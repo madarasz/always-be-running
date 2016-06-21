@@ -8,9 +8,9 @@
         <small>{{ $subtitle }}</small>
     @endunless
 </h5>
-@if ($loader)
+@unless (empty($loader))
     <div class="loader">&nbsp;</div>
-@endif
+@endunless
 <table class="table table-sm table-striped" id="{{ $id }}">
     <thead>
         @if( in_array('title', $columns) )

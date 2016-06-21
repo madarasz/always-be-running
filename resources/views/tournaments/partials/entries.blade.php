@@ -20,8 +20,8 @@
                     <td class="text-right">#{{ $i+1 }}</td>
             @endif
             <td>{{ $entry->player->name }}</td>
-            <td><a href="{{ "https://netrunnerdb.com/en/decklist/".$entry->corp_deck_id }}">{{ $entry->corp_deck_title }}</a></td>
-            <td><a href="{{ "https://netrunnerdb.com/en/decklist/".$entry->runner_deck_id }}">{{ $entry->runner_deck_title }}</a></td>
+            <td><img src="/img/ids/{{ $entry->corp_deck_identity }}.png">&nbsp;<a href="{{ "https://netrunnerdb.com/en/decklist/".$entry->corp_deck_id }}">{{ $entry->corp_deck_title }}</a></td>
+            <td><img src="/img/ids/{{ $entry->runner_deck_identity }}.png">&nbsp;<a href="{{ "https://netrunnerdb.com/en/decklist/".$entry->runner_deck_id }}">{{ $entry->runner_deck_title }}</a></td>
             @if (($user && ($user->admin || $user->id == $creator))
                 || ($user_entry && count($entry) && $entry->user == $user_entry->user))
                 <td class="text-right">

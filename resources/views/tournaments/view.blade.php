@@ -66,6 +66,9 @@
                     @unless($tournament->location_address === '')
                         <strong>Address</strong>: {{ $tournament->location_address }}<br/>
                     @endunless
+                    @unless($tournament->contact === '')
+                        <strong>Contact</strong>: {{ $tournament->contact }}<br/>
+                    @endunless
                 </p>
                 {{--Google map--}}
                 <div class="map-wrapper-small">
@@ -169,7 +172,7 @@
                                                         {{--<optgroup label="Public decklists">--}}
                                                     {{--@endif--}}
                                                     @foreach ($decks['public']['corp'] as $deck)
-                                                        <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
+                                                        <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }}, "identity": "{{ $deck['identity'] }}" }'>{{ $deck['name'] }}</option>
                                                     @endforeach
                                                     {{--@if ($decks_two_types)--}}
                                                         {{--</optgroup>--}}
@@ -183,8 +186,10 @@
                                                     {{--@endif--}}
                                                 </select>
                                             @else
-                                                <br/>
-                                                <em>You don't have any published decklist on NetrunnerDB.</em>
+                                                <div class="alert alert-danger" id="no-corp-deck">
+                                                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                                                    You don't have any published decklist on NetrunnerDB.
+                                                </div>
                                             @endif
                                         </div>
                                     </div>
@@ -197,7 +202,7 @@
                                                         {{--<optgroup label="Public decklists">--}}
                                                     {{--@endif--}}
                                                     @foreach ($decks['public']['runner'] as $deck)
-                                                        <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>
+                                                        <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }}, "identity": "{{ $deck['identity'] }}" }'>{{ $deck['name'] }}</option>
                                                     @endforeach
                                                     {{--@if ($decks_two_types)--}}
                                                         {{--</optgroup>--}}
@@ -211,8 +216,10 @@
                                                     {{--@endif--}}
                                                 </select>
                                             @else
-                                                <br/>
-                                                <em id="no-decks">You don't have any published decklist on NetrunnerDB.</em>
+                                                <div class="alert alert-danger" id="no-runner-deck">
+                                                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                                                    You don't have any published decklist on NetrunnerDB.
+                                                </div>
                                             @endif
                                         </div>
                                     </div>

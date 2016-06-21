@@ -104,9 +104,9 @@ class TournamentsController extends Controller
         } else {
             $user_entry = Entry::where('tournament_id', $tournament->id)->where('user', $user->id)->first();
         }
-        $decks = [];
+        $decks = ['public' => ['corp' => [], 'runner' => [] ]];
         $decks_two_types = false;
-        if (!is_null($user))
+        if (!is_null($user) && (is_null($user_entry) || is_null($user_entry->rank)))
         {
             $decks = app('App\Http\Controllers\NetrunnerDBController')->getDeckData();
             $decks_two_types = count($decks['public']['corp']) > 0 && count($decks['private']['corp']) > 0;
@@ -196,7 +196,7 @@ class TournamentsController extends Controller
 
         $tournaments = $tournaments->select('id', 'title', 'location_country', 'location_state', 'tournament_type_id',
             'location_city', 'date', 'players_number', 'cardpool_id', 'concluded', 'approved', 'conflict',
-            'location_store', 'location_address', 'location_place_id')->get();
+            'location_store', 'location_address', 'location_place_id', 'contact')->get();
 
         // modify and flatten result
         $result = [];
@@ -219,6 +219,7 @@ class TournamentsController extends Controller
                 'location' => $location,
                 'address' => $tournament->location_address,
                 'store' => $tournament->location_store,
+                'contact' => $tournament->contact,
                 'place_id' => $tournament->location_place_id,
                 'concluded' => $tournament->concluded == 1,
                 'approved' => $tournament->approved,

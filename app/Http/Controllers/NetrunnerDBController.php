@@ -66,7 +66,7 @@ class NetrunnerDBController extends Controller
     {
         $result = ['public' => ['runner' => [], 'corp' => []], 'private' => ['runner' => [], 'corp' => []]];
         $runner_ids = CardIdentity::where('runner', 1)->get()->pluck('id')->all();
-        $corp_ids = CardIdentity::where('runner', 1)->get()->pluck('id')->all();
+        $corp_ids = CardIdentity::where('runner', 0)->get()->pluck('id')->all();
         $public = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/private/decklists'), true);
         $this->sortDecks($public['data'], $result['public'], $runner_ids, $corp_ids);
         // TODO: enable if performance is ok
@@ -82,13 +82,14 @@ class NetrunnerDBController extends Controller
     {
         foreach ($deckSource as $deck)
         {
-            $side = $this->isDeckRunner($deck, $runner_ids, $corp_ids);
-            $data = ['id' => $deck['id'], 'name' => $deck['name'], 'date_update' => $deck['date_update']];
-            if ($side == true)  // TODO: include null
+            $info = $this->classifyDeck($deck, $runner_ids, $corp_ids);
+            $data = ['id' => $deck['id'], 'name' => $deck['name'],
+                'identity' => $info['identity'], 'date_update' => $deck['date_update']];
+            if ($info['side'] === 'runner' || is_null($info['side']))  // TODO: include null
             {
                 array_push($target['runner'], $data);
             }
-            if ($side == false) // TODO: include null
+            if ($info['side'] === 'corp' || is_null($info['side'])) // TODO: include null
             {
                 array_push($target['corp'], $data);
             }
@@ -239,19 +240,19 @@ class NetrunnerDBController extends Controller
         return $a['date_update'] < $b['date_update'];
     }
 
-    private function isDeckRunner($deck, $runner_ids, $corp_ids)
+    private function classifyDeck($deck, $runner_ids, $corp_ids)
     {
         foreach ($deck['cards'] as $key => $card)
         {
             if (in_array($key, $runner_ids))
             {
-                return true;
+                return ['side' => 'runner', 'identity' => $key];
             } elseif (in_array($key, $corp_ids))
             {
-                return false;
+                return ['side' => 'corp', 'identity' => $key];
             }
         }
-        return null;
+        return ['side' => null, 'identity' => null];
     }
 }
 

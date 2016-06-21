@@ -56,9 +56,10 @@ class EntriesController extends Controller
                 'rank_top' => $request->rank_top,
                 'corp_deck_id' => $corp_deck['id'],
                 'corp_deck_title' => $corp_deck['title'],
+                'corp_deck_identity' => $corp_deck['identity'],
                 'runner_deck_id' => $runner_deck['id'],
-                'runner_deck_title' => $runner_deck['title']
-                // TODO: identities
+                'runner_deck_title' => $runner_deck['title'],
+                'runner_deck_identity' => $runner_deck['identity']
             ]);
         } else {
             $entry->update([
@@ -66,9 +67,10 @@ class EntriesController extends Controller
                 'rank_top' => $request->rank_top,
                 'corp_deck_id' => $corp_deck['id'],
                 'corp_deck_title' => $corp_deck['title'],
+                'corp_deck_identity' => $corp_deck['identity'],
                 'runner_deck_id' => $runner_deck['id'],
-                'runner_deck_title' => $runner_deck['title']
-                // TODO: identities
+                'runner_deck_title' => $runner_deck['title'],
+                'runner_deck_identity' => $runner_deck['identity']
             ]);
         }
         // create conflict

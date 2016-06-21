@@ -32,11 +32,17 @@
                 {!! Form::checkbox('decklist', null, in_array(old('decklist', $tournament->decklist), [1, 'on'], true), ['id' => 'decklist']) !!}
                 {!! Form::label('decklist', 'decklist is mandatory') !!}
             </div>
+            {{--Contact--}}
+            <div class="form-group">
+                {!! Form::label('contact', 'Contact') !!}
+                {!! Form::text('contact', old('contact', $tournament->contact),
+                     ['class' => 'form-control', 'placeholder' => 'T.O. phone number or email']) !!}
+            </div>
             {{--Description--}}
             <div class="form-group">
                 {!! Form::label('description', 'Description') !!}
                 {!! Form::textarea('description', old('description', $tournament->description),
-                    ['rows' => 6, 'cols' => '', 'class' => 'form-control', 'placeholder' => 'additional information and rules, prizepool, TO contact, etc.']) !!}
+                    ['rows' => 6, 'cols' => '', 'class' => 'form-control', 'placeholder' => 'additional information and rules, prizepool, etc.']) !!}
             </div>
         </div>
         {{--Conclusion--}}
