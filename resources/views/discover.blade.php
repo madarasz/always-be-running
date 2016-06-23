@@ -12,21 +12,21 @@
                         <div class="form-group">
                             {!! Form::label('tournament_type_id', 'Type') !!}
                             {!! Form::select('tournament_type_id', $tournament_types,
-                                null, ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder)', 'disabled' => '']) !!}
+                                null, ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder, infowindow)', 'disabled' => '']) !!}
                         </div>
                     </div>
                     <div class="col-md-4 col-xs-12">
                         <div class="form-group">
                             {!! Form::label('location_country', 'Country') !!}
                             {!! Form::select('location_country', $countries, null,
-                                ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder)', 'disabled' => '']) !!}
+                                ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder, infowindow)', 'disabled' => '']) !!}
                         </div>
                     </div>
                     <div class="col-md-4 col-xs-12 hidden-xs-up" id="select_state">
                         <div class="form-group">
                             {!! Form::label('location_state', 'US State') !!}
                             {!! Form::select('location_state', $states,
-                                        null, ['class' => 'form-control filter', 'onchange'=>'filterDiscover(default_filter, map, geocoder)', 'disabled' => '']) !!}
+                                        null, ['class' => 'form-control filter', 'onchange'=>'filterDiscover(default_filter, map, geocoder, infowindow)', 'disabled' => '']) !!}
                         </div>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
     </script>
     <script type="text/javascript">
 
-        var geocoder, map,
+        var geocoder, map, infowindow,
             default_filter = 'start={{ $nowdate }}&approved=1';
 
         function initializeMap() {
@@ -81,8 +81,9 @@
                 center: {lat: 40.157053, lng: 19.329297}
             });
             geocoder = new google.maps.Geocoder();
+            infowindow = new google.maps.InfoWindow();
             $('.filter').prop("disabled", false);
-            updateDiscover(default_filter, map, geocoder);
+            updateDiscover(default_filter, map, geocoder, infowindow);
         }
 
     </script>

@@ -336,48 +336,78 @@ function updateTournamentCalendar(data) {
     });
 }
 
-function codeAddress(data, map, geocoder) {
+function codeAddress(data, map, geocoder, infowindow) {
     // delete markers
     if (typeof map.markers != 'undefined') {
         for (var i = 0; i < map.markers.length; i++) {
             map.markers[i].setMap(null);
+            google.maps.event.clearListeners(map.markers[i], 'click');
         }
     }
     map.markers = [];
     var bounds = new google.maps.LatLngBounds();
-    var u = 0;
+    var countAddress = 0;
     for (i = 0; i < data.length; i++) {
         if (data[i].location !== 'online') {
-            var address = data[i].address.length > 0 ? data[i].address : data[i].location;
-            geocoder.geocode({'address': address}, function (results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    var marker = new google.maps.Marker({
-                        map: map,
-                        position: results[0].geometry.location
-                    });
-                    map.markers.push(marker);
-                    bounds.extend(marker.getPosition());
-
-                } else {
-                    console.log('Geocode was not successful for the following address: ' + data[u].address + '/' + data[u].location);
-                }
-                u++;
-                if (u == data.length) {
-                    // avoiding to much zoom
-                    var zoombounds = 0.002;
-                    if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
-                        var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat() + zoombounds, bounds.getNorthEast().lng() + zoombounds);
-                        var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat() - zoombounds, bounds.getNorthEast().lng() - zoombounds);
-                        bounds.extend(extendPoint1);
-                        bounds.extend(extendPoint2);
-                    }
-                    map.fitBounds(bounds);
-                }
-            });
-        } else {
-            u++;
+            countAddress++;
         }
     }
+    for (i = 0; i < data.length; i++) {
+        if (data[i].location !== 'online') {
+            countAddress --;
+            var address = data[i].address.length > 0 ? data[i].address : data[i].location;
+            geocoder.geocode({'address': address}, ownGeocodeCallback(data[i], countAddress == 0, map, bounds, infowindow));
+        }
+    }
+}
+
+function ownGeocodeCallback(data, isLast, map, bounds, infowindow) {
+    var geocodeCallback = function (results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+            // create marker
+            var marker = new google.maps.Marker({
+                map: map,
+                position: results[0].geometry.location
+            });
+            map.markers.push(marker);
+            bounds.extend(marker.getPosition());
+            // set listener for infowindow
+            marker.addListener('click', function () {
+                infowindow.setContent(renderInfoText(data));
+                infowindow.open(map, marker);
+            });
+        } else {
+            console.log('Geocode was not successful for the following address: ' + data.address + '/' + data.location);
+        }
+        if (isLast) {
+            // avoiding to much zoom
+            var zoombounds = 0.002;
+            if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
+                var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat() + zoombounds, bounds.getNorthEast().lng() + zoombounds);
+                var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat() - zoombounds, bounds.getNorthEast().lng() - zoombounds);
+                bounds.extend(extendPoint1);
+                bounds.extend(extendPoint2);
+            }
+            map.fitBounds(bounds);
+
+        }
+    };
+    return geocodeCallback;
+}
+
+function renderInfoText(data) {
+    var html = '<a href="/tournaments/' + data.id + '"><strong>' + data.title + '</strong></a><br/>' +
+        '<em>' + data.type + '</em><br/>' +
+        '<strong>city</strong>: ' + data.location + '<br/>';
+    if (data.store !== '') {
+        html = html + '<strong>store</strong>: ' + data.store + '<br/>';
+    }
+    html = html + '<strong>date</strong>: ' + data.date + '<br/>' +
+        '<strong>cardpool</strong>: ' + data.cardpool;
+    if (data.contact !== '') {
+        html = html + '<br/><strong>contact</strong>: ' + data.contact;
+    }
+    return html;
 }
 
 function updateDiscover(filter, map, geocoder) {
@@ -387,11 +417,11 @@ function updateDiscover(filter, map, geocoder) {
         $('.loader').addClass('hidden-xs-up');
         updateTournamentTable('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'], 'no tournaments to show', data);
         updateTournamentCalendar(data);
-        codeAddress(data, map, geocoder);
+        codeAddress(data, map, geocoder, infowindow);
     });
 }
 
-function filterDiscover(default_filter, map, geocoder) {
+function filterDiscover(default_filter, map, geocoder, infowindow) {
     var filter = default_filter,
         type = document.getElementById('tournament_type_id').value,
         countrySelector = document.getElementById('location_country'),
@@ -414,7 +444,7 @@ function filterDiscover(default_filter, map, geocoder) {
         $('#select_state').addClass('hidden-xs-up');
     }
 
-    updateDiscover(filter, map, geocoder);
+    updateDiscover(filter, map, geocoder, infowindow);
 }
 
 function conclusionCheck() {
