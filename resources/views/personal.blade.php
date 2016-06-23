@@ -10,6 +10,7 @@
                     <i class="fa fa-calendar" aria-hidden="true"></i>
                     My calendar<br/>
                     <small>tournaments I registered to</small>
+                    @include('partials.calendar')
                 </h5>
             </div>
         </div>
@@ -18,7 +19,7 @@
                 @include('tournaments.partials.tabledin',
                 ['columns' => ['title', 'location', 'date', 'cardpool', 'user_claim'],
                 'title' => 'My tournaments', 'subtitle' => 'tournaments I registered to',
-                 'id' => 'my-table', 'icon' => 'fa-list-alt'])
+                 'id' => 'my-table', 'icon' => 'fa-list-alt', 'loader' => true])
             </div>
         </div>
     </div>
@@ -30,9 +31,45 @@
                     <i class="fa fa-wrench" aria-hidden="true"></i>
                     Personal settings
                 </h5>
-                <br/>
-                <div class="text-xs-center">
+                <form class="m-t-2">
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <select class="form-control" id="country">
+                            <option>---</option>
+                        </select>
+                        <small class="text-muted">your default country filter</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="fday">First day of week</label>
+                        <select class="form-control" id="fday">
+                            <option>Monday</option>
+                            <option>Sunday</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fdate">Date format</label>
+                        <select class="form-control" id="fdate">
+                            <option>YYYY.MM.DD.</option>
+                            <option>DD/MM/YYY</option>
+                            <option>MM-DD-YYYY</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Email notification</label><br/>
+                        <input id="notif-conclude" type="checkbox">
+                        <label for="notif-conclude">tournament due for conclusion<br/>
+                            <small class="text-muted">for tournaments you created</small>
+                        </label><br/>
+
+                        <input id="notif-claim" type="checkbox">
+                        <label for="notif-claim">tournament spot can be claimed<br/>
+                            <small class="text-muted">for tournaments you registered to</small>
+                        </label>
+                    </div>
+                </form>
+                <div class="text-xs-center m-t-2">
                     <a href="" class="btn btn-primary">Update settings</a>
+                    @include('partials.tobedeveloped')
                 </div>
             </div>
         </div>
@@ -40,14 +77,15 @@
             <div class="bracket">
                 <div class="pull-right">
                     <a href="" class="btn btn-primary">View public profile</a>
+                    @include('partials.tobedeveloped')
                 </div>
                 <h5>
                     <i class="fa fa-user" aria-hidden="true"></i>
                     Public profile information
                 </h5>
                 <br/>
-                <strong>Usernames</strong>
                 <form>
+                    <strong>Usernames</strong>
                     <div class="form-group row">
                         <label class="col-sm-offset-1 col-sm-3 form-control-label">NetrunnerDB</label>
                         <div class="col-sm-7">
@@ -83,9 +121,34 @@
                             <input type="text" class="form-control">
                         </div>
                     </div>
+                    <br/>
+                    <strong>Other information</strong>
+                    <div class="form-group row">
+                        <label class="col-sm-offset-1 col-sm-3 form-control-label">Website/blog</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-offset-1 col-sm-3 form-control-label">About</label>
+                        <div class="col-sm-7">
+                            <textarea rows="3" cols="" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="text-xs-center m-t-2">
+                        <a href="" class="btn btn-primary">Save profile info</a>
+                        @include('partials.tobedeveloped')
+                    </div>
                 </form>
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        getTournamentData('foruser={{ $user }}', function(data) {
+            $('.loader').addClass('hidden-xs-up');
+            updateTournamentTable('#my-table', ['title', 'location', 'date', 'cardpool', 'user_claim'], 'no tournaments to show', data);
+            updateTournamentCalendar(data);
+        });
+    </script>
 @stop
 

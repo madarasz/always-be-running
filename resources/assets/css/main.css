@@ -111,3 +111,10 @@ body {
         opacity: 0.5;
     }
 }
+
+h5 small {
+    font-size: 70%;
+}
+input[type="checkbox"] {
+    vertical-align: text-top;
+}

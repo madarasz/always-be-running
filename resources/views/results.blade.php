@@ -39,7 +39,7 @@
                     Statistics<br/>
                     <small>provided by <a href="http://www.knowthemeta.com">KnowTheMeta</a></small>
                 </h5>
-                <div class="text-xs-center m-t-1 m-b-1"><small>please filter for cardpool first</small></div>
+                @include('partials.tobedeveloped')
             </div>
         </div>
     {{--</div>--}}

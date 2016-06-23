@@ -23,8 +23,8 @@
     </h4>
     @include('partials.message')
     <div class="row">
-        {{--Tournament info--}}
         <div class="col-md-4 col-xs-12">
+            {{--Tournament info--}}
             <div class="bracket">
                 {{--Approval--}}
                 @if ($tournament->approved === null)
@@ -75,6 +75,16 @@
                     <div id="map"></div>
                 </div>
             </div>
+            {{--Statistics--}}
+            @if ($tournament->concluded)
+            <div class="bracket">
+                <h5>
+                    <i class="fa fa-bar-chart" aria-hidden="true"></i>
+                    Statistics
+                </h5>
+                @include('partials.tobedeveloped')
+            </div>
+            @endif
         </div>
         {{--Standings and claims--}}
         <div class="col-md-8 col-xs-12">
@@ -118,13 +128,13 @@
                                 <li>Swiss rounds rank: <strong>#{{ $user_entry->rank }}</strong></li>
                                 <li>
                                     Corporation deck:
-                                    <a href="{{ "https://netrunnerdb.com/en/decklist/".$user_entry->corp_deck_id }}">
+                                    <img src="/img/ids/{{ $user_entry->corp_deck_identity }}.png">&nbsp;<a href="{{ "https://netrunnerdb.com/en/decklist/".$user_entry->corp_deck_id }}">
                                         {{ $user_entry->corp_deck_title }}
                                     </a>
                                 </li>
                                 <li>
                                     Runner deck:
-                                    <a  href="{{ "https://netrunnerdb.com/en/decklist/".$user_entry->runner_deck_id }}">
+                                    <img src="/img/ids/{{ $user_entry->runner_deck_identity }}.png">&nbsp;<a  href="{{ "https://netrunnerdb.com/en/decklist/".$user_entry->runner_deck_id }}">
                                         {{ $user_entry->runner_deck_title }}
                                     </a>
                                 </li>
@@ -279,6 +289,14 @@
                     @endif
                 @endif
             </div>
+            </div>
+            {{--Comments--}}
+            <div class="bracket">
+                <h5>
+                    <i class="fa fa-comments-o" aria-hidden="true"></i>
+                    Comments
+                </h5>
+                @include('partials.tobedeveloped')
             </div>
         </div>
     </div>

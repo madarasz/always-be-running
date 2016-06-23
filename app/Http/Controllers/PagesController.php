@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Tournament;
 use App\TournamentType;
-use App\Entry;
+//use App\Entry;
 use App\CardPack;
 
 use App\Http\Requests;
@@ -71,15 +71,22 @@ class PagesController extends Controller
      */
     public function organize(Request $request)
     {
+        if (is_null($request->user())) {
+            return view('loginreq');
+        }
         $this->authorize('logged_in', Tournament::class, $request->user());
         $user = $request->user()->id;
         $message = session()->has('message') ? session('message') : '';
         return view('organize', compact('user', 'message'));
     }
 
-    public function personal()
+    public function personal(Request $request)
     {
+        if (is_null($request->user())) {
+            return view('loginreq');
+        }
         $message = session()->has('message') ? session('message') : '';
-        return view('personal', compact('message'));
+        $user = $request->user()->id;
+        return view('personal', compact('message', 'user'));
     }
 }

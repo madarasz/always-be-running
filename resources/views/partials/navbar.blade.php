@@ -23,7 +23,7 @@
             </ul>
             <ul class="nav navbar-nav pull-right">
                 @if (Auth::check())
-                    <li class="nav-item"><a class="nav-link" href="/personal">{{ Auth::user()->name }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/personal">Personal</a></li>
                     <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
                 @else
                     <li class="nav-item"><a class="nav-link" href="/oauth2/redirect">Login via NetrunnerDB</a></li>

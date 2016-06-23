@@ -193,6 +193,11 @@ class TournamentsController extends Controller
         if ($request->input('deleted')) {
             $tournaments = $tournaments->whereNotNull('deleted_at');
         }
+        if ($request->input('foruser')) {
+            $tournaments = $tournaments->whereIn('id', function($query) use ($request) {
+                $query->select('tournament_id')->from(with(new Entry)->getTable())->where('user', $request->input('foruser'));
+            });
+        }
 
         $tournaments = $tournaments->select('id', 'title', 'location_country', 'location_state', 'tournament_type_id',
             'location_city', 'date', 'players_number', 'cardpool_id', 'concluded', 'approved', 'conflict',
@@ -230,8 +235,9 @@ class TournamentsController extends Controller
             ]);
 
             // user specific claim
-            if ($request->input('user')) {
-                $entry = Entry::where('tournament_id', $tournament->id)->where('user', $request->input('user'))
+            if ($request->input('user') || $request->input('foruser')) {
+                $userId = $request->input('user') ? $request->input('user') : $request->input('foruser');
+                $entry = Entry::where('tournament_id', $tournament->id)->where('user', $userId)
                     ->whereNotNull('rank')->first();
                 $result[count($result)-1]['user_claim'] = !is_null($entry);
             }
