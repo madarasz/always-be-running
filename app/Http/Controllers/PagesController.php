@@ -32,9 +32,9 @@ class PagesController extends Controller
         $states = array_values($states);
         $message = session()->has('message') ? session('message') : '';
         // adding empty filters
-        $tournament_types = [0 => '---'] + $tournament_types;
-        $countries = [0 => '---'] + $countries;
-        $states = [0 => '---'] + $states;
+        $tournament_types = [-1 => '---'] + $tournament_types;
+        $countries = [-1 => '---'] + $countries;
+        $states = [-1 => '---'] + $states;
         return view('discover', compact('message', 'nowdate', 'tournament_types', 'countries', 'states'));
     }
 
@@ -57,9 +57,9 @@ class PagesController extends Controller
         $countries = $tournaments->pluck('location_country')->unique()->all();
         $tournament_cardpools = CardPack::whereIn('id', $tournaments->pluck('cardpool_id')->unique()->all())->pluck('name', 'id')->all();;
         // adding empty filters
-        $tournament_types = [0 => '---'] + $tournament_types;
-        $countries = [0 => '---'] + $countries;
-        $tournament_cardpools = [0 => '---'] + $tournament_cardpools;
+        $tournament_types = [-1 => '---'] + $tournament_types;
+        $countries = [-1 => '---'] + $countries;
+        $tournament_cardpools = [-1 => '---'] + $tournament_cardpools;
         $message = session()->has('message') ? session('message') : '';
         return view('results', compact('registered', 'message', 'nowdate', 'tournament_types', 'countries', 'tournament_cardpools'));
     }

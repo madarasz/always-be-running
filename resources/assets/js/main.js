@@ -426,8 +426,8 @@ function filterDiscover(default_filter, map, geocoder, infowindow) {
         type = document.getElementById('tournament_type_id').value,
         countrySelector = document.getElementById('location_country'),
         stateSelector = document.getElementById('location_state'),
-        country = countrySelector.options[countrySelector.value].innerHTML,
-        state = stateSelector.options[stateSelector.value].innerHTML;
+        country = countrySelector.options[parseInt(countrySelector.value)+1].innerHTML,
+        state = stateSelector.options[parseInt(stateSelector.value)+1].innerHTML;
     if (type > 0) {
         filter = filter + '&type=' + type;
     }
