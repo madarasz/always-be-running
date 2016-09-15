@@ -4,6 +4,7 @@
 Homestead.yaml
 Homestead.json
 .env
+.live.env
 .idea
 node_modules
 public/js

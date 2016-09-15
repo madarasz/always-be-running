@@ -68,7 +68,7 @@
                     </div>
                 </form>
                 <div class="text-xs-center m-t-2">
-                    <a href="" class="btn btn-primary">Update settings</a>
+                    <input type="button" value="Update settings" class="btn btn-primary disabled"/>
                     @include('partials.tobedeveloped')
                 </div>
             </div>
@@ -76,7 +76,7 @@
         <div class="col-md-8 col-xs-12">
             <div class="bracket">
                 <div class="pull-right">
-                    <a href="" class="btn btn-primary">View public profile</a>
+                    <input type="button" value="View public profile" class="btn btn-primary disabled"/>
                     @include('partials.tobedeveloped')
                 </div>
                 <h5>
@@ -136,7 +136,7 @@
                         </div>
                     </div>
                     <div class="text-xs-center m-t-2">
-                        <a href="" class="btn btn-primary">Save profile info</a>
+                        <input type="button" class="btn btn-primary disabled" value="Save profile info"/>
                         @include('partials.tobedeveloped')
                     </div>
                 </form>
