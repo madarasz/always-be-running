@@ -18,7 +18,7 @@ class NetrunnerDBController extends Controller
 
     public function __construct()
     {
-        $this->oauth = \OAuth2::consumer('NetrunnerDB', 'http://localhost:8000/oauth2/redirect');
+        $this->oauth = \OAuth2::consumer('NetrunnerDB', '/oauth2/redirect');
     }
 
     /**
