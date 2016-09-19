@@ -1,7 +1,7 @@
 @extends('layout.general')
 
 @section('content')
-    <h4 class="page-header">Discover upcoming tournaments</h4>
+    <h4 class="page-header">Upcoming tournaments</h4>
     <div class="row">
         <div class="col-xs-12">
             <div class="bracket">
