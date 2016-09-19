@@ -3,7 +3,7 @@
 <![endif]-->
 
 {{--Navigation bar--}}
-<nav class="navbar navbar-dark bg-inverse navbar-fixed-top" role="navigation" style="background-color: #222;">
+<nav class="navbar navbar-dark bg-inverse navbar-fixed-top" role="navigation" style="background-color: #222 !important;">
     <div class="container">
         <a class="navbar-brand" href="/#">
             <img src="/img/logo_small.png" class="navbar-brand-image"/>
