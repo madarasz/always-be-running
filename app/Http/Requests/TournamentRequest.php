@@ -23,7 +23,7 @@ class TournamentRequest extends Request
      */
     public function rules()
     {
-        if (Request::get('tournament_type_id') == 6)
+        if (Request::get('tournament_type_id') == 7) // online tournament requires no location
         {
             return [
                 'title' => 'required',
