@@ -48,10 +48,18 @@
         {{--Conclusion--}}
         <div class="bracket">
             <label>Conclusion</label>
-            <div class="form-group">
-                {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), [1, 'on'], true),
-                    ['onclick' => 'conclusionCheck()', 'id' => 'concluded']) !!}
-                {!! Form::label('concluded', 'tournament has ended') !!}
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <div class="form-group">
+                        {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), [1, 'on'], true),
+                            ['onclick' => 'conclusionCheck()', 'id' => 'concluded']) !!}
+                        {!! Form::label('concluded', 'tournament has ended') !!}
+                    </div>
+                </div>
+                <div class="col-md-6 col-xs-12 text-xs-center">
+                    <input type="button" class="btn btn-primary disabled" value="Upload CSV results"/>
+                    @include('partials.tobedeveloped')
+                </div>
             </div>
             <div class="row" id="player-numbers">
                 {{--Player number--}}
