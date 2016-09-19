@@ -14,7 +14,7 @@
         </button>
         <div class="collapse navbar-toggleable-xs" id="navbar-collapse-1">
             <ul class="nav navbar-nav pull-left">
-                <li class="nav-item"><a class="nav-link" href="/discover">Upcoming</a></li>
+                <li class="nav-item"><a class="nav-link" href="/upcoming">Upcoming</a></li>
                 <li class="nav-item"><a class="nav-link" href="/results">Results</a></li>
                 <li class="nav-item"><a class="nav-link" href="/organize">Organize</a></li>
                 @if (Auth::check() && Auth::user()->admin == 1)

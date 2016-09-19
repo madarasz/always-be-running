@@ -2,7 +2,7 @@
 
 Route::get('/', 'PagesController@home');
 
-Route::get('discover', 'PagesController@discover');
+Route::get('upcoming', 'PagesController@upcoming');
 Route::get('results', 'PagesController@results');
 Route::get('organize', 'PagesController@organize');
 Route::get('personal', 'PagesController@personal');

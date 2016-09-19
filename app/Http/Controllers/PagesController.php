@@ -18,7 +18,7 @@ class PagesController extends Controller
         return view('home', compact('message'));
     }
 
-    public function discover()
+    public function upcoming()
     {
         $nowdate = date('Y.m.d.', time() - 86400); // actually yesterday, to be on the safe side
         $tournaments = Tournament::where('date', '>=', $nowdate)->where('approved', 1)->whereNull('deleted_at');
@@ -35,7 +35,7 @@ class PagesController extends Controller
         $tournament_types = [-1 => '---'] + $tournament_types;
         $countries = [-1 => '---'] + $countries;
         $states = [-1 => '---'] + $states;
-        return view('discover', compact('message', 'nowdate', 'tournament_types', 'countries', 'states'));
+        return view('upcoming', compact('message', 'nowdate', 'tournament_types', 'countries', 'states'));
     }
 
     public function results(Request $request)
