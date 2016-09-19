@@ -19,3 +19,6 @@ tests/nightwatch/reports
 tests/nightwatch/globals/login-data.js
 cards.json
 !.gitkeep
+composer.phar
+resources/assets/js/bootstrap.min.js
+resources/assets/js/tether.js
