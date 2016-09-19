@@ -14,5 +14,6 @@
     @yield('content')
     </div>
 
+    @include('partials.analytics')
 </body>
 </html>
