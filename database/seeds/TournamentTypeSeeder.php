@@ -26,16 +26,20 @@ class TournamentTypeSeeder extends Seeder
                     'order' => 3
                 ),
                 array(
-                    'type_name' => 'worlds championship',
+                    'type_name' => 'national championship',
                     'order' => 4
                 ),
                 array(
-                    'type_name' => 'casual',
+                    'type_name' => 'worlds championship',
                     'order' => 5
                 ),
                 array(
-                    'type_name' => 'online event',
+                    'type_name' => 'casual',
                     'order' => 6
+                ),
+                array(
+                    'type_name' => 'online event',
+                    'order' => 7
                 )
             )
         );
