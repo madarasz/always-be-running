@@ -87,6 +87,7 @@ class PagesController extends Controller
         }
         $message = session()->has('message') ? session('message') : '';
         $user = $request->user()->id;
-        return view('personal', compact('message', 'user'));
+        $username = $request->user()->name;
+        return view('personal', compact('message', 'user', 'username'));
     }
 }

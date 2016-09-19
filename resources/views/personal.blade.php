@@ -89,7 +89,7 @@
                     <div class="form-group row">
                         <label class="col-sm-offset-1 col-sm-3 form-control-label">NetrunnerDB</label>
                         <div class="col-sm-7">
-                            <p class="form-control-static">Necro</p>
+                            <p class="form-control-static">{{ $username }}</p>
                         </div>
                     </div>
                     <div class="form-group row">
