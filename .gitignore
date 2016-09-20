@@ -1,3 +1,6 @@
+!vendor/illuminate/html/HtmlServiceProvider.php
+!vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/NetrunnerDB.php
+!.gitkeep
 /vendor
 /node_modules
 /public/storage
@@ -11,14 +14,11 @@ public/js
 public/css
 public/fonts
 public/img
-!vendor/illuminate/html/HtmlServiceProvider.php
 tests/nightwatch/bin
 selenium-debug.log
 tests/nightwatch/reports
-!/vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/NetrunnerDB.php
 tests/nightwatch/globals/login-data.js
 cards.json
-!.gitkeep
 composer.phar
 resources/assets/js/bootstrap.min.js
 resources/assets/js/tether.js
