@@ -207,7 +207,7 @@ class TournamentsController extends Controller
         $result = [];
         foreach($tournaments as $tournament) {
             // location
-            if ($tournament->tournament_type_id == 6) {
+            if ($tournament->tournament_type_id == 7) {
                 $location = 'online';
             } else if ($tournament->location_country === 'United States') {
                 $location = $tournament->location_country.', '.$tournament->location_state.', '.$tournament->location_city;

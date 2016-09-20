@@ -66,7 +66,7 @@
                 @endif
                 @if( in_array('location', $columns) )
                     <td>
-                        @if ($row->tournament_type_id == 6)
+                        @if ($row->tournament_type_id == 7)
                             <em>online</em>
                         @else
                             {{ $row->country->name }},
@@ -151,6 +151,7 @@
                 @if( in_array('action_delete', $columns) )
                     <td>
                         {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$row->id"]) !!}
+                            <input name="_token" type="hidden" value="{{ csrf_token() }}">
                             {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> delete', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}
                         {!! Form::close() !!}
                     </td>
