@@ -14,6 +14,7 @@ public/js
 public/css
 public/fonts
 public/img
+public/tjsons
 tests/nightwatch/bin
 selenium-debug.log
 tests/nightwatch/reports

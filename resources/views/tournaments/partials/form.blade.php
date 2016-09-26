@@ -47,18 +47,20 @@
         </div>
         {{--Conclusion--}}
         <div class="bracket">
-            <label>Conclusion</label>
+            <h5>Conclusion</h5>
             <div class="row">
-                <div class="col-md-6 col-xs-12">
-                    <div class="form-group">
+                <div class="col-md-6 col-xs-12 p-t-1">
+                    <div class="form-group text-xs-center">
                         {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), [1, 'on'], true),
                             ['onclick' => 'conclusionCheck()', 'id' => 'concluded']) !!}
                         {!! Form::label('concluded', 'tournament has ended') !!}
                     </div>
                 </div>
                 <div class="col-md-6 col-xs-12 text-xs-center">
-                    <input type="button" class="btn btn-primary disabled" value="Upload CSV results"/>
-                    @include('partials.tobedeveloped')
+                    <div class="card text-xs-center  p-t-1 p-b-1">
+                        <label class="card-title">Upload NRTM (json) results</label>
+                        {!! Form::file('jsonresults') !!}
+                    </div>
                 </div>
             </div>
             <div class="row" id="player-numbers">

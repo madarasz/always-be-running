@@ -114,7 +114,7 @@
                         <hr/>
                         <h5>Your claim:</h5>
                         {{--Existing claim--}}
-                        @if ($user_entry && $user_entry->rank)
+                        @if ($user_entry && $user_entry->runner_deck_id)
                             <ul id="player-claim">
                                 @if ($tournament->top_number)
                                     <li>Top cut rank:
@@ -242,6 +242,12 @@
                             {!! Form::close() !!}
                         @endif
                     @endif
+                {{--Clear anonym claims--}}
+                @if ($user && ($user->admin || $user->id == $tournament->creator))
+                    {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id/clearanonym"]) !!}
+                        {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Clear all anonym claims by NRTM import', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}
+                    {!! Form::close() !!}
+                @endif
                 {{--Tables of tournament standings --}}
                 @if ($tournament->top_number)
                     <hr/>
@@ -265,11 +271,13 @@
             @endif
             {{--List of registered players--}}
             <hr/>
-            <h5>Registered players {{ count($entries) > 0 ? '('.count($entries).')' : '' }}</h5>
+            <h5>Registered players {{ $regcount > 0 ? '('.$regcount.')' : '' }}</h5>
             @if (count($entries) > 0)
                 <ul id="registered-players">
                 @foreach ($entries as $entry)
-                    <li>{{ $entry->player->name }}</li>
+                    @if ($entry->player)
+                        <li>{{ $entry->player->name }}</li>
+                    @endif
                 @endforeach
                 </ul>
             @else

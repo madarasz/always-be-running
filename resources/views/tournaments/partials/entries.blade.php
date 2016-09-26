@@ -19,14 +19,37 @@
                 <tr>
                     <td class="text-right">#{{ $i+1 }}</td>
             @endif
-            <td>{{ $entry->player->name }}</td>
-            <td><img src="/img/ids/{{ $entry->corp_deck_identity }}.png">&nbsp;<a href="{{ "https://netrunnerdb.com/en/decklist/".$entry->corp_deck_id }}">{{ $entry->corp_deck_title }}</a></td>
-            <td><img src="/img/ids/{{ $entry->runner_deck_identity }}.png">&nbsp;<a href="{{ "https://netrunnerdb.com/en/decklist/".$entry->runner_deck_id }}">{{ $entry->runner_deck_title }}</a></td>
-            @if (($user && ($user->admin || $user->id == $creator))
-                || ($user_entry && count($entry) && $entry->user == $user_entry->user))
+            @if ($entry->player)
+                <td>{{ $entry->player->name }}</td>
+            @else
+                <td></td>
+            @endif
+
+            <td>
+                <img src="/img/ids/{{ $entry->corp_deck_identity }}.png">&nbsp;
+                @if ($entry->corp_deck_id)
+                    <a href="{{ "https://netrunnerdb.com/en/decklist/".$entry->corp_deck_id }}">
+                        {{ $entry->corp_deck_title }}
+                    </a>
+                @else
+                    {{ $entry->corp_deck_title }}
+                @endif
+            </td>
+            <td>
+                <img src="/img/ids/{{ $entry->runner_deck_identity }}.png">&nbsp;
+                @if ($entry->runner_deck_id)
+                    <a href="{{ "https://netrunnerdb.com/en/decklist/".$entry->runner_deck_id }}">
+                        {{ $entry->runner_deck_title }}
+                    </a>
+                @else
+                    {{ $entry->runner_deck_title }}
+                @endif
+            </td>
+            @if ($entry->runner_deck_id && (($user && ($user->admin || $user->id == $creator))
+                || ($user_entry && count($entry) && $entry->user == $user_entry->user)))
                 <td class="text-right">
                     {!! Form::open(['method' => 'DELETE', 'url' => "/entries/$entry->id"]) !!}
-                        @if ($user_entry && count($entry) && $entry->user == $user_entry->user)
+                        @if ($user_entry && $entry->user && count($entry) && $entry->user == $user_entry->user)
                             {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove my claim', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}
                         @else
                             {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove claim', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}

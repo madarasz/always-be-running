@@ -6,6 +6,7 @@ use App\CardPack;
 use App\Entry;
 use App\Tournament;
 use App\TournamentType;
+use App\CardIdentity;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 
@@ -20,7 +21,10 @@ class TournamentsController extends Controller
     {
         $this->authorize('logged_in', Tournament::class, $request->user());
         $request->sanitize_data($request->user()->id);
-        Tournament::create($request->all());
+        $tournament = Tournament::create($request->all());
+
+        $this->processNRTMjson($request, $tournament);
+
         return redirect()->action('PagesController@organize')->with('message', 'Tournament created.');
     }
 
@@ -65,6 +69,9 @@ class TournamentsController extends Controller
         $this->authorize('own', $tournament, $request->user());
         $request->sanitize_data();
         $tournament->update($request->all());
+
+        $this->processNRTMjson($request, $tournament);
+
         return redirect()->action('PagesController@organize')->with('message', 'Tournament updated.');
     }
 
@@ -88,6 +95,7 @@ class TournamentsController extends Controller
         $nowdate = date('Y.m.d.');
         $user = $request->user();
         $entries = $tournament->entries;
+        $regcount = $tournament->registration_number();
         $entries_swiss = [];
         $entries_top = [];
         if ($tournament->players_number)
@@ -106,14 +114,14 @@ class TournamentsController extends Controller
         }
         $decks = ['public' => ['corp' => [], 'runner' => [] ]];
         $decks_two_types = false;
-        if (!is_null($user) && (is_null($user_entry) || is_null($user_entry->rank)))
+        if (!is_null($user) && (is_null($user_entry) || is_null($user_entry->runner_deck_id)))
         {
             $decks = app('App\Http\Controllers\NetrunnerDBController')->getDeckData();
             $decks_two_types = count($decks['public']['corp']) > 0 && count($decks['private']['corp']) > 0;
         }
         return view('tournaments.view',
             compact('tournament', 'message', 'type', 'nowdate', 'user', 'entries',
-                'user_entry', 'decks', 'entries_swiss', 'entries_top', 'decks_two_types'));
+                'user_entry', 'decks', 'entries_swiss', 'entries_top', 'decks_two_types', 'regcount'));
     }
 
     /**
@@ -245,4 +253,109 @@ class TournamentsController extends Controller
         return response()->json($result);
     }
 
+    /**
+     * Deletes all anonym claims (from NRTM import) from a tournament
+     * @param $id tournament ID
+     * @param Request $request
+     * @return mixed
+     */
+    public function clearAnonym($id, Request $request) {
+
+        $tournament = Tournament::findorFail($id);
+        $this->authorize('own', $tournament, $request->user());
+
+        // delete claims
+        Entry::where('tournament_id', $tournament->id)->whereNull('runner_deck_id')->delete();
+
+        // clear conflicts if exists and solved
+        $tournament->updateConflict();
+
+        return redirect()->back()->with('message', 'You have cleared all anonym claims.');
+
+    }
+
+    /**
+     * updates tournament with the anonymous claims from the NRTM json
+     * @param $request
+     * @param $tournament
+     */
+    private function processNRTMjson(&$request, &$tournament) {
+
+        if ($request->hasFile('jsonresults') && $request->file('jsonresults')->isValid()) {
+            // store file
+            $request->file('jsonresults')->move('tjsons', $tournament->id.'.json');
+
+            // process file
+            $json = json_decode(file_get_contents('tjsons/'.$tournament->id.'.json'), true);
+            $tournament->concluded = true;
+            $tournament->top_number = $json['cutToTop']; // number of players in top cut
+            $tournament->players_number = count($json['players']); // number of players
+            foreach($json['players'] as $swiss) {
+
+                // get identities
+                $corp = CardIdentity::where('title', 'LIKE', '%'.$swiss['corpIdentity'].'%')->first();
+                $runner = CardIdentity::where('title', 'LIKE', '%'.$swiss['runnerIdentity'].'%')->first();
+                $existing = Entry::where('tournament_id', $tournament->id)->where('rank', $swiss['rank'])->first();
+
+                // create claims with IDs
+                if (!is_null($corp) && !is_null($runner) && // identities are found
+                    (is_null($existing) || strcmp($runner->id, $existing->runner_deck_identity) != 0 ||
+                        strcmp($corp->id, $existing->corp_deck_identity) != 0)) { // no entry or conflicting entry
+
+                    // checking top cut
+                    $ranktop = 0;
+                    foreach($json['eliminationPlayers'] as $topcut) {
+                        if ($topcut['id'] == $swiss['id']) {
+                            $ranktop = $topcut['rank'];
+                            break;
+                        }
+                    }
+
+                    // user matching
+                    $user = null;
+                    $registered = Entry::where('tournament_id', $tournament->id)->where('user', '>', 0)->get();
+                    foreach ($registered as $reg) {
+                        if (strcmp(strtoupper($reg->player->name), strtoupper($swiss['name'])) == 0) {
+                            $user = $reg->player->id;
+                            // check if existing claim matches
+                            if ($reg->rank != $swiss['rank'] || $reg->rank_top != $ranktop) {
+                                // new claim will be saved instead of updating
+                                $user = null;
+                            } else {
+                                // updating existing registration
+                                $reg->update([
+                                    'rank' => $swiss['rank'],
+                                    'rank_top' => $ranktop,
+                                    'corp_deck_identity' => $corp->id,
+                                    'corp_deck_title' => $swiss['corpIdentity'],
+                                    'runner_deck_identity' => $runner->id,
+                                    'runner_deck_title' => $swiss['runnerIdentity']
+                                ]);
+                            }
+                            break;
+                        }
+                    }
+
+                    // saving new claim
+                    if (is_null($user)) {  // new claim
+                        Entry::create([
+                            'approved' => 1,
+                            'tournament_id' => $tournament->id,
+                            'rank' => $swiss['rank'],
+                            'rank_top' => $ranktop,
+                            'corp_deck_identity' => $corp->id,
+                            'corp_deck_title' => $swiss['corpIdentity'],
+                            'runner_deck_identity' => $runner->id,
+                            'runner_deck_title' => $swiss['runnerIdentity']
+                        ]);
+                    }
+                }
+            }
+
+            $tournament->save();
+
+            // create conflict if needed
+            $tournament->updateConflict();
+        }
+    }
 }

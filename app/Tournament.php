@@ -31,10 +31,21 @@ class Tournament extends Model
     }
 
     public function registration_number() {
-        return $this->entries()->count();
+        return $this->entries()->where('user', '>', '0')->count();
     }
 
     public function claim_number() {
         return $this->entries()->whereNotNull('rank')->count();
+    }
+
+    /**
+     * updates conflict flag according to conflicting claims
+     */
+    public function updateConflict() {
+        $conflict_rank = Entry::where('tournament_id', $this->id)
+            ->groupBy('rank')->havingRaw('count(rank) > 1')->first();
+        $conflict_rank_top = Entry::where('tournament_id', $this->id)
+            ->groupBy('rank_top')->havingRaw('count(rank) > 1')->first();
+        $this->update(['conflict' => is_null($conflict_rank) && is_null($conflict_rank_top) ? 0 : 1]);
     }
 }
