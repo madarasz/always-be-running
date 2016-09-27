@@ -459,6 +459,21 @@ function conclusionCheck() {
     }
 }
 
+function usingNRTMImport() {
+    if (document.getElementById('jsonresults').value == '') {  // if file field is empty
+        document.getElementById('concluded').removeAttribute('disabled', '');
+        $('#nrtm-helper').addClass('hidden-xs-up');
+        conclusionCheck();
+    } else {    // if file is selected
+        document.getElementById('concluded').checked = true;
+        document.getElementById('concluded').setAttribute('disabled', '');
+        document.getElementById('players_number').setAttribute('disabled', '');
+        $('#pn-req').addClass('hidden-xs-up');
+        document.getElementById('top_number').setAttribute('disabled', '');
+        $('#nrtm-helper').removeClass('hidden-xs-up');
+    }
+}
+
 function renderPlace(place, marker, map) {
     // If the place has a geometry, then present it on a map.
     if (place.geometry.viewport) {

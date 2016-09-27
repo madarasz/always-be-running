@@ -47,37 +47,37 @@
         </div>
         {{--Conclusion--}}
         <div class="bracket">
-            <h5>Conclusion</h5>
+            <h5>
+                Conclusion
+                <small class="form-group text-xs-center">
+                    -
+                    {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), [1, 'on'], true),
+                        ['onclick' => 'conclusionCheck()', 'id' => 'concluded']) !!}
+                    {!! Form::label('concluded', 'tournament has ended') !!}
+                </small>
+            </h5>
             <div class="row">
-                <div class="col-md-6 col-xs-12 p-t-1">
-                    <div class="form-group text-xs-center">
-                        {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), [1, 'on'], true),
-                            ['onclick' => 'conclusionCheck()', 'id' => 'concluded']) !!}
-                        {!! Form::label('concluded', 'tournament has ended') !!}
-                    </div>
-                </div>
-                <div class="col-md-6 col-xs-12 text-xs-center">
-                    <div class="card text-xs-center  p-t-1 p-b-1">
-                        <label class="card-title">Upload NRTM (json) results</label>
-                        {!! Form::file('jsonresults') !!}
-                    </div>
-                </div>
-            </div>
-            <div class="row" id="player-numbers">
-                {{--Player number--}}
                 <div class="col-md-6 col-xs-12">
+                    {{--Player number--}}
                     <div class="form-group">
                         {!! Html::decode(Form::label('players_number', 'Number of players<sup class="text-danger hidden-xs-up" id="pn-req">*</sup>')) !!}
                         {!! Form::text('players_number', old('players_number', $tournament->players_number),
                              ['class' => 'form-control', 'placeholder' => 'number of players', 'disabled' => '']) !!}
                     </div>
-                </div>
-                {{--Top number--}}
-                <div class="col-md-6 col-xs-12">
+                    {{--Top cut number--}}
                     <div class="form-group">
                         {!! Form::label('top_number', 'Number of players in top cut') !!}
                         {!! Form::text('top_number', old('top_number', $tournament->top_number),
                              ['class' => 'form-control', 'placeholder' => 'number fo players in top cut', 'disabled' => '']) !!}
+                    </div>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <div class="card text-xs-center p-t-1 p-b-1 m-t-2">
+                        <div class="form-group">
+                            <label class="card-title">Upload NRTM (json) results</label>
+                            {!! Form::file('jsonresults', ['id' => 'jsonresults']) !!}
+                        </div>
+                        <small id="nrtm-helper" class="hidden-xs-up">Click 'Save Tournament' to import.</small>
                     </div>
                 </div>
             </div>
@@ -153,6 +153,8 @@
 
     conclusionCheck();
     showLocation();
+    document.getElementById('jsonresults').addEventListener('change', usingNRTMImport, false);
+
     $('#date').datepicker({
         autoclose: true,
         format: 'yyyy.mm.dd.',
