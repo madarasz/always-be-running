@@ -73,7 +73,7 @@ class TournamentRequest extends Request
             $input['creator'] = $user_id;
         }
 
-        if ($input['tournament_type_id'] == 6)
+        if ($input['tournament_type_id'] == 7) // online tournament has no location
         {
             $input['location_country'] = '';
             $input['location_us_state'] = '';
