@@ -25,7 +25,9 @@ class TournamentsController extends Controller
 
         $this->processNRTMjson($request, $tournament);
 
-        return redirect()->action('PagesController@organize')->with('message', 'Tournament created.');
+        // redirecting to show newly created tournament
+        return redirect()->route('tournaments.show', $tournament->id)
+            ->with('message', 'Tournament created.');
     }
 
     /**
