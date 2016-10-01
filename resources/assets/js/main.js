@@ -497,14 +497,22 @@ function refreshAddressInfo(place) {
     }
     // place name, address
     if (typeof place.types !== 'undefined') {
+        // if the store/place has a name
         if ($.inArray('establishment', place.types) > -1 || ($.inArray('store', place.types) > -1)) {
             document.getElementById('store').innerHTML = place.name;
             document.getElementById('location_store').value = place.name;
+        } else {
+            document.getElementById('store').innerHTML = '';
+            document.getElementById('location_store').value = '';
         }
+        // if it has an address
         if ($.inArray('street_address', place.types) > -1 || $.inArray('store', place.types) > -1
             || $.inArray('establishment', place.types) > -1) {
             document.getElementById('address').innerHTML = place.formatted_address;
             document.getElementById('location_address').value = place.formatted_address;
+        } else {
+            document.getElementById('address').innerHTML = '';
+            document.getElementById('location_address').value = '';
         }
     } else {
         document.getElementById('store').innerHTML = '';
