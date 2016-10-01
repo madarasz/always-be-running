@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(TournamentTypeSeeder::class);
         $this->call(UsersSeeder::class);
-        //$this->call(CardIdentitySeeder::class); TODO, cardpack, cycles as well
+        $this->call(CardCycleSeeder::class);
+        $this->call(CardPackSeeder::class);
     }
 }

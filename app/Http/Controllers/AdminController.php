@@ -30,10 +30,10 @@ class AdminController extends Controller
         $count_ids = CardIdentity::count();
         $last_id = $count_ids > 0 ? CardIdentity::orderBy('id', 'desc')->first()->title : '';
         $count_cycles = count($cycles);
-        $last_cycle = $count_cycles > 0 ? $cycles[0]->name : '';
+        $last_cycle = $count_cycles > 1 ? $cycles[1]->name : '';
         $count_packs = CardPack::count();
-        $last_pack = $count_packs > 0 && $count_cycles > 0
-            ? $packs[0][0]->name : '';
+        $last_pack = $count_packs > 1 && $count_cycles > 1
+            ? $packs[1][0]->name : '';
 
         return view('admin', compact('user', 'to_approve', 'deleted', 'nowdate', 'message',
             'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles'));
