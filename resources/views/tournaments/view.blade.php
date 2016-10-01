@@ -43,7 +43,7 @@
                 @endif
                 {{--Location, date--}}
                 <h5>
-                    @unless($tournament->tournament_type_id == 6)
+                    @unless($tournament->tournament_type_id == 7)
                         {{ $tournament->location_city }}, {{$tournament->location_country === 'United States' ? $tournament->location_state : ''}}{{ $tournament->location_country }}<br/>
                     @endunless
                     {{ $tournament->date }}
