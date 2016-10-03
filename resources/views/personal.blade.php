@@ -146,7 +146,7 @@
     <script type="text/javascript">
         getTournamentData('foruser={{ $user }}', function(data) {
             $('.loader').addClass('hidden-xs-up');
-            updateTournamentTable('#my-table', ['title', 'location', 'date', 'cardpool', 'user_claim'], 'no tournaments to show', data);
+            updateTournamentTable('#my-table', ['title', 'location', 'date', 'cardpool', 'user_claim'], 'no tournaments to show', '', data);
             updateTournamentCalendar(data);
         });
     </script>

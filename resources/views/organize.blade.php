@@ -21,7 +21,7 @@
     <script type="text/javascript">
         getTournamentData("creator={{ $user }}", function(data) {
             updateTournamentTable('#created', ['title', 'date', 'location', 'cardpool', 'approval', 'conclusion', 'players', 'claims',
-                'action_edit', 'action_delete'], 'no tournaments to show', data);
+                'action_edit', 'action_delete'], 'no tournaments to show', '{{ csrf_token() }}', data);
         });
     </script>
 @stop

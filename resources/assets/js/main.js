@@ -26,7 +26,7 @@ function getTournamentData(filters, callback) {
     });
 }
 
-function updateTournamentTable(elementID, columns, emptyMessage, data) {
+function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data) {
     var nowdate = nowDate();
     $.each(data, function (index, element) {
         newrow = $('<tr>').appendTo(elementID + ' > tbody');
@@ -225,7 +225,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, data) {
             }), $('<input>', {
                 name: '_token',
                 type: 'hidden',
-                value: '{{ csrf_token() }}'
+                value: csrftoken
             }), $('<button>', {
                 type: 'submit',
                 'class': 'btn btn-danger btn-xs'
@@ -415,7 +415,7 @@ function updateDiscover(filter, map, geocoder) {
     $('#discover-table').find('tbody').empty();
     getTournamentData(filter, function(data) {
         $('.loader').addClass('hidden-xs-up');
-        updateTournamentTable('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'], 'no tournaments to show', data);
+        updateTournamentTable('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'], 'no tournaments to show', '', data);
         updateTournamentCalendar(data);
         codeAddress(data, map, geocoder, infowindow);
     });
