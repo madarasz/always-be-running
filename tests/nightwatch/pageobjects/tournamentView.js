@@ -23,7 +23,7 @@ var tournamentViewCommands = {
             callback.call(client);
         }
 
-        return this.api;
+        return this;
     },
 
     claim: function(data, client) {
@@ -47,7 +47,7 @@ var tournamentViewCommands = {
             callback.call(client);
         }
 
-        return this.api;
+        return this;
     },
 
     assertClaim: function(username, rank, topRank, conflictRank, conflictTop, runnerDeck, corpDeck, client) {
@@ -74,7 +74,7 @@ var tournamentViewCommands = {
             callback.call(client);
         }
 
-        return this.api;
+        return this;
     },
 
     assertClaimRemoveButton: function(topTable, username, present, text, client) {
@@ -94,7 +94,7 @@ var tournamentViewCommands = {
             callback.call(client);
         }
 
-        return this.api;
+        return this;
     },
 
     removeClaimOfUser: function(username, client) {
@@ -110,7 +110,7 @@ var tournamentViewCommands = {
             callback.call(client);
         }
 
-        return this.api;
+        return this;
     }
 };
 
@@ -118,22 +118,24 @@ var tournamentViewCommands = {
 module.exports = {
     commands: [tournamentViewCommands],
     elements: {
-        title: "//h3[contains(., '%s')]",
-        ttype: "//h3/small[contains(., '%s')]",
-        description: "//div[contains(@class, 'panel-body') and contains(., '%s')]",
-        date: "//h4[contains(., '%s')]",
-        time: "//p[contains(., '%s')]",
-        country: "//h4[contains(., '%s')]",
-        state: "//h4[contains(., '%s')]",
-        city: "//h4[contains(., '%s')]",
-        store: "//p[contains(., '%s')]",
-        address: "//p[contains(., '%s')]",
+        title: "//span[@id='tournament-title' and contains(., '%s')]",
+        ttype: "//span[@id='tournament-type' and contains(., '%s')]",
+        creator: "//span[@id='tournament-creator' and contains(., '%s')]",
+        description: "//div[@id='tournament-description' and contains(., '%s')]",
+        cardpool: "//span[@id='cardpool' and contains(., '%s')]",
+        date: "//span[@id='tournament-date' and contains(., '%s')]",
+        time: "//span[@id='start-time' and contains(., '%s')]",
+        city: "//span[@id='tournament-city' and contains(., '%s')]",
+        store: "//span[@id='store' and contains(., '%s')]",
+        address: "//span[@id='address' and contains(., '%s')]",
+        contact: "//span[@id='contact' and contains(., '%s')]",
+        decklist: "//span[@id='decklist-mandatory']",
         registeredPlayer: "//ul[@id='registered-players']/li[contains(., '%s')]",
         verifySwissEntry: "//table[@id='entries-swiss']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
         verifyTopEntry: "//table[@id='entries-top']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
         entryRemoveButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'%s')]",
         map: {
-            selector: "//iframe[@id='map']",
+            selector: "//div[@id='map']/div",
             locateStrategy: 'xpath'
         },
         approvalNeed: {
@@ -230,6 +232,14 @@ module.exports = {
         },
         registerButton: {
             selector: "//a[@id='register']",
+            locateStrategy: 'xpath'
+        },
+        storeInfo: {
+            selector: "//span[@id='store']",
+            locateStrategy: 'xpath'
+        },
+        addressInfo: {
+            selector: "//span[@id='address']",
             locateStrategy: 'xpath'
         }
     }

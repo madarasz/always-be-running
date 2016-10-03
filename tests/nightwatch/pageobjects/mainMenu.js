@@ -6,15 +6,15 @@ var menuCommands = {
             callback.call(client);
         }
 
-        return this.api;
+        return this;
     }
 };
 
 module.exports = {
     commands: [menuCommands],
     elements: {
-        create: {
-            selector: "//a[contains(text(),'Create')]",
+        organize: {
+            selector: "//a[contains(text(),'Organize')]",
             locateStrategy: 'xpath'
         },
         admin: {

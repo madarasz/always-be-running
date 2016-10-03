@@ -30,7 +30,21 @@ var tableCommands = {
             callback.call(client);
         }
 
-        return this.api;
+        return this;
+    },
+
+    assertMissingRow: function(table_id, title, callback) {
+        this.log('*** Verifying missing row on table ('+table_id+'): '+title+' ***');
+
+        var util = require('util');
+
+        this.api.assert.elementNotPresent(util.format(this.elements.row.selector, table_id, title), 1000);
+
+        if (typeof callback === "function") {
+            callback.call(client);
+        }
+
+        return this;
     },
 
     selectTournament: function(table_id, title, action, callback) {
@@ -40,8 +54,9 @@ var tableCommands = {
         var util = require('util');
 
         if (action === 'delete') {
-            this.api.click(util.format(this.elements.deleteButton.selector, table_id, title)).
-                api.assert.elementNotPresent(util.format(this.elements.row.selector, table_id, title));
+            this.api.click(util.format(this.elements.deleteButton.selector, table_id, title));
+            this.log('* Checking if delete was successfull *');
+            this.api.assert.elementNotPresent(util.format(this.elements.row.selector, table_id, title));
         } else {
             this.api.click(util.format(this.elements.button.selector, table_id, title, action));
         }
@@ -50,7 +65,7 @@ var tableCommands = {
             callback.call(client);
         }
 
-        return this.api;
+        return this;
     }
 };
 

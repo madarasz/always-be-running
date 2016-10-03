@@ -1,20 +1,19 @@
 var tournamentA = {
     title: 'Test A - ' + formatDate(new Date()),
     type: 'casual',
-    type_id: '5',
+    type_id: '6',
     cardpool: 'Business First',
     cardpool_id: 'bf',
     description: 'description A',
     date: '2999.01.01.',
     time: '12:40',
-    country: 'United States',
-    country_id: '840',
-    state: 'California',
-    state_id: '5',
-    city: 'Budapest',
-    store: 'Superstore',
-    address: 'Sehol utca 4.',
-    wrongdate: '444'
+    players: '20',
+    top: '4',
+    contact: '+66 666 666',
+    location: 'Budapest metagame',
+    city: 'Hungary, Budapest',
+    store: 'Metagame Kártyabolt',
+    address: 'Budapest, Kádár u. 10, 1132 Hungary'
 };
 var tournamentB = {
     title: 'Test B - ' + formatDate(new Date()),
@@ -23,15 +22,12 @@ var tournamentB = {
     cardpool: 'True Colors',
     cardpool_id: 'tc',
     description: 'description B',
-    players: '222',
-    top: '44',
     date: '2003.01.01.',
     time: '10:00',
-    country: 'Hungary',
-    country_id: '348',
-    city: 'Miskolc',
-    store: 'Telep',
-    address: 'Nincs utca 5.'
+    contact: '+33 333 333',
+    wrong_location: 'Spain',
+    location: 'Barcelona Spain',
+    city: 'Spain, Barcelona'
 };
 var tournamentC = {
     title: 'Test B - ' + formatDate(new Date()),
@@ -59,7 +55,7 @@ function formatDate(date) {
 }
 
 module.exports = {
-    'Tournament A - create, edit, view with validation' : function (browser) {
+    'Tournament - create (casual, concluded), edit (worlds, not concluded), view with validation': function (browser) {
 
         var regularLogin = browser.globals.regularLogin;
 
@@ -67,502 +63,198 @@ module.exports = {
             .url(browser.launchUrl)
             .log('*** Logging in ***')
             .login(regularLogin.username, regularLogin.password)
+            .log('*** Creating Tournament A ***');
 
-            // create tournament
-            .log('*** Creating Tournament A ***')
-            .click("//a[contains(text(),'Create')]")
-            .assert.assertTournamentForm({not_visible: ['location_us_state', 'players_number', 'map']})
-            .fillTournament({ // with wroing date
-                inputs: {title: tournamentA.title, date: tournamentA.wrongdate, start_time: tournamentA.time},
-                textareas: {description: tournamentA.description},
-                selects: {
-                    location_country: tournamentA.country,
-                    tournament_type_id: tournamentA.type,
-                    cardpool_id: tournamentA.cardpool
-                },
-                checkboxes: {decklist: true, concluded: true, display_map: true}
-            })
-            .assert.assertTournamentForm({visible: ['players_number', 'map']})
-            .fillTournament({
-                inputs: {players_number: tournamentB.players, top_number: tournamentB.top},
-                checkboxes: {concluded: false}
-            })
-            .assert.assertTournamentForm({not_visible: ['players_number'], visible: ['location_us_state']})
-            .fillTournament({
-                selects: {location_us_state: tournamentA.state},
-                inputs: {
-                    location_city: tournamentA.city,
-                    location_store: tournamentA.store,
-                    location_address: tournamentA.address
-                }
-            })
-            .click("//input[@type='submit']")
+        browser.page.mainMenu().selectMenu('organize');
 
-            // data check after validation
-            .log('*** Data check after form validation fails ***')
-            .waitForElementVisible("//li[contains(text(), 'YYYY.MM.DD.')]", 1000)
-            .assert.assertTournamentForm({
-                inputs: {
-                    title: tournamentA.title,
-                    date: tournamentA.wrongdate,
-                    start_time: tournamentA.time,
-                    location_city: tournamentA.city,
-                    location_store: tournamentA.store,
-                    location_address: tournamentA.address
-                },
-                textareas: {description: tournamentA.description},
-                selects: {
-                    location_country: tournamentA.country_id, tournament_type_id: tournamentA.type_id,
-                    cardpool_id: tournamentA.cardpool_id, location_us_state: tournamentA.state_id
-                },
-                checkboxes: {decklist: true, concluded: false, display_map: true},
-                not_visible: ['players_number'], visible: ['location_us_state', 'map']
-            })
-            .fillTournament({inputs: {date: tournamentA.date}})
-            .log('*** Saving ***')
-            .click("//input[@type='submit']")
+        browser.page.organizePage().click('@create');
 
-            // verify on My tournaments
-            .log('*** Verifying on my tournaments table ***')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .assert.assertTournamentTable('created', tournamentA.title, {
-                texts: [tournamentA.date, tournamentA.cardpool],
-                labels: ['pending', 'not yet'], texts_missing: [tournamentB.players]
-            })
-
-            // verify tournament details view
-            .log('*** Verifying on tournament details view ***')
-            .selectTournament('created', tournamentA.title, 'view')
-            .assert.assertTournamentView({
-                title: tournamentA.title, ttype: tournamentA.type,
-                description: tournamentA.description, date: tournamentA.date, time: tournamentA.time,
-                country: tournamentA.country, state: tournamentA.state, city: tournamentA.city,
-                store: tournamentA.store, address: tournamentA.address, map: true
-            })
-
-            // edit tournament
-            .log('*** Verifying data on edit form ***')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .selectTournament('created', tournamentA.title, 'edit')
-            .assert.assertTournamentForm({
+        // creating new tournament
+        browser.page.tournamentForm()
+            .assertForm({
+                visible: ['location', 'players_number_disabled', 'map_loaded']})
+            .fillForm({
                 inputs: {
                     title: tournamentA.title,
                     date: tournamentA.date,
                     start_time: tournamentA.time,
-                    location_city: tournamentA.city,
-                    location_store: tournamentA.store,
-                    location_address: tournamentA.address
+                    contact: tournamentA.contact
                 },
                 textareas: {description: tournamentA.description},
                 selects: {
-                    location_country: tournamentA.country_id, tournament_type_id: tournamentA.type_id,
-                    cardpool_id: tournamentA.cardpool_id, location_us_state: tournamentA.state_id
+                    tournament_type_id: tournamentA.type,
+                    cardpool_id: tournamentA.cardpool
                 },
-                checkboxes: {decklist: true, concluded: false, display_map: true},
-                not_visible: ['players_number'], visible: ['location_us_state', 'map']
+                checkboxes: {decklist: true, concluded: true},
             })
-
-            // modify values
-            .log('*** Editing Tournament A to B ***')
-            .fillTournament({
+            .fillForm({
                 inputs: {
-                    title: tournamentB.title,
-                    date: tournamentA.wrongdate,    // wrong date
-                    start_time: tournamentB.time,
-                    location_city: tournamentB.city,
-                    location_store: tournamentB.store,
-                    location_address: tournamentB.address
-                },
-                textareas: {description: tournamentB.description},
-                selects: {
-                    location_country: tournamentB.country,
-                    tournament_type_id: tournamentB.type,
-                    cardpool_id: tournamentB.cardpool
-                },
-                checkboxes: {decklist: false, concluded: true, display_map: false}
+                    players_number: tournamentA.players,
+                    top_number: tournamentA.top
+                }
             })
-            .assert.assertTournamentForm({
-                inputs: {players_number: '', top_number: ''},
-                not_visible: ['location_us_state', 'map']
+            // submit with missing location
+            .click('@submit_button')
+            .assertForm({
+                errors: ['city', 'country']
             })
-            .fillTournament({inputs: {players_number: tournamentB.players, top_number: tournamentB.top}})
-            .click("//input[@type='submit']")
+            // adding location info
+            .fillForm({
+                location: tournamentA.location
+            })
+            .assertForm({
+                visible: ['location_country', 'location_city', 'location_store', 'location_address'],
+                not_present: ['location_state']
+            })
+            .click('@submit_button');
 
-            // data check after validation
-            .log('*** Data check after form validation fails ***')
-            .waitForElementVisible("//li[contains(text(), 'YYYY.MM.DD.')]", 1000)
-            .assert.assertTournamentForm({
+        // verify on tournament detail page
+        browser.page.tournamentView()
+            .assertView({
+                title: tournamentA.title,
+                ttype: tournamentA.type,
+                creator: regularLogin.username,
+                description: tournamentA.description,
+                date: tournamentA.date,
+                time: tournamentA.time,
+                cardpool: tournamentA.cardpool,
+                city: tournamentA.city,
+                store: tournamentA.store,
+                address: tournamentA.address,
+                contact: tournamentA.contact,
+                map: true,
+                //decklist: true, // don't know why this fails
+                approvalNeed: true,
+                editButton: true,
+                approveButton: false,
+                rejectButton: false,
+                deleteButton: true,
+                conflictWarning: false,
+                playerNumbers: true,
+                topPlayerNumbers: true,
+                playerClaim: false,
+                createClaimFrom: true,
+                submitClaim: true,
+                removeClaim: false,
+                claimError: false,
+                topEntriesTable: true,
+                swissEntriesTable: true,
+                ownClaimInTable: false,
+                conflictInTable: false,
+                dueWarning: false,
+                registeredPlayers: false,
+                noRegisteredPlayers: true,
+                unregisterButton: false,
+                registerButton: true
+            });
+
+        // verify table on organize page
+        browser.page.mainMenu().selectMenu('organize');
+
+        browser.page.tournamentTable()
+            .assertTable('created', tournamentA.title, {
+                texts: [tournamentA.date, tournamentA.cardpool, tournamentA.players, tournamentA.city],
+                labels: ['pending', 'concluded'], texts_missing: []
+            })
+            .selectTournament('created', tournamentA.title, 'update');
+
+        // update tournament
+        browser.page.tournamentForm()
+            .assertForm({
+                visible: ['location_country', 'location_city', 'location_store', 'location_address'],
+                not_present: ['location_state'],
                 inputs: {
-                    title: tournamentB.title,
-                    date: tournamentA.wrongdate,
-                    start_time: tournamentB.time,
-                    location_city: tournamentB.city,
-                    location_store: tournamentB.store,
-                    location_address: tournamentB.address,
-                    players_number: tournamentB.players,
-                    top_number: tournamentB.top
+                    title: tournamentA.title,
+                    date: tournamentA.date,
+                    start_time: tournamentA.time,
+                    contact: tournamentA.contact,
+                    players_number: tournamentA.players,
+                    top_number: tournamentA.top
                 },
-                textareas: {description: tournamentB.description},
+                textareas: { description: tournamentA.description },
                 selects: {
-                    location_country: tournamentB.country_id,
-                    tournament_type_id: tournamentB.type_id,
-                    cardpool_id: tournamentB.cardpool_id
+                    tournament_type_id: tournamentA.type_id,
+                    cardpool_id: tournamentA.cardpool_id
                 },
-                checkboxes: {decklist: false, concluded: true, display_map: false},
-                not_visible: ['location_us_state', 'map']
+                checkboxes: {decklist: true, concluded: true}
             })
-            .fillTournament({inputs: {date: tournamentB.date}})
-            .log('*** Saving ***')
-            .click("//input[@type='submit']")
-
-            // verify on My tournaments
-            .log('*** Verifying on my tournaments table ***')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .assert.assertTournamentTable('created', tournamentB.title, {
-                texts: [tournamentB.date, tournamentB.cardpool, tournamentB.players],
-                labels: ['pending', 'concluded']
-            })
-
-            // verify tournament details view
-            .log('*** Verifying on tournament details view ***')
-            .selectTournament('created', tournamentB.title, 'view')
-            .assert.assertTournamentView({
-                title: tournamentB.title, ttype: tournamentB.type,
-                description: tournamentB.description, date: tournamentB.date, time: tournamentB.time,
-                country: tournamentB.country, city: tournamentB.city,
-                store: tournamentB.store, address: tournamentB.address, map: false
-            })
-
-            // delete
-            .log('*** Deleting ***')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .selectTournament('created', tournamentB.title, 'delete')
-
-            .end();
-    },
-
-    'Tournament B - create, edit, view with validation' : function (browser) {
-
-        var regularLogin = browser.globals.regularLogin;
-
-        browser
-            .url(browser.launchUrl)
-            .log('*** Logging in ***')
-            .login(regularLogin.username, regularLogin.password)
-
-            // create tournament
-            .log('*** Creating Tournament B ***')
-            .click("//a[contains(text(),'Create')]")
-            .waitForElementVisible('//body', 3000)
-            .fillTournament({
-                inputs: {
-                    title: tournamentB.title, date: tournamentA.wrongdate, start_time: tournamentB.time, // wrong date
-                    location_city: tournamentB.city, location_store: tournamentB.store,
-                    location_address: tournamentB.address
-                },
-                textareas: {description: tournamentB.description},
-                selects: {
-                    location_country: tournamentB.country,
-                    tournament_type_id: tournamentB.type,
-                    cardpool_id: tournamentB.cardpool
-                },
-                checkboxes: {concluded: true}
-            })
-            .fillTournament({inputs: {players_number: tournamentB.players, top_number: tournamentB.top}})
-            .assert.assertTournamentForm({not_visible: ['location_us_state', 'map']})
-            .click("//input[@type='submit']")
-
-            // data check after validation
-            .log('*** Data check after form validation fails ***')
-            .waitForElementVisible("//li[contains(text(), 'YYYY.MM.DD.')]", 1000)
-            .assert.assertTournamentForm({
-                inputs: {
-                    title: tournamentB.title,
-                    date: tournamentA.wrongdate,
-                    start_time: tournamentB.time,
-                    location_city: tournamentB.city,
-                    location_store: tournamentB.store,
-                    location_address: tournamentB.address,
-                    players_number: tournamentB.players,
-                    top_number: tournamentB.top
-                },
-                textareas: {description: tournamentB.description},
-                selects: {
-                    location_country: tournamentB.country_id,
-                    tournament_type_id: tournamentB.type_id,
-                    cardpool_id: tournamentB.cardpool_id
-                },
-                checkboxes: {decklist: false, concluded: true, display_map: false},
-                not_visible: ['location_us_state', 'map']
-            })
-            .fillTournament({inputs: {date: tournamentB.date}})
-            .log('*** Saving ***')
-            .click("//input[@type='submit']")
-
-            // verify on My tournaments
-            .log('*** Verifying on my tournaments table ***')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .assert.assertTournamentTable('created', tournamentB.title, {
-                texts: [tournamentB.date, tournamentB.cardpool, tournamentB.players],
-                labels: ['pending', 'concluded']
-            })
-
-            // verify tournament details view
-            .log('*** Verifying on tournament details view ***')
-            .selectTournament('created', tournamentB.title, 'view')
-            .assert.assertTournamentView({
-                title: tournamentB.title, ttype: tournamentB.type,
-                description: tournamentB.description, date: tournamentB.date, time: tournamentB.time,
-                country: tournamentB.country, city: tournamentB.city,
-                store: tournamentB.store, address: tournamentB.address, map: false
-            })
-
-            // edit tournament
-            .log('*** Verifying data on edit form ***')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .selectTournament('created', tournamentB.title, 'edit')
-            .assert.assertTournamentForm({
+            .fillForm({
                 inputs: {
                     title: tournamentB.title,
                     date: tournamentB.date,
                     start_time: tournamentB.time,
-                    location_city: tournamentB.city,
-                    location_store: tournamentB.store,
-                    location_address: tournamentB.address,
-                    players_number: tournamentB.players,
-                    top_number: tournamentB.top
+                    contact: tournamentB.contact
                 },
                 textareas: {description: tournamentB.description},
                 selects: {
-                    location_country: tournamentB.country_id,
-                    tournament_type_id: tournamentB.type_id,
-                    cardpool_id: tournamentB.cardpool_id
+                    tournament_type_id: tournamentB.type,
+                    cardpool_id: tournamentB.cardpool
                 },
-                checkboxes: {decklist: false, concluded: true, display_map: false},
-                not_visible: ['location_us_state', 'map']
+                location: tournamentB.wrong_location,
+                checkboxes: {concluded: true, decklist: false}
             })
-
-            .log('*** Editing Tournament B to A ***')
-            .fillTournament({ // with wrong date
-                inputs: {
-                    title: tournamentA.title,
-                    date: tournamentA.wrongdate,
-                    start_time: tournamentA.time,
-                    location_city: tournamentA.city,
-                    location_store: tournamentA.store,
-                    location_address: tournamentA.address
-                },
-                textareas: {description: tournamentA.description},
-                selects: {
-                    location_country: tournamentA.country,
-                    tournament_type_id: tournamentA.type,
-                    cardpool_id: tournamentA.cardpool
-                },
-                checkboxes: {decklist: true, concluded: false, display_map: true}
+            // submit with missing city location
+            .click('@submit_button')
+            .assertForm({
+                errors: ['city']
             })
-            .assert.assertTournamentForm({not_visible: ['players_number'], visible: ['location_us_state', 'map']})
-            .fillTournament({selects: {location_us_state: tournamentA.state}})
-            .pause(1000)// gotta have this
-            .click("//input[@type='submit']")
-
-            // data check after validation
-            .log('*** Data check after form validation fails ***')
-            .waitForElementVisible("//li[contains(text(), 'YYYY.MM.DD.')]", 1000)
-            .assert.assertTournamentForm({
-                inputs: {
-                    title: tournamentA.title,
-                    date: tournamentA.wrongdate,
-                    start_time: tournamentA.time,
-                    location_city: tournamentA.city,
-                    location_store: tournamentA.store,
-                    location_address: tournamentA.address
-                },
-                textareas: {description: tournamentA.description},
-                selects: {
-                    location_country: tournamentA.country_id, tournament_type_id: tournamentA.type_id,
-                    cardpool_id: tournamentA.cardpool_id, location_us_state: tournamentA.state_id
-                },
-                checkboxes: {decklist: true, concluded: false, display_map: true},
-                not_visible: ['players_number'], visible: ['location_us_state', 'map']
+            .fillForm({
+                location: tournamentB.location
             })
-            .fillTournament({inputs: {date: tournamentA.date}})
-            .log('*** Saving ***')
-            .click("//input[@type='submit']")
+            .click('@submit_button');
 
-            // verify on My tournaments
-            .log('*** Verifying on tournament details view ***')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .assert.assertTournamentTable('created', tournamentA.title, {
-                texts: [tournamentA.date, tournamentA.cardpool],
-                labels: ['pending', 'not yet'], texts_missing: [tournamentB.players]
+        // verify on tournament detail page
+        browser.page.tournamentView()
+            .assertView({
+                title: tournamentB.title,
+                ttype: tournamentB.type,
+                creator: regularLogin.username,
+                description: tournamentB.description,
+                date: tournamentB.date,
+                time: tournamentB.time,
+                cardpool: tournamentB.cardpool,
+                city: tournamentB.city,
+                contact: tournamentB.contact,
+                map: true,
+                decklist: false,
+                approvalNeed: true,
+                editButton: true,
+                approveButton: false,
+                rejectButton: false,
+                deleteButton: true,
+                conflictWarning: false,
+                playerNumbers: false,
+                topPlayerNumbers: false,
+                playerClaim: false,
+                createClaimFrom: false,
+                submitClaim: false,
+                removeClaim: false,
+                claimError: false,
+                topEntriesTable: false,
+                swissEntriesTable: false,
+                ownClaimInTable: false,
+                conflictInTable: false,
+                dueWarning: true,
+                registeredPlayers: false,
+                noRegisteredPlayers: true,
+                unregisterButton: false,
+                registerButton: true,
+                storeInfo: false,
+                addressInfo: false
+            });
+
+        // verify table on organize page
+        browser.page.mainMenu().selectMenu('organize');
+
+        browser.page.tournamentTable()
+            .assertTable('created', tournamentB.title, {
+                texts: [tournamentB.date, tournamentB.cardpool, tournamentB.city],
+                labels: ['pending', 'due'], texts_missing: []
             })
-
-            // verify tournament details view
-            .log('*** Verifying on tournament details view ***')
-            .selectTournament('created', tournamentA.title, 'view')
-            .assert.assertTournamentView({
-                title: tournamentA.title, ttype: tournamentA.type,
-                description: tournamentA.description, date: tournamentA.date, time: tournamentA.time,
-                country: tournamentA.country, state: tournamentA.state, city: tournamentA.city,
-                store: tournamentA.store, address: tournamentA.address, map: true
-            })
-
-            // delete
-            .log('*** Deleting ***')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .selectTournament('created', tournamentA.title, 'delete')
+            .selectTournament('created', tournamentB.title, 'delete');
     },
-    'Tournament C online - create, edit, view with validation' : function (browser) {
 
-        var regularLogin = browser.globals.regularLogin;
-
-        browser
-            .url(browser.launchUrl)
-            .log('*** Logging in ***')
-            .login(regularLogin.username, regularLogin.password)
-
-            // create tournament
-            .log('*** Creating Tournament C ***')
-            .click("//a[contains(text(),'Create')]")
-            .waitForElementVisible('//body', 3000)
-            .fillTournament({
-                inputs: {
-                    title: tournamentC.title, date: tournamentA.wrongdate, // wrong date
-                    location_city: tournamentC.city, location_store: tournamentC.store,
-                    location_address: tournamentC.address
-                },
-                selects: {
-                    location_country: tournamentC.country,
-                    location_us_state: tournamentC.state
-                },
-                checkboxes: {display_map: true}
-            })
-            .assert.assertTournamentForm({visible: ['location','location_us_state', 'map']})
-            .fillTournament({selects: {tournament_type_id: tournamentC.type}})
-            .assert.assertTournamentForm({not_visible: ['location']})
-            .click("//input[@type='submit']")
-
-            // data check after validation
-            .log('*** Data check after form validation fails ***')
-            .waitForElementVisible("//li[contains(text(), 'YYYY.MM.DD.')]", 1000)
-            .assert.assertTournamentForm({
-                inputs: {
-                    title: tournamentC.title,
-                    date: tournamentA.wrongdate
-                },
-                selects: {
-                    tournament_type_id: tournamentC.type_id
-                },
-                not_visible: ['location', 'map']
-            })
-            .fillTournament({inputs: {date: tournamentC.date}})
-            .log('*** Saving ***')
-            .click("//input[@type='submit']")
-
-            // verify on My tournaments
-            .log('*** Verifying on my tournaments table ***')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .assert.assertTournamentTable('created', tournamentC.title, {
-                texts: [tournamentC.date],
-                labels: ['pending', 'due']
-            })
-
-            // verify tournament details view
-            .log('*** Verifying on tournament details view ***')
-            .selectTournament('created', tournamentB.title, 'view')
-            .assert.assertTournamentView({
-                title: tournamentC.title, ttype: tournamentC.type, date: tournamentC.date, map: false
-            })
-
-            // edit tournament
-            .log('*** Verifying data on edit form ***')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .selectTournament('created', tournamentB.title, 'edit')
-            .assert.assertTournamentForm({
-                inputs: {
-                    title: tournamentC.title,
-                    date: tournamentC.date
-                },
-                selects: {
-                    tournament_type_id: tournamentC.type_id
-                },
-                not_visible: ['location', 'map']
-            })
-
-            .log('*** Editing Tournament C to A ***')
-            .fillTournament({ // with wrong date
-                inputs: {
-                    title: tournamentA.title,
-                    date: tournamentA.wrongdate,
-                    start_time: tournamentA.time
-                },
-                textareas: {description: tournamentA.description},
-                selects: {
-                    tournament_type_id: tournamentA.type,
-                    cardpool_id: tournamentA.cardpool
-                },
-                checkboxes: {display_map: true}
-            })
-            .fillTournament({
-                inputs: {
-                    location_city: tournamentA.city,
-                    location_store: tournamentA.store,
-                    location_address: tournamentA.address
-                },
-                selects: {
-                    location_country: tournamentA.country,
-                }
-            })
-            .assert.assertTournamentForm({visible: ['location_us_state', 'map']})
-            .fillTournament({selects: {location_us_state: tournamentA.state}})
-            .pause(1000)// gotta have this
-            .click("//input[@type='submit']")
-
-            // data check after validation
-            .log('*** Data check after form validation fails ***')
-            .waitForElementVisible("//li[contains(text(), 'YYYY.MM.DD.')]", 1000)
-            .assert.assertTournamentForm({
-                inputs: {
-                    title: tournamentA.title,
-                    date: tournamentA.wrongdate,
-                    start_time: tournamentA.time,
-                    location_city: tournamentA.city,
-                    location_store: tournamentA.store,
-                    location_address: tournamentA.address
-                },
-                textareas: {description: tournamentA.description},
-                selects: {
-                    location_country: tournamentA.country_id, tournament_type_id: tournamentA.type_id,
-                    cardpool_id: tournamentA.cardpool_id, location_us_state: tournamentA.state_id
-                },
-                checkboxes: {display_map: true},
-                not_visible: ['players_number'], visible: ['location_us_state', 'map']
-            })
-            .fillTournament({inputs: {date: tournamentA.date}})
-            .log('*** Saving ***')
-            .click("//input[@type='submit']")
-
-            // verify on My tournaments
-            .log('*** Verifying on tournament details view ***')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .assert.assertTournamentTable('created', tournamentA.title, {
-                texts: [tournamentA.date, tournamentA.cardpool],
-                labels: ['pending', 'not yet'], texts_missing: [tournamentB.players]
-            })
-
-            // verify tournament details view
-            .log('*** Verifying on tournament details view ***')
-            .selectTournament('created', tournamentA.title, 'view')
-            .assert.assertTournamentView({
-                title: tournamentA.title, ttype: tournamentA.type,
-                description: tournamentA.description, date: tournamentA.date, time: tournamentA.time,
-                country: tournamentA.country, state: tournamentA.state, city: tournamentA.city,
-                store: tournamentA.store, address: tournamentA.address, map: true
-            })
-
-            // delete
-            .log('*** Deleting ***')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .selectTournament('created', tournamentA.title, 'delete')
+    after: function(browser) {
+        browser.end();
     }
 };

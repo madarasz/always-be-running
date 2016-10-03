@@ -14,12 +14,18 @@
                         <a href="/tournaments/{{ $tournament->id }}/reject" class="btn btn-danger" id="reject-button"><i class="fa fa-thumbs-down" aria-hidden="true"></i> Reject</a>
                     @endif
                     {{--Delete--}}
-                    {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Delete tournament', array('type' => 'submit', 'class' => 'btn btn-danger', 'id' => 'reject-button')) !!}
+                    {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Delete tournament', array('type' => 'submit', 'class' => 'btn btn-danger', 'id' => 'delete-button')) !!}
                 {!! Form::close() !!}
             </div>
         @endif
-        {{ $tournament->title }}<br/>
-        <small>{{ $type }} - <em>created by {{ $tournament->user->name }}</em></small>
+        <span id="tournament-title">{{ $tournament->title }}</span><br/>
+        <small>
+            <span id="tournament-type">{{ $type }}</span> -
+            <em>
+                created by
+                <span id="tournament-creator">{{ $tournament->user->name }}</span>
+            </em>
+        </small>
     </h4>
     @include('partials.message')
     <div class="row">
@@ -44,30 +50,33 @@
                 {{--Location, date--}}
                 <h5>
                     @unless($tournament->tournament_type_id == 7)
-                        {{ $tournament->location_city }}, {{$tournament->location_country === 'United States' ? $tournament->location_state : ''}}{{ $tournament->location_country }}<br/>
+                        <span id="tournament-city">
+                            {{$tournament->location_country === 'United States' ? $tournament->location_state : ''}} {{ $tournament->location_country }}, {{ $tournament->location_city }}
+                        </span>
+                        <br/>
                     @endunless
-                    {{ $tournament->date }}
+                    <span id="tournament-date">{{ $tournament->date }}</span>
                 </h5>
                 {{--Details--}}
-                <p><strong>Legal cardpool up to:</strong> <em>{{ $tournament->cardpool->name }}</em></p>
+                <p><strong>Legal cardpool up to:</strong> <span id="cardpool"><em>{{ $tournament->cardpool->name }}</em></span></p>
                 @unless($tournament->description === '')
-                    <div class="card"><div class="card-block">{!! nl2br(e($tournament->description)) !!}</div></div>
+                    <div class="card"><div class="card-block" id="tournament-description">{!! nl2br(e($tournament->description)) !!}</div></div>
                 @endunless
                 @if($tournament->decklist == 1)
-                    <p><strong><u>decklist is mandatory!</u></strong></p>
+                    <p><strong><u><span id="decklist-mandatory">decklist is mandatory!</span></u></strong></p>
                 @endif
                 <p>
                     @unless($tournament->start_time === '')
-                        <strong>Starting time</strong>: {{ $tournament->start_time }} (local time)<br/>
+                        <strong>Starting time</strong>: <span id="start-time">{{ $tournament->start_time }}</span> (local time)<br/>
                     @endunless
                     @unless($tournament->location_store === '')
-                        <strong>Store/venue</strong>: {{ $tournament->location_store }}<br/>
+                        <strong>Store/venue</strong>: <span id="store">{{ $tournament->location_store }}</span><br/>
                     @endunless
                     @unless($tournament->location_address === '')
-                        <strong>Address</strong>: {{ $tournament->location_address }}<br/>
+                        <strong>Address</strong>: <span id="address">{{ $tournament->location_address }}</span><br/>
                     @endunless
                     @unless($tournament->contact === '')
-                        <strong>Contact</strong>: {{ $tournament->contact }}<br/>
+                        <strong>Contact</strong>: <span id="contact">{{ $tournament->contact }}</span><br/>
                     @endunless
                 </p>
                 {{--Google map--}}
