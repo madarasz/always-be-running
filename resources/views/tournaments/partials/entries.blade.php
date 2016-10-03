@@ -1,3 +1,4 @@
+{{--table of entries for tournament details page--}}
 <table class="table table-sm table-striped" id="{{ $id }}">
     <thead>
         <th class="text-right">rank</th>

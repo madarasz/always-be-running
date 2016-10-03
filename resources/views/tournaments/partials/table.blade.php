@@ -1,3 +1,4 @@
+{{--Table of tournaments, generated on server-side, OBSOLETE--}}
 <h5>
     @unless (empty($icon))
         <i class="fa {{ $icon }}" aria-hidden="true"></i>
