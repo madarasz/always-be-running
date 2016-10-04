@@ -10,8 +10,10 @@ var tournamentA = {
     players: '20',
     top: '4',
     contact: '+66 666 666',
-    location: 'Budapest metagame',
-    city: 'Hungary, Budapest',
+    location_input: 'Budapest metagame',
+    location: 'Hungary, Budapest',
+    city: 'Budapest',
+    country: 'Hungary',
     store: 'Metagame Kártyabolt',
     address: 'Budapest, Kádár u. 10, 1132 Hungary'
 };
@@ -26,7 +28,7 @@ var tournamentB = {
     time: '10:00',
     contact: '+33 333 333',
     wrong_location: 'Spain',
-    location: 'Barcelona Spain',
+    location: 'Barcelona, Spain',
     city: 'Spain, Barcelona'
 };
 var tournamentC = {
@@ -67,10 +69,11 @@ module.exports = {
 
         browser.page.mainMenu().selectMenu('organize');
 
-        browser.page.organizePage().click('@create');
+        browser.page.organizePage().clickCommand('create');
 
         // creating new tournament
         browser.page.tournamentForm()
+            .validate()
             .assertForm({
                 visible: ['location', 'players_number_disabled', 'map_loaded']})
             .fillForm({
@@ -85,8 +88,12 @@ module.exports = {
                     tournament_type_id: tournamentA.type,
                     cardpool_id: tournamentA.cardpool
                 },
-                checkboxes: {decklist: true, concluded: true},
-            })
+                checkboxes: {decklist: true}
+            }).
+            fillForm({
+                checkboxes: {concluded: true}
+            });
+        browser.page.tournamentForm()
             .fillForm({
                 inputs: {
                     players_number: tournamentA.players,
@@ -100,7 +107,7 @@ module.exports = {
             })
             // adding location info
             .fillForm({
-                location: tournamentA.location
+                location: tournamentA.location_input
             })
             .assertForm({
                 visible: ['location_country', 'location_city', 'location_store', 'location_address'],
@@ -123,7 +130,7 @@ module.exports = {
                 address: tournamentA.address,
                 contact: tournamentA.contact,
                 map: true,
-                //decklist: true, // don't know why this fails
+                decklist: true,
                 approvalNeed: true,
                 editButton: true,
                 approveButton: false,
@@ -160,6 +167,7 @@ module.exports = {
 
         // update tournament
         browser.page.tournamentForm()
+            .validate()
             .assertForm({
                 visible: ['location_country', 'location_city', 'location_store', 'location_address'],
                 not_present: ['location_state'],
@@ -190,8 +198,11 @@ module.exports = {
                     tournament_type_id: tournamentB.type,
                     cardpool_id: tournamentB.cardpool
                 },
-                location: tournamentB.wrong_location,
-                checkboxes: {concluded: true, decklist: false}
+                checkboxes: {decklist: false},
+                location: tournamentB.wrong_location
+            })
+            .fillForm({
+                checkboxes: {concluded: false}
             })
             // submit with missing city location
             .click('@submit_button')
@@ -205,6 +216,7 @@ module.exports = {
 
         // verify on tournament detail page
         browser.page.tournamentView()
+            .validate()
             .assertView({
                 title: tournamentB.title,
                 ttype: tournamentB.type,

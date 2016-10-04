@@ -111,6 +111,20 @@ var tournamentViewCommands = {
         }
 
         return this;
+    },
+
+    validate: function(client) {
+
+        this.log('* Validating tournament details page *');
+
+        this.waitForElementVisible('@validator', 10000);
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this;
+
     }
 };
 
@@ -129,11 +143,18 @@ module.exports = {
         store: "//span[@id='store' and contains(., '%s')]",
         address: "//span[@id='address' and contains(., '%s')]",
         contact: "//span[@id='contact' and contains(., '%s')]",
-        decklist: "//span[@id='decklist-mandatory']",
         registeredPlayer: "//ul[@id='registered-players']/li[contains(., '%s')]",
         verifySwissEntry: "//table[@id='entries-swiss']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
         verifyTopEntry: "//table[@id='entries-top']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
         entryRemoveButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'%s')]",
+        decklist: {
+            selector: "//span[@id='decklist-mandatory']",
+            locateStrategy: 'xpath'
+        },
+        validator: {
+            selector: "//h4[contains(.,'created by')]",
+            locateStrategy: 'xpath'
+        },
         map: {
             selector: "//div[@id='map']/div",
             locateStrategy: 'xpath'

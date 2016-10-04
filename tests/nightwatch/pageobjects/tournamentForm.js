@@ -1,10 +1,11 @@
 var tournamentFromCommands = {
+
+    // asserts tournament form contents
     assertForm: function(data, client) {
 
         this.log('*** Verifying tournament form ***');
 
-        var util;
-        util = require('util');
+        var util = require('util');
 
         this.api.useXpath().waitForElementVisible('//body', 3000);
 
@@ -29,7 +30,7 @@ var tournamentFromCommands = {
         if (data.hasOwnProperty('inputs')) {
             for (var property in data.inputs) {
                 if (data.inputs.hasOwnProperty(property)) {
-                    this.api.useXpath().assert.value("//input[@id='" + property + "']", data.inputs[property]);
+                    this.api.useXpath().assert.value(util.format(this.elements.inputs.selector, property), data.inputs[property]);
                 }
             }
         }
@@ -37,7 +38,7 @@ var tournamentFromCommands = {
         if (data.hasOwnProperty('textareas')) {
             for (var property in data.textareas) {
                 if (data.textareas.hasOwnProperty(property)) {
-                    this.api.useXpath().assert.value("//textarea[@id='" + property + "']", data.textareas[property]);
+                    this.api.useXpath().assert.value(util.format(this.elements.textareas.selector, property), data.textareas[property]);
                 }
             }
         }
@@ -45,15 +46,17 @@ var tournamentFromCommands = {
         if (data.hasOwnProperty('selects')) {
             for (var property in data.selects) {
                 if (data.selects.hasOwnProperty(property)) {
-                    this.api.useXpath().assert.value("//select[@id='" + property + "']", data.selects[property]);
+                    this.api.useXpath().assert.value(util.format(this.elements.selects.selector, property), data.selects[property]);
                 }
             }
         }
 
         if (data.hasOwnProperty('errors')) {
-            data.errors.forEach(function(item) {
-                this.waitForElementVisible(util.format("//div[@id='error-list']/ul/li[contains(., '%s')]", item), 3000);
-            }, this);
+            for (var property in data.errors) {
+                if (data.errors.hasOwnProperty(property)) {
+                    this.api.useXpath().verify.elementPresent(util.format(this.elements.errorlist.selector, data.errors[property]));
+                }
+            }
         }
 
         if (data.hasOwnProperty('checkboxes')) {
@@ -61,10 +64,10 @@ var tournamentFromCommands = {
             for (var property in data.checkboxes) {
                 if (data.checkboxes.hasOwnProperty(property)) {
                     if (data.checkboxes[property]) {
-                        this.api.verify.elementPresent("input:checked[name='" + property + "']");
+                        this.api.verify.elementPresent(util.format(this.elements.checkboxes_checked.selector, property));
                     } else {
-                        this.api.verify.elementPresent("input[name='" + property + "']");
-                        this.api.verify.elementNotPresent("input:checked[name='" + property + "']");
+                        this.api.verify.elementPresent(util.format(this.elements.checkboxes.selector, property));
+                        this.api.verify.elementNotPresent(util.format(this.elements.checkboxes_checked.selector, property));
                     }
                 }
             }
@@ -78,9 +81,12 @@ var tournamentFromCommands = {
         return this;
     },
 
+    // inserts data on tournament form
     fillForm: function(data, client) {
 
         this.log('*** Filling out tournament form ***');
+
+        var util = require('util');
 
         for (var property in data) {
             if (data.hasOwnProperty(property)) {
@@ -102,25 +108,27 @@ var tournamentFromCommands = {
                         break;
                 }
             }
+            this.api.pause(100); // pause after each action
         }
 
         function mapSearch(client, data) {
             client
                 .log('* Adding location *')
-                .api.useXpath().clearValue("//input[@id='location_search']")
+                .api.useXpath().clearValue(client.elements.location_search.selector)
                 .keys(data)
-                .waitForElementVisible("//span[@class='pac-matched']", 5000)
-                .sendKeys("//input[@id='location_search']", client.api.Keys.DOWN_ARROW)
+                .waitForElementVisible(client.elements.map_suggestion.selector, 5000)
+                .sendKeys(client.elements.location_search.selector, client.api.Keys.DOWN_ARROW)
                 .pause(1000)
-                .sendKeys("//input[@id='location_search']", client.api.Keys.TAB)
+                .sendKeys(client.elements.location_search.selector, client.api.Keys.TAB)
         }
 
         function fillFormInputs(client, data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) {
                     client.log('* Typing into field "' + property + '": ' + data[property] + ' *');
-                    client.api.useXpath().clearValue("//input[@id='" + property + "']")
-                        .setValue("//input[@id='" + property + "']", data[property]);
+                    client.api.useXpath()
+                        .clearValue(util.format(client.elements.inputs.selector, property))
+                        .setValue(util.format(client.elements.inputs.selector, property), data[property]);
                 }
             }
         }
@@ -129,8 +137,8 @@ var tournamentFromCommands = {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) {
                     client.log('* Selecting in "' + property + '": ' + data[property] + ' *');
-                    client.api.useXpath().click("//select[@id='" + property + "']")
-                        .setValue("//select[@id='" + property + "']", data[property])
+                    client.api.useXpath().click(util.format(client.elements.selects.selector,property))
+                        .setValue(util.format(client.elements.selects.selector,property), data[property])
                         .keys(['\uE006']);
                 }
             }
@@ -140,8 +148,8 @@ var tournamentFromCommands = {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) {
                     client.log('* Typing into textarea "' + property + '": ' + data[property] + '* ');
-                    client.api.useXpath().clearValue("//textarea[@id='" + property + "']")
-                        .setValue("//textarea[@id='" + property + "']", data[property]);
+                    client.api.useXpath().clearValue(util.format(client.elements.textareas.selector,property))
+                        .setValue(util.format(client.elements.textareas.selector,property), data[property]);
                 }
             }
         }
@@ -150,12 +158,27 @@ var tournamentFromCommands = {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) {
                     client.log('* Clicking checkbox "' + property + '" *');
-                    // TODO: check state
-                    //client.getValue("//input[@id='" + property + "']", (function(result) {
-                    //   if (data[property] != (result.checked == 'checked')) {
-                    client.api.useXpath().click("//input[@id='" + property + "']");
-                    //}
-                    //}(property)));
+                    client.api.useCss().verify.elementPresent(util.format(client.elements.checkboxes.selector, property));
+
+                    var required = data[property];
+
+                    // check state
+                    client.api.element('css selector', util.format(client.elements.checkboxes_checked.selector, property),
+                        (function(required, property, client) {     // closure FTW
+                            return function(found) {
+                                client.log('- required state: ' + required);
+                                var state = found.status != -1;
+                                client.log('- current state: ' + state);
+                                //client.log(JSON.stringify(found));
+
+                                //click if needed
+                                if (state != required) {
+                                    client.log('- clicking!');
+                                    client.api.useCss().click(util.format(client.elements.checkboxes.selector, property));
+                                }
+                            }
+                        }(required, property, client))
+                    );
                 }
             }
         }
@@ -165,6 +188,20 @@ var tournamentFromCommands = {
         }
 
         return this;
+    },
+
+    validate: function(client) {
+
+        this.log('* Validating tournament form page *');
+
+        this.waitForElementVisible('@validator', 10000);
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this;
+
     }
 };
 
@@ -172,6 +209,16 @@ var tournamentFromCommands = {
 module.exports = {
     commands: [tournamentFromCommands],
     elements: {
+        inputs: "//input[@id='%s']",
+        textareas: "//textarea[@id='%s']",
+        selects: "//select[@id='%s']",
+        errorlist: "//div[@id='error-list']/ul/li[contains(., '%s')]",
+        checkboxes: "input[id='%s']",                   // css selector!
+        checkboxes_checked: "input:checked[id='%s']",    // css selector!
+        validator: {
+            selector: "//h4[contains(.,'Create new tournament') or contains(.,'Edit tournament')]",
+            locateStrategy: 'xpath'
+        },
         location: {
             selector: "//div[@id='select_location']",
             locateStrategy: 'xpath'

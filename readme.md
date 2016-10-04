@@ -43,3 +43,14 @@ You will need the following in order to run ABR locally:
 10. Download all the data required from NetrunnerDB. Go to [Admin section](http://localhost:8000/admin) and click the **Update Card cycles**, **Update Card packs** and **Update Identities** buttons to get the data. Do this every time a new pack comes out.
 
 11. You are done :)
+
+### Automated tests
+
+There are Nightwatch automated integration tests in the *tests/nightwatch* directory.
+
+#### Prerequisites
+- Have **selenium-server-standalone.jar** in *tests/nightwatch/bin/* directory (preferably version 2.53.1)
+- Browsers
+- - Firefox (supported by default, preferably version 46.0.1)
+- - Chrome (have **chromedriver** executable in *tests/nightwatch/bin/* directory)
+- - PhantomJS (have **phantomjs** executable in *tests/nightwatch/bin/* directory)

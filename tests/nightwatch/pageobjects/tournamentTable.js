@@ -1,4 +1,6 @@
 var tableCommands = {
+
+    // asserts contents of tournament table
     assertTable: function(table_id, title, data, callback) {
 
         this.log('*** Verifying tournament table ('+table_id+'): '+title+' ***');
@@ -6,7 +8,7 @@ var tableCommands = {
         var util = require('util');
 
         this.api.useXpath()
-            .waitForElementVisible(util.format(this.elements.row.selector, table_id, title), 1000);
+            .waitForElementVisible(util.format(this.elements.row.selector, table_id, title), 5000);
 
         if (data.hasOwnProperty('texts')) {
             data.texts.forEach(function(item) {
@@ -33,6 +35,7 @@ var tableCommands = {
         return this;
     },
 
+    // checks that a row is missing for tournament table
     assertMissingRow: function(table_id, title, callback) {
         this.log('*** Verifying missing row on table ('+table_id+'): '+title+' ***');
 
@@ -47,6 +50,7 @@ var tableCommands = {
         return this;
     },
 
+    // clicks button of
     selectTournament: function(table_id, title, action, callback) {
 
         this.log('*** Performing "'+action+'" on tournament table ('+table_id+'): '+title+' ***');
