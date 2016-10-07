@@ -261,6 +261,11 @@
                                 </div>
                             {!! Form::close() !!}
                         @endif
+                    @else
+                        <hr/>
+                        <div class="text-xs-center" id="">
+                            <a href="/oauth2/redirect">Login via NetrunnerDB</a> to claim spot.
+                        </div>
                     @endif
                 <hr/>
                 {{--Import NRTM, Clear anonym claims--}}
@@ -300,7 +305,7 @@
                 <div class="alert alert-warning" id="due-warning">
                     <i class="fa fa-clock-o" aria-hidden="true"></i>
                     This tournament is due for completion.<br/>
-                    The tournament creator should set it to 'concluded', so players make claims.
+                    The tournament creator should set it to 'concluded', so players can make claims.
                 </div>
                 {{--Conclude modal, button--}}
                 <div class="text-xs-center">

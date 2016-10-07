@@ -35,7 +35,7 @@ class Tournament extends Model
     }
 
     public function claim_number() {
-        return $this->entries()->whereNotNull('rank')->count();
+        return $this->entries()->whereNotNull('runner_deck_id')->count();
     }
 
     /**
