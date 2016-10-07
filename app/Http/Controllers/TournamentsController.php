@@ -285,6 +285,43 @@ class TournamentsController extends Controller
     }
 
     /**
+     * Receives player number and top cut player number from the
+     * conclude tournament manually form on the conclude modal.
+     * @param $id tournament ID
+     * @param Requests\TournamentRequest $request
+     * @return mixed
+     */
+    public function concludeManual($id, Request $request) {
+        $tournament = Tournament::findorFail($id);
+        $this->authorize('own', $tournament, $request->user());
+
+        $tournament->update(array_merge($request->all(), ['concluded' => true]));
+
+        // redirecting to show newly created tournament
+        return redirect()->route('tournaments.show', $tournament->id)
+            ->with('message', 'Tournament concluded.');
+    }
+
+    /**
+     * Receives NRTM json file from the conclude tournament modal
+     * @param $id tournament ID
+     * @param Request $request
+     * @return mixed
+     */
+    public function concludeNRTM($id, Request $request) {
+        $tournament = Tournament::findorFail($id);
+        $this->authorize('own', $tournament, $request->user());
+
+        $tournament->update(['concluded' => true]);
+
+        $this->processNRTMjson($request, $tournament);
+
+        // redirecting to show newly created tournament
+        return redirect()->route('tournaments.show', $tournament->id)
+            ->with('message', 'Tournament concluded by NRTM import.');
+    }
+
+    /**
      * updates tournament with the anonymous claims from the NRTM json
      * @param $request
      * @param $tournament

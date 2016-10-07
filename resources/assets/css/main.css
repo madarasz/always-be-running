@@ -1,3 +1,4 @@
+/*because top menu bar*/
 body {
     padding-top: 50px;
     padding-bottom: 20px;
@@ -6,6 +7,7 @@ body {
     font-style: italic;
 }
 
+/*bracket style*/
 .bracket{
     position: relative;
     padding: 0.5em 1em 1em 1em;
@@ -43,6 +45,7 @@ body {
     /*color: inherit;*/
 }
 
+/*Embedded Google map*/
 .map-wrapper {
     height: 400px;
     width: 100%;
@@ -72,6 +75,62 @@ body {
     margin-bottom: 0;
 }
 
+h5 small {
+    font-size: 70%;
+}
+h6 {
+    font-size: 1.1rem;
+}
+input[type="checkbox"] {
+    vertical-align: text-top;
+}
+
+/*modal*/
+.modal-title {
+    line-height: 1.2;
+}
+.modal-subtitle {
+    font-size: 80%;
+    font-style: italic;
+}
+.card-title {
+    padding-bottom: 1rem;
+    font-weight: bold;
+}
+
+/*overlay to disable parts*/
+.overlay {
+    position: absolute;
+    top: -5px;  /*because bracket style*/
+    left: 0;
+    right: 0;
+    bottom: 5px;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    color: white;
+    display: inline-block;
+}
+.overlay div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+
+/*button for concluding tournaments*/
+.btn-conclude {
+    color: #fff;
+    background-color: #ae5cb8;
+    border-color: #ae5cb8;
+}
+.btn-conclude:hover {
+    color: #fff;
+    background-color: #8b4195;
+    border-color: #8b4195;
+}
+
+/*loader animation*/
 .loader {
     color: #000;
     font-weight: bold;
@@ -112,9 +171,85 @@ body {
     }
 }
 
-h5 small {
-    font-size: 70%;
+/*responsive full height columns*/
+.row-height {
+    display: table;
+    table-layout: fixed;
+    height: 100%;
+    width: 100%;
 }
-input[type="checkbox"] {
-    vertical-align: text-top;
+.col-height {
+    display: table-cell;
+    float: none;
+    height: 100%;
+}
+.inside-full-height {
+    height: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.inside-bottom-center {
+    left: 0;
+    right: 0;
+    position: absolute;
+    bottom: 1.25rem;
+}
+.button-spacer {
+    padding-top: 3rem;
+}
+
+@media (min-width: 480px) {
+    .row-xs-height {
+        display: table;
+        table-layout: fixed;
+        height: 100%;
+        width: 100%;
+    }
+    .col-xs-height {
+        display: table-cell;
+        float: none;
+        height: 100%;
+    }
+}
+
+@media (min-width: 768px) {
+    .row-sm-height {
+        display: table;
+        table-layout: fixed;
+        height: 100%;
+        width: 100%;
+    }
+    .col-sm-height {
+        display: table-cell;
+        float: none;
+        height: 100%;
+    }
+}
+
+@media (min-width: 992px) {
+    .row-md-height {
+        display: table;
+        table-layout: fixed;
+        height: 100%;
+        width: 100%;
+    }
+    .col-md-height {
+        display: table-cell;
+        float: none;
+        height: 100%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .row-lg-height {
+        display: table;
+        table-layout: fixed;
+        height: 100%;
+        width: 100%;
+    }
+    .col-lg-height {
+        display: table-cell;
+        float: none;
+        height: 100%;
+    }
 }

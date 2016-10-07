@@ -16,7 +16,7 @@
                         {!! Form::label('tournament_type_id', 'Type') !!}
                         {!! Form::select('tournament_type_id', $tournament_types,
                             old('tournament_type_id', $tournament->tournament_type_id),
-                            ['class' => 'form-control', 'onchange' => 'showLocation()']) !!}
+                            ['class' => 'form-control', 'onchange' => 'changeTournamentType()']) !!}
                     </div>
                 </div>
                 {{--Cardpool--}}
@@ -48,43 +48,41 @@
         </div>
         {{--Conclusion--}}
         <div class="bracket">
+            {{--Overlay--}}
+            <div id="overlay-conclusion" class="overlay hidden-xs-up">
+                <div>'non-tournament' events have no conclusion</div>
+            </div>
             <h5>
                 Conclusion
                 <small class="form-group text-xs-center">
                     -
                     {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), [1, 'on'], true),
                         ['onclick' => 'conclusionCheck()', 'id' => 'concluded']) !!}
-                    {!! Form::label('concluded', 'tournament has ended') !!}
+                    {!! Form::label('concluded', 'tournament has already ended') !!}
                 </small>
             </h5>
             <div class="row">
+                {{--Player number--}}
                 <div class="col-md-6 col-xs-12">
-                    {{--Player number--}}
                     <div class="form-group">
-                        {!! Html::decode(Form::label('players_number', 'Number of players<sup class="text-danger hidden-xs-up" id="pn-req">*</sup>')) !!}
+                        {!! Html::decode(Form::label('players_number', 'Number of players<sup class="text-danger hidden-xs-up req-conclusion">*</sup>')) !!}
                         {!! Form::text('players_number', old('players_number', $tournament->players_number),
                              ['class' => 'form-control', 'placeholder' => 'number of players', 'disabled' => '']) !!}
                     </div>
-                    {{--Top cut number--}}
+                </div>
+                {{--Top cut number--}}
+                <div class="col-md-6 col-xs-12">
                     <div class="form-group">
                         {!! Form::label('top_number', 'Number of players in top cut') !!}
                         {!! Form::text('top_number', old('top_number', $tournament->top_number),
                              ['class' => 'form-control', 'placeholder' => 'number fo players in top cut', 'disabled' => '']) !!}
                     </div>
                 </div>
-                <div class="col-md-6 col-xs-12">
-                    <div class="card text-xs-center p-t-1 p-b-1 m-t-2">
-                        <div class="form-group">
-                            <label class="card-title">Upload NRTM (json) results</label>
-                            {!! Form::file('jsonresults', ['id' => 'jsonresults']) !!}
-                        </div>
-                        <small id="nrtm-helper" class="hidden-xs-up">Click 'Save Tournament' to import.</small>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
     <div class="col-xs-12 col-md-4">
+        {{--Date and time--}}
         <div class="bracket">
             {{--Date--}}
             <div class="form-group">
@@ -97,37 +95,41 @@
                     </div>
                 </div>
             </div>
-
             {{--Starting time--}}
             <div class="form-group">
                 {!! Form::label('start_time', 'Starting time') !!}
                 {!! Form::text('start_time', old('start_time', $tournament->start_time), ['class' => 'form-control', 'placeholder' => 'HH:MM']) !!}
             </div>
-            <div id="select_location">
-                {{--Location--}}
-                <div class="form-group">
-                    {!! Form::label('location_search', 'Location') !!}
-                    {!! Form::text('location_search', null,
-                        ['class' => 'form-control', 'placeholder' => 'search city, address or store name']) !!}
-                    {{--Google map--}}
-                    <div class="map-wrapper-small">
-                        <div id="map"></div>
-                    </div>
+        </div>
+        {{--Location--}}
+        <div class="bracket">
+            {{--Overlay--}}
+            <div id="overlay-location" class="overlay hidden-xs-up">
+                <div>'online' events have no location</div>
+            </div>
+            {{--Location input--}}
+            <div class="form-group">
+                {!! Form::label('location_search', 'Location') !!}
+                {!! Form::text('location_search', null,
+                    ['class' => 'form-control', 'placeholder' => 'search city, address or store name']) !!}
+                {{--Google map--}}
+                <div class="map-wrapper-small">
+                    <div id="map"></div>
                 </div>
-                {{--Location info--}}
-                <div class="form-group">
-                    <strong>Country:<sup class="text-danger">*</sup></strong> <span id="country"></span><br/>
-                    <strong>State (US):</strong> <span id="state"></span><br/>
-                    <strong>City:<sup class="text-danger">*</sup></strong> <span id="city"></span><br/>
-                    <strong>Store/Venue:</strong> <span id="store"></span><br/>
-                    <strong>Address:</strong> <span id="address"></span><br/>
-                    {!! Form::hidden('location_country', old('location_country', $tournament->location_country), ['id' => 'location_country']) !!}
-                    {!! Form::hidden('location_state', old('location_state', $tournament->location_state), ['id' => 'location_state']) !!}
-                    {!! Form::hidden('location_city', old('location_city', $tournament->location_city), ['id' => 'location_city']) !!}
-                    {!! Form::hidden('location_store', old('location_store', $tournament->location_store), ['id' => 'location_store']) !!}
-                    {!! Form::hidden('location_address', old('location_address', $tournament->location_address), ['id' => 'location_address']) !!}
-                    {!! Form::hidden('location_place_id', old('location_place_id', $tournament->location_place_id), ['id' => 'location_place_id']) !!}
-                </div>
+            </div>
+            {{--Location info--}}
+            <div class="form-group">
+                <strong>Country:<sup class="text-danger req-location">*</sup></strong> <span id="country"></span><br/>
+                <strong>State (US):</strong> <span id="state"></span><br/>
+                <strong>City:<sup class="text-danger req-location">*</sup></strong> <span id="city"></span><br/>
+                <strong>Store/Venue:</strong> <span id="store"></span><br/>
+                <strong>Address:</strong> <span id="address"></span><br/>
+                {!! Form::hidden('location_country', old('location_country', $tournament->location_country), ['id' => 'location_country']) !!}
+                {!! Form::hidden('location_state', old('location_state', $tournament->location_state), ['id' => 'location_state']) !!}
+                {!! Form::hidden('location_city', old('location_city', $tournament->location_city), ['id' => 'location_city']) !!}
+                {!! Form::hidden('location_store', old('location_store', $tournament->location_store), ['id' => 'location_store']) !!}
+                {!! Form::hidden('location_address', old('location_address', $tournament->location_address), ['id' => 'location_address']) !!}
+                {!! Form::hidden('location_place_id', old('location_place_id', $tournament->location_place_id), ['id' => 'location_place_id']) !!}
             </div>
         </div>
     </div>
@@ -153,8 +155,7 @@
         old_place_id = '{{old('location_place_id', $tournament->location_place_id)}}';
 
     conclusionCheck();
-    showLocation();
-    document.getElementById('jsonresults').addEventListener('change', usingNRTMImport, false);
+    changeTournamentType();
 
     $('#date').datepicker({
         autoclose: true,

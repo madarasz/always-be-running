@@ -1,19 +1,27 @@
-function showLocation() {
+//overlay changes based on tournament type on tournament form
+function changeTournamentType() {
+    //online event, disable location
     if ($("#tournament_type_id option:selected").html() === 'online event') {
-        $('#select_location').addClass('hidden-xs-up');
+        $('#overlay-location').removeClass('hidden-xs-up');
     } else {
-        $('#select_location').removeClass('hidden-xs-up');
+        $('#overlay-location').addClass('hidden-xs-up');
     }
 
+    // non-tournament event, disable conclusion
+    if ($("#tournament_type_id option:selected").html() === 'non-tournament event') {
+        $('#overlay-conclusion').removeClass('hidden-xs-up');
+    } else {
+        $('#overlay-conclusion').addClass('hidden-xs-up');
+    }
 }
 
-var delay = (function(){
-    var timer = 0;
-    return function(callback, ms){
-        clearTimeout (timer);
-        timer = setTimeout(callback, ms);
-    };
-})();
+//var delay = (function(){
+//    var timer = 0;
+//    return function(callback, ms){
+//        clearTimeout (timer);
+//        timer = setTimeout(callback, ms);
+//    };
+//})();
 
 function getTournamentData(filters, callback) {
     $.ajax({
@@ -136,13 +144,16 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                     'class': 'label label-success'
                 }));
             } else if (element.date <= nowdate) {
-                cell.append($('<i>', {
-                    'aria-hidden': true,
-                    'class': 'fa fa-clock-o text-danger'
-                }), ' ', $('<span>', {
-                    text: 'due, pls update',
-                    'class': 'label label-danger'
-                }));
+                cell.append($('<button>', {
+                    'class': 'btn btn-conclude btn-xs',
+                    'data-toggle': 'modal',
+                    'data-target': '#concludeModal',
+                    'data-tournament-id': element.id,
+                    'data-subtitle': element.title + ' - ' + element.date
+                }).append($('<i>', {
+                    'class': 'fa fa-check',
+                    'aria-hidden': true
+                }), ' conclude'));
             } else {
                 cell.append($('<span>', {
                     text: 'not yet',
@@ -450,11 +461,11 @@ function filterDiscover(default_filter, map, geocoder, infowindow) {
 function conclusionCheck() {
     if (document.getElementById('concluded').checked) {
         document.getElementById('players_number').removeAttribute('disabled');
-        $('#pn-req').removeClass('hidden-xs-up');
+        $('.req-conclusion').removeClass('hidden-xs-up');
         document.getElementById('top_number').removeAttribute('disabled');
     } else {
         document.getElementById('players_number').setAttribute('disabled','');
-        $('#pn-req').addClass('hidden-xs-up');
+        $('.req-conclusion').addClass('hidden-xs-up');
         document.getElementById('top_number').setAttribute('disabled','');
     }
 }
@@ -485,7 +496,10 @@ function renderPlace(place, marker, map) {
     marker.setPosition(place.geometry.location);
     marker.setVisible(true);
 
-    refreshAddressInfo(place);
+    // if we are on the tournament form, refresh infos
+    if (document.getElementById('location_place_id')) {
+        refreshAddressInfo(place);
+    }
 }
 
 function refreshAddressInfo(place) {

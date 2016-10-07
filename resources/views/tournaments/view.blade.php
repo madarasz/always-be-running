@@ -1,6 +1,7 @@
 @extends('layout.general')
 
 @section('content')
+    @include('tournaments.partials.modal')
     {{--Header--}}
     <h4 class="page-header">
         @if ($user && ($user->admin || $user->id == $tournament->creator))
@@ -59,9 +60,6 @@
                 </h5>
                 {{--Details--}}
                 <p><strong>Legal cardpool up to:</strong> <span id="cardpool"><em>{{ $tournament->cardpool->name }}</em></span></p>
-                @unless($tournament->description === '')
-                    <div class="card"><div class="card-block" id="tournament-description">{!! nl2br(e($tournament->description)) !!}</div></div>
-                @endunless
                 @if($tournament->decklist == 1)
                     <p><strong><u><span id="decklist-mandatory">decklist is mandatory!</span></u></strong></p>
                 @endif
@@ -97,8 +95,21 @@
         </div>
         {{--Standings and claims--}}
         <div class="col-md-8 col-xs-12">
+            {{--Tournament description--}}
+            @unless($tournament->description === '')
+                <div class="bracket">
+                    {{--<h5>Description</h5>--}}
+                    <div id="description">
+                        {!! nl2br(e($tournament->description)) !!}
+                    </div>
+                </div>
+            @endunless
             <div class="bracket">
             @if ($tournament->concluded)
+                    <h5>
+                        <i class="fa fa-list-ol" aria-hidden="true"></i>
+                        Results
+                    </h5>
                     {{--Conflict--}}
                     @if ($tournament->conflict)
                         <div class="alert alert-danger" id="conflict-warning">
@@ -121,7 +132,7 @@
                     {{--User claim--}}
                     @if ($user)
                         <hr/>
-                        <h5>Your claim:</h5>
+                        <h6>Your claim</h6>
                         {{--Existing claim--}}
                         @if ($user_entry && $user_entry->runner_deck_id)
                             <ul id="player-claim">
@@ -251,36 +262,57 @@
                             {!! Form::close() !!}
                         @endif
                     @endif
-                {{--Clear anonym claims--}}
+                <hr/>
+                {{--Import NRTM, Clear anonym claims--}}
                 @if ($user && ($user->admin || $user->id == $tournament->creator))
-                    {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id/clearanonym"]) !!}
-                        {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Clear all anonym claims by NRTM import', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}
-                    {!! Form::close() !!}
+                    <div class="text-xs-center">
+                        {{--Import NRTM--}}
+                        <button class="btn btn-conclude btn-xs" data-toggle="modal" data-hide-manual="true"
+                                data-target="#concludeModal" data-tournament-id="{{$tournament->id}}"
+                                data-subtitle="{{$tournament->title.' - '.$tournament->date}}">
+                            <i class="fa fa-check" aria-hidden="true"></i> Import NRTM results
+                        </button>
+                        {{--Clear NRTM--}}
+                        {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id/clearanonym"]) !!}
+                            {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove all claims by NRTM import', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}
+                        {!! Form::close() !!}
+                    </div>
                 @endif
                 {{--Tables of tournament standings --}}
                 @if ($tournament->top_number)
-                    <hr/>
-                    <h5>Top cut</h5>
+                    <h6>Top cut</h6>
                     @include('tournaments.partials.entries',
                         ['entries' => $entries_top, 'user_entry' => $user_entry, 'rank' => 'rank_top',
                         'creator' => $tournament->creator, 'id' => 'entries-top'])
+                    <hr/>
                 @endif
-                <hr/>
-                <h5>Swiss rounds</h5>
+                <h6>Swiss rounds</h6>
                 @include('tournaments.partials.entries',
                     ['entries' => $entries_swiss, 'user_entry' => $user_entry, 'rank' => 'rank',
                     'creator' => $tournament->creator, 'id' => 'entries-swiss'])
             {{--Tournament is due--}}
             @elseif($tournament->date <= $nowdate)
+                <h5>
+                    <i class="fa fa-list-ol" aria-hidden="true"></i>
+                    Results
+                </h5>
                 <div class="alert alert-warning" id="due-warning">
                     <i class="fa fa-clock-o" aria-hidden="true"></i>
                     This tournament is due for completion.<br/>
-                    The tournament creator should set it to concluded and record player number, so players make claims.
+                    The tournament creator should set it to 'concluded', so players make claims.
+                </div>
+                {{--Conclude modal, button--}}
+                <div class="text-xs-center">
+                    <button class="btn btn-conclude" data-toggle="modal" data-target="#concludeModal"
+                            data-tournament-id="{{$tournament->id}}"
+                            data-subtitle="{{$tournament->title.' - '.$tournament->date}}">
+                        <i class="fa fa-check" aria-hidden="true"></i> Conclude
+                    </button>
                 </div>
             @endif
             {{--List of registered players--}}
             <hr/>
-            <h5>Registered players {{ $regcount > 0 ? '('.$regcount.')' : '' }}</h5>
+            <h6>Registered players {{ $regcount > 0 ? '('.$regcount.')' : '' }}</h6>
             @if (count($entries) > 0)
                 <ul id="registered-players">
                 @foreach ($entries as $entry)

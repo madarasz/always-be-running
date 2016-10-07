@@ -82,6 +82,13 @@ class TournamentRequest extends Request
             $input['location_address'] = '';
         }
 
+        if ($input['tournament_type_id'] == 8) // non-tournament has no conclusion
+        {
+            $input['concluded'] = 0;
+            $input['players_number'] = null;
+            $input['top_number'] = null;
+        }
+
         $this->replace($input);
     }
 }

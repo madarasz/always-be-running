@@ -23,6 +23,8 @@ Route::get('tournaments/{id}/unregister', 'EntriesController@unregister');
 Route::post('tournaments/{id}/claim', 'EntriesController@claim');
 Route::delete('entries/{id}', 'EntriesController@unclaim');
 Route::delete('tournaments/{id}/clearanonym', 'TournamentsController@clearAnonym');
+Route::post('tournaments/{id}/conclude/manual', 'TournamentsController@concludeManual');
+Route::post('tournaments/{id}/conclude/nrtm', 'TournamentsController@concludeNRTM');
 
 Route::get('/oauth2/redirect', 'NetrunnerDBController@login');
 Route::get('/logout', 'NetrunnerDBController@logout');

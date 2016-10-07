@@ -34,13 +34,17 @@ class TournamentTypeSeeder extends Seeder
                     'order' => 5
                 ),
                 array(
-                    'type_name' => 'casual',
+                    'type_name' => 'casual tournament',
                     'order' => 6
                 ),
                 array(
                     'type_name' => 'online event',
                     'order' => 7
-                )
+                ),
+                array(
+                    'type_name' => 'non-tournament event',
+                    'order' => 8
+                ),
             )
         );
     }
