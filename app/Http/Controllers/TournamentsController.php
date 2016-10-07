@@ -23,8 +23,6 @@ class TournamentsController extends Controller
         $request->sanitize_data($request->user()->id);
         $tournament = Tournament::create($request->all());
 
-        $this->processNRTMjson($request, $tournament);
-
         // redirecting to show newly created tournament
         return redirect()->route('tournaments.show', $tournament->id)
             ->with('message', 'Tournament created.');
@@ -77,8 +75,6 @@ class TournamentsController extends Controller
         $this->authorize('own', $tournament, $request->user());
         $request->sanitize_data();
         $tournament->update($request->all());
-
-        $this->processNRTMjson($request, $tournament);
 
         // redirecting to show newly created tournament
         return redirect()->route('tournaments.show', $tournament->id)

@@ -290,8 +290,9 @@
                 @include('tournaments.partials.entries',
                     ['entries' => $entries_swiss, 'user_entry' => $user_entry, 'rank' => 'rank',
                     'creator' => $tournament->creator, 'id' => 'entries-swiss'])
-            {{--Tournament is due--}}
-            @elseif($tournament->date <= $nowdate)
+                <hr/>
+            {{--Tournament is due and not non-tournament without results--}}
+            @elseif($tournament->date <= $nowdate && $tournament->tournament_type_id != 8)
                 <h5>
                     <i class="fa fa-list-ol" aria-hidden="true"></i>
                     Results
@@ -309,9 +310,9 @@
                         <i class="fa fa-check" aria-hidden="true"></i> Conclude
                     </button>
                 </div>
+                <hr/>
             @endif
             {{--List of registered players--}}
-            <hr/>
             <h6>Registered players {{ $regcount > 0 ? '('.$regcount.')' : '' }}</h6>
             @if (count($entries) > 0)
                 <ul id="registered-players">

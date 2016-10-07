@@ -138,27 +138,29 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 'class': 'text-xs-center'
             }).appendTo(newrow);
 
-            if (element.concluded) {
-                cell.append($('<span>', {
-                    text: 'concluded',
-                    'class': 'label label-success'
-                }));
-            } else if (element.date <= nowdate) {
-                cell.append($('<button>', {
-                    'class': 'btn btn-conclude btn-xs',
-                    'data-toggle': 'modal',
-                    'data-target': '#concludeModal',
-                    'data-tournament-id': element.id,
-                    'data-subtitle': element.title + ' - ' + element.date
-                }).append($('<i>', {
-                    'class': 'fa fa-check',
-                    'aria-hidden': true
-                }), ' conclude'));
-            } else {
-                cell.append($('<span>', {
-                    text: 'not yet',
-                    'class': 'label label-info'
-                }));
+            if (element.type !== 'non-tournament event') { // if not a non-tournament
+                if (element.concluded) {
+                    cell.append($('<span>', {
+                        text: 'concluded',
+                        'class': 'label label-success'
+                    }));
+                } else if (element.date <= nowdate) {
+                    cell.append($('<button>', {
+                        'class': 'btn btn-conclude btn-xs',
+                        'data-toggle': 'modal',
+                        'data-target': '#concludeModal',
+                        'data-tournament-id': element.id,
+                        'data-subtitle': element.title + ' - ' + element.date
+                    }).append($('<i>', {
+                        'class': 'fa fa-check',
+                        'aria-hidden': true
+                    }), ' conclude'));
+                } else {
+                    cell.append($('<span>', {
+                        text: 'not yet',
+                        'class': 'label label-info'
+                    }));
+                }
             }
         }
         // players
