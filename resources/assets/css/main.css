@@ -106,7 +106,7 @@ input[type="checkbox"] {
     right: 0;
     bottom: 5px;
     background-color: rgba(0, 0, 0, 0.7);
-    z-index: 9999;
+    z-index: 9;
     color: white;
     display: inline-block;
 }

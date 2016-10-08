@@ -78,9 +78,11 @@
                     @endunless
                 </p>
                 {{--Google map--}}
-                <div class="map-wrapper-small">
-                    <div id="map"></div>
-                </div>
+                @if($tournament->tournament_type_id != 7)
+                    <div class="map-wrapper-small">
+                        <div id="map"></div>
+                    </div>
+                @endif
             </div>
             {{--Statistics--}}
             @if ($tournament->concluded)
@@ -99,7 +101,7 @@
             @unless($tournament->description === '')
                 <div class="bracket">
                     {{--<h5>Description</h5>--}}
-                    <div id="description">
+                    <div id="tournament-description">
                         {!! nl2br(e($tournament->description)) !!}
                     </div>
                 </div>
@@ -263,7 +265,7 @@
                         @endif
                     @else
                         <hr/>
-                        <div class="text-xs-center" id="">
+                        <div class="text-xs-center" id="suggest-login">
                             <a href="/oauth2/redirect">Login via NetrunnerDB</a> to claim spot.
                         </div>
                     @endif
@@ -274,12 +276,12 @@
                         {{--Import NRTM--}}
                         <button class="btn btn-conclude btn-xs" data-toggle="modal" data-hide-manual="true"
                                 data-target="#concludeModal" data-tournament-id="{{$tournament->id}}"
-                                data-subtitle="{{$tournament->title.' - '.$tournament->date}}">
+                                data-subtitle="{{$tournament->title.' - '.$tournament->date}}" id="button-import-nrtm">
                             <i class="fa fa-check" aria-hidden="true"></i> Import NRTM results
                         </button>
                         {{--Clear NRTM--}}
                         {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id/clearanonym"]) !!}
-                            {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove all claims by NRTM import', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}
+                            {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove all claims by NRTM import', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'id' => 'button-clear-nrtm')) !!}
                         {!! Form::close() !!}
                     </div>
                 @endif
@@ -311,7 +313,7 @@
                 <div class="text-xs-center">
                     <button class="btn btn-conclude" data-toggle="modal" data-target="#concludeModal"
                             data-tournament-id="{{$tournament->id}}"
-                            data-subtitle="{{$tournament->title.' - '.$tournament->date}}">
+                            data-subtitle="{{$tournament->title.' - '.$tournament->date}}" id="button-conclude">
                         <i class="fa fa-check" aria-hidden="true"></i> Conclude
                     </button>
                 </div>
@@ -355,33 +357,37 @@
             </div>
         </div>
     </div>
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_MAPS_API')}}&libraries=places&callback=initializeMap">
-    </script>
-    <script type="text/javascript">
-        var map, marker;
+    {{--Google maps library--}}
+    @if($tournament->tournament_type_id != 7)
+        <script async defer
+                src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_MAPS_API')}}&libraries=places&callback=initializeMap">
+        </script>
+        {{--Scripts for google maps--}}
+        <script type="text/javascript">
+            var map, marker;
 
-        function initializeMap() {
-            map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 1,
-                center: {lat: 40.157053, lng: 19.329297},
-                mapTypeId: google.maps.MapTypeId.ROADMAP,
-                streetViewControl: false,
-                mapTypeControl: false
-            });
+            function initializeMap() {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 1,
+                    center: {lat: 40.157053, lng: 19.329297},
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    streetViewControl: false,
+                    mapTypeControl: false
+                });
 
-            marker = new google.maps.Marker({
-                map: map,
-                anchorPoint: new google.maps.Point(0, -29)
-            });
+                marker = new google.maps.Marker({
+                    map: map,
+                    anchorPoint: new google.maps.Point(0, -29)
+                });
 
-            var service = new google.maps.places.PlacesService(map);
-            service.getDetails({placeId: '{{ $tournament->location_place_id }}'}, function(place, status){
-                if (status === google.maps.places.PlacesServiceStatus.OK) {
-                    renderPlace(place, marker, map)
-                }
-            });
-        }
-    </script>
+                var service = new google.maps.places.PlacesService(map);
+                service.getDetails({placeId: '{{ $tournament->location_place_id }}'}, function(place, status){
+                    if (status === google.maps.places.PlacesServiceStatus.OK) {
+                        renderPlace(place, marker, map)
+                    }
+                });
+            }
+        </script>
+    @endif
 @stop
 
