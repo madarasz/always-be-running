@@ -116,6 +116,7 @@ var tournamentFromCommands = {
                 .log('* Adding location *')
                 .api.useXpath().clearValue(client.elements.location_search.selector)
                 .keys(data)
+                .pause(500)
                 .waitForElementVisible(client.elements.map_suggestion.selector, 5000)
                 .sendKeys(client.elements.location_search.selector, client.api.Keys.DOWN_ARROW)
                 .pause(1000)
@@ -219,10 +220,6 @@ module.exports = {
             selector: "//h4[contains(.,'Create new tournament') or contains(.,'Edit tournament')]",
             locateStrategy: 'xpath'
         },
-        location: {
-            selector: "//div[@id='select_location']",
-            locateStrategy: 'xpath'
-        },
         players_number_disabled: {
             selector: "//input[@id='players_number' and @disabled]",
             locateStrategy: 'xpath'
@@ -265,6 +262,14 @@ module.exports = {
         },
         submit_button: {
             selector: "//input[@type='submit']",
+            locateStrategy: 'xpath'
+        },
+        overlay_conclusion: {
+            selector: "//div[@id='overlay-conclusion']",
+            locateStrategy: 'xpath'
+        },
+        overlay_location: {
+            selector: "//div[@id='overlay-location']",
             locateStrategy: 'xpath'
         }
     }

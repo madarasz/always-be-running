@@ -29,20 +29,17 @@ var tournamentB = {
     contact: '+33 333 333',
     wrong_location: 'Spain',
     location: 'Barcelona, Spain',
-    city: 'Spain, Barcelona'
+    city: 'Spain, Barcelona',
+    players: '30',
+    top: '8'
 };
 var tournamentC = {
-    title: 'Test B - ' + formatDate(new Date()),
+    title: 'Test C - ' + formatDate(new Date()),
     type: 'online event',
-    type_id: '6',
+    type_id: '7',
     date: '2001.01.01.',
-    country: 'United States',
-    country_id: '840',
-    state: 'California',
-    state_id: '5',
-    city: 'Miskolc',
-    store: 'Telep',
-    address: 'Nincs utca 5.'
+    cardpool: '--- not yet known ---',
+    cardpool_id: 'unknown'
 };
 
 function formatDate(date) {
@@ -57,7 +54,7 @@ function formatDate(date) {
 }
 
 module.exports = {
-    'Tournament - create (casual, concluded), edit (worlds, not concluded), view with validation': function (browser) {
+    'Tournament - create (casual, concluded), edit (worlds, not concluded), view with validation, conclude via table': function (browser) {
 
         var regularLogin = browser.globals.regularLogin;
 
@@ -75,7 +72,9 @@ module.exports = {
         browser.page.tournamentForm()
             .validate()
             .assertForm({
-                visible: ['location', 'players_number_disabled', 'map_loaded']})
+                visible: ['players_number_disabled', 'map_loaded'],
+                not_visible: ['overlay_conclusion', 'overlay_location']
+            })
             .fillForm({
                 inputs: {
                     title: tournamentA.title,
@@ -139,6 +138,10 @@ module.exports = {
                 conflictWarning: false,
                 playerNumbers: true,
                 topPlayerNumbers: true,
+                suggestLogin: false,
+                buttonNRTMimport: true,
+                buttonNRTMclear: true,
+                buttonConclude: false,
                 playerClaim: false,
                 createClaimFrom: true,
                 submitClaim: true,
@@ -237,6 +240,10 @@ module.exports = {
                 conflictWarning: false,
                 playerNumbers: false,
                 topPlayerNumbers: false,
+                suggestLogin: false,
+                buttonNRTMimport: false,
+                buttonNRTMclear: false,
+                buttonConclude: true,
                 playerClaim: false,
                 createClaimFrom: false,
                 submitClaim: false,
@@ -261,7 +268,71 @@ module.exports = {
         browser.page.tournamentTable()
             .assertTable('created', tournamentB.title, {
                 texts: [tournamentB.date, tournamentB.cardpool, tournamentB.city],
-                labels: ['pending', 'due'], texts_missing: []
+                labels: ['pending'], texts_missing: []
+            })
+            .selectTournament('created', tournamentB.title, 'conclude');
+
+        // conclude on organize page
+        browser.page.concludeModal()
+            .validate(tournamentB.title)
+            .validate(tournamentB.date)
+            .concludeManual({
+                players_number: tournamentB.players,
+                top_number: tournamentB.top
+            });
+
+        // verify on tournament view
+        browser.page.tournamentView()
+            .validate()
+            .assertView({
+                title: tournamentB.title,
+                ttype: tournamentB.type,
+                creator: regularLogin.username,
+                description: tournamentB.description,
+                date: tournamentB.date,
+                time: tournamentB.time,
+                cardpool: tournamentB.cardpool,
+                city: tournamentB.city,
+                contact: tournamentB.contact,
+                map: true,
+                decklist: false,
+                approvalNeed: true,
+                editButton: true,
+                approveButton: false,
+                rejectButton: false,
+                deleteButton: true,
+                conflictWarning: false,
+                playerNumbers: true,
+                topPlayerNumbers: true,
+                suggestLogin: false,
+                buttonNRTMimport: true,
+                buttonNRTMclear: true,
+                buttonConclude: false,
+                playerClaim: false,
+                createClaimFrom: true,
+                submitClaim: true,
+                removeClaim: false,
+                claimError: false,
+                topEntriesTable: true,
+                swissEntriesTable: true,
+                ownClaimInTable: false,
+                conflictInTable: false,
+                dueWarning: false,
+                registeredPlayers: false,
+                noRegisteredPlayers: true,
+                unregisterButton: false,
+                registerButton: true,
+                storeInfo: false,
+                addressInfo: false
+            });
+
+        // verify table on organize page
+        browser.page.mainMenu().selectMenu('organize');
+
+        browser.page.tournamentTable()
+            .assertTable('created', tournamentB.title, {
+                texts: [tournamentB.date, tournamentB.cardpool, tournamentB.city],
+                labels: ['pending', 'concluded'], texts_missing: []
             })
             .selectTournament('created', tournamentB.title, 'delete');
     },

@@ -80,6 +80,6 @@ module.exports = {
         text: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td[contains(.,'%s')]",
         label: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/span[contains(.,'%s')]",
         deleteButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'delete')]",
-        button: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/a[contains(.,'%s')]"
+        button: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/*[contains(.,'%s')]"
     }
 };

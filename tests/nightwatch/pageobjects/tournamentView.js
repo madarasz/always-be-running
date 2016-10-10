@@ -195,6 +195,22 @@ module.exports = {
             selector: "//span[@id='top-player-numbers']",
             locateStrategy: 'xpath'
         },
+        suggestLogin: {
+            selector: "//div[@id='suggest-login']",
+            locateStrategy: 'xpath'
+        },
+        buttonNRTMimport: {
+            selector: "//button[@id='button-import-nrtm']",
+            locateStrategy: 'xpath'
+        },
+        buttonNRTMclear: {
+            selector: "//button[@id='button-clear-nrtm']",
+            locateStrategy: 'xpath'
+        },
+        buttonConclude: {
+            selector: "//button[@id='button-conclude']",
+            locateStrategy: 'xpath'
+        },
         playerClaim: {
             selector: "//ul[@id='player-claim']",
             locateStrategy: 'xpath'
