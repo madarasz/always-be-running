@@ -20,6 +20,7 @@ var concludeCommands = {
 
         this
             .api.useXpath()
+            .clearValue(this.elements.inputPlayersNumber.selector)
             .setValue(this.elements.inputPlayersNumber.selector, data['players_number'])
             .setValue(this.elements.inputTopNumber.selector, data['top_number'])
             .click(this.elements.submitManual.selector);
@@ -50,7 +51,7 @@ module.exports = {
             locateStrategy: 'xpath'
         },
         inputTopNumber: {
-            selector: "//input[@id='top_number']",
+            selector: "//select[@id='top_number']",
             locateStrategy: 'xpath'
         },
         inputNRTMFile: {

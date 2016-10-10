@@ -29,7 +29,7 @@ class TournamentRequest extends Request
                 'title' => 'required',
                 'date' => 'required|date_format:Y.m.d.',
                 'players_number' => 'integer|between:1,1000',
-                'top_number' => 'integer|between:0,1000',
+                'top_number' => 'integer|between:0,1000|players_top:'.Request::get('players_number').','.Request::get('top_number')
             ];
         } else {
             return [
@@ -38,7 +38,7 @@ class TournamentRequest extends Request
                 'location_city' => 'required',
                 'location_country' => 'required',
                 'players_number' => 'integer|between:1,1000',
-                'top_number' => 'integer|between:0,1000',
+                'top_number' => 'integer|between:0,1000|players_top:'.Request::get('players_number').','.Request::get('top_number')
             ];
         }
     }
@@ -46,21 +46,28 @@ class TournamentRequest extends Request
     public function messages() {
         return [
             'date_format' => 'Please enter the date using YYYY.MM.DD. format.',
+            'players_top' => 'Players in top cut should be less than the total number of players.'
         ];
     }
 
     public function sanitize_data($user_id = null)
     {
         $input = array_map('trim', $this->all());
+
+        // concluded tournaments
         if (array_key_exists('concluded', $input))
         {
             $input['concluded'] = 1;
+            if ($input['top_number'] == 0) {
+                $input['top_number'] = null;
+            }
         } else {
             $input['concluded'] = 0;
             $input['players_number'] = null;
             $input['top_number'] = null;
         }
 
+        // mandatory decklist
         if (array_key_exists('decklist', $input))
         {
             $input['decklist'] = 1;

@@ -284,10 +284,10 @@ class TournamentsController extends Controller
      * Receives player number and top cut player number from the
      * conclude tournament manually form on the conclude modal.
      * @param $id tournament ID
-     * @param Requests\TournamentRequest $request
+     * @param Requests\ConcludeRequest $request
      * @return mixed
      */
-    public function concludeManual($id, Request $request) {
+    public function concludeManual($id, Requests\ConcludeRequest $request) {
         $tournament = Tournament::findorFail($id);
         $this->authorize('own', $tournament, $request->user());
 

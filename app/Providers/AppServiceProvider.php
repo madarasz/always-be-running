@@ -21,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend('tournament_not_top', function($attribute, $value, $parameters, $validator) {
             return ($parameters[0] > $parameters[1] || $value != 0); // swiss rank should be out of cut or top rank set
         });
+        // validator for tournament form conclusion / conclusion form
+        Validator::extend('players_top', function($attribute, $value, $parameters, $validator) {
+            return ($parameters[0] > $parameters[1]); // players number should be greater than the top cut player number
+        });
     }
 
     /**

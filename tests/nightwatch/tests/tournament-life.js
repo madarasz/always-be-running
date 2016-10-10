@@ -8,7 +8,9 @@ var tournamentA = {
     date: '2999.01.01.',
     time: '12:40',
     players: '20',
-    top: '4',
+    wrong_players: '3',
+    top: 'top 4',
+    top_value: '4',
     contact: '+66 666 666',
     location_input: 'Budapest metagame',
     location: 'Hungary, Budapest',
@@ -31,7 +33,8 @@ var tournamentB = {
     location: 'Barcelona, Spain',
     city: 'Spain, Barcelona',
     players: '30',
-    top: '8'
+    wrong_players: '8',
+    top: 'top 8'
 };
 var tournamentC = {
     title: 'Test C - ' + formatDate(new Date()),
@@ -54,7 +57,21 @@ function formatDate(date) {
 }
 
 module.exports = {
-    'Tournament - create (casual, concluded), edit (worlds, not concluded), view with validation, conclude via table': function (browser) {
+    /**
+     * - create tournament (casual, concluded), validation for missing location, players-top
+     * - fill in missing location, save
+     * - verify on tournament view page
+     * - verify on Organize page table
+     * - update tournament (worlds, not concluded), validation for missing city
+     * - fill in missing city, save
+     * - verify on tournament view page
+     * - verify on Organize page table
+     * - conclude tournament from Organize page, validation for players-top
+     * - conclude tournament from Organize page, with correct values
+     * - verify on tournament view page
+     * - delete tournament from Organize page
+     */
+    'Tournament - create, edit, view with validation, conclude': function (browser) {
 
         var regularLogin = browser.globals.regularLogin;
 
@@ -94,19 +111,18 @@ module.exports = {
             });
         browser.page.tournamentForm()
             .fillForm({
-                inputs: {
-                    players_number: tournamentA.players,
-                    top_number: tournamentA.top
-                }
+                inputs: { players_number: tournamentA.wrong_players },
+                selects: { top_number: tournamentA.top }
             })
             // submit with missing location
             .click('@submit_button')
             .assertForm({
-                errors: ['city', 'country']
+                errors: ['city', 'country', 'Players in top cut']
             })
             // adding location info
             .fillForm({
-                location: tournamentA.location_input
+                location: tournamentA.location_input,
+                inputs: { players_number: tournamentA.players }
             })
             .assertForm({
                 visible: ['location_country', 'location_city', 'location_store', 'location_address'],
@@ -174,18 +190,19 @@ module.exports = {
             .assertForm({
                 visible: ['location_country', 'location_city', 'location_store', 'location_address'],
                 not_present: ['location_state'],
+                not_visible: ['overlay_conclusion', 'overlay_location'],
                 inputs: {
                     title: tournamentA.title,
                     date: tournamentA.date,
                     start_time: tournamentA.time,
                     contact: tournamentA.contact,
-                    players_number: tournamentA.players,
-                    top_number: tournamentA.top
+                    players_number: tournamentA.players
                 },
                 textareas: { description: tournamentA.description },
                 selects: {
                     tournament_type_id: tournamentA.type_id,
-                    cardpool_id: tournamentA.cardpool_id
+                    cardpool_id: tournamentA.cardpool_id,
+                    top_number: tournamentA.top_value
                 },
                 checkboxes: {decklist: true, concluded: true}
             })
@@ -268,11 +285,30 @@ module.exports = {
         browser.page.tournamentTable()
             .assertTable('created', tournamentB.title, {
                 texts: [tournamentB.date, tournamentB.cardpool, tournamentB.city],
-                labels: ['pending'], texts_missing: []
+                labels: ['pending']
             })
             .selectTournament('created', tournamentB.title, 'conclude');
 
-        // conclude on organize page
+        // conclude on organize page, with validation error
+        browser.page.concludeModal()
+            .validate(tournamentB.title)
+            .validate(tournamentB.date)
+            .concludeManual({
+                players_number: tournamentB.wrong_players,
+                top_number: tournamentB.top
+            });
+
+        // check for valication error
+        browser.page.tournamentForm().assertForm({ errors: ['Players in top cut']});    // validating with different page object
+
+        // conclude on organize page, with correct values
+        browser.page.tournamentTable()
+            .assertTable('created', tournamentB.title, {
+                texts: [tournamentB.date, tournamentB.cardpool, tournamentB.city],
+                labels: ['pending']
+            })
+            .selectTournament('created', tournamentB.title, 'conclude');
+
         browser.page.concludeModal()
             .validate(tournamentB.title)
             .validate(tournamentB.date)

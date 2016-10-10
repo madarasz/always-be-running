@@ -12,6 +12,7 @@
     @include('tournaments.partials.modal')
 
     @include('partials.message')
+    @include('errors.list')
 
     {{--Table for tournaments created by me--}}
     <div class="row">
