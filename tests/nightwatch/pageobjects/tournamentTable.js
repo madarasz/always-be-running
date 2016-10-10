@@ -54,6 +54,7 @@ var tableCommands = {
     selectTournament: function(table_id, title, action, callback) {
 
         this.log('*** Performing "'+action+'" on tournament table ('+table_id+'): '+title+' ***');
+        this.api.useXpath();
 
         var util = require('util');
 

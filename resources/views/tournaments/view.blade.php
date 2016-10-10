@@ -8,7 +8,7 @@
             <div class="pull-right" id="control-buttons">
                 {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id"]) !!}
                     {{--Edit--}}
-                    <a href="{{ "/tournaments/$tournament->id/edit" }}" class="btn btn-primary" id="edit-button"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                    <a href="{{ "/tournaments/$tournament->id/edit" }}" class="btn btn-primary" id="edit-button"><i class="fa fa-pencil" aria-hidden="true"></i> Update</a>
                     {{--Approval --}}
                     @if ($user && $user->admin)
                         <a href="/tournaments/{{ $tournament->id }}/approve" class="btn btn-success" id="approve-button"><i class="fa fa-thumbs-up" aria-hidden="true"></i> Approve</a>
@@ -51,8 +51,8 @@
                 {{--Location, date--}}
                 <h5>
                     @unless($tournament->tournament_type_id == 7)
-                        <span id="tournament-city">
-                            {{$tournament->location_country === 'United States' ? $tournament->location_state : ''}} {{ $tournament->location_country }}, {{ $tournament->location_city }}
+                        <span id="tournament-location">
+                            {{ $tournament->location_country }}, {{$tournament->location_country === 'United States' ? $tournament->location_state.', ' : ''}}{{ $tournament->location_city }}
                         </span>
                         <br/>
                     @endunless

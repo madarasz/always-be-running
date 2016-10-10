@@ -139,7 +139,7 @@ module.exports = {
         cardpool: "//span[@id='cardpool' and contains(., '%s')]",
         date: "//span[@id='tournament-date' and contains(., '%s')]",
         time: "//span[@id='start-time' and contains(., '%s')]",
-        city: "//span[@id='tournament-city' and contains(., '%s')]",
+        location: "//span[@id='tournament-location' and contains(., '%s')]",
         store: "//span[@id='store' and contains(., '%s')]",
         address: "//span[@id='address' and contains(., '%s')]",
         contact: "//span[@id='contact' and contains(., '%s')]",
@@ -153,6 +153,10 @@ module.exports = {
         },
         validator: {
             selector: "//h4[contains(.,'created by')]",
+            locateStrategy: 'xpath'
+        },
+        descriptionSection: {
+            selector: "//div[@id='tournament-description']",
             locateStrategy: 'xpath'
         },
         map: {

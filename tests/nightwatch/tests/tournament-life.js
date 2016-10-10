@@ -30,8 +30,8 @@ var tournamentB = {
     time: '10:00',
     contact: '+33 333 333',
     wrong_location: 'Spain',
-    location: 'Barcelona, Spain',
-    city: 'Spain, Barcelona',
+    location_input: 'Barcelona, Spain',
+    location: 'Spain, Barcelona',
     players: '30',
     wrong_players: '8',
     top: 'top 8'
@@ -42,7 +42,24 @@ var tournamentC = {
     type_id: '7',
     date: '2001.01.01.',
     cardpool: '--- not yet known ---',
-    cardpool_id: 'unknown'
+    cardpool_id: 'unknown',
+    players: '6',
+    top: '- no elimination rounds -'
+};
+var tournamentD = {
+    title: 'Test D - ' + formatDate(new Date()),
+    type: 'non-tournament event',
+    type_id: '8',
+    date: '2011.01.01.',
+    cardpool: 'Business First',
+    cardpool_id: 'bf',
+    location_input: 'United states, IN, Bloomington, Common room',
+    location: 'United States, IN, Bloomington',
+    city: 'Bloomington',
+    state: 'Indiana',
+    country: 'United States',
+    store: 'The Common Room',
+    address: '223 S Pete Ellis Dr, Bloomington, IN 47408, USA'
 };
 
 function formatDate(date) {
@@ -59,17 +76,18 @@ function formatDate(date) {
 module.exports = {
     /**
      * - create tournament (casual, concluded), validation for missing location, players-top
-     * - fill in missing location, save
-     * - verify on tournament view page
+     * - fill in missing location, correct player number, save
+     * - verify on tournament details page
      * - verify on Organize page table
      * - update tournament (worlds, not concluded), validation for missing city
      * - fill in missing city, save
-     * - verify on tournament view page
+     * - verify on tournament details page
      * - verify on Organize page table
      * - conclude tournament from Organize page, validation for players-top
      * - conclude tournament from Organize page, with correct values
-     * - verify on tournament view page
-     * - delete tournament from Organize page
+     * - verify on tournament details page
+     * - verify on Organize page table
+     * - delete tournament on Organize page
      */
     'Tournament - create, edit, view with validation, conclude': function (browser) {
 
@@ -85,7 +103,7 @@ module.exports = {
 
         browser.page.organizePage().clickCommand('create');
 
-        // creating new tournament
+        // create tournament (casual, concluded)
         browser.page.tournamentForm()
             .validate()
             .assertForm({
@@ -109,17 +127,19 @@ module.exports = {
             fillForm({
                 checkboxes: {concluded: true}
             });
+
+        // validation for missing location, players-top
         browser.page.tournamentForm()
             .fillForm({
                 inputs: { players_number: tournamentA.wrong_players },
                 selects: { top_number: tournamentA.top }
             })
-            // submit with missing location
+            // submit with missing location, incorrect player number
             .click('@submit_button')
             .assertForm({
                 errors: ['city', 'country', 'Players in top cut']
             })
-            // adding location info
+            // fill in missing location, correct player number, save
             .fillForm({
                 location: tournamentA.location_input,
                 inputs: { players_number: tournamentA.players }
@@ -130,7 +150,7 @@ module.exports = {
             })
             .click('@submit_button');
 
-        // verify on tournament detail page
+        // verify on tournament details page
         browser.page.tournamentView()
             .assertView({
                 title: tournamentA.title,
@@ -140,7 +160,7 @@ module.exports = {
                 date: tournamentA.date,
                 time: tournamentA.time,
                 cardpool: tournamentA.cardpool,
-                city: tournamentA.city,
+                location: tournamentA.location,
                 store: tournamentA.store,
                 address: tournamentA.address,
                 contact: tournamentA.contact,
@@ -174,17 +194,17 @@ module.exports = {
                 registerButton: true
             });
 
-        // verify table on organize page
+        // verify on Organize page table
         browser.page.mainMenu().selectMenu('organize');
 
         browser.page.tournamentTable()
             .assertTable('created', tournamentA.title, {
-                texts: [tournamentA.date, tournamentA.cardpool, tournamentA.players, tournamentA.city],
+                texts: [tournamentA.date, tournamentA.cardpool, tournamentA.players, tournamentA.location],
                 labels: ['pending', 'concluded'], texts_missing: []
             })
             .selectTournament('created', tournamentA.title, 'update');
 
-        // update tournament
+        // update tournament (worlds, not concluded)
         browser.page.tournamentForm()
             .validate()
             .assertForm({
@@ -224,13 +244,14 @@ module.exports = {
             .fillForm({
                 checkboxes: {concluded: false}
             })
-            // submit with missing city location
+            // validation for missing city
             .click('@submit_button')
             .assertForm({
                 errors: ['city']
             })
+            // fill in missing city, save
             .fillForm({
-                location: tournamentB.location
+                location: tournamentB.location_input
             })
             .click('@submit_button');
 
@@ -245,7 +266,7 @@ module.exports = {
                 date: tournamentB.date,
                 time: tournamentB.time,
                 cardpool: tournamentB.cardpool,
-                city: tournamentB.city,
+                location: tournamentB.location,
                 contact: tournamentB.contact,
                 map: true,
                 decklist: false,
@@ -279,17 +300,17 @@ module.exports = {
                 addressInfo: false
             });
 
-        // verify table on organize page
+        // verify on Organize page table
         browser.page.mainMenu().selectMenu('organize');
 
         browser.page.tournamentTable()
             .assertTable('created', tournamentB.title, {
-                texts: [tournamentB.date, tournamentB.cardpool, tournamentB.city],
+                texts: [tournamentB.date, tournamentB.cardpool, tournamentB.location],
                 labels: ['pending']
             })
             .selectTournament('created', tournamentB.title, 'conclude');
 
-        // conclude on organize page, with validation error
+        // conclude tournament from Organize page, validation for players-top
         browser.page.concludeModal()
             .validate(tournamentB.title)
             .validate(tournamentB.date)
@@ -301,10 +322,10 @@ module.exports = {
         // check for valication error
         browser.page.tournamentForm().assertForm({ errors: ['Players in top cut']});    // validating with different page object
 
-        // conclude on organize page, with correct values
+        // conclude tournament from Organize page, with correct values
         browser.page.tournamentTable()
             .assertTable('created', tournamentB.title, {
-                texts: [tournamentB.date, tournamentB.cardpool, tournamentB.city],
+                texts: [tournamentB.date, tournamentB.cardpool, tournamentB.location],
                 labels: ['pending']
             })
             .selectTournament('created', tournamentB.title, 'conclude');
@@ -317,7 +338,7 @@ module.exports = {
                 top_number: tournamentB.top
             });
 
-        // verify on tournament view
+        // verify on tournament details page
         browser.page.tournamentView()
             .validate()
             .assertView({
@@ -328,7 +349,7 @@ module.exports = {
                 date: tournamentB.date,
                 time: tournamentB.time,
                 cardpool: tournamentB.cardpool,
-                city: tournamentB.city,
+                location: tournamentB.location,
                 contact: tournamentB.contact,
                 map: true,
                 decklist: false,
@@ -362,15 +383,234 @@ module.exports = {
                 addressInfo: false
             });
 
-        // verify table on organize page
+        // verify on Organize page table
         browser.page.mainMenu().selectMenu('organize');
 
         browser.page.tournamentTable()
             .assertTable('created', tournamentB.title, {
-                texts: [tournamentB.date, tournamentB.cardpool, tournamentB.city],
-                labels: ['pending', 'concluded'], texts_missing: []
+                texts: [tournamentB.date, tournamentB.cardpool, tournamentB.location, tournamentB.players],
+                labels: ['pending', 'concluded']
             })
+            // delete tournament on Organize page
             .selectTournament('created', tournamentB.title, 'delete');
+    },
+
+    /**
+     * - create tournament: online, not concluded
+     * - verify on tournament details page
+     * - conclude on tournament details page, without top-cut
+     * - verify on tournament details page
+     * - update tournament (via tournament details page): non-tournament, USA location
+     * - verify on tournament details page
+     * - verify on Organize page table
+     * - delete tournament from Organize page
+     */
+    'Tournament - create, edit, conclude (special tournament types)': function (browser) {
+
+        var regularLogin = browser.globals.regularLogin;
+
+        browser
+            .url(browser.launchUrl)
+            .log('*** Logging in ***')
+            .login(regularLogin.username, regularLogin.password)
+            .log('*** Creating Tournament C ***');
+
+        browser.page.mainMenu().selectMenu('organize');
+
+        browser.page.organizePage().clickCommand('create');
+
+        // create tournament: online, not concluded
+        browser.page.tournamentForm()
+            .validate()
+            .assertForm({
+                visible: ['players_number_disabled', 'map_loaded'],
+                not_visible: ['overlay_conclusion', 'overlay_location']
+            })
+            .fillForm({
+                inputs: {
+                    title: tournamentC.title,
+                    date: tournamentC.date
+                },
+                selects: {
+                    tournament_type_id: tournamentC.type,
+                    cardpool_id: tournamentC.cardpool
+                },
+                checkboxes: {decklist: false, concluded: false}
+            })
+            .assertForm({
+                visible: ['overlay_location'],
+                not_visible: ['overlay_conclusion']
+            })
+            .click('@submit_button');
+
+        // verify on tournament detail page
+        browser.page.tournamentView()
+            .validate()
+            .assertView({
+                title: tournamentC.title,
+                ttype: tournamentC.type,
+                creator: regularLogin.username,
+                date: tournamentC.date,
+                cardpool: tournamentC.cardpool,
+                descriptionSection: false,
+                map: false,
+                decklist: false,
+                approvalNeed: true,
+                editButton: true,
+                approveButton: false,
+                rejectButton: false,
+                deleteButton: true,
+                conflictWarning: false,
+                playerNumbers: false,
+                topPlayerNumbers: false,
+                suggestLogin: false,
+                buttonNRTMimport: false,
+                buttonNRTMclear: false,
+                buttonConclude: true,
+                playerClaim: false,
+                createClaimFrom: false,
+                submitClaim: false,
+                removeClaim: false,
+                claimError: false,
+                topEntriesTable: false,
+                swissEntriesTable: false,
+                ownClaimInTable: false,
+                conflictInTable: false,
+                dueWarning: true,
+                registeredPlayers: false,
+                noRegisteredPlayers: true,
+                unregisterButton: false,
+                registerButton: true
+            })
+            .click('@buttonConclude');
+
+        // conclude on tournament details page, without top-cut
+        browser.page.concludeModal()
+            .validate(tournamentC.title)
+            .validate(tournamentC.date)
+            .concludeManual({
+                players_number: tournamentC.players,
+                top_number: tournamentC.top
+            });
+
+        // verify on tournament details page
+        browser.page.tournamentView()
+            .assertView({
+                title: tournamentC.title,
+                ttype: tournamentC.type,
+                creator: regularLogin.username,
+                date: tournamentC.date,
+                cardpool: tournamentC.cardpool,
+                descriptionSection: false,
+                map: false,
+                decklist: false,
+                approvalNeed: true,
+                editButton: true,
+                approveButton: false,
+                rejectButton: false,
+                deleteButton: true,
+                conflictWarning: false,
+                playerNumbers: true,
+                topPlayerNumbers: false,
+                suggestLogin: false,
+                buttonNRTMimport: true,
+                buttonNRTMclear: true,
+                buttonConclude: false,
+                playerClaim: false,
+                createClaimFrom: true,
+                submitClaim: true,
+                removeClaim: false,
+                claimError: false,
+                topEntriesTable: false,
+                swissEntriesTable: true,
+                ownClaimInTable: false,
+                conflictInTable: false,
+                dueWarning: false,
+                registeredPlayers: false,
+                noRegisteredPlayers: true,
+                unregisterButton: false,
+                registerButton: true
+            })
+            .click('@editButton');
+
+        // update tournament (via tournament details page): non-tournament, USA location
+        browser.page.tournamentForm()
+            .validate()
+            .assertForm({
+                visible: ['overlay_location'],
+                not_visible: ['overlay_conclusion']
+            })
+            .fillForm({
+                inputs: {
+                    title: tournamentD.title,
+                    date: tournamentD.date
+                },
+                selects: {
+                    tournament_type_id: tournamentD.type,
+                    cardpool_id: tournamentD.cardpool
+                },
+                checkboxes: {decklist: true},
+                location: tournamentD.location_input
+            })
+            .assertForm({
+                visible: ['overlay_conclusion', 'location_country', 'location_city',
+                    'location_store', 'location_address', 'location_state'],
+                not_visible: ['overlay_location']
+            })
+            .click('@submit_button');
+
+        // verify on tournament details page
+        browser.page.tournamentView()
+            .assertView({
+                title: tournamentD.title,
+                ttype: tournamentD.type,
+                creator: regularLogin.username,
+                date: tournamentD.date,
+                cardpool: tournamentD.cardpool,
+                location: tournamentD.location,
+                store: tournamentD.store,
+                address: tournamentD.address,
+                descriptionSection: false,
+                map: true,
+                decklist: true,
+                approvalNeed: true,
+                editButton: true,
+                approveButton: false,
+                rejectButton: false,
+                deleteButton: true,
+                conflictWarning: false,
+                playerNumbers: false,
+                topPlayerNumbers: false,
+                suggestLogin: false,
+                buttonNRTMimport: false,
+                buttonNRTMclear: false,
+                buttonConclude: false,
+                playerClaim: false,
+                createClaimFrom: false,
+                submitClaim: false,
+                removeClaim: false,
+                claimError: false,
+                topEntriesTable: false,
+                swissEntriesTable: false,
+                ownClaimInTable: false,
+                conflictInTable: false,
+                dueWarning: false,
+                registeredPlayers: false,
+                noRegisteredPlayers: true,
+                unregisterButton: false,
+                registerButton: true
+            });
+
+        // verify table on organize page
+        browser.page.mainMenu().selectMenu('organize');
+
+        browser.page.tournamentTable()
+            .assertTable('created', tournamentD.title, {
+                texts: [tournamentD.date, tournamentD.cardpool, tournamentD.location, '0'],
+                labels: ['pending'], texts_missing: ['concluded']
+            })
+            // delete tournament from Organize page
+            .selectTournament('created', tournamentD.title, 'delete');
     },
 
     after: function(browser) {
