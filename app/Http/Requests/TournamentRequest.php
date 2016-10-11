@@ -23,24 +23,24 @@ class TournamentRequest extends Request
      */
     public function rules()
     {
-        if (Request::get('tournament_type_id') == 7) // online tournament requires no location
+        $player_rules = is_null(Request::get('concluded')) ? '' : '|required'; // if concluded, players number is required
+
+        $rules = [
+            'title' => 'required',
+            'date' => 'required|date_format:Y.m.d.',
+            'players_number' => 'integer|between:1,1000'.$player_rules,
+            'top_number' => 'integer|between:0,1000|players_top:'.Request::get('players_number').','.Request::get('top_number')
+        ];
+
+        if (Request::get('tournament_type_id') != 7) // non-online tournament requires location
         {
-            return [
-                'title' => 'required',
-                'date' => 'required|date_format:Y.m.d.',
-                'players_number' => 'integer|between:1,1000',
-                'top_number' => 'integer|between:0,1000|players_top:'.Request::get('players_number').','.Request::get('top_number')
-            ];
-        } else {
-            return [
-                'title' => 'required',
-                'date' => 'required|date_format:Y.m.d.',
+            $rules = array_merge($rules, [
                 'location_city' => 'required',
-                'location_country' => 'required',
-                'players_number' => 'integer|between:1,1000',
-                'top_number' => 'integer|between:0,1000|players_top:'.Request::get('players_number').','.Request::get('top_number')
-            ];
+                'location_country' => 'required'
+            ]);
         }
+
+        return $rules;
     }
 
     public function messages() {
