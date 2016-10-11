@@ -116,12 +116,21 @@ class NetrunnerDBController extends Controller
     function findOrCreateUser($userData)
     {
         $user = User::find($userData['id']);
+        $importData = [
+            'id' => $userData['id'],
+            'name' => $userData['username'],
+            'email' => $userData['email'],
+            'sharing' => $userData['sharing']
+        ];
+
+        // check if user is already in DB
         if (is_null($user)) {
-            User::create(['id' => $userData['id'], 'name' => $userData['username'], 'sharing' => $userData['sharing']]);
+            User::create($importData);
             $user = User::find($userData['id']);
         } else {
-            $user->update(['id' => $userData['id'], 'name' => $userData['username'], 'sharing' => $userData['sharing']]);
+            $user->update($importData);
         }
+
         return $user;
     }
 
