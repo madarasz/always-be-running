@@ -41,6 +41,9 @@ var tableCommands = {
 
         var util = require('util');
 
+        this.api.useXpath()
+            .waitForElementVisible(util.format(this.elements.table.selector, table_id), 5000);
+
         this.api.assert.elementNotPresent(util.format(this.elements.row.selector, table_id, title), 1000);
 
         if (typeof callback === "function") {
@@ -50,8 +53,24 @@ var tableCommands = {
         return this;
     },
 
-    // clicks button of
-    selectTournament: function(table_id, title, action, callback) {
+    // clicks tournament for tournament detailed view
+    selectTournament: function(table_id, title, callback) {
+
+        this.log('*** Clickeing tournament on table ('+table_id+'): '+title+' ***');
+
+        var util = require('util');
+
+        this.api.useXpath().click(util.format(this.elements.title.selector, table_id, title));
+
+        if (typeof callback === "function") {
+            callback.call(client);
+        }
+
+        return this;
+    },
+
+    // clicks button of action
+    selectTournamentAction: function(table_id, title, action, callback) {
 
         this.log('*** Performing "'+action+'" on tournament table ('+table_id+'): '+title+' ***');
         this.api.useXpath();
@@ -77,10 +96,12 @@ var tableCommands = {
 module.exports = {
     commands: [tableCommands],
     elements: {
+        table: "//table[@id='%s']/tbody",
         row: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]",
         text: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td[contains(.,'%s')]",
         label: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/span[contains(.,'%s')]",
         deleteButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'delete')]",
-        button: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/*[contains(.,'%s')]"
+        button: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/*[contains(.,'%s')]",
+        title: "//table[@id='%s']/tbody/tr/td/a[contains(.,'%s')]"
     }
 };

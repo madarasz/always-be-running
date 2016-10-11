@@ -202,7 +202,7 @@ module.exports = {
                 texts: [tournamentA.date, tournamentA.cardpool, tournamentA.players, tournamentA.location],
                 labels: ['pending', 'concluded'], texts_missing: []
             })
-            .selectTournament('created', tournamentA.title, 'update');
+            .selectTournamentAction('created', tournamentA.title, 'update');
 
         // update tournament (worlds, not concluded)
         browser.page.tournamentForm()
@@ -308,7 +308,7 @@ module.exports = {
                 texts: [tournamentB.date, tournamentB.cardpool, tournamentB.location],
                 labels: ['pending']
             })
-            .selectTournament('created', tournamentB.title, 'conclude');
+            .selectTournamentAction('created', tournamentB.title, 'conclude');
 
         // conclude tournament from Organize page, validation for players-top
         browser.page.concludeModal()
@@ -319,8 +319,8 @@ module.exports = {
                 top_number: tournamentB.top
             });
 
-        // check for valication error
-        browser.page.tournamentForm().assertForm({ errors: ['Players in top cut']});    // validating with different page object
+        // check for validation error
+        browser.page.messages().assertError('Players in top cut');
 
         // conclude tournament from Organize page, with correct values
         browser.page.tournamentTable()
@@ -328,7 +328,7 @@ module.exports = {
                 texts: [tournamentB.date, tournamentB.cardpool, tournamentB.location],
                 labels: ['pending']
             })
-            .selectTournament('created', tournamentB.title, 'conclude');
+            .selectTournamentAction('created', tournamentB.title, 'conclude');
 
         browser.page.concludeModal()
             .validate(tournamentB.title)
@@ -392,7 +392,7 @@ module.exports = {
                 labels: ['pending', 'concluded']
             })
             // delete tournament on Organize page
-            .selectTournament('created', tournamentB.title, 'delete');
+            .selectTournamentAction('created', tournamentB.title, 'delete');
     },
 
     /**
@@ -610,7 +610,7 @@ module.exports = {
                 labels: ['pending'], texts_missing: ['concluded']
             })
             // delete tournament from Organize page
-            .selectTournament('created', tournamentD.title, 'delete');
+            .selectTournamentAction('created', tournamentD.title, 'delete');
     },
 
     after: function(browser) {

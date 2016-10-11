@@ -1,3 +1,3 @@
 @if ($message != '')
-    <div class="alert alert-info">{{ $message }}</div>
+    <div class="alert alert-info" id="message">{{ $message }}</div>
 @endif

@@ -17,6 +17,14 @@ module.exports = {
             selector: "//a[contains(text(),'Organize')]",
             locateStrategy: 'xpath'
         },
+        results: {
+            selector: "//a[contains(text(),'Results')]",
+            locateStrategy: 'xpath'
+        },
+        upcoming: {
+            selector: "//a[contains(text(),'Upcoming')]",
+            locateStrategy: 'xpath'
+        },
         admin: {
             selector: "//a[contains(text(),'Admin')]",
             locateStrategy: 'xpath'

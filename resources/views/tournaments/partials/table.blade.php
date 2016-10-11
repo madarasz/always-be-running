@@ -68,7 +68,7 @@
                 @if( in_array('location', $columns) )
                     <td>
                         @if ($row->tournament_type_id == 7)
-                            <em>online</em>
+                            <span><em>online</em></span>
                         @else
                             {{ $row->country->name }},
                             @if ($row->location_us_state < 52)

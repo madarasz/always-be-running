@@ -1,9 +1,18 @@
-var tournament = {
-    title: 'Test - ' + formatDate(new Date()),
-    type: 'online event',
-    type_id: '6',
-    date: '2001.01.01.'
-};
+var tournamentPast = {
+        title: 'Test - past - ' + formatDate(new Date()),
+        type: 'online event',
+        cardpool: 'Business First',
+        type_id: '7',
+        date: '2001.01.01.',
+        players: '9'
+    },
+    tournamentFuture = {
+        title: 'Test - future - ' + formatDate(new Date()),
+        type: 'online event',
+        cardpool: 'True Colors',
+        type_id: '7',
+        date: '2022.01.01.'
+    };
 
 // TODO: put in module
 function formatDate(date) {
@@ -18,166 +27,290 @@ function formatDate(date) {
 }
 
 module.exports = {
-    'Tournament approval - create' : function (browser) {
 
-        var regularLogin = browser.globals.regularLogin;
+    // TODO: with different users
+
+    /***
+     * - create concluded tournament in the past (unapproved)
+     * - verify on tournament detail page
+     * - verify that unapproved tournament is not seen on the Results page
+     * - approve tournament with admin on Admin page
+     * - verify on Results page
+     * - verify on tournament detail page
+     * - reject on tournament detail page
+     * - verify on tournament detail page
+     * - verify that rejected tournament is not seen on the Results page
+     * - delete tournament with admin on Admin page
+     */
+    'Tournament approval, rejection - past tournament' : function (browser) {
+
+        var adminLogin = browser.globals.adminLogin;
 
         browser
             .url(browser.launchUrl)
             .log('*** Logging in ***')
-            .login(regularLogin.username, regularLogin.password)
+            .login(adminLogin.username, adminLogin.password)
+            .log('*** Creating Tournament in past ***');
 
-            // create tournament
-            .log('*** Creating Tournament ***')
-            .click("//a[contains(text(),'Create')]")
-            .fillTournament({
-                inputs: {title: tournament.title, date: tournament.date},
-                selects: {tournament_type_id: tournament.type}
+        browser.page.mainMenu().selectMenu('organize');
+
+        browser.page.organizePage().clickCommand('create');
+
+        // create concluded tournament in the past (unapproved)
+        browser.page.tournamentForm()
+            .validate()
+            .fillForm({
+                inputs: {
+                    title: tournamentPast.title,
+                    date: tournamentPast.date
+                },
+                selects: {
+                    tournament_type_id: tournamentPast.type,
+                    cardpool_id: tournamentPast.cardpool
+                },
+                checkboxes: {concluded: true}
             })
-            .log('*** Saving ***')
-            .click("//input[@type='submit']")
-
-            // verify on My tournaments
-            .log('*** Verifying on my tournaments table ***')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .assert.assertTournamentTable('created', tournament.title, {
-                texts: [tournament.date],
-                labels: ['pending', 'due']
+            .fillForm({
+                inputs: { players_number: tournamentPast.players }
             })
+            .click('@submit_button');
 
-            // verify tournament details view
-            .log('*** Verifying on tournament details view ***')
-            .selectTournament('created', tournament.title, 'view')
-            .assert.assertTournamentView({
-                title: tournament.title, ttype: tournament.type, date: tournament.date,
-                map: false, approvalNeed: true, approvalRejected: false,
-                editButton: true, deleteButton: true, approveButton: false, rejectButton: false
+        // verify on tournament detail page
+        browser.page.tournamentView()
+            .validate()
+            .assertView({
+                title: tournamentPast.title,
+                ttype: tournamentPast.type,
+                cardpool: tournamentPast.cardpool,
+                creator: adminLogin.username,
+                date: tournamentPast.date,
+                approvalNeed: true,
+                approvalRejected: false,
+                editButton: true,
+                approveButton: true,
+                rejectButton: true,
+                deleteButton: true
+            });
+
+        // verify that unapproved tournament is not seen on the Results page
+        browser.page.mainMenu().selectMenu('results');
+
+        browser.page.tournamentTable()
+            .assertMissingRow('results', tournamentPast.title);
+
+        // approve tournament with admin on Admin page
+        browser.page.mainMenu().selectMenu('admin');
+
+        browser.page.tournamentTable()
+            .assertTable('pending', tournamentPast.title, {
+                texts: [tournamentPast.date, tournamentPast.cardpool, tournamentPast.players],
+                labels: ['pending', 'concluded']
             })
+            .selectTournamentAction('pending', tournamentPast.title, 'approve');
 
-            .end();
+        browser.page.messages().assertMessage('Tournament approved.');
+
+        browser.page.tournamentTable()
+            .assertMissingRow('pending', tournamentPast.title);
+
+        // verify on Results page
+        browser.page.mainMenu().selectMenu('results');
+
+        browser.page.tournamentTable()
+            .assertTable('results', tournamentPast.title, {
+                texts: [tournamentPast.date, tournamentPast.cardpool, tournamentPast.players, 'online']
+            })
+            .selectTournament('results', tournamentPast.title);
+
+        // verify on tournament details page
+        browser.page.tournamentView()
+            .validate()
+            .assertView({
+                title: tournamentPast.title,
+                ttype: tournamentPast.type,
+                cardpool: tournamentPast.cardpool,
+                creator: adminLogin.username,
+                date: tournamentPast.date,
+                approvalNeed: false,
+                approvalRejected: false,
+                editButton: true,
+                approveButton: true,
+                rejectButton: true,
+                deleteButton: true
+            })
+            // reject on tournament detail page
+            .click('@rejectButton')
+            .assertView({
+                title: tournamentPast.title,
+                ttype: tournamentPast.type,
+                cardpool: tournamentPast.cardpool,
+                creator: adminLogin.username,
+                date: tournamentPast.date,
+                approvalNeed: false,
+                approvalRejected: true,
+                editButton: true,
+                approveButton: true,
+                rejectButton: true,
+                deleteButton: true
+            });
+
+        // verify that rejected tournament is not seen on the Results page
+        browser.page.mainMenu().selectMenu('results');
+
+        browser.page.tournamentTable()
+            .assertMissingRow('results', tournamentPast.title);
+
+        // delete tournament with admin on Admin page
+        browser.page.mainMenu().selectMenu('admin');
+
+        browser.page.tournamentTable()
+            .assertTable('pending', tournamentPast.title, {
+                texts: [tournamentPast.date, tournamentPast.cardpool, tournamentPast.players],
+                labels: ['rejected', 'concluded']
+            })
+            .selectTournamentAction('pending', tournamentPast.title, 'delete');
     },
 
-    // TODO: can be seen by other user
-
-    'Tournament approval - admin rejects' : function (browser) {
+    /***
+     * - create concluded tournament in the future (unapproved)
+     * - verify on tournament detail page
+     * - verify that unapproved tournament is not seen on the Upcoming page
+     * - approve tournament with admin on Admin page
+     * - verify on Upcoming page
+     * - verify on tournament detail page
+     * - reject on tournament detail page
+     * - verify on tournament detail page
+     * - verify that rejected tournament is not seen on the Upcoming page
+     * - delete tournament with admin on Admin page
+     */
+    'Tournament approval, rejection - upcoming tournament' : function (browser) {
 
         var adminLogin = browser.globals.adminLogin;
 
         browser
             .url(browser.launchUrl)
-            .log('*** Logging in with admin ***')
+            .log('*** Logging in ***')
             .login(adminLogin.username, adminLogin.password)
+            .log('*** Creating Tournament in past ***');
 
-            // verify on admin table
-            .click("//a[contains(text(),'Admin')]")
-            .assert.assertTournamentTable('pending', tournament.title, {
-                texts: [tournament.date],
-                labels: ['pending', 'due']
+        browser.page.mainMenu().selectMenu('organize');
+
+        browser.page.organizePage().clickCommand('create');
+
+        // create concluded tournament in the future (unapproved)
+        browser.page.tournamentForm()
+            .validate()
+            .fillForm({
+                inputs: {
+                    title: tournamentFuture.title,
+                    date: tournamentFuture.date
+                },
+                selects: {
+                    tournament_type_id: tournamentFuture.type,
+                    cardpool_id: tournamentFuture.cardpool
+                },
+                checkboxes: {concluded: false}
             })
+            .click('@submit_button');
 
-            // verify tournament details view
-            .log('*** Verifying on tournament details view ***')
-            .selectTournament('pending', tournament.title, 'view')
-            .assert.assertTournamentView({
-                title: tournament.title, ttype: tournament.type, date: tournament.date,
-                map: false, approvalNeed: true, approvalRejected: false,
-                editButton: true, deleteButton: true, approveButton: true, rejectButton: true
+        // verify on tournament detail page
+        browser.page.tournamentView()
+            .validate()
+            .assertView({
+                title: tournamentFuture.title,
+                ttype: tournamentFuture.type,
+                cardpool: tournamentFuture.cardpool,
+                creator: adminLogin.username,
+                date: tournamentFuture.date,
+                approvalNeed: true,
+                approvalRejected: false,
+                editButton: true,
+                approveButton: true,
+                rejectButton: true,
+                deleteButton: true
+            });
+
+        // verify that unapproved tournament is not seen on the Upcoming page
+        browser.page.mainMenu().selectMenu('upcoming');
+
+        browser.page.tournamentTable()
+            .assertMissingRow('discover-table', tournamentFuture.title);
+
+        // approve tournament with admin on Admin page
+        browser.page.mainMenu().selectMenu('admin');
+
+        browser.page.tournamentTable()
+            .assertTable('pending', tournamentFuture.title, {
+                texts: [tournamentFuture.date, tournamentFuture.cardpool],
+                labels: ['pending', 'not yet']
             })
+            .selectTournamentAction('pending', tournamentFuture.title, 'approve');
 
-            // rejecting
-            .log('*** Reject ***')
-            .click("//div[@id='control-buttons']/form/a[contains(., 'Reject')]")
-            .assert.assertTournamentView({
-                approvalNeed: false, approvalRejected: true
+        browser.page.messages().assertMessage('Tournament approved.');
+
+        browser.page.tournamentTable()
+            .assertMissingRow('pending', tournamentFuture.title);
+
+        // verify on Upcoming page
+        browser.page.mainMenu().selectMenu('upcoming');
+
+        browser.page.tournamentTable()
+            .assertTable('discover-table', tournamentFuture.title, {
+                texts: [tournamentFuture.date, tournamentFuture.cardpool, 'online']
             })
+            .selectTournament('discover-table', tournamentFuture.title);
 
-            .end();
+        // verify on tournament details page
+        browser.page.tournamentView()
+            .validate()
+            .assertView({
+                title: tournamentFuture.title,
+                ttype: tournamentFuture.type,
+                cardpool: tournamentFuture.cardpool,
+                creator: adminLogin.username,
+                date: tournamentFuture.date,
+                approvalNeed: false,
+                approvalRejected: false,
+                editButton: true,
+                approveButton: true,
+                rejectButton: true,
+                deleteButton: true
+            })
+            // reject on tournament detail page
+            .click('@rejectButton')
+            .assertView({
+                title: tournamentFuture.title,
+                ttype: tournamentFuture.type,
+                cardpool: tournamentFuture.cardpool,
+                creator: adminLogin.username,
+                date: tournamentFuture.date,
+                approvalNeed: false,
+                approvalRejected: true,
+                editButton: true,
+                approveButton: true,
+                rejectButton: true,
+                deleteButton: true
+            });
+
+        // verify that rejected tournament is not seen on the Upcoming page
+        browser.page.mainMenu().selectMenu('upcoming');
+
+        browser.page.tournamentTable()
+            .assertMissingRow('discover-table', tournamentFuture.title);
+
+        // delete tournament with admin on Admin page
+        browser.page.mainMenu().selectMenu('admin');
+
+        browser.page.tournamentTable()
+            .assertTable('pending', tournamentFuture.title, {
+                texts: [tournamentFuture.date, tournamentFuture.cardpool],
+                labels: ['rejected', 'not yet']
+            })
+            .selectTournamentAction('pending', tournamentFuture.title, 'delete');
     },
 
-    // TODO: can not be seen by other user
-
-    'Tournament approval - creator rechecks' : function (browser) {
-
-        var regularLogin = browser.globals.regularLogin;
-
-        browser
-            .url(browser.launchUrl)
-            .log('*** Logging in with creator ***')
-            .login(regularLogin.username, regularLogin.password)
-
-            // verify on my tournaments table
-            .click("//a[contains(text(),'My Tournaments')]")
-            .assert.assertTournamentTable('created', tournament.title, {
-                texts: [tournament.date],
-                labels: ['rejected', 'due']
-            })
-
-            // verify tournament details view
-            .log('*** Verifying on tournament details view ***')
-            .selectTournament('created', tournament.title, 'view')
-            .assert.assertTournamentView({
-                approvalNeed: false, approvalRejected: true,
-                editButton: true, deleteButton: true, approveButton: false, rejectButton: false
-            })
-
-            .end();
-    },
-
-    'Tournament approval - admin approves' : function (browser) {
-
-        var adminLogin = browser.globals.adminLogin;
-
-        browser
-            .url(browser.launchUrl)
-            .log('*** Logging in with admin ***')
-            .login(adminLogin.username, adminLogin.password)
-
-            // verify on admin table
-            .click("//a[contains(text(),'Admin')]")
-            .assert.assertTournamentTable('pending', tournament.title, {
-                texts: [tournament.date],
-                labels: ['rejected', 'due']
-            })
-
-            // approval
-            .log('*** Approve ***')
-            .selectTournament('pending', tournament.title, 'approve')
-
-            .end();
-    },
-
-    'Tournament approval - creator rechecks approved' : function (browser) {
-
-        var regularLogin = browser.globals.regularLogin;
-
-        browser
-            .url(browser.launchUrl)
-            .log('*** Logging in with creator ***')
-            .login(regularLogin.username, regularLogin.password)
-
-            // verify on my tournaments table
-            .click("//a[contains(text(),'My Tournaments')]")
-            .assert.assertTournamentTable('created', tournament.title, {
-                texts: [tournament.date],
-                labels: ['approved', 'due']
-            })
-
-            // verify tournament details view
-            .log('*** Verifying on tournament details view ***')
-            .selectTournament('created', tournament.title, 'view')
-            .assert.assertTournamentView({
-                approvalNeed: false, approvalRejected: false,
-                editButton: true, deleteButton: true, approveButton: false, rejectButton: false
-            })
-
-            // delete
-            .log('*** Deleting ***')
-            .click("//a[contains(text(),'My Tournaments')]")
-            .selectTournament('created', tournament.title, 'delete')
-
-            .end();
+    after: function(browser) {
+        browser.end();
     }
-
-    // TODO: can be seen by other user
 
 };
