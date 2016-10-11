@@ -272,11 +272,12 @@ class TournamentsController extends Controller
 
         // delete claims
         Entry::where('tournament_id', $tournament->id)->whereNull('runner_deck_id')->delete();
+        $tournament->update(['import' => 0]);
 
         // clear conflicts if exists and solved
         $tournament->updateConflict();
 
-        return redirect()->back()->with('message', 'You have cleared all anonym claims.');
+        return redirect()->back()->with('message', 'You have cleared all claims by NRTM import.');
 
     }
 
@@ -331,6 +332,7 @@ class TournamentsController extends Controller
             // process file
             $json = json_decode(file_get_contents('tjsons/'.$tournament->id.'.json'), true);
             $tournament->concluded = true;
+            $tournament->import = 1;
             $tournament->top_number = $json['cutToTop']; // number of players in top cut
             $tournament->players_number = count($json['players']); // number of players
             foreach($json['players'] as $swiss) {
@@ -372,7 +374,8 @@ class TournamentsController extends Controller
                                     'corp_deck_identity' => $corp->id,
                                     'corp_deck_title' => $swiss['corpIdentity'],
                                     'runner_deck_identity' => $runner->id,
-                                    'runner_deck_title' => $swiss['runnerIdentity']
+                                    'runner_deck_title' => $swiss['runnerIdentity'],
+                                    'import_username' => $swiss['name']
                                 ]);
                             }
                             break;
@@ -389,7 +392,8 @@ class TournamentsController extends Controller
                             'corp_deck_identity' => $corp->id,
                             'corp_deck_title' => $swiss['corpIdentity'],
                             'runner_deck_identity' => $runner->id,
-                            'runner_deck_title' => $swiss['runnerIdentity']
+                            'runner_deck_title' => $swiss['runnerIdentity'],
+                            'import_username' => $swiss['name']
                         ]);
                     }
                 }

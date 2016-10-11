@@ -20,8 +20,11 @@
                 <tr>
                     <td class="text-right">#{{ $i+1 }}</td>
             @endif
+
             @if ($entry->player)
                 <td>{{ $entry->player->name }}</td>
+            @elseif ($entry->import_username)
+                <td class="import-user">{{ $entry->import_username }}</td>
             @else
                 <td></td>
             @endif

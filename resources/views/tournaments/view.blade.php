@@ -273,16 +273,19 @@
                 {{--Import NRTM, Clear anonym claims--}}
                 @if ($user && ($user->admin || $user->id == $tournament->creator))
                     <div class="text-xs-center">
-                        {{--Import NRTM--}}
-                        <button class="btn btn-conclude btn-xs" data-toggle="modal" data-hide-manual="true"
-                                data-target="#concludeModal" data-tournament-id="{{$tournament->id}}"
-                                data-subtitle="{{$tournament->title.' - '.$tournament->date}}" id="button-import-nrtm">
-                            <i class="fa fa-check" aria-hidden="true"></i> Import NRTM results
-                        </button>
-                        {{--Clear NRTM--}}
-                        {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id/clearanonym"]) !!}
-                            {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove all claims by NRTM import', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'id' => 'button-clear-nrtm')) !!}
-                        {!! Form::close() !!}
+                        @if ($tournament->import)
+                            {{--Clear NRTM--}}
+                            {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id/clearanonym"]) !!}
+                                {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove all claims by NRTM import', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'id' => 'button-clear-nrtm')) !!}
+                            {!! Form::close() !!}
+                        @else
+                            {{--Import NRTM--}}
+                            <button class="btn btn-conclude btn-xs" data-toggle="modal" data-hide-manual="true"
+                                    data-target="#concludeModal" data-tournament-id="{{$tournament->id}}"
+                                    data-subtitle="{{$tournament->title.' - '.$tournament->date}}" id="button-import-nrtm">
+                                <i class="fa fa-check" aria-hidden="true"></i> Import NRTM results
+                            </button>
+                        @endif
                     </div>
                 @endif
                 {{--Tables of tournament standings --}}

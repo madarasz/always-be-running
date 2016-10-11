@@ -85,6 +85,13 @@ input[type="checkbox"] {
     vertical-align: text-top;
 }
 
+/*import user in entries table*/
+.import-user {
+    font-style: italic;
+    font-size: 90%;
+    vertical-align: middle !important;
+}
+
 /*modal*/
 .modal-title {
     line-height: 1.2;
