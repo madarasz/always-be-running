@@ -85,6 +85,12 @@ input[type="checkbox"] {
     vertical-align: text-top;
 }
 
+/*limiting image size in tournament description markdown*/
+#tournament-description img {
+    max-width: 100%;
+    height: auto;
+}
+
 /*import user in entries table*/
 .import-user {
     font-style: italic;
