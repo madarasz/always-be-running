@@ -271,7 +271,7 @@ class TournamentsController extends Controller
         $this->authorize('own', $tournament, $request->user());
 
         // delete claims
-        Entry::where('tournament_id', $tournament->id)->whereNull('runner_deck_id')->delete();
+        Entry::where('tournament_id', $tournament->id)->whereNull('runner_deck_id')->whereNotNull('import_username')->delete();
         $tournament->update(['import' => 0]);
 
         // clear conflicts if exists and solved
@@ -342,7 +342,7 @@ class TournamentsController extends Controller
                 $runner = CardIdentity::where('title', 'LIKE', '%'.$swiss['runnerIdentity'].'%')->first();
                 $existing = Entry::where('tournament_id', $tournament->id)->where('rank', $swiss['rank'])->first();
 
-                // create claims with IDs
+                // create claims with IDs, skipping this if there is a user claim on the same rank with same IDs
                 if (!is_null($corp) && !is_null($runner) && // identities are found
                     (is_null($existing) || strcmp($runner->id, $existing->runner_deck_identity) != 0 ||
                         strcmp($corp->id, $existing->corp_deck_identity) != 0)) { // no entry or conflicting entry
@@ -356,46 +356,18 @@ class TournamentsController extends Controller
                         }
                     }
 
-                    // user matching
-                    $user = null;
-                    $registered = Entry::where('tournament_id', $tournament->id)->where('user', '>', 0)->get();
-                    foreach ($registered as $reg) {
-                        if (strcmp(strtoupper($reg->player->name), strtoupper($swiss['name'])) == 0) {
-                            $user = $reg->player->id;
-                            // check if existing claim matches
-                            if ($reg->rank != $swiss['rank'] || $reg->rank_top != $ranktop) {
-                                // new claim will be saved instead of updating
-                                $user = null;
-                            } else {
-                                // updating existing registration
-                                $reg->update([
-                                    'rank' => $swiss['rank'],
-                                    'rank_top' => $ranktop,
-                                    'corp_deck_identity' => $corp->id,
-                                    'corp_deck_title' => $swiss['corpIdentity'],
-                                    'runner_deck_identity' => $runner->id,
-                                    'runner_deck_title' => $swiss['runnerIdentity'],
-                                    'import_username' => $swiss['name']
-                                ]);
-                            }
-                            break;
-                        }
-                    }
-
                     // saving new claim
-                    if (is_null($user)) {  // new claim
-                        Entry::create([
-                            'approved' => 1,
-                            'tournament_id' => $tournament->id,
-                            'rank' => $swiss['rank'],
-                            'rank_top' => $ranktop,
-                            'corp_deck_identity' => $corp->id,
-                            'corp_deck_title' => $swiss['corpIdentity'],
-                            'runner_deck_identity' => $runner->id,
-                            'runner_deck_title' => $swiss['runnerIdentity'],
-                            'import_username' => $swiss['name']
-                        ]);
-                    }
+                    Entry::create([
+                        'approved' => 1,
+                        'tournament_id' => $tournament->id,
+                        'rank' => $swiss['rank'],
+                        'rank_top' => $ranktop,
+                        'corp_deck_identity' => $corp->id,
+                        'corp_deck_title' => $swiss['corpIdentity'],
+                        'runner_deck_identity' => $runner->id,
+                        'runner_deck_title' => $swiss['runnerIdentity'],
+                        'import_username' => $swiss['name']
+                    ]);
                 }
             }
 

@@ -44,8 +44,8 @@ class Tournament extends Model
     public function updateConflict() {
         $conflict_rank = Entry::where('tournament_id', $this->id)
             ->groupBy('rank')->havingRaw('count(rank) > 1')->first();
-        $conflict_rank_top = Entry::where('tournament_id', $this->id)
-            ->groupBy('rank_top')->havingRaw('count(rank) > 1')->first();
+        $conflict_rank_top = Entry::where('tournament_id', $this->id)->where('rank_top', '>', 0)
+            ->groupBy('rank_top')->havingRaw('count(rank_top) > 1')->first();
         $this->update(['conflict' => is_null($conflict_rank) && is_null($conflict_rank_top) ? 0 : 1]);
     }
 }
