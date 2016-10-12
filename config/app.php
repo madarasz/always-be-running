@@ -159,6 +159,7 @@ return [
         'Webpatser\Countries\CountriesServiceProvider',
         Illuminate\Html\HtmlServiceProvider::class,
         Artdarek\OAuth\OAuthServiceProvider::class,
+        Haleks\Markdown\MarkdownServiceProvider::class
     ],
 
     /*
@@ -208,6 +209,7 @@ return [
         'Form' => Illuminate\Html\FormFacade::class,
         'Html' => Illuminate\Html\HtmlFacade::class,
         'OAuth2' => Artdarek\OAuth\Facade\OAuth::class,
+        'Markdown' => Haleks\Markdown\Facades\Markdown::class
     ],
 
 ];

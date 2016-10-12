@@ -9,7 +9,8 @@
         "laravel/framework": "5.2.*",
         "webpatser/laravel-countries": "dev-master",
         "illuminate/html": "^5.0",
-        "oriceon/oauth-5-laravel": "dev-master"
+        "oriceon/oauth-5-laravel": "dev-master",
+        "haleks/laravel-markdown": "^0.3.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

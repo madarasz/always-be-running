@@ -42,6 +42,7 @@
             {{--Description--}}
             <div class="form-group">
                 {!! Form::label('description', 'Description') !!}
+                <div class="pull-right"><small><a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank" rel="nofollow"><img src="/img/markdown_icon.png"/></a> formatting is supported</small></div>
                 {!! Form::textarea('description', old('description', $tournament->description),
                     ['rows' => 6, 'cols' => '', 'class' => 'form-control', 'placeholder' => 'additional information and rules, prizepool, etc.']) !!}
             </div>

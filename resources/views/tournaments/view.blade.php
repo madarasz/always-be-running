@@ -100,9 +100,9 @@
             {{--Tournament description--}}
             @unless($tournament->description === '')
                 <div class="bracket">
-                    {{--<h5>Description</h5>--}}
+                    {{--<h5>Description with markdown</h5>--}}
                     <div id="tournament-description">
-                        {!! nl2br(e($tournament->description)) !!}
+                        {!! Markdown::convertToHtml(nl2br(e($tournament->description))) !!}
                     </div>
                 </div>
             @endunless
