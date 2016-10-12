@@ -30,7 +30,7 @@ class TournamentPolicy
     }
 
     public function own(User $user, Tournament $tournament) {
-        return $user->id === $tournament->creator;
+        return $user->id == $tournament->creator;
     }
 
     public function admin() {

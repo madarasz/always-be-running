@@ -26,11 +26,11 @@ class EntryPolicy
     }
 
     public function own(User $user, Entry $entry) {
-        return $user->id === $entry->user;
+        return $user->id == $entry->user;
     }
 
     public function unclaim(User $user, Entry $entry) {
         $tournament = $entry->tournament();
-        return $user->id === $entry->user || $user->id === $tournament->creator;
+        return $user->id == $entry->user || $user->id == $tournament->creator;
     }
 }
