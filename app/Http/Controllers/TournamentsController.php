@@ -161,7 +161,12 @@ class TournamentsController extends Controller
         $tournament = Tournament::findorFail($id);
         $this->authorize('own', $tournament, $request->user());
         Tournament::destroy($id);
-        return back()->with('message', 'Tournament deleted.');
+
+        if (strpos($request->pathInfo, 'tournaments') !== false) {
+            return view('organize')->with('message', 'Tournament deleted.');
+        } else {
+            return back()->with('message', 'Tournament deleted.');
+        }
     }
 
     /**
