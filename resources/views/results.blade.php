@@ -4,7 +4,7 @@
     <h4 class="page-header">Results</h4>
     @include('partials.message')
     <div class="row">
-        <div class="col-md-4 col-xs-12">
+        <div class="col-md-3 col-xs-12">
             <div class="bracket">
                 <h5><i class="fa fa-filter" aria-hidden="true"></i> Filter</h5>
                 {!! Form::open(['url' => '/tournaments']) !!}
@@ -44,7 +44,7 @@
         </div>
     {{--</div>--}}
     {{--<div class="row">--}}
-        <div class="col-md-8 col-xs-12">
+        <div class="col-md-9 col-xs-12">
             <div class="bracket">
                 @include('tournaments.partials.tabledin',
                     ['columns' => ['title', 'date', 'location', 'cardpool', 'players', 'claims' ],

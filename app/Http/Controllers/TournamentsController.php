@@ -96,12 +96,15 @@ class TournamentsController extends Controller
         {
             abort(403);
         }
+
         $type = $tournament->tournament_type->type_name;
         $message = session()->has('message') ? session('message') : '';
         $nowdate = date('Y.m.d.');
         $user = $request->user();
         $entries = $tournament->entries;
         $regcount = $tournament->registration_number();
+
+        // tournament entries
         $entries_swiss = [];
         $entries_top = [];
         if ($tournament->players_number)
@@ -112,22 +115,18 @@ class TournamentsController extends Controller
         {
             $this->pushEntries($tournament->top_number, $entries, $entries_top, 'rank_top');
         }
+
+        // user's entry
         if (is_null($user))
         {
             $user_entry = null;
         } else {
             $user_entry = Entry::where('tournament_id', $tournament->id)->where('user', $user->id)->first();
         }
-        $decks = ['public' => ['corp' => [], 'runner' => [] ]];
-        $decks_two_types = false;
-        if (!is_null($user) && (is_null($user_entry) || is_null($user_entry->runner_deck_id)))
-        {
-            $decks = app('App\Http\Controllers\NetrunnerDBController')->getDeckData();
-            $decks_two_types = count($decks['public']['corp']) > 0 && count($decks['private']['corp']) > 0;
-        }
+
         return view('tournaments.view',
             compact('tournament', 'message', 'type', 'nowdate', 'user', 'entries',
-                'user_entry', 'decks', 'entries_swiss', 'entries_top', 'decks_two_types', 'regcount'));
+                'user_entry', 'entries_swiss', 'entries_top', 'regcount'));
     }
 
     /**
@@ -218,9 +217,7 @@ class TournamentsController extends Controller
             });
         }
 
-        $tournaments = $tournaments->select('id', 'title', 'location_country', 'location_state', 'tournament_type_id',
-            'location_city', 'date', 'players_number', 'cardpool_id', 'concluded', 'approved', 'conflict',
-            'location_store', 'location_address', 'location_place_id', 'contact')->get();
+        $tournaments = $tournaments->select()->get();
 
         // modify and flatten result
         $result = [];
@@ -248,6 +245,7 @@ class TournamentsController extends Controller
                 'concluded' => $tournament->concluded == 1,
                 'approved' => $tournament->approved,
                 'players_count' => $tournament->players_number,
+                'top_count' => $tournament->top_number,
                 'registration_count' => $tournament->registration_number(),
                 'claim_count' => $tournament->claim_number(),
                 'claim_conflict' => $tournament->conflict == 1

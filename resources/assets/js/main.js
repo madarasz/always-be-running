@@ -118,13 +118,18 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                     'class': 'label label-success'
                 }));
             } else if (element.concluded) {
-                cell.append($('<i>', {
-                    'aria-hidden': true,
-                    'class': 'fa fa-clock-o text-danger'
-                }), ' ', $('<span>', {
-                    text: 'please claim',
-                    'class': 'label label-danger'
-                }));
+                cell.append($('<button>', {
+                    'class': 'btn btn-claim btn-xs',
+                    'data-toggle': 'modal',
+                    'data-target': '#claimModal',
+                    'data-tournament-id': element.id,
+                    'data-subtitle': element.title + ' - ' + element.date,
+                    'data-players-number': element.players_count,
+                    'data-top-number': element.top_count
+                }).append($('<i>', {
+                    'class': 'fa fa-list-ol',
+                    'aria-hidden': true
+                }), ' claim'));
             } else {
                 cell.append($('<span>', {
                     text: 'registered',

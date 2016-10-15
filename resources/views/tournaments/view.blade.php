@@ -1,7 +1,7 @@
 @extends('layout.general')
 
 @section('content')
-    @include('tournaments.partials.modal')
+    @include('tournaments.modals.conclude')
     {{--Header--}}
     <h4 class="page-header">
         @if ($user && ($user->admin || $user->id == $tournament->creator))
@@ -150,15 +150,37 @@
                                 <li>Swiss rounds rank: <strong>#{{ $user_entry->rank }}</strong></li>
                                 <li>
                                     Corporation deck:
-                                    <img src="/img/ids/{{ $user_entry->corp_deck_identity }}.png">&nbsp;<a href="{{ "https://netrunnerdb.com/en/decklist/".$user_entry->corp_deck_id }}">
-                                        {{ $user_entry->corp_deck_title }}
-                                    </a>
+                                    <img src="/img/ids/{{ $user_entry->corp_deck_identity }}.png">&nbsp;
+                                    {{--public deck--}}
+                                    @if ($user_entry->corp_deck_type == 1)
+                                        <a href="{{ "https://netrunnerdb.com/en/decklist/".$user_entry->corp_deck_id }}">
+                                            {{ $user_entry->corp_deck_title }}
+                                        </a>
+                                    {{--private deck--}}
+                                    @elseif ($user_entry->corp_deck_type == 2)
+                                        <a href="{{ "https://netcorpdb.com/en/deck/view/".$user_entry->corp_deck_id }}">
+                                            {{ $user_entry->corp_deck_title }}
+                                        </a>
+                                    @else
+                                        data error
+                                    @endif
                                 </li>
                                 <li>
                                     Runner deck:
-                                    <img src="/img/ids/{{ $user_entry->runner_deck_identity }}.png">&nbsp;<a  href="{{ "https://netrunnerdb.com/en/decklist/".$user_entry->runner_deck_id }}">
-                                        {{ $user_entry->runner_deck_title }}
-                                    </a>
+                                    <img src="/img/ids/{{ $user_entry->runner_deck_identity }}.png">&nbsp;
+                                    {{--public deck--}}
+                                    @if ($user_entry->runner_deck_type == 1)
+                                        <a href="{{ "https://netrunnerdb.com/en/decklist/".$user_entry->runner_deck_id }}">
+                                            {{ $user_entry->runner_deck_title }}
+                                        </a>
+                                        {{--private deck--}}
+                                    @elseif ($user_entry->runner_deck_type == 2)
+                                        <a href="{{ "https://netrunnerdb.com/en/deck/view/".$user_entry->runner_deck_id }}">
+                                            {{ $user_entry->runner_deck_title }}
+                                        </a>
+                                    @else
+                                        data error
+                                    @endif
                                 </li>
                             </ul>
                             <div class="text-xs-center">
@@ -170,98 +192,16 @@
                         {{--Creating new claim--}}
                         @else
                             @include('errors.list')
-                            {!! Form::open(['url' => "/tournaments/$tournament->id/claim", 'id' => 'create-claim']) !!}
-                                {!! Form::hidden('top_number', $tournament->top_number) !!}
-                                <div class="row">
-                                    <div class="col-xs-12 col-md-6">
-                                        <div class="form-group">
-                                            {!! Form::label('rank', 'rank after swiss rounds') !!}
-                                            {!! Form::select('rank', array_combine(range(1, $tournament->players_number),
-                                                range(1, $tournament->players_number)), old('rank'), ['class' => 'form-control']) !!}
-                                        </div>
-                                    </div>
-                                    @if ($tournament->top_number)
-                                        <div class="col-xs-12 col-md-6">
-                                            <div class="form-group">
-                                                {!! Form::label('rank_top', 'rank after top cut') !!}
-                                                {!! Form::select('rank_top',
-                                                    array_combine(
-                                                        array_merge([0],range(1, $tournament->top_number)),
-                                                        array_merge(['below top cut'], range(1, $tournament->top_number))),
-                                                    old('rank_top'), ['class' => 'form-control']) !!}
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
-                                {{--Dropdown selectors for decks--}}
-                                <div class="row">
-                                    <div class="col-xs-12 col-md-6">
-                                        <div class="form-group">
-                                            {!! Form::label('corp_deck', 'corporation deck') !!}
-                                            @if (count($decks['public']['corp'])>0)
-                                                <select class="form-control" id="corp_deck" name="corp_deck">
-                                                    {{--@if ($decks_two_types)--}}
-                                                        {{--<optgroup label="Public decklists">--}}
-                                                    {{--@endif--}}
-                                                    @foreach ($decks['public']['corp'] as $deck)
-                                                        <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }}, "identity": "{{ $deck['identity'] }}" }'>{{ $deck['name'] }}</option>
-                                                    @endforeach
-                                                    {{--@if ($decks_two_types)--}}
-                                                        {{--</optgroup>--}}
-                                                        {{--<optgroup label="Shared private decklists">--}}
-                                                    {{--@endif--}}
-                                                    {{--@foreach ($decks['private']['corp'] as $deck)--}}
-                                                        {{--<option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>--}}
-                                                    {{--@endforeach--}}
-                                                    {{--@if ($decks_two_types)--}}
-                                                        {{--</optgroup>--}}
-                                                    {{--@endif--}}
-                                                </select>
-                                            @else
-                                                <div class="alert alert-danger" id="no-corp-deck">
-                                                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                                                    You don't have any published decklist on NetrunnerDB.
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-md-6">
-                                        <div class="form-group">
-                                            {!! Form::label('runner_deck', 'runner deck') !!}
-                                            @if (count($decks['public']['runner'])>0)
-                                                <select class="form-control" id="runner_deck" name="runner_deck">
-                                                    {{--@if ($decks_two_types)--}}
-                                                        {{--<optgroup label="Public decklists">--}}
-                                                    {{--@endif--}}
-                                                    @foreach ($decks['public']['runner'] as $deck)
-                                                        <option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }}, "identity": "{{ $deck['identity'] }}" }'>{{ $deck['name'] }}</option>
-                                                    @endforeach
-                                                    {{--@if ($decks_two_types)--}}
-                                                        {{--</optgroup>--}}
-                                                        {{--<optgroup label="Shared private decklists">--}}
-                                                    {{--@endif--}}
-                                                    {{--@foreach ($decks['private']['runner'] as $deck)--}}
-                                                        {{--<option value='{ "title": "{{ addslashes($deck['name']) }}", "id": {{ $deck['id'] }} }'>{{ $deck['name'] }}</option>--}}
-                                                    {{--@endforeach--}}
-                                                    {{--@if ($decks_two_types)--}}
-                                                        {{--</optgroup>--}}
-                                                    {{--@endif--}}
-                                                </select>
-                                            @else
-                                                <div class="alert alert-danger" id="no-runner-deck">
-                                                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                                                    You don't have any published decklist on NetrunnerDB.
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-xs-center">
-                                    <button type="submit" class="btn btn-success" id="submit-claim">
-                                        <i class="fa fa-check-square-o" aria-hidden="true"></i> Claim spot
-                                    </button>
-                                </div>
-                            {!! Form::close() !!}
+                            @include('tournaments.modals.claim')
+                            <div class="text-xs-center">
+                                <button class="btn btn-claim" data-toggle="modal"
+                                        data-players-number="{{$tournament->players_number}}"
+                                        data-top-number="{{$tournament->top_number}}"
+                                        data-target="#claimModal" data-tournament-id="{{$tournament->id}}"
+                                        data-subtitle="{{$tournament->title.' - '.$tournament->date}}" id="button-claim">
+                                    <i class="fa fa-list-ol" aria-hidden="true"></i> Claim your spot
+                                </button>
+                            </div>
                         @endif
                     @else
                         <hr/>

@@ -30,3 +30,4 @@ Route::get('/oauth2/redirect', 'NetrunnerDBController@login');
 Route::get('/logout', 'NetrunnerDBController@logout');
 
 Route::get('/api/tournaments', 'TournamentsController@tournamentJSON');
+Route::get('/api/userdecks', 'NetrunnerDBController@getUserDecksJSON');

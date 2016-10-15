@@ -8,7 +8,8 @@ class Entry extends Model
 {
     public $timestamps = true;
     protected $fillable = ['rank', 'rank_top', 'runner_deck_title', 'runner_deck_id', 'runner_deck_identity',
-        'corp_deck_title', 'corp_deck_id', 'corp_deck_identity', 'approved', 'user', 'tournament_id', 'import_username'];
+        'corp_deck_title', 'corp_deck_id', 'corp_deck_identity', 'approved', 'user', 'tournament_id', 'import_username',
+        'runner_deck_type', 'corp_deck_type'];
     protected $dates = ['created_at', 'updated_at'];
 
     public function tournament() {

@@ -64,17 +64,17 @@ class NetrunnerDBController extends Controller
      */
     function getDeckData()
     {
-        $result = ['public' => ['runner' => [], 'corp' => []], 'private' => ['runner' => [], 'corp' => []]];
+        $result = ['publicNetrunnerDB' => ['runner' => [], 'corp' => []], 'privateNetrunnerDB' => ['runner' => [], 'corp' => []]];
         $runner_ids = CardIdentity::where('runner', 1)->get()->pluck('id')->all();
         $corp_ids = CardIdentity::where('runner', 0)->get()->pluck('id')->all();
         $public = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/private/decklists'), true);
-        $this->sortDecks($public['data'], $result['public'], $runner_ids, $corp_ids);
-        // TODO: enable if performance is ok
-//        if (Auth::user()->sharing)
-//        {
-//            $private = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/private/decks'), true);
-//            $this->sortDecks($private['data'], $result['private'], $runner_ids, $corp_ids);
-//        }
+        $this->sortDecks($public['data'], $result['publicNetrunnerDB'], $runner_ids, $corp_ids);
+        // private deck data
+        if (Auth::user()->sharing)
+        {
+            $private = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/private/decks'), true);
+            $this->sortDecks($private['data'], $result['privateNetrunnerDB'], $runner_ids, $corp_ids);
+        }
         return $result;
     }
 
@@ -96,6 +96,20 @@ class NetrunnerDBController extends Controller
         }
         usort($target['runner'], array($this, 'sortByDateUpdate'));
         usort($target['corp'], array($this, 'sortByDateUpdate'));
+    }
+
+    /**
+     * JSON API for the list of user's decks.
+     * It is a proxy that the front-end calls, because OAuth tokens should be handled by the backend.
+     * Currently returns NetrunnerDB decks: user's published decks and private decks if shared.
+     * @param Request $request
+     */
+    public function getUserDecksJSON(Request $request) {
+        if (Auth::user()) {
+            return response()->json($this->getDeckData());
+        } else {
+            return response()->json('User is not logged in');
+        }
     }
 
     /**

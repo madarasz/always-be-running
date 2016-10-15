@@ -29,22 +29,44 @@
                 <td></td>
             @endif
 
+            {{--corp deck--}}
             <td>
                 <img src="/img/ids/{{ $entry->corp_deck_identity }}.png">&nbsp;
                 @if ($entry->corp_deck_id)
-                    <a href="{{ "https://netrunnerdb.com/en/decklist/".$entry->corp_deck_id }}">
-                        {{ $entry->corp_deck_title }}
-                    </a>
+                    {{--public deck--}}
+                    @if ($entry->corp_deck_type == 1)
+                        <a href="{{ "https://netrunnerdb.com/en/decklist/".$entry->corp_deck_id }}">
+                            {{ $entry->corp_deck_title }}
+                        </a>
+                    {{--private deck--}}
+                    @elseif ($entry->corp_deck_type == 2)
+                        <a href="{{ "https://netrunnerdb.com/en/deck/view/".$entry->corp_deck_id }}">
+                            {{ $entry->corp_deck_title }}
+                        </a>
+                    @else
+                        data error
+                    @endif
                 @else
                     {{ $entry->corp_deck_title }}
                 @endif
             </td>
+            {{--runner deck--}}
             <td>
                 <img src="/img/ids/{{ $entry->runner_deck_identity }}.png">&nbsp;
                 @if ($entry->runner_deck_id)
-                    <a href="{{ "https://netrunnerdb.com/en/decklist/".$entry->runner_deck_id }}">
-                        {{ $entry->runner_deck_title }}
-                    </a>
+                    {{--public deck--}}
+                    @if ($entry->runner_deck_type == 1)
+                        <a href="{{ "https://netrunnerdb.com/en/decklist/".$entry->runner_deck_id }}">
+                            {{ $entry->runner_deck_title }}
+                        </a>
+                    {{--private deck--}}
+                    @elseif ($entry->runner_deck_type == 2)
+                        <a href="{{ "https://netrunnerdb.com/en/deck/view/".$entry->runner_deck_id }}">
+                            {{ $entry->runner_deck_title }}
+                        </a>
+                    @else
+                        data error
+                    @endif
                 @else
                     {{ $entry->runner_deck_title }}
                 @endif

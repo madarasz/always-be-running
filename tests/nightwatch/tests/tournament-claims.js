@@ -34,6 +34,16 @@ function formatDate(date) {
 }
 
 module.exports = {
+    /**
+     * NRTM scenarios:
+     * - no reg, NRTM import, claim with user, matching claim
+     * - reg, NRTM import, claim with user, not mathcing claim
+     * - claim with user, NRTM import, matching
+     * - claim with user, NRTM import, not matching
+     *
+     * - remove claim, remove import scenarios
+     */
+
     //'Tournament claims - create, register, claim by creator' : function (browser) {
     //
     //    var regularLogin = browser.globals.regularLogin;

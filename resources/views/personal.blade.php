@@ -3,6 +3,8 @@
 @section('content')
     <h4 class="page-header">Personal</h4>
     @include('partials.message')
+    @include('errors.list')
+    @include('tournaments.modals.claim')
     <div class="row">
         <div class="col-md-4 col-xs-12">
             <div class="bracket">

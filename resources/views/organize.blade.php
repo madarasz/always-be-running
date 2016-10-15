@@ -9,7 +9,7 @@
         Organize
     </h4>
     {{--Conclude modal--}}
-    @include('tournaments.partials.modal')
+    @include('tournaments.modals.conclude')
 
     @include('partials.message')
     @include('errors.list')

@@ -59,31 +59,27 @@ class EntriesController extends Controller
                 Entry::destroy($import_entry->id);    // delete import entry
         }
 
+        $entry = [
+            'rank' => $request->rank,
+            'rank_top' => $request->rank_top,
+            'corp_deck_id' => $corp_deck['id'],
+            'corp_deck_title' => $corp_deck['title'],
+            'corp_deck_identity' => $corp_deck['identity'],
+            'corp_deck_type' => $corp_deck['type'],
+            'runner_deck_id' => $runner_deck['id'],
+            'runner_deck_title' => $runner_deck['title'],
+            'runner_deck_identity' => $runner_deck['identity'],
+            'runner_deck_type' => $runner_deck['type']
+        ];
+
         if (is_null($reg_entry)) {   // new claim
-            Entry::create([
+            Entry::create([         // additional fields
                 'user' => $request->user()->id,
                 'approved' => 1,
-                'tournament_id' => $id,
-                'rank' => $request->rank,
-                'rank_top' => $request->rank_top,
-                'corp_deck_id' => $corp_deck['id'],
-                'corp_deck_title' => $corp_deck['title'],
-                'corp_deck_identity' => $corp_deck['identity'],
-                'runner_deck_id' => $runner_deck['id'],
-                'runner_deck_title' => $runner_deck['title'],
-                'runner_deck_identity' => $runner_deck['identity']
-            ]);
+                'tournament_id' => $id
+            ] + $entry);
         } else {    // merging with registration
-            $reg_entry->update([
-                'rank' => $request->rank,
-                'rank_top' => $request->rank_top,
-                'corp_deck_id' => $corp_deck['id'],
-                'corp_deck_title' => $corp_deck['title'],
-                'corp_deck_identity' => $corp_deck['identity'],
-                'runner_deck_id' => $runner_deck['id'],
-                'runner_deck_title' => $runner_deck['title'],
-                'runner_deck_identity' => $runner_deck['identity']
-            ]);
+            $reg_entry->update($entry);
         }
 
         // add conflict if needed

@@ -130,6 +130,29 @@ input[type="checkbox"] {
     height: 100%;
 }
 
+/*small refresh icon*/
+.small-right-icon {
+    float: right;
+    bottom: -0.25em;
+    margin-top: 0.75em;
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+
+/*button for claiming*/
+.btn-claim {
+    color: #fff;
+    background-color: #b87434;
+    border-color: #b87434;
+}
+.btn-claim:hover {
+    color: #fff;
+    background-color: #945e2b;
+    border-color: #945e2b;
+}
 
 /*button for concluding tournaments*/
 .btn-conclude {
@@ -146,20 +169,23 @@ input[type="checkbox"] {
 /*loader animation*/
 .loader {
     color: #000;
-    font-weight: bold;
     opacity: 0.8;
     min-height: 50px;
     z-index: 10;
     width: 100%;
     position: absolute;
     text-align: center;
-    margin-top: 3rem;
+    margin-top: 2rem;
+    font-style: italic;
 }
 .loader:before {
     content: '[';
     display: inline-block;
     -webkit-animation: pulse 0.4s alternate infinite ease-in-out;
     animation: pulse 0.4s alternate infinite ease-in-out;
+    margin-right: 5px;
+    font-weight: bold;
+    font-style: normal;
 }
 .loader:after {
     content: ']';
@@ -168,6 +194,9 @@ input[type="checkbox"] {
     animation: pulse 0.4s alternate infinite ease-in-out;
     -webkit-animation-delay: 0.4s;
     animation-delay: 0.4s;
+    margin-left: 5px;
+    font-weight: bold;
+    font-style: normal;
 }
 @-webkit-keyframes pulse {
     to {
