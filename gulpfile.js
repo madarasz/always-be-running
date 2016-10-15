@@ -25,7 +25,10 @@ elixir(function(mix) {
         .scripts([
             "jquery-2.2.3.min.js",      // TODO: jquery from npm?
             "tether.js",
-            "main.js",
+            "abr-calendar.js",
+            "abr-map.js",
+            "abr-table.js",
+            "abr-main.js",
             "bootstrap.min.js",
             "jquery.calendario.js",
             "bootstrap-datepicker.js",

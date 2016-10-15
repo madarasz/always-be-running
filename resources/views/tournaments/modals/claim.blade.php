@@ -55,7 +55,7 @@
                             </div>
                         </div>
                         <div class="text-xs-center">
-                            <button type="submit" class="btn btn-claim disabled" id="submit-claim">
+                            <button type="submit" class="btn btn-claim disabled" id="submit-claim" disabled>
                                 Claim spot
                             </button>
                         </div>
@@ -116,7 +116,7 @@
                         displayListOfDecksForClaims('corp', data);
                         deckData = data;
                         modal.find('.deck-loader').removeClass('loader').addClass('hidden-xs-up');
-                        modal.find('#submit-claim').removeClass('disabled');
+                        modal.find('#submit-claim').removeClass('disabled').prop("disabled", false);
                         loading = false;
                         // todo: login if needed
                     }
