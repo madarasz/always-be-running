@@ -14,7 +14,7 @@
             <div class="modal-body">
                 <div class="container-fluid bd-example-row">
                     {!! Form::open(['url' => "", 'id' => 'create-claim']) !!}
-                        {!! Form::hidden('top_number', '') !!}
+                        <input name="top_number" type="hidden" value="" id="hidden-top-value" />
                         {{--Rank selectors--}}
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
@@ -85,7 +85,7 @@
         var modal = $(this);
         modal.find('.modal-subtitle').text(subtitle);
         modal.find('#create-claim').attr("action", "/tournaments/" + id + "/claim");
-        modal.find('#top_number').val(top_number);
+        modal.find('#hidden-top-value').val(top_number);
 
         // ranks
         modal.find('#rank').empty();
@@ -134,7 +134,7 @@
 
                         // enable submission if there were decks on both sides
                         if (data.privateNetrunnerDB.runner.length + data.publicNetrunnerDB.runner.length > 0 &&
-                                data.privateNetrunnerDB.corp.length + data.publicNetrunnerDB.runner.corp > 0) {
+                                data.privateNetrunnerDB.corp.length + data.publicNetrunnerDB.corp.length > 0) {
                             modal.find('#submit-claim').removeClass('disabled').prop("disabled", false);
                         }
 
