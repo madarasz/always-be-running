@@ -26,29 +26,29 @@ var tournamentViewCommands = {
         return this;
     },
 
-    claim: function(data, client) {
-
-        this.log('*** Creating claim for tournament ***');
-
-        this.api.useXpath().waitForElementVisible(this.elements.createClaimFrom.selector, 3000);
-
-        // set form
-        for (var property in data) {
-            if (data.hasOwnProperty(property)) {
-                this.api.useXpath().click("//select[@id='" + property + "']")
-                    .setValue("//select[@id='" + property + "']", data[property])
-                    .keys(['\uE006']);
-            }
-        }
-        // save claim
-        this.click("@submitClaim");
-
-        if (typeof callback === "function"){
-            callback.call(client);
-        }
-
-        return this;
-    },
+    //claim: function(data, client) {
+    //
+    //    this.log('*** Creating claim for tournament ***');
+    //
+    //    this.api.useXpath().waitForElementVisible(this.elements.createClaimFrom.selector, 3000);
+    //
+    //    // set form
+    //    for (var property in data) {
+    //        if (data.hasOwnProperty(property)) {
+    //            this.api.useXpath().click("//select[@id='" + property + "']")
+    //                .setValue("//select[@id='" + property + "']", data[property])
+    //                .keys(['\uE006']);
+    //        }
+    //    }
+    //    // save claim
+    //    this.click("@submitClaim");
+    //
+    //    if (typeof callback === "function"){
+    //        callback.call(client);
+    //    }
+    //
+    //    return this;
+    //},
 
     assertClaim: function(username, rank, topRank, conflictRank, conflictTop, runnerDeck, corpDeck, client) {
 
@@ -219,12 +219,8 @@ module.exports = {
             selector: "//ul[@id='player-claim']",
             locateStrategy: 'xpath'
         },
-        createClaimFrom: {
-            selector: "//form[@id='create-claim']",
-            locateStrategy: 'xpath'
-        },
-        submitClaim: {
-            selector: "//button[@id='submit-claim']",
+        buttonClaim: {
+            selector: "//button[@id='button-claim']",
             locateStrategy: 'xpath'
         },
         removeClaim: {
