@@ -15,6 +15,7 @@
                 <div class="container-fluid bd-example-row">
                     {!! Form::open(['url' => "", 'id' => 'create-claim']) !!}
                         {!! Form::hidden('top_number', '') !!}
+                        {{--Rank selectors--}}
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
                                 <div class="form-group">
@@ -30,7 +31,7 @@
                             </div>
                         </div>
                         {{--Dropdown selectors for decks--}}
-                        <div class="row">
+                        <div class="row" id="claim-deck-row">
                             <div class="col-xs-12 col-md-6">
                                 <div class="deck-loader">loading</div>
                                 <div class="form-group">
@@ -38,7 +39,7 @@
                                     {!! Form::select('corp_deck', [], null, ['class' => 'form-control']) !!}
                                     <div class="alert alert-danger hidden-xs-up" id="no-corp-deck">
                                         <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                                        You don't have any published decklist on NetrunnerDB.
+                                        You don't have any decklist available on NetrunnerDB.
                                     </div>
                                 </div>
                             </div>
@@ -49,11 +50,17 @@
                                     {!! Form::select('runner_deck', [], null, ['class' => 'form-control']) !!}
                                     <div class="alert alert-danger hidden-xs-up" id="no-runner-deck">
                                         <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                                        You don't have any published decklist on NetrunnerDB.
+                                        You don't have any decklist available on NetrunnerDB.
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        {{--Login prompt if user is not logged in--}}
+                        <div class="text-xs-center hidden-xs-up m-b-1" id="claim-user-login">
+                            You are not logged in.<br/>
+                            <a href="/oauth2/redirect">Login via NetrunnerDB</a> to claim spot.
+                        </div>
+                        {{--Sumbit claim--}}
                         <div class="text-xs-center">
                             <button type="submit" class="btn btn-claim disabled" id="submit-claim" disabled>
                                 Claim spot
@@ -112,13 +119,27 @@
                     dataType: "json",
                     async: true,
                     success: function (data) {
+                        // hide loader animation
+                        modal.find('.deck-loader').removeClass('loader').addClass('hidden-xs-up');
+
+                        // user needs to login
+                        if (data.error) {
+                            modal.find('#claim-user-login').removeClass('hidden-xs-up');
+                            modal.find('#claim-deck-row').addClass('hidden-xs-up');
+                            return 0;
+                        }
+
                         displayListOfDecksForClaims('runner', data);
                         displayListOfDecksForClaims('corp', data);
+
+                        // enable submission if there were decks on both sides
+                        if (data.privateNetrunnerDB.runner.length + data.publicNetrunnerDB.runner.length > 0 &&
+                                data.privateNetrunnerDB.corp.length + data.publicNetrunnerDB.runner.corp > 0) {
+                            modal.find('#submit-claim').removeClass('disabled').prop("disabled", false);
+                        }
+
                         deckData = data;
-                        modal.find('.deck-loader').removeClass('loader').addClass('hidden-xs-up');
-                        modal.find('#submit-claim').removeClass('disabled').prop("disabled", false);
                         loading = false;
-                        // todo: login if needed
                     }
                 });
             }
@@ -132,27 +153,41 @@
 
             modal.find(rootElement).empty();
 
-            // add optgroups
-            if (data.privateNetrunnerDB[side].length && data.publicNetrunnerDB[side].length) {
-                modal.find(rootElement).append($('<optgroup>', { label: '--- published decks ---', id: side+'_public'}));
-                modal.find(rootElement).append($('<optgroup>', { label: '--- private decks ---', id: side+'_private'}));
-                publicRoot = modal.find('#'+side+'_public');
-                privateRoot = modal.find('#'+side+'_private');
-            }
+            // no deck warning
+            if (data.privateNetrunnerDB[side].length + data.publicNetrunnerDB[side].length == 0) {
+                modal.find('#no-'+side+'-deck').removeClass('hidden-xs-up');
+                modal.find('#'+side+'_deck').addClass('hidden-xs-up');
 
-            // add public decks
-            if (data.publicNetrunnerDB) {
-                displayDecksForClaims(data.publicNetrunnerDB[side], publicRoot, 1);
-            }
-            // add private decks
-            if (data.privateNetrunnerDB) {
-                displayDecksForClaims(data.privateNetrunnerDB[side], privateRoot, 2);
+            } else {
+
+                // add optgroups
+                if (data.privateNetrunnerDB[side].length && data.publicNetrunnerDB[side].length) {
+                    modal.find(rootElement).append($('<optgroup>', {
+                        label: '--- published decks ---',
+                        id: side + '_public'
+                    }));
+                    modal.find(rootElement).append($('<optgroup>', {
+                        label: '--- private decks ---',
+                        id: side + '_private'
+                    }));
+                    publicRoot = modal.find('#' + side + '_public');
+                    privateRoot = modal.find('#' + side + '_private');
+                }
+
+                // add public decks
+                if (data.publicNetrunnerDB) {
+                    displayDecksForClaims(data.publicNetrunnerDB[side], publicRoot, 1);
+                }
+                // add private decks
+                if (data.privateNetrunnerDB) {
+                    displayDecksForClaims(data.privateNetrunnerDB[side], privateRoot, 2);
+                }
             }
         }
 
         // populates option lines for tournament claim form deck selector
         function displayDecksForClaims(data, rootElement, type) {
-            // todo: ordering
+            // note: ordering by date is note done, relying on NetrunnerDB
             $.each(data, function (index, element) {
                 rootElement.append($('<option>', {
                     value: "{ \"title\": \"" + element.name.replace(/'/g, "\\'") +
@@ -163,8 +198,5 @@
             });
         }
     });
-
-
-        // todo: show no deck error
 
 </script>

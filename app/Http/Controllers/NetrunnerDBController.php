@@ -108,7 +108,7 @@ class NetrunnerDBController extends Controller
         if (Auth::user()) {
             return response()->json($this->getDeckData());
         } else {
-            return response()->json('User is not logged in');
+            return response()->json(['error' => 'User is not logged in']);
         }
     }
 

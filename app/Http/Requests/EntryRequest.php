@@ -32,8 +32,8 @@ class EntryRequest extends Request
 
     public function messages() {
         return [
-            'corp_deck.required' => 'Publish a corporation deck on NetrunnerDB, so you will be able to choose it here.',
-            'runner_deck.required' => 'Publish a runner deck on NetrunnerDB, so you will be able to choose it here.',
+            'corp_deck.required' => 'Create a corporation deck on NetrunnerDB, so you will be able to choose it here.',
+            'runner_deck.required' => 'Create a runner deck on NetrunnerDB, so you will be able to choose it here.',
             'tournament_top' => "The \"rank after top cut\" must be \"below top cut\", because you didn't make the it to the top cut.",
             'tournament_not_top' => "The \"rank after top cut\" must be set, because you made the top cut during the swiss rounds."
         ];
