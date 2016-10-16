@@ -24,7 +24,8 @@ class ConcludeRequest extends Request
     public function rules()
     {
         return [
-            'top_number' => 'integer|between:0,1000|players_top:'.Request::get('players_number').','.Request::get('top_number')
+            'players_number' => 'integer|between:1,1000',
+            'top_number' => 'integer|between:0,16|players_top:'.Request::get('players_number').','.Request::get('top_number')
         ];
     }
 

@@ -253,6 +253,7 @@
                     The tournament creator should set it to 'concluded', so players can make claims.
                 </div>
                 {{--Conclude modal, button--}}
+                @include('errors.list')
                 <div class="text-xs-center">
                     <button class="btn btn-conclude" data-toggle="modal" data-target="#concludeModal"
                             data-tournament-id="{{$tournament->id}}"
