@@ -18,6 +18,7 @@ elixir(function(mix) {
         bootstrap4Path = 'node_modules/bootstrap/dist';
     mix.copy('resources/assets/fonts', 'public/fonts')
         .copy('resources/assets/img', 'public/img')
+        .copy('resources/assets/favicons', 'public')
         .copy(bootstrapPath + '/fonts', 'public/fonts')
         .copy(bootstrap4Path + '/js/bootstrap.min.js', 'resources/assets/js')
         .copy('node_modules/tether/dist/js/tether.js', 'resources/assets/js')
