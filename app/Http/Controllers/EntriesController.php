@@ -52,9 +52,9 @@ class EntriesController extends Controller
 
         // merging with import entry
         if (!is_null($import_entry) &&     // if there is an import entry
-            $import_entry->runner_deck_id == $request->runner_deck_id &&   // and IDs match
-            $import_entry->corp_deck_id == $request->corp_deck_id &&
-            $import_entry->rank == $request->rank && $import_entry->rank_top == $request->rank_top) // and rank, top_rank match
+            $import_entry->runner_deck_identity == $request->runner_deck_identity &&   // and IDs match
+            $import_entry->corp_deck_identity == $request->corp_deck_identity &&
+            $import_entry->rank == $request->rank && $import_entry->rank_top == intval($request->rank_top)) // and rank, top_rank match
         {
                 Entry::destroy($import_entry->id);    // delete import entry
         }
