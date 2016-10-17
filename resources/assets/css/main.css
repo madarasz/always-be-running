@@ -3,8 +3,32 @@ body {
     padding-top: 50px;
     padding-bottom: 20px;
 }
+
+/*labels*/
 .label {
     font-style: italic;
+    display: inline-block;
+    padding: .25em .4em;
+    font-size: 75%;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+}
+.label-warning {
+    background-color: #f0ad4e;
+}
+.label-danger {
+    background-color: #d9534f;
+}
+.label-info {
+    background-color: #5bc0de;
+}
+.label-success {
+    background-color: #5cb85c;
 }
 
 /*bracket style*/
