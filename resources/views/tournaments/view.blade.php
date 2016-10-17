@@ -102,7 +102,7 @@
                 <div class="bracket">
                     {{--<h5>Description with markdown</h5>--}}
                     <div id="tournament-description">
-                        {!! Markdown::convertToHtml(nl2br(e($tournament->description))) !!}
+                        {!! Markdown::convertToHtml(str_replace(["\r\n", "\r", "\n"], "  \r", $tournament->description)) !!}
                     </div>
                 </div>
             @endunless
