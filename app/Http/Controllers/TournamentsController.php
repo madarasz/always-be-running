@@ -161,10 +161,11 @@ class TournamentsController extends Controller
         $this->authorize('own', $tournament, $request->user());
         Tournament::destroy($id);
 
-        if (strpos($request->pathInfo, 'tournaments') !== false) {
-            return view('organize')->with('message', 'Tournament deleted.');
+        if (strpos($request->headers->get('referer'), 'tournaments') !== false) {
+            $user = $request->user()->id;
+            return view('organize', ['user' => $user])->with('message', 'Tournament deleted.');    // deleted from tournament details page
         } else {
-            return back()->with('message', 'Tournament deleted.');
+            return back()->with('message', 'Tournament deleted.');  // deleted from Organize or Admin page
         }
     }
 
