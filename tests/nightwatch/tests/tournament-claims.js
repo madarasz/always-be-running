@@ -44,6 +44,12 @@ module.exports = {
      *
      * - remove claim, remove import scenarios
      * - validation errors
+     * - creator removing claims from different people
+     * - different users claiming the same spot
+     */
+    /**
+     * Claim scenarios:
+     * * reg, conclude (with top), claim with validation (below top cut), unclaim, unregister
      */
 
     /**
@@ -58,6 +64,9 @@ module.exports = {
      * - verify on tournament details page
      * - remove claim
      * - verify on tournament details page
+     * - unregister
+     * - verify on tournament details page
+     * - delete tournament
      * @param browser
      */
     'Tournament - reg, conclude, claim with validation, unclaim, unregister': function (browser) {
@@ -263,6 +272,34 @@ module.exports = {
                 unregisterButton: true,
                 registerButton: false
             })
+            .click('@unregisterButton')
+            // verify on tournament detail page
+            .assertView({
+                conflictWarning: false,
+                playerNumbers: true,
+                topPlayerNumbers: true,
+                buttonNRTMimport: true,
+                buttonNRTMclear: false,
+                buttonConclude: false,
+                playerClaim: false,
+                buttonClaim: true,
+                removeClaim: false,
+                claimError: false,
+                topEntriesTable: true,
+                swissEntriesTable: true,
+                ownClaimInTable: false,
+                conflictInTable: false,
+                dueWarning: false,
+                registeredPlayers: false,
+                noRegisteredPlayers: true,
+                unregisterButton: false,
+                registerButton: true
+            })
+            // delete tournament
+            .click('@deleteButton');
+
+        browser.page.tournamentTable()
+            .assertMissingRow('created', tournament.title);
 
     },
 
