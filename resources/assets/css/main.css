@@ -4,6 +4,14 @@ body {
     padding-bottom: 20px;
 }
 
+/*navbar*/
+.navbar-toggler {
+    color: #fff;
+}
+.bg-inverse {
+    background-color: #222 !important;
+}
+
 /*labels*/
 .label {
     font-style: italic;
