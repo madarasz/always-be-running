@@ -32,8 +32,16 @@ class AdminController extends Controller
         $count_cycles = count($cycles);
         $last_cycle = $count_cycles > 1 ? $cycles[1]->name : '';
         $count_packs = CardPack::count();
-        $last_pack = $count_packs > 1 && $count_cycles > 1
-            ? $packs[1][0]->name : '';
+        // determine last pack name, $pack[0] is 'draft'
+        if ($count_packs > 1 && $count_cycles > 1) {
+            if (count($packs[1])) {
+                $last_pack = $packs[1][0]->name;
+            } else {
+                $last_pack = $packs[2][0]->name;
+            }
+        } else {
+            $last_pack = '';
+        }
 
         return view('admin', compact('user', 'to_approve', 'deleted', 'nowdate', 'message',
             'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles'));
