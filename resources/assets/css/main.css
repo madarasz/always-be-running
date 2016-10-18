@@ -30,6 +30,13 @@ body {
 .label-success {
     background-color: #5cb85c;
 }
+.input-group label {
+    margin-top: .5rem;
+    margin-right: .5rem;
+}
+.h5-filter {
+    padding-top: .4rem;
+}
 
 /*bracket style*/
 .bracket{

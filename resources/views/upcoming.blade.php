@@ -5,26 +5,29 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="bracket">
-                <h5><i class="fa fa-filter" aria-hidden="true"></i> Filter</h5>
                 {!! Form::open(['url' => '/tournaments']) !!}
                 <div class="row">
-                    <div class="col-md-4 col-xs-12">
-                        <div class="form-group">
-                            {!! Form::label('tournament_type_id', 'Type') !!}
+                    <div class="col-md-3 col-xs-12">
+                        <h5 class="h5-filter"><i class="fa fa-filter" aria-hidden="true"></i> Filter</h5>
+                    </div>
+                    <div class="col-md-3" id="filter-spacer"></div>
+                    <div class="col-md-3 col-xs-12">
+                        <div class="input-group">
+                            {!! Form::label('tournament_type_id', 'Type:') !!}
                             {!! Form::select('tournament_type_id', $tournament_types,
                                 null, ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder, infowindow)', 'disabled' => '']) !!}
                         </div>
                     </div>
-                    <div class="col-md-4 col-xs-12">
-                        <div class="form-group">
-                            {!! Form::label('location_country', 'Country') !!}
+                    <div class="col-md-3 col-xs-12">
+                        <div class="input-group">
+                            {!! Form::label('location_country', 'Country:') !!}
                             {!! Form::select('location_country', $countries, null,
                                 ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder, infowindow)', 'disabled' => '']) !!}
                         </div>
                     </div>
-                    <div class="col-md-4 col-xs-12 hidden-xs-up" id="select_state">
-                        <div class="form-group">
-                            {!! Form::label('location_state', 'US State') !!}
+                    <div class="col-md-3 col-xs-12 hidden-xs-up" id="select_state">
+                        <div class="input-group">
+                            {!! Form::label('location_state', 'US State:') !!}
                             {!! Form::select('location_state', $states,
                                         null, ['class' => 'form-control filter', 'onchange'=>'filterDiscover(default_filter, map, geocoder, infowindow)', 'disabled' => '']) !!}
                         </div>

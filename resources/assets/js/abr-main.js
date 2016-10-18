@@ -59,6 +59,7 @@ function filterDiscover(default_filter, map, geocoder, infowindow) {
         filter = filter + '&country=' + country;
         if (country === 'United States') {
             $('#select_state').removeClass('hidden-xs-up');
+            $('#filter-spacer').addClass('hidden-xs-up');
             if (state !== '---') {
                 filter = filter + '&state=' + state;
             }
@@ -66,6 +67,7 @@ function filterDiscover(default_filter, map, geocoder, infowindow) {
     }
     if (country !== 'United States') {
         $('#select_state').addClass('hidden-xs-up');
+        $('#filter-spacer').removeClass('hidden-xs-up');
     }
 
     updateDiscover(filter, map, geocoder, infowindow);
