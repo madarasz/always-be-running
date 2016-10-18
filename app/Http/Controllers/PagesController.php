@@ -23,7 +23,7 @@ class PagesController extends Controller
         $nowdate = date('Y.m.d.', time() - 86400); // actually yesterday, to be on the safe side
         $tournaments = Tournament::where('date', '>=', $nowdate)->where('approved', 1)->whereNull('deleted_at');
         $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->unique()->all())->pluck('type_name', 'id')->all();
-        $countries = $tournaments->pluck('location_country')->unique()->all();
+        $countries = $tournaments->where('location_country', '!=', '')->pluck('location_country')->unique()->all();
         $states = $tournaments->pluck('location_state')->unique()->all();
         if(($states_key = array_search('', $states)) !== false) {
             unset($states[$states_key]);
