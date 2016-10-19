@@ -54,7 +54,7 @@
         </div>
     </div>
     <script type="text/javascript">
-        getTournamentData("approved=1&conluded=1&end={{ $nowdate }}", function(data) {
+        getTournamentData("approved=1&concluded=1&end={{ $nowdate }}", function(data) {
             updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'players', 'claims'], 'no tournaments to show', '', data);
             $('.filter').prop("disabled", false);
         });
