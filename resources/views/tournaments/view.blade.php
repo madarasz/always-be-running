@@ -101,7 +101,7 @@
             @unless($tournament->description === '')
                 <div class="bracket">
                     {{--<h5>Description with markdown</h5>--}}
-                    <div id="tournament-description">
+                    <div id="tournament-description" class="markdown-content">
                         {!! Markdown::convertToHtml(str_replace(["\r\n", "\r", "\n"], "  \r", $tournament->description)) !!}
                     </div>
                 </div>

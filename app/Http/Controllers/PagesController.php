@@ -2,20 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Entry;
 use Illuminate\Http\Request;
 use App\Tournament;
 use App\TournamentType;
-//use App\Entry;
 use App\CardPack;
 
 use App\Http\Requests;
 
 class PagesController extends Controller
 {
-    public function home()
+    public function home(Request $request)
     {
+        $yesterday = date('Y.m.d.', time() - 86400);
+        $tomorrow = date('Y.m.d.', time() + 86400);
         $message = session()->has('message') ? session('message') : '';
-        return view('home', compact('message'));
+        $user = $request->user();
+        if ($user) {
+            $created_count = Tournament::where('creator', $user->id)->count();
+            $claim_count = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')->count();
+        }
+        return view('home', compact('message', 'user', 'created_count', 'claim_count', 'yesterday', 'tomorrow'));
     }
 
     public function upcoming()

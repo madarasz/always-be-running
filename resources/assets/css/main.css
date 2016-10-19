@@ -84,6 +84,11 @@ body {
     /*color: inherit;*/
 }
 
+/*user numbers on homescreen*/
+.user-counts {
+    font-size: 80%;
+}
+
 /*footer stuff*/
 .legal-bullshit {
     font-size: 0.7em;
@@ -131,9 +136,29 @@ input[type="checkbox"] {
 }
 
 /*limiting image size in tournament description markdown*/
-#tournament-description img {
+.markdown-content img {
     max-width: 100%;
     height: auto;
+}
+
+/* ID hotness on homepage */
+.hot-id {
+    text-align: center;
+    padding-top: 1em;
+}
+.hot-id img {
+    max-width: 70%;
+    height: auto;
+}
+
+/*integration on homepage*/
+.integration {
+    text-align: center;
+    padding-top: 1em;
+}
+.integration .hint {
+    font-size: 80%;
+    font-style: italic;
 }
 
 /*import user in entries table*/

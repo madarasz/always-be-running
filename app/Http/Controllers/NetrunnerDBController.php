@@ -37,6 +37,7 @@ class NetrunnerDBController extends Controller
             {
                 $auth_user = $this->findOrCreateUser($user);
                 Auth::login($auth_user, true);
+                $this->getDeckData();   // update deck counts
 
                 // redirect back to the original page
                 $login_url = $request->cookie('login_url');
@@ -76,7 +77,7 @@ class NetrunnerDBController extends Controller
      * Also includes private decks if user is set to sharing.
      * @return array
      */
-    function getDeckData()
+    public function getDeckData()
     {
         $result = ['publicNetrunnerDB' => ['runner' => [], 'corp' => []], 'privateNetrunnerDB' => ['runner' => [], 'corp' => []]];
         $runner_ids = CardIdentity::where('runner', 1)->get()->pluck('id')->all();
@@ -89,6 +90,15 @@ class NetrunnerDBController extends Controller
             $private = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/private/decks'), true);
             $this->sortDecks($private['data'], $result['privateNetrunnerDB'], $runner_ids, $corp_ids);
         }
+
+        // update user with deck counts
+        $countPublicDecks = count($result['publicNetrunnerDB']['runner']) + count($result['publicNetrunnerDB']['corp']);
+        $countPrivateDecks = count($result['privateNetrunnerDB']['runner']) + count($result['privateNetrunnerDB']['corp']);
+        Auth::user()->update([
+            'published_decks' => $countPublicDecks,
+            'private_decks' => $countPrivateDecks
+        ]);
+
         return $result;
     }
 
