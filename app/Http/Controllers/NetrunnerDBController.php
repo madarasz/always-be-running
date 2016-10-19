@@ -37,12 +37,19 @@ class NetrunnerDBController extends Controller
             {
                 $auth_user = $this->findOrCreateUser($user);
                 Auth::login($auth_user, true);
-                return redirect()->action('PagesController@home');
+
+                // redirect back to the original page
+                $login_url = $request->cookie('login_url');
+                if (is_null($login_url)) {
+                    return redirect()->action('PagesController@home');
+                } else {
+                    return redirect($login_url);
+                }
             }
         } else
         {
             $url = $this->oauth->getAuthorizationUri();
-            return redirect((string)$url);
+            return redirect((string)$url)->withCookie('login_url', $request->headers->get('referer'), 10);
         }
     }
 
@@ -50,10 +57,17 @@ class NetrunnerDBController extends Controller
      * Logs out user.
      * @return redirects to home page.
      */
-    function logout()
+    function logout(Request $request)
     {
         Auth::logout();
-        return redirect()->action('PagesController@home');
+
+        // redirect back, if possible
+        $logout_url = $request->headers->get('referer');
+        if (strpos($logout_url, 'edit') || strpos($logout_url, 'admin')) {
+            return redirect()->action('PagesController@home');
+        } else {
+            return back();
+        }
     }
 
     /**
