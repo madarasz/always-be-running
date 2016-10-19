@@ -42,7 +42,9 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
         }
         // type
         if ($.inArray('type', columns) > -1) {
-            newrow.append($('<td>').append($('<em>', {
+            newrow.append($('<td>', {
+                class: 'hidden-md-down'
+            }).append($('<em>', {
                 text: element.type
             })));
         }
@@ -143,13 +145,13 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
         if ($.inArray('players', columns) > -1) {
             newrow.append($('<td>', {
                 text: element.concluded ? element.players_count : element.registration_count,
-                'class': 'text-xs-center'
+                'class': 'text-xs-center hidden-sm-down'
             }));
         }
         // claims
         if ($.inArray('claims', columns) > -1) {
             cell = $('<td>', {
-                'class': 'text-xs-center'
+                'class': 'text-xs-center hidden-sm-down'
             }).appendTo(newrow);
 
             if (element.claim_conflict) {

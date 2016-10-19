@@ -8,7 +8,7 @@
             {{--Upcoming--}}
             <div class="bracket">
                 @include('tournaments.partials.tabledin',
-                ['columns' => ['title', 'location', 'date', 'players', 'cardpool'],
+                ['columns' => ['title', 'location', 'date', 'cardpool'],
                 'title' => 'Upcoming tournaments', 'id' => 'discover-table', 'icon' => 'fa-list-alt', 'loader' => true])
                 {{--<div class="p-t-1">--}}
                     {{--<a href="/upcoming">More upcoming >>></a>--}}
@@ -88,7 +88,7 @@
         // upcoming table
         getTournamentData('start={{ $yesterday }}&approved=1', function(data) {
             $('.loader').addClass('hidden-xs-up');
-            updateTournamentTable('#discover-table', ['title', 'date', 'location', 'cardpool', 'players'], 'no tournaments to show', '', data);
+            updateTournamentTable('#discover-table', ['title', 'date', 'location', 'cardpool'], 'no tournaments to show', '', data);
             // results table
             getTournamentData("approved=1&conluded=1&end={{ $tomorrow }}", function(data) {
                 updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'players', 'claims'], 'no tournaments to show', '', data);

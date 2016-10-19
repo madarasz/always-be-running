@@ -27,7 +27,7 @@
             <th>cardpool</th>
         @endif
         @if( in_array('type', $columns) )
-            <th>type</th>
+            <th class="hidden-md-down">type</th>
         @endif
         @if( in_array('approval', $columns) )
             <th class="text-xs-center">approval</th>
@@ -39,10 +39,10 @@
             <th class="text-xs-center">conclusion</th>
         @endif
         @if( in_array('players', $columns) )
-            <th class="text-xs-center">players</th>
+            <th class="text-xs-center hidden-sm-down">players</th>
         @endif
         @if( in_array('claims', $columns) )
-            <th class="text-xs-center">claims</th>
+            <th class="text-xs-center hidden-sm-down">claims</th>
         @endif
         @if( in_array('action_view', $columns) )
             <th></th>
