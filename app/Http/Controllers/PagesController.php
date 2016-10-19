@@ -90,4 +90,14 @@ class PagesController extends Controller
         $username = $request->user()->name;
         return view('personal', compact('message', 'user', 'username'));
     }
+
+    public function about()
+    {
+        return view('about');
+    }
+
+    public function faq()
+    {
+        return view('faq');
+    }
 }

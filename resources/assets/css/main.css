@@ -84,6 +84,12 @@ body {
     /*color: inherit;*/
 }
 
+/*footer stuff*/
+.legal-bullshit {
+    font-size: 0.7em;
+    font-style: italic;
+}
+
 /*Embedded Google map*/
 .map-wrapper {
     height: 400px;

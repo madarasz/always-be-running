@@ -6,6 +6,8 @@ Route::get('upcoming', 'PagesController@upcoming');
 Route::get('results', 'PagesController@results');
 Route::get('organize', 'PagesController@organize');
 Route::get('personal', 'PagesController@personal');
+Route::get('about', 'PagesController@about');
+Route::get('faq', 'PagesController@faq');
 Route::get('admin', 'AdminController@lister');
 Route::get('admin/identities/update', 'NetrunnerDBController@requestIdentities');
 Route::get('admin/cycles/update', 'NetrunnerDBController@requestCycles');
