@@ -288,6 +288,10 @@
                     @else
                         <a href="{{"/tournaments/$tournament->id/register"}}" class="btn btn-primary" id="register"><i class="fa fa-plus-circle" aria-hidden="true"></i> Register</a>
                     @endif
+                @else
+                    <div class="text-xs-center p-b-1" id="suggest-login2">
+                        <a href="/oauth2/redirect">Login via NetrunnerDB</a> to register for this tournament.
+                    </div>
                 @endif
             </div>
             </div>
