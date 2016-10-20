@@ -152,7 +152,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 }))
             }
             if (element.winner_corp_identity) {
-                cell.append($('<img>', {
+                cell.append('&nbsp;').append($('<img>', {
                     src: '/img/ids/'+element.winner_corp_identity+'.png'
                 }))
             }
