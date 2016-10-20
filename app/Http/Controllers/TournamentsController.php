@@ -259,6 +259,19 @@ class TournamentsController extends Controller
                     ->whereNotNull('rank')->first();
                 $result[count($result)-1]['user_claim'] = !is_null($entry);
             }
+
+            // winner IDs
+            if ($tournament->concluded) {
+                if ($tournament->top_count) {
+                    $winner = Entry::where('tournament_id', $tournament->id)->where('rank_top', 1)->first(); // with top cut
+                } else {
+                    $winner = Entry::where('tournament_id', $tournament->id)->where('rank', 1)->first(); // without top cut
+                }
+                if (!is_null($winner)) {
+                    $result[count($result)-1]['winner_runner_identity'] = $winner['runner_deck_identity'];
+                    $result[count($result)-1]['winner_corp_identity'] = $winner['corp_deck_identity'];
+                }
+            }
         }
         return response()->json($result);
     }

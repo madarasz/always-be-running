@@ -47,7 +47,7 @@
         <div class="col-md-9 col-xs-12">
             <div class="bracket">
                 @include('tournaments.partials.tabledin',
-                    ['columns' => ['title', 'date', 'location', 'cardpool', 'players', 'claims' ],
+                    ['columns' => ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims' ],
                     'title' => 'Tournament results from the past', 'id' => 'results', 'icon' => 'fa-list-alt',
                     'subtitle' => 'only concluded tournaments'])
             </div>
@@ -55,7 +55,7 @@
     </div>
     <script type="text/javascript">
         getTournamentData("approved=1&concluded=1&end={{ $nowdate }}", function(data) {
-            updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'players', 'claims'], 'no tournaments to show', '', data);
+            updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', data);
             $('.filter').prop("disabled", false);
         });
     </script>

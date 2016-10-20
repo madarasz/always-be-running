@@ -151,6 +151,12 @@ input[type="checkbox"] {
     height: auto;
 }
 
+/* 1st player ID in table */
+.cell-winner img {
+    padding: 0.2rem 2px;
+}
+
+
 /*integration on homepage*/
 .integration {
     text-align: center;

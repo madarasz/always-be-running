@@ -38,6 +38,9 @@
         @if( in_array('conclusion', $columns) )
             <th class="text-xs-center">conclusion</th>
         @endif
+        @if( in_array('winner', $columns) )
+            <th class="text-xs-center">1st</th>
+        @endif
         @if( in_array('players', $columns) )
             <th class="text-xs-center hidden-sm-down">players</th>
         @endif

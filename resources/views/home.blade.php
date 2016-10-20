@@ -17,7 +17,7 @@
             {{--Results--}}
             <div class="bracket">
                 @include('tournaments.partials.tabledin',
-                    ['columns' => ['title', 'date', 'location', 'cardpool', 'players', 'claims' ],
+                    ['columns' => ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims' ],
                     'title' => 'Tournament results', 'id' => 'results', 'icon' => 'fa-list-alt'])
             </div>
         </div>
@@ -91,7 +91,7 @@
             updateTournamentTable('#discover-table', ['title', 'date', 'location', 'cardpool'], 'no tournaments to show', '', data);
             // results table
             getTournamentData("approved=1&concluded=1&end={{ $tomorrow }}", function(data) {
-                updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'players', 'claims'], 'no tournaments to show', '', data);
+                updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', data);
                 $('.filter').prop("disabled", false);
             });
         });

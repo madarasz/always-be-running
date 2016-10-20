@@ -141,6 +141,22 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 }));
             }
         }
+        // winner
+        if ($.inArray('winner', columns) > -1) {
+            cell = $('<td>', {
+                'class': 'text-xs-center cell-winner'
+            }).appendTo(newrow);
+            if (element.winner_runner_identity) {
+                cell.append($('<img>', {
+                    src: '/img/ids/'+element.winner_runner_identity+'.png'
+                }))
+            }
+            if (element.winner_corp_identity) {
+                cell.append($('<img>', {
+                    src: '/img/ids/'+element.winner_corp_identity+'.png'
+                }))
+            }
+        }
         // players
         if ($.inArray('players', columns) > -1) {
             newrow.append($('<td>', {
