@@ -26,6 +26,17 @@
                 created by
                 <span id="tournament-creator">{{ $tournament->user->name }}</span>
             </em>
+            @if ($user && $user->admin)
+                <div class="alert alert-success view-indicator" id="viewing-as-admin">
+                    <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+                    viewing as admin
+                </div>
+            @elseif ($user && $user->id == $tournament->creator)
+                <div class="alert alert-success view-indicator" id="viewing-as-creator">
+                    <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+                    viewing as creator
+                </div>
+            @endif
         </small>
     </h4>
     @include('partials.message')

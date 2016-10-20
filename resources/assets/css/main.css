@@ -159,6 +159,12 @@ input[type="checkbox"] {
     padding: 0.2rem 0;
 }
 
+/* viewing as admin/creator */
+.view-indicator {
+    font-size: 80%;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+}
 
 /*integration on homepage*/
 .integration {
