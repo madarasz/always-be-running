@@ -146,9 +146,13 @@ input[type="checkbox"] {
     text-align: center;
     padding-top: 1em;
 }
-.hot-id img {
+.hot-id a img {
     max-width: 70%;
     height: auto;
+}
+.spotlight-title {
+    font-size: 80%;
+    font-style: italic;
 }
 
 /* 1st player ID in table */

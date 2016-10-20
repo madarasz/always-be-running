@@ -70,17 +70,11 @@
             <div class="bracket">
                 <h5>
                     <i class="fa fa-fire" aria-hidden="true"></i>
-                    Hot IDs<br/>
+                    Popular IDs - <span id="hot-packname" class="spotlight-title"></span><br/>
                     <small>by <a href="http://www.knowthemeta.com/">Know the Meta</a></small>
                 </h5>
-                <div class="hot-id">
-                    <img src="http://www.knowthemeta.com/static/img/cards/netrunner-whizzard-master-gamer.png"/><br/>
-                    <small>Whizzard: Master Gamer</small>
-                </div>
-                <div class="hot-id">
-                    <img src="http://www.knowthemeta.com/static/img/cards/netrunner-nbn-controlling-the-message.png"/><br/>
-                    <small>NBN: Controlling the Message</small>
-                </div>
+                <div class="hot-id" id="hot-id-runner"></div>
+                <div class="hot-id" id="hot-id-corp"></div>
             </div>
         </div>
     </div>
@@ -93,6 +87,10 @@
             getTournamentData("approved=1&concluded=1&end={{ $tomorrow }}", function(data) {
                 updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', data);
                 $('.filter').prop("disabled", false);
+                // KtM get
+                getKTMDataPacks(function (packs) {
+                    updatePopularIds(packs[packs.length-1]);
+                })
             });
         });
     </script>

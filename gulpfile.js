@@ -30,6 +30,7 @@ elixir(function(mix) {
             "abr-map.js",
             "abr-table.js",
             "abr-main.js",
+            "abr-stats.js",
             "bootstrap.min.js",
             "jquery.calendario.js",
             "bootstrap-datepicker.js",

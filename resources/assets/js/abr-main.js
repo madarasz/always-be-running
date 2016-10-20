@@ -84,3 +84,7 @@ function conclusionCheck() {
         document.getElementById('top_number').setAttribute('disabled','');
     }
 }
+
+function percentageToString(fraction) {
+    return Math.round(fraction * 1000) / 10 + '%';
+}
