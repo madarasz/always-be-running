@@ -28,12 +28,12 @@
             </em>
             @if ($user && $user->admin)
                 <div class="alert alert-success view-indicator" id="viewing-as-admin">
-                    <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+                    <i class="fa fa-info-circle" aria-hidden="true"></i>
                     viewing as admin
                 </div>
             @elseif ($user && $user->id == $tournament->creator)
                 <div class="alert alert-success view-indicator" id="viewing-as-creator">
-                    <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+                    <i class="fa fa-info-circle" aria-hidden="true"></i>
                     viewing as creator
                 </div>
             @endif
