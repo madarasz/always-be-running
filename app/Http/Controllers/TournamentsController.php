@@ -262,7 +262,7 @@ class TournamentsController extends Controller
 
             // winner IDs
             if ($tournament->concluded) {
-                if ($tournament->top_count) {
+                if ($tournament->top_number) {
                     $winner = Entry::where('tournament_id', $tournament->id)->where('rank_top', 1)->first(); // with top cut
                 } else {
                     $winner = Entry::where('tournament_id', $tournament->id)->where('rank', 1)->first(); // without top cut
