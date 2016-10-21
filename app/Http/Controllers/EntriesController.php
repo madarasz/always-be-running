@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EntryRequest;
 use App\Tournament;
 use App\Entry;
+use App\User;
+use App\CardIdentity;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -108,5 +110,63 @@ class EntriesController extends Controller
         $tournament->updateConflict();
 
         return redirect()->back()->with('message', 'You removed your claim from the tournament.');
+    }
+
+    /**
+     * API endpont for tournament results
+     * @param $id Tournament ID
+     * @return mixed
+     */
+    public function entriesJSON(Request $request) {
+        $id = $request->input('id');
+        $tournament = Tournament::where('id', $id)->first();
+
+        // not found
+        if (is_null($tournament)) {
+            return response()->json(['error' => 'Tournament not found.']);
+        }
+        // not concluded
+        if ($tournament->concluded == 0) {
+            return response()->json(['warn' => 'Tournament is not concluded.']);
+        }
+
+        $result = [];
+        $identities = CardIdentity::get()->pluck('title', 'id')->all();
+        $entries = Entry::where('tournament_id', $id)->get()->all();
+
+        foreach($entries as $entry) {
+
+            if ($entry['user']) {
+                $user_name = User::where('id', $entry['user'])->first()['name'];
+            } else {
+                $user_name = null;
+            }
+
+            array_push($result, [
+                'user_id' => $entry['user'],
+                'user_name' => $user_name,
+                'user_import_name' => $entry['import_username'],
+                'rank_swiss' => $entry['rank'],
+                'rank_top' => $entry['rank_top'] ? $entry['rank_top'] : null,
+                'runner_deck_title' => $entry['runner_deck_title'],
+                'runner_deck_identity_id' => $entry['runner_deck_identity'],
+                'runner_deck_identity_title' => $identities[$entry['runner_deck_identity']],
+                'runner_deck_url' => $this->deckUrl($entry['runner_deck_id'], $entry['runner_deck_type']),
+                'corp_deck_title' => $entry['corp_deck_title'],
+                'corp_deck_identity_id' => $entry['corp_deck_identity'],
+                'corp_deck_identity_title' => $identities[$entry['corp_deck_identity']],
+                'corp_deck_url' => $this->deckUrl($entry['corp_deck_id'], $entry['corp_deck_type'])
+            ]);
+        }
+
+        return response()->json($result);
+    }
+
+    public function deckUrl($deckid, $type) {
+        switch ($type) {
+            case 1: return "https://netrunnerdb.com/en/decklist/".$deckid;
+            case 2: return "https://netrunnerdb.com/en/deck/view/".$deckid;
+            default: return "";
+        }
     }
 }
