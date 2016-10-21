@@ -47,8 +47,18 @@
                     <a name="nrtm"></a><strong>How do I import the tournament results from NRTM?</strong>
                 </p>
                 <p>
-                    <em>Tutorial coming soon.</em>
+                    <a href="https://itunes.apple.com/us/app/nrtm/id695468874?mt=8">NRTM</a> is a Netrunner tournament
+                    manager app. You will need the following to export tournament results:
                 </p>
+                <ul>
+                    <li>Get the identity names. Go to <strong>Settings</strong> >> <strong>Edit Names</strong> >>
+                        <strong>Download from NetrunnerDB.com</strong>.</li>
+                    <li>Add JSON export function. Go to <strong>Settings</strong> >> <strong>Data Export</strong> >>
+                        switch on <strong>Add JSON Data to Export</strong>.</li>
+                    <li>After the tournament is finished, go to <strong>More...</strong> >> <strong>Export</strong> >>>
+                        <img src="/img/icon_ios_upload.png"/> <strong>Export as Email / Dropbox</strong>.</li>
+                    <li>Upload the <strong>NRTM.json</strong> file you received when you conclude the tournament.</li>
+                </ul>
                 <p class="p-t-2">
                     <a name="more-questions"></a><strong>I have more questions or ideas.</strong>
                 </p>

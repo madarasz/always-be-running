@@ -52,7 +52,8 @@
                             <div class="col-md-6 col-xs-12 col-sm-height">
                                 <div class="card inside-full-height">
                                     <div class="card-block text-xs-center">
-                                        <div class="card-title">Import NRTM results</div>
+                                        <div class="card-title">Import results from NRTM.json</div>
+                                        <div class="p-b-3">Having trouble? Read the <a href="/faq#nrtm" target="_blank">F.A.Q</a></div>
                                         {!! Form::open(['url' => '', 'files' => true, 'id' => 'conclude-nrtm']) !!}
                                             {{--TODO: mandatory field--}}
                                             <input id="jsonresults" name="jsonresults" type="file" style="max-width: 100%;" required>
