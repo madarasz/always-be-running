@@ -31,7 +31,7 @@ function updatePopularIds(packname) {
         async: true,
         success: function (data) {
             data.ids.sort(tournamentShorters.byAllStanding);
-            addCardStat('#hot-id-runner', data.ids[0], data.allStandingCount)
+            addCardStat('#hot-id-runner', data.ids[0], data.allStandingCount, data.topStandingCount);
             // get corp
             $.ajax({
                 url: "http://www.knowthemeta.com/JSON/Tournament/corp/" + packname,
@@ -39,7 +39,7 @@ function updatePopularIds(packname) {
                 async: true,
                 success: function (data) {
                     data.ids.sort(tournamentShorters.byAllStanding);
-                    addCardStat('#hot-id-corp', data.ids[0], data.allStandingCount)
+                    addCardStat('#hot-id-corp', data.ids[0], data.allStandingCount, data.topStandingCount);
                 }
             });
         }
@@ -66,7 +66,7 @@ var tournamentShorters = {
 };
 
 // adds card with statistics
-function addCardStat(element, card, allCount) {
+function addCardStat(element, card, allCount, topCount) {
     $(element).append($('<a>', {
         href: 'http://www.knowthemeta.com/Cards/' + card.title + '/'
     }).append($('<img>', {
@@ -77,7 +77,7 @@ function addCardStat(element, card, allCount) {
     })), $('<div>', {
         class: 'spotlight-title',
         text: 'all: ' + percentageToString(card.allStandingCount / allCount) +
-        ' - top: ' + percentageToString(card.topStandingCount / allCount)
+        ' - top: ' + percentageToString(card.topStandingCount / topCount)
     }));
     $(element).removeClass('loader');
 }
