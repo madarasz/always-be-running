@@ -287,24 +287,26 @@
             @else
                 <p><em id="no-registered-players">no players yet</em></p>
             @endif
-            <div class="text-xs-center">
-                @if ($user)
-                    @if ($user_entry)
-                        @if ($user_entry->rank)
-                            <span class="btn btn-danger disabled" id="unregister-disabled"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</span><br/>
-                            <small><em>remove your claim first</em></small>
+            @if (!$tournament->concluded)
+                <div class="text-xs-center">
+                    @if ($user)
+                        @if ($user_entry)
+                            @if ($user_entry->rank)
+                                <span class="btn btn-danger disabled" id="unregister-disabled"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</span><br/>
+                                <small><em>remove your claim first</em></small>
+                            @else
+                                <a href="{{"/tournaments/$tournament->id/unregister"}}" class="btn btn-danger" id="unregister"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</a>
+                            @endif
                         @else
-                            <a href="{{"/tournaments/$tournament->id/unregister"}}" class="btn btn-danger" id="unregister"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</a>
+                            <a href="{{"/tournaments/$tournament->id/register"}}" class="btn btn-primary" id="register"><i class="fa fa-plus-circle" aria-hidden="true"></i> Register</a>
                         @endif
                     @else
-                        <a href="{{"/tournaments/$tournament->id/register"}}" class="btn btn-primary" id="register"><i class="fa fa-plus-circle" aria-hidden="true"></i> Register</a>
+                        <div class="text-xs-center p-b-1" id="suggest-login2">
+                            <a href="/oauth2/redirect">Login via NetrunnerDB</a> to register for this tournament.
+                        </div>
                     @endif
-                @else
-                    <div class="text-xs-center p-b-1" id="suggest-login2">
-                        <a href="/oauth2/redirect">Login via NetrunnerDB</a> to register for this tournament.
-                    </div>
-                @endif
-            </div>
+                </div>
+            @endif
             </div>
             {{--Comments--}}
             <div class="bracket">
