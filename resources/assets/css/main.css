@@ -46,6 +46,15 @@ body {
     padding-top: .4rem;
 }
 
+/*popover*/
+.my-popover {
+    cursor: pointer
+}
+.my-popover sup i {
+    color: #0275d8;
+}
+
+
 /*bracket style*/
 .bracket{
     position: relative;

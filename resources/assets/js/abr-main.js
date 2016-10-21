@@ -1,3 +1,8 @@
+// enable all popovers
+$(function () {
+    $('[data-toggle="popover"]').popover();
+});
+
 //overlay changes based on tournament type on tournament form
 function changeTournamentType() {
     //online event, disable location

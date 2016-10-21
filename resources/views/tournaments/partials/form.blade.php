@@ -14,6 +14,17 @@
                 <div class="col-md-6 col-xs-12">
                     <div class="form-group">
                         {!! Form::label('tournament_type_id', 'Type') !!}
+                        @include('partials.popover', ['direction' => 'right', 'content' =>
+                            'Confused about the official Netrunner tournament types?
+                            Read the <a href="https://www.fantasyflightgames.com/en/more/android-netrunner-organized-play/" target="_blank">FFG\'s Organized Play</a> page.
+                            The prize kit is a good way to tell which type you are hosting.
+                            <br/><br/>
+                            Additional tournament types:
+                            <ul>
+                                <li><strong>casual tournament:</strong></li>
+                                <li><strong>online event:</strong> You are playing via Jinteki.net/OCTGN. No location is required.</li>
+                                <li><strong>non-tournament:</strong> There are no rounds, points, rankings at the end. Just play.</li>
+                            </ul>'])
                         {!! Form::select('tournament_type_id', $tournament_types,
                             old('tournament_type_id', $tournament->tournament_type_id),
                             ['class' => 'form-control', 'onchange' => 'changeTournamentType()']) !!}
@@ -112,6 +123,9 @@
             {{--Location input--}}
             <div class="form-group">
                 {!! Form::label('location_search', 'Location') !!}
+                @include('partials.popover', ['direction' => 'top', 'content' =>
+                            'Use the input field to search for the location of the tournament.
+                            Providing the city is enough, but locating the store or address helps players.'])
                 {!! Form::text('location_search', null,
                     ['class' => 'form-control', 'placeholder' => 'search city, address or store name']) !!}
                 {{--Google map--}}
