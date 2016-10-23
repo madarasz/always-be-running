@@ -77,7 +77,17 @@ function renderInfoText(data) {
 function renderPlace(place, marker, map) {
     // If the place has a geometry, then present it on a map.
     if (place.geometry.viewport) {
-        map.fitBounds(place.geometry.viewport);
+        var bounds = new google.maps.LatLngBounds();
+        bounds.union(place.geometry.viewport);
+        var zoombounds = 0.002;
+        if (Math.abs(bounds.getNorthEast().lat() - bounds.getSouthWest().lat()) < zoombounds ) {
+            var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat() + zoombounds, bounds.getNorthEast().lng() + zoombounds);
+            var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat() - zoombounds, bounds.getNorthEast().lng() - zoombounds);
+            bounds.extend(extendPoint1);
+            bounds.extend(extendPoint2);
+        }
+        map.fitBounds(bounds);
+        //map.fitBounds(place.geometry.viewport);
     } else {
         map.setCenter(place.geometry.location);
         map.setZoom(15);
