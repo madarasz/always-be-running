@@ -158,4 +158,7 @@ function refreshAddressInfo(place) {
             document.getElementById('location_state').value = '';
         }
     }
+    //coordinates
+    document.getElementById('location_lat').value = place.geometry.location.lat();
+    document.getElementById('location_long').value = place.geometry.location.lng();
 }

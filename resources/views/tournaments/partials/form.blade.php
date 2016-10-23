@@ -146,6 +146,8 @@
                 {!! Form::hidden('location_store', old('location_store', $tournament->location_store), ['id' => 'location_store']) !!}
                 {!! Form::hidden('location_address', old('location_address', $tournament->location_address), ['id' => 'location_address']) !!}
                 {!! Form::hidden('location_place_id', old('location_place_id', $tournament->location_place_id), ['id' => 'location_place_id']) !!}
+                {!! Form::hidden('location_lat', old('location_lat', $tournament->location_lat), ['id' => 'location_lat']) !!}
+                {!! Form::hidden('location_long', old('location_long', $tournament->location_long), ['id' => 'location_long']) !!}
             </div>
         </div>
     </div>

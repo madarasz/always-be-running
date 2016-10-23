@@ -87,6 +87,8 @@ class TournamentRequest extends Request
             $input['location_city'] = '';
             $input['location_store'] = '';
             $input['location_address'] = '';
+            $input['location_lat'] = null;
+            $input['location_long'] = null;
         }
 
         if ($input['tournament_type_id'] == 8) // non-tournament has no conclusion
