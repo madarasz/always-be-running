@@ -5,14 +5,43 @@
     @include('partials.message')
     <div class="row">
         <div class="col-md-9 col-xs-12">
+            {{--<div class="row">--}}
+                {{--<div class="row-height">--}}
+                    {{--<div class="col-md-6 col-xs-12 col-sm-height">--}}
+                        {{--<div class="bracket inside-full-height">--}}
+                            {{--<h5>--}}
+                                {{--<i class="fa fa-star" aria-hidden="true"></i>--}}
+                                {{--Featured tournament--}}
+                            {{--</h5>--}}
+                            {{--<div class="featured-tournament">--}}
+                                {{--<a href="/tournaments/1">--}}
+                                    {{--<img src="http://i.imgur.com/GTcljf0m.jpg"/>--}}
+                                    {{--<div class="small-bold">--}}
+                                        {{--2016 Hungarian nationals</div>--}}
+                                {{--</a>--}}
+                                {{--<div class="small-text">--}}
+                                    {{--20 players<br/>--}}
+                                    {{--winner: Korrigan <img src="/img/ids/01033.png">&nbsp;<img src="/img/ids/06005.png">--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+
+                        {{--</div>--}}
+                    {{--</div>--}}
+                    {{--<div class="col-md-6 col-xs-12 col-sm-height">--}}
+                        {{--<div class="bracket inside-full-height">--}}
+                            {{--<h5>--}}
+                                {{--<i class="fa fa-info" aria-hidden="true"></i>--}}
+                                {{--News--}}
+                            {{--</h5>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
+                {{--</div>--}}
+            {{--</div>--}}
             {{--Upcoming--}}
             <div class="bracket">
                 @include('tournaments.partials.tabledin',
                 ['columns' => ['title', 'location', 'date', 'cardpool'],
                 'title' => 'Upcoming tournaments', 'id' => 'discover-table', 'icon' => 'fa-list-alt', 'loader' => true])
-                {{--<div class="p-t-1">--}}
-                    {{--<a href="/upcoming">More upcoming >>></a>--}}
-                {{--</div>--}}
             </div>
             {{--Results--}}
             <div class="bracket">
@@ -70,7 +99,7 @@
             <div class="bracket">
                 <h5>
                     <i class="fa fa-fire" aria-hidden="true"></i>
-                    Popular IDs - <span id="hot-packname" class="spotlight-title"></span><br/>
+                    Popular IDs - <span id="hot-packname" class="small-text"></span><br/>
                     <small>by <a href="http://www.knowthemeta.com/">Know the Meta</a></small>
                 </h5>
                 <div class="hot-id" id="hot-id-runner"></div>

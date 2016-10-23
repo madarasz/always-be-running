@@ -54,6 +54,15 @@ body {
     color: #0275d8;
 }
 
+/* featured tournament */
+.featured-tournament {
+    text-align: center;
+}
+.featured-tournament > a > img {
+    width: 100%;
+    height: auto;
+    padding: 0.5em 0;
+}
 
 /*bracket style*/
 .bracket{
@@ -159,10 +168,14 @@ input[type="checkbox"] {
     max-width: 70%;
     height: auto;
 }
-.spotlight-title {
+.small-text {
+     font-size: 80%;
+     font-style: italic;
+     line-height: 1.2;
+}
+.small-bold {
     font-size: 80%;
-    font-style: italic;
-    line-height: 1.2;
+    font-weight: bold;
 }
 
 /* 1st player ID in table */

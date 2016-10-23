@@ -65,6 +65,10 @@ var tournamentShorters = {
     }
 };
 
+var idShorter = function (a,b) {
+    return (b[1] - a[1]);
+};
+
 // adds card with statistics
 function addCardStat(element, card, allCount, topCount) {
     $(element).append($('<a>', {
@@ -72,10 +76,10 @@ function addCardStat(element, card, allCount, topCount) {
     }).append($('<img>', {
         src: imageURL(card.title)
     }), $('<div>', {
-        class: 'spotlight-title',
+        class: 'small-text',
         text: card.title
     })), $('<div>', {
-        class: 'spotlight-title',
+        class: 'small-text',
         text: 'all: ' + percentageToString(card.allStandingCount / allCount) +
         ' - top: ' + percentageToString(card.topStandingCount / topCount)
     }));
@@ -86,4 +90,46 @@ function addCardStat(element, card, allCount, topCount) {
 function imageURL(title) {
     return "http://www.knowthemeta.com/static/img/cards/netrunner-" +
         title.toLowerCase().replace(new RegExp(" ", 'g'), "-").replace(new RegExp("[^a-z0-9.-]", 'g'), "") + ".png";
+}
+
+// pie charts on IDs on tournament detail page
+function drawEntryStats(data, side, element, playersNum) {
+    var stat_results = [['ID', 'number of decks', 'faction']];
+    for (var i = 0, len = data.length; i < len; i++) {
+        var found = false;
+        for (var u = 1, len2 = stat_results.length; u < len2; u++) {
+            if (data[i][side+'_deck_identity_title'] === stat_results[u][0]) {
+                stat_results[u][1]++;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            stat_results.push([data[i][side+'_deck_identity_title'], 1, data[i][side+'_deck_identity_faction']]);
+        }
+
+    }
+
+    stat_results.sort(idShorter);
+
+    // adding unknown IDs
+    if (data.length < playersNum ) {
+        stat_results.push(['unknown', playersNum - data.length, 'unknown']);
+    }
+
+    var slices = [];
+    for (var u = 1, len2 = stat_results.length; u < len2; u++) {
+        slices.push({color: factionCodeToColor(stat_results[u][2])});
+    }
+
+    var chartdata = google.visualization.arrayToDataTable(stat_results);
+
+    var options = {
+        chartArea: {left:0,top:0,width:'100%',height:'100%'},
+        slices: slices
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById(element));
+
+    chart.draw(chartdata, options);
 }

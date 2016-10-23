@@ -93,3 +93,41 @@ function conclusionCheck() {
 function percentageToString(fraction) {
     return Math.round(fraction * 1000) / 10 + '%';
 }
+
+// convert faction_code to color code
+function factionCodeToColor(faction) {
+    switch (faction) {
+        case "shaper":
+            return "#7EAC39";
+            break;
+        case "anarch":
+            return "#AC5439";
+            break;
+        case "criminal":
+            return "#3962AC";
+            break;
+        case "haas-bioroid":
+            return "#702871";
+            break;
+        case "weyland-cons":
+            return "#1B654F";
+            break;
+        case "jinteki":
+            return "#8f1E0A";
+            break;
+        case "nbn":
+            return "#CB953A";
+            break;
+        case "apex":
+            return "darkred";
+            break;
+        case "sunny-lebeau":
+            return "black";
+            break;
+        case "adam":
+            return "darkgoldenrod";
+            break;
+        default:
+            return "grey";
+    }
+}

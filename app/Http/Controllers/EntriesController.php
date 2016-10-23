@@ -131,7 +131,9 @@ class EntriesController extends Controller
         }
 
         $result = [];
-        $identities = CardIdentity::get()->pluck('title', 'id')->all();
+        $identities = CardIdentity::get();
+        $identities_titles=$identities->pluck('title', 'id')->all();
+        $identities_factions=$identities->pluck('faction_code', 'id')->all();
         $entries = Entry::where('tournament_id', $id)->get()->all();
 
         foreach($entries as $entry) {
@@ -150,11 +152,13 @@ class EntriesController extends Controller
                 'rank_top' => $entry['rank_top'] ? $entry['rank_top'] : null,
                 'runner_deck_title' => $entry['runner_deck_title'],
                 'runner_deck_identity_id' => $entry['runner_deck_identity'],
-                'runner_deck_identity_title' => $identities[$entry['runner_deck_identity']],
+                'runner_deck_identity_title' => $identities_titles[$entry['runner_deck_identity']],
+                'runner_deck_identity_faction' => $identities_factions[$entry['runner_deck_identity']],
                 'runner_deck_url' => $this->deckUrl($entry['runner_deck_id'], $entry['runner_deck_type']),
                 'corp_deck_title' => $entry['corp_deck_title'],
                 'corp_deck_identity_id' => $entry['corp_deck_identity'],
-                'corp_deck_identity_title' => $identities[$entry['corp_deck_identity']],
+                'corp_deck_identity_title' => $identities_titles[$entry['corp_deck_identity']],
+                'corp_deck_identity_faction' => $identities_factions[$entry['corp_deck_identity']],
                 'corp_deck_url' => $this->deckUrl($entry['corp_deck_id'], $entry['corp_deck_type'])
             ]);
         }

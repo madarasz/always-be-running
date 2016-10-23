@@ -102,7 +102,10 @@
                     <i class="fa fa-bar-chart" aria-hidden="true"></i>
                     Statistics
                 </h5>
-                @include('partials.tobedeveloped')
+                <div id="stat-chart-runner"></div>
+                <div class="text-xs-center small-text p-b-1">runner IDs</div>
+                <div id="stat-chart-corp"></div>
+                <div class="text-xs-center small-text">corp IDs</div>
             </div>
             @endif
         </div>
@@ -318,6 +321,27 @@
             </div>
         </div>
     </div>
+    {{--Statistics chart--}}
+    @if ($tournament->concluded)
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
+            function drawChart() {
+
+                $.ajax({
+                    url: "/api/entries?id={{ $tournament->id }}",
+                    dataType: "json",
+                    async: true,
+                    success: function (data) {
+                        var playernum = parseInt('{{ $tournament->players_number }}');
+                        drawEntryStats(data, 'runner', 'stat-chart-runner', playernum);
+                        drawEntryStats(data, 'corp', 'stat-chart-corp', playernum);
+                    }
+                });
+            }
+        </script>
+    @endif
     {{--Google maps library--}}
     @if($tournament->tournament_type_id != 7)
         <script async defer
