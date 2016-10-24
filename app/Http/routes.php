@@ -8,6 +8,8 @@ Route::get('organize', 'PagesController@organize');
 Route::get('personal', 'PagesController@personal');
 Route::get('about', 'PagesController@about');
 Route::get('faq', 'PagesController@faq');
+Route::get('markdown', 'PagesController@markdown');
+
 Route::get('admin', 'AdminController@lister');
 Route::get('admin/identities/update', 'NetrunnerDBController@requestIdentities');
 Route::get('admin/cycles/update', 'NetrunnerDBController@requestCycles');

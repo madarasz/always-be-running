@@ -107,4 +107,9 @@ class PagesController extends Controller
     {
         return view('faq');
     }
+
+    public function markdown()
+    {
+        return view('markdown');
+    }
 }
