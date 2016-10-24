@@ -103,7 +103,7 @@
                 <div class="input-group">
                     {!! Form::text('date', old('date', $tournament->date),
                                  ['class' => 'form-control', 'required' => '', 'placeholder' => 'YYYY.MM.DD.']) !!}
-                    <div class="input-group-addon">
+                    <div class="input-group-addon" id="datepicker-icon">
                         <i class="fa fa-calendar" aria-hidden="true"></i>
                     </div>
                 </div>
@@ -181,6 +181,11 @@
         orientation: 'bottom',
         todayHighlight: true,
         weekStart: 1 //TODO: custom
+    });
+
+    // clicking icon should also show datepicker
+    $('#datepicker-icon').click(function(){
+        $('#date').trigger('focus.datepicker.data-api');
     });
 
     function initializeMap() {
