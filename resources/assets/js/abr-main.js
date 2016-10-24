@@ -57,21 +57,34 @@ function filterDiscover(default_filter, map, geocoder, infowindow) {
         stateSelector = document.getElementById('location_state'),
         country = countrySelector.options[parseInt(countrySelector.value)+1].innerHTML,
         state = stateSelector.options[parseInt(stateSelector.value)+1].innerHTML;
+    // type filtering
     if (type > 0) {
         filter = filter + '&type=' + type;
+        $('#filter-type').addClass('active-filter');
+    } else {
+        $('#filter-type').removeClass('active-filter');
     }
+    // country filtering
     if (country !== '---') {
         filter = filter + '&country=' + country;
+        $('#filter-country').addClass('active-filter');
         if (country === 'United States') {
-            $('#select_state').removeClass('hidden-xs-up');
+            $('#filter-state').removeClass('hidden-xs-up');
             $('#filter-spacer').addClass('hidden-xs-up');
+            // state filtering
             if (state !== '---') {
                 filter = filter + '&state=' + state;
+                $('#filter-state').addClass('active-filter');
+            } else {
+                $('#filter-state').removeClass('active-filter');
             }
         }
+    } else {
+        $('#filter-country').removeClass('active-filter');
     }
+    // state filter only visible for US
     if (country !== 'United States') {
-        $('#select_state').addClass('hidden-xs-up');
+        $('#filter-state').addClass('hidden-xs-up');
         $('#filter-spacer').removeClass('hidden-xs-up');
     }
 

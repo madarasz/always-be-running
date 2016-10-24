@@ -11,21 +11,21 @@
                         <h5 class="h5-filter"><i class="fa fa-filter" aria-hidden="true"></i> Filter</h5>
                     </div>
                     <div class="col-md-3" id="filter-spacer"></div>
-                    <div class="col-md-3 col-xs-12">
+                    <div class="col-md-3 col-xs-12" id="filter-type">
                         <div class="input-group">
                             {!! Form::label('tournament_type_id', 'Type:') !!}
                             {!! Form::select('tournament_type_id', $tournament_types,
                                 null, ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder, infowindow)', 'disabled' => '']) !!}
                         </div>
                     </div>
-                    <div class="col-md-3 col-xs-12">
+                    <div class="col-md-3 col-xs-12" id="filter-country">
                         <div class="input-group">
                             {!! Form::label('location_country', 'Country:') !!}
                             {!! Form::select('location_country', $countries, null,
                                 ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder, infowindow)', 'disabled' => '']) !!}
                         </div>
                     </div>
-                    <div class="col-md-3 col-xs-12 hidden-xs-up" id="select_state">
+                    <div class="col-md-3 col-xs-12 hidden-xs-up" id="filter-state">
                         <div class="input-group">
                             {!! Form::label('location_state', 'US State:') !!}
                             {!! Form::select('location_state', $states,

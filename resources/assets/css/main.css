@@ -325,6 +325,12 @@ input[type="checkbox"] {
     }
 }
 
+/*active filters*/
+.active-filter {
+    background-color: #a3ccff;
+    font-weight: bold;
+}
+
 /*responsive full height columns*/
 .row-height {
     display: table;
