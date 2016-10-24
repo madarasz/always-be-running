@@ -98,14 +98,14 @@ function drawEntryStats(data, side, element, playersNum) {
     for (var i = 0, len = data.length; i < len; i++) {
         var found = false;
         for (var u = 1, len2 = stat_results.length; u < len2; u++) {
-            if (data[i][side+'_deck_identity_title'] === stat_results[u][0]) {
+            if (shortenID(data[i][side+'_deck_identity_title']) === stat_results[u][0]) {
                 stat_results[u][1]++;
                 found = true;
                 break;
             }
         }
         if (!found) {
-            stat_results.push([data[i][side+'_deck_identity_title'], 1, data[i][side+'_deck_identity_faction']]);
+            stat_results.push([shortenID(data[i][side+'_deck_identity_title']), 1, data[i][side+'_deck_identity_faction']]);
         }
 
     }
@@ -132,4 +132,55 @@ function drawEntryStats(data, side, element, playersNum) {
     var chart = new google.visualization.PieChart(document.getElementById(element));
 
     chart.draw(chartdata, options);
+}
+
+// pie charts on IDs on tournament detail page
+function drawResultStats(element, data, threshold) {
+    var stat_results = [['ID', 'number of decks', 'faction']];
+    for (var i = 0, len = data.length; i < len; i++) {
+        stat_results.push([shortenID(data[i]['title']), data[i]['allStandingCount'], data[i]['faction']]);
+    }
+
+    var slices = [];
+    for (var u = 1, len2 = stat_results.length; u < len2; u++) {
+        slices.push({color: factionCodeToColor(stat_results[u][2])});
+    }
+
+    var chartdata = google.visualization.arrayToDataTable(stat_results);
+
+    var options = {
+        chartArea: {left:0,top:0,width:'100%',height:'100%'},
+        slices: slices,
+        sliceVisibilityThreshold: threshold
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById(element));
+
+    chart.draw(chartdata, options);
+}
+
+// ID pie charts on Results page
+function updateIdStats(packname) {
+    // update pack name
+    $('#stat-packname').text(packname);
+    // get runner
+    $.ajax({
+        url: "http://www.knowthemeta.com/JSON/Tournament/runner/" + packname,
+        dataType: "json",
+        async: true,
+        success: function (data) {
+            data.ids.sort(tournamentShorters.byAllStanding);
+            drawResultStats('stat-chart-runner', data.ids, 0.04);
+            // get corp
+            $.ajax({
+                url: "http://www.knowthemeta.com/JSON/Tournament/corp/" + packname,
+                dataType: "json",
+                async: true,
+                success: function (data) {
+                    data.ids.sort(tournamentShorters.byAllStanding);
+                    drawResultStats('stat-chart-corp', data.ids, 0.04);
+                }
+            });
+        }
+    });
 }

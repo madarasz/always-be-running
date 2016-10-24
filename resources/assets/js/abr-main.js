@@ -125,6 +125,9 @@ function factionCodeToColor(faction) {
         case "weyland-cons":
             return "#1B654F";
             break;
+        case "weyland-consortium":
+            return "#1B654F";
+            break;
         case "jinteki":
             return "#8f1E0A";
             break;
@@ -142,5 +145,25 @@ function factionCodeToColor(faction) {
             break;
         default:
             return "grey";
+    }
+}
+
+// short version of ID titles
+function shortenID(fulltitle) {
+    // when you need the part after ":"
+    var special_cases = ['Haas-Bioroid', 'Jinteki:', 'NBN', 'Weyland Consortium'],
+        found = false;
+
+    for (var i = 0, len = special_cases.length; i < len; i++) {
+        if (fulltitle.indexOf(special_cases[i]) !== -1) {
+            found = true;
+            break;
+        }
+    }
+
+    if (found) {
+        return fulltitle.split(':')[1]; // after :
+    } else {
+        return fulltitle.split(':')[0]; // before :
     }
 }
