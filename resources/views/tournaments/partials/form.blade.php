@@ -41,7 +41,7 @@
             </div>
             {{--Mandatory decklist--}}
             <div class="form-group">
-                {!! Form::checkbox('decklist', null, in_array(old('decklist', $tournament->decklist), [1, 'on'], true), ['id' => 'decklist']) !!}
+                {!! Form::checkbox('decklist', null, in_array(old('decklist', $tournament->decklist), ['1', 'on'], true), ['id' => 'decklist']) !!}
                 {!! Form::label('decklist', 'decklist is mandatory') !!}
             </div>
             {{--Contact--}}
@@ -68,7 +68,7 @@
                 Conclusion
                 <small class="form-group text-xs-center">
                     -
-                    {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), [1, 'on'], true),
+                    {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), ['1', 'on'], true),
                         ['onclick' => 'conclusionCheck()', 'id' => 'concluded']) !!}
                     {!! Form::label('concluded', 'tournament has already ended') !!}
                 </small>
