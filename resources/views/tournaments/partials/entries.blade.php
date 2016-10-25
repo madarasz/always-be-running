@@ -1,5 +1,5 @@
 {{--table of entries for tournament details page--}}
-<table class="table table-sm table-striped" id="{{ $id }}">
+<table class="table table-sm table-striped abr-table" id="{{ $id }}">
     <thead>
         <th class="text-right">rank</th>
         <th>player</th>

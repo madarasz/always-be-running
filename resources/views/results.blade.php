@@ -5,7 +5,7 @@
     @include('partials.message')
     <div class="row">
         {{--Results table--}}
-        <div class="col-md-8 col-sm-12 push-md-4">
+        <div class="col-md-8 push-md-4 col-lg-9 push-lg-3 col-sm-12">
             <div class="bracket">
                 @include('tournaments.partials.tabledin',
                     ['columns' => ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims' ],
@@ -13,7 +13,7 @@
                     'subtitle' => 'only concluded tournaments'])
             </div>
         </div>
-        <div class="col-md-4 col-sm-12 pull-md-8">
+        <div class="col-md-4 pull-md-8 col-lg-3 pull-lg-9 col-col-sm-12">
             {{--Filters--}}
             <div class="bracket">
                 <h5><i class="fa fa-filter" aria-hidden="true"></i> Filter</h5>

@@ -4,6 +4,11 @@ body {
     padding-bottom: 20px;
 }
 
+/*because valign middle*/
+table.abr-table tr td {
+    vertical-align: middle;
+}
+
 /*navbar*/
 .navbar-toggler {
     color: #fff;
