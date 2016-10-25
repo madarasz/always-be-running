@@ -4,7 +4,16 @@
     <h4 class="page-header">Results</h4>
     @include('partials.message')
     <div class="row">
-        <div class="col-md-3 col-xs-12">
+        {{--Results table--}}
+        <div class="col-md-9 col-xs-12 push-md-3">
+            <div class="bracket">
+                @include('tournaments.partials.tabledin',
+                    ['columns' => ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims' ],
+                    'title' => 'Tournament results from the past', 'id' => 'results', 'icon' => 'fa-list-alt',
+                    'subtitle' => 'only concluded tournaments'])
+            </div>
+        </div>
+        <div class="col-md-3 col-xs-12 pull-md-9">
             {{--Filters--}}
             <div class="bracket">
                 <h5><i class="fa fa-filter" aria-hidden="true"></i> Filter</h5>
@@ -47,21 +56,13 @@
                 </div>
             </div>
         </div>
-        {{--Results table--}}
-        <div class="col-md-9 col-xs-12">
-            <div class="bracket">
-                @include('tournaments.partials.tabledin',
-                    ['columns' => ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims' ],
-                    'title' => 'Tournament results from the past', 'id' => 'results', 'icon' => 'fa-list-alt',
-                    'subtitle' => 'only concluded tournaments'])
-            </div>
-        </div>
     </div>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
         var defaultFilter = "approved=1&concluded=1&end={{ $nowdate }}",
                 packlist = [],
-                currentPack = "";
+                currentPack = "",
+                runnerIDs = [], corpIDs = [];
 
         // table entries
         getTournamentData(defaultFilter, function(data) {
@@ -80,6 +81,12 @@
                 updateIdStats(currentPack);
             });
         }
+
+        // redraw charts on window resize
+        $(window).resize(function(){
+            drawResultStats('stat-chart-runner', runnerIDs, 0.04);
+            drawResultStats('stat-chart-corp', corpIDs, 0.04);
+        });
     </script>
 @stop
 

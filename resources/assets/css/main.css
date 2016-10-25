@@ -455,3 +455,14 @@ blockquote {
         height: 100%;
     }
 }
+/*responsive linebreaks*/
+@media (min-width: 768px) and (max-width: 1199px) {
+    .line-breaker {
+        display: block;
+    }
+}
+@media (max-width: 575px) {
+    .line-breaker {
+        display: block;
+    }
+}

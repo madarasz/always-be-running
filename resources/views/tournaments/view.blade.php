@@ -327,22 +327,29 @@
     @if ($tournament->concluded)
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <script type="text/javascript">
+            var chartData, playernum = parseInt('{{ $tournament->players_number }}');
             google.charts.load('current', {'packages':['corechart']});
             google.charts.setOnLoadCallback(drawChart);
-            function drawChart() {
 
+            function drawChart() {
                 $.ajax({
                     url: "/api/entries?id={{ $tournament->id }}",
                     dataType: "json",
                     async: true,
                     success: function (data) {
-                        var playernum = parseInt('{{ $tournament->players_number }}');
                         $('.stat-load').addClass('hidden-xs-up');
                         drawEntryStats(data, 'runner', 'stat-chart-runner', playernum);
                         drawEntryStats(data, 'corp', 'stat-chart-corp', playernum);
+                        chartData = data;
                     }
                 });
             }
+
+            // redraw charts on window resize
+            $(window).resize(function(){
+                drawEntryStats(chartData, 'runner', 'stat-chart-runner', playernum);
+                drawEntryStats(chartData, 'corp', 'stat-chart-corp', playernum);
+            });
         </script>
     @endif
     {{--Google maps library--}}

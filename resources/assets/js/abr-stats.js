@@ -174,6 +174,7 @@ function updateIdStats(packname) {
             $('.stat-error').addClass('hidden-xs-up');
             $('.stat-chart').removeClass('hidden-xs-up');
             data.ids.sort(tournamentShorters.byAllStanding);
+            runnerIDs = data.ids;
             drawResultStats('stat-chart-runner', data.ids, 0.04);
             // get corp
             $.ajax({
@@ -182,6 +183,7 @@ function updateIdStats(packname) {
                 async: true,
                 success: function (data) {
                     data.ids.sort(tournamentShorters.byAllStanding);
+                    corpIDs = data.ids;
                     drawResultStats('stat-chart-corp', data.ids, 0.04);
                     $('.stat-chart').removeClass('hidden-xs-up');
                     $('.stat-load').addClass('hidden-xs-up');

@@ -24,9 +24,13 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
         }
         // date
         if ($.inArray('date', columns) > -1) {
-            newrow.append($('<td>', {
-                text: element.date
-            }));
+            newrow.append($('<td>').append($('<span>', {
+                text: element.date.substring(0, 5),
+                class: 'line-breaker'
+            }), $('<span>', {
+                text: element.date.substring(5),
+                class: 'line-breaker'
+            })));
         }
         // location
         if ($.inArray('location', columns) > -1) {
