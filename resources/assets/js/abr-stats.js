@@ -23,7 +23,7 @@ function getKTMDataPacks(callback) {
 // update the popular IDs box on the homepage
 function updatePopularIds(packname) {
     // update pack name
-    $('#hot-packname').text(packname);
+    $('#hot-packname').html(packname.replace(new RegExp(' ', 'g'), '&nbsp;'));
     // get runner
     $.ajax({
         url: "http://www.knowthemeta.com/JSON/Tournament/runner/" + packname,
@@ -162,7 +162,7 @@ function drawResultStats(element, data, threshold) {
 // ID pie charts on Results page
 function updateIdStats(packname) {
     // update pack name
-    $('#stat-packname').text(packname);
+    $('#stat-packname').html(packname.replace(new RegExp(' ', 'g'), '&nbsp;'));
     $('.stat-chart').addClass('hidden-xs-up');
     $('.stat-load').removeClass('hidden-xs-up');
     // get runner

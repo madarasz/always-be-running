@@ -27,22 +27,24 @@
                 {!! Form::close() !!}
             </div>
             {{--Stats--}}
-            <div class="bracket text-xs-center">
+            <div class="bracket">
                 <h5>
                     <i class="fa fa-bar-chart" aria-hidden="true"></i>
                     Statistics - <span id="stat-packname" class="small-text"></span><br/>
                     <small>provided by <a href="http://www.knowthemeta.com">KnowTheMeta</a></small>
                 </h5>
-                {{--runner ID chart--}}
-                <div class="loader-chart stat-load">loading</div>
-                <div id="stat-chart-runner" class="stat-chart"></div>
-                <div class="small-text p-b-1 hidden-xs-up stat-error">no stats available</div>
-                <div class="small-text p-b-1">runner IDs</div>
-                {{--corp ID chart--}}
-                <div class="loader-chart stat-load">loading</div>
-                <div id="stat-chart-corp" class="stat-chart"></div>
-                <div class="small-text p-b-1 hidden-xs-up stat-error">no stats available</div>
-                <div class="small-text">corp IDs</div>
+                <div class="text-xs-center">
+                    {{--runner ID chart--}}
+                    <div class="loader-chart stat-load">loading</div>
+                    <div id="stat-chart-runner" class="stat-chart"></div>
+                    <div class="small-text p-b-1 hidden-xs-up stat-error">no stats available</div>
+                    <div class="small-text p-b-1">runner IDs</div>
+                    {{--corp ID chart--}}
+                    <div class="loader-chart stat-load">loading</div>
+                    <div id="stat-chart-corp" class="stat-chart"></div>
+                    <div class="small-text p-b-1 hidden-xs-up stat-error">no stats available</div>
+                    <div class="small-text">corp IDs</div>
+                </div>
             </div>
         </div>
         {{--Results table--}}
