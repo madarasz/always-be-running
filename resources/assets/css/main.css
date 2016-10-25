@@ -165,7 +165,8 @@ input[type="checkbox"] {
     padding-top: 1em;
 }
 .hot-id a img {
-    max-width: 70%;
+    width: 70%;
+    max-width: 155px;
     height: auto;
 }
 .small-text {

@@ -165,13 +165,13 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
         if ($.inArray('players', columns) > -1) {
             newrow.append($('<td>', {
                 text: element.concluded ? element.players_count : element.registration_count,
-                'class': 'text-xs-center hidden-sm-down'
+                'class': 'text-xs-center hidden-xs-down'
             }));
         }
         // claims
         if ($.inArray('claims', columns) > -1) {
             cell = $('<td>', {
-                'class': 'text-xs-center hidden-sm-down'
+                'class': 'text-xs-center hidden-xs-down'
             }).appendTo(newrow);
 
             if (element.claim_conflict) {

@@ -9,10 +9,10 @@
             <img src="/img/logo_small.png" class="navbar-brand-image"/>
             Always be Running.net
         </a>
-        <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#navbar-collapse-1">
+        <button class="navbar-toggler hidden-md-up pull-right" type="button" data-toggle="collapse" data-target="#navbar-collapse-1">
             &#9776;
         </button>
-        <div class="collapse navbar-toggleable-xs" id="navbar-collapse-1">
+        <div class="collapse navbar-toggleable-sm" id="navbar-collapse-1">
             <ul class="nav navbar-nav pull-left">
                 <li class="nav-item"><a class="nav-link" href="/upcoming">Upcoming</a></li>
                 <li class="nav-item"><a class="nav-link" href="/results">Results</a></li>

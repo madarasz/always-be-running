@@ -102,8 +102,14 @@
                     Popular IDs - <span id="hot-packname" class="small-text"></span><br/>
                     <small>by <a href="http://www.knowthemeta.com/">Know the Meta</a></small>
                 </h5>
-                <div class="hot-id" id="hot-id-runner"></div>
-                <div class="hot-id" id="hot-id-corp"></div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-12">
+                        <div class="hot-id" id="hot-id-runner"></div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-12">
+                        <div class="hot-id" id="hot-id-corp"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

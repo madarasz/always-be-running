@@ -76,7 +76,7 @@
                 <td class="text-right">
                     {!! Form::open(['method' => 'DELETE', 'url' => "/entries/$entry->id"]) !!}
                         @if ($user_entry && $entry->user && count($entry) && $entry->user == $user_entry->user)
-                            {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove my claim', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}
+                            {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove<span class="hidden-md-down"> my claim</span>', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}
                         @else
                             {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove claim', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}
                         @endif

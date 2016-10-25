@@ -35,6 +35,13 @@ $font-family-sans-serif: 'Titillium Web' !default;
 // bootstrap v3
 //@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
+$container-max-widths: (
+        sm: 720px,
+        md: 959px,
+        lg: 960px,
+        xl: 1140px
+);
+
 // bootstrap v4-alpha
 $enable-flex: true;
 @import "node_modules/bootstrap/scss/bootstrap";
