@@ -4,6 +4,13 @@ body {
     padding-bottom: 20px;
 }
 
+/* strange Android css bugfix */
+@media (max-width: 991px) {
+    footer {
+        font-size: 14px;
+    }
+}
+
 /*because valign middle*/
 table.abr-table tr td {
     vertical-align: middle;
