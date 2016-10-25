@@ -163,12 +163,16 @@ function drawResultStats(element, data, threshold) {
 function updateIdStats(packname) {
     // update pack name
     $('#stat-packname').text(packname);
+    $('.stat-chart').addClass('hidden-xs-up');
+    $('.stat-load').removeClass('hidden-xs-up');
     // get runner
     $.ajax({
         url: "http://www.knowthemeta.com/JSON/Tournament/runner/" + packname,
         dataType: "json",
         async: true,
         success: function (data) {
+            $('.stat-error').addClass('hidden-xs-up');
+            $('.stat-chart').removeClass('hidden-xs-up');
             data.ids.sort(tournamentShorters.byAllStanding);
             drawResultStats('stat-chart-runner', data.ids, 0.04);
             // get corp
@@ -179,8 +183,61 @@ function updateIdStats(packname) {
                 success: function (data) {
                     data.ids.sort(tournamentShorters.byAllStanding);
                     drawResultStats('stat-chart-corp', data.ids, 0.04);
+                    $('.stat-chart').removeClass('hidden-xs-up');
+                    $('.stat-load').addClass('hidden-xs-up');
                 }
             });
+        },
+        // stat missing
+        error: function () {
+            $('.stat-error').removeClass('hidden-xs-up');
+            $('.stat-load').addClass('hidden-xs-up');
+        }
+    });
+}
+
+
+// update filter settings for the Results page
+function filterResults(filter, packlist) {
+    var type = document.getElementById('tournament_type_id').value,
+        cardpool = document.getElementById('cardpool').value,
+        cardpoolName = $("#cardpool option:selected").text(),
+        countrySelector = document.getElementById('location_country'),
+        country = countrySelector.options[parseInt(countrySelector.value)+1].innerHTML;
+    // type filtering
+    if (type > 0) {
+        filter = filter + '&type=' + type;
+        $('#filter-type').addClass('active-filter');
+    } else {
+        $('#filter-type').removeClass('active-filter');
+    }
+    // country filtering
+    if (country !== '---') {
+        filter = filter + '&country=' + country;
+        $('#filter-country').addClass('active-filter');
+    } else {
+        $('#filter-country').removeClass('active-filter');
+    }
+    // cardpool filtering
+    if (cardpool != -1) {
+        filter = filter + '&cardpool=' + cardpool;
+        $('#filter-cardpool').addClass('active-filter');
+    } else {
+        $('#filter-cardpool').removeClass('active-filter');
+    }
+
+    $('.loader').removeClass('hidden-xs-up');
+    $('#results').find('tbody').empty();
+    getTournamentData(filter, function(data) {
+        $('.loader').addClass('hidden-xs-up');
+        updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', data);
+        if (currentPack !== cardpoolName) {
+            currentPack = cardpoolName;
+            // no filter is statistics for latest pack
+            if (cardpoolName === '---') {
+                cardpoolName = packlist[packlist.length-1];
+            }
+            updateIdStats(cardpoolName);
         }
     });
 }

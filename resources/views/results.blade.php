@@ -5,38 +5,47 @@
     @include('partials.message')
     <div class="row">
         <div class="col-md-3 col-xs-12">
+            {{--Filters--}}
             <div class="bracket">
                 <h5><i class="fa fa-filter" aria-hidden="true"></i> Filter</h5>
                 {!! Form::open(['url' => '/tournaments']) !!}
-                    <div class="form-group">
+                    <div class="form-group" id="filter-cardpool">
                         {!! Form::label('cardpool', 'Cardpool') !!}
                         {!! Form::select('cardpool', $tournament_cardpools,
-                            null, ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder)', 'disabled' => '']) !!}
+                            null, ['class' => 'form-control filter', 'onchange' => 'filterResults(defaultFilter, packlist)', 'disabled' => '']) !!}
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="filter-type">
                         {!! Form::label('tournament_type_id', 'Type') !!}
                         {!! Form::select('tournament_type_id', $tournament_types,
-                            null, ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder)', 'disabled' => '']) !!}
+                            null, ['class' => 'form-control filter', 'onchange' => 'filterResults(defaultFilter, packlist)', 'disabled' => '']) !!}
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="filter-country">
                         {!! Form::label('location_country', 'Country') !!}
                         {!! Form::select('location_country', $countries, null,
-                            ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder)', 'disabled' => '']) !!}
+                            ['class' => 'form-control filter', 'onchange' => 'filterResults(defaultFilter, packlist)', 'disabled' => '']) !!}
                     </div>
                 {!! Form::close() !!}
             </div>
-            <div class="bracket">
+            {{--Stats--}}
+            <div class="bracket text-xs-center">
                 <h5>
                     <i class="fa fa-bar-chart" aria-hidden="true"></i>
                     Statistics - <span id="stat-packname" class="small-text"></span><br/>
                     <small>provided by <a href="http://www.knowthemeta.com">KnowTheMeta</a></small>
                 </h5>
-                <div id="stat-chart-runner"></div>
-                <div class="text-xs-center small-text p-b-1">runner IDs</div>
-                <div id="stat-chart-corp"></div>
-                <div class="text-xs-center small-text">corp IDs</div>
+                {{--runner ID chart--}}
+                <div class="loader-chart stat-load">loading</div>
+                <div id="stat-chart-runner" class="stat-chart"></div>
+                <div class="small-text p-b-1 hidden-xs-up stat-error">no stats available</div>
+                <div class="small-text p-b-1">runner IDs</div>
+                {{--corp ID chart--}}
+                <div class="loader-chart stat-load">loading</div>
+                <div id="stat-chart-corp" class="stat-chart"></div>
+                <div class="small-text p-b-1 hidden-xs-up stat-error">no stats available</div>
+                <div class="small-text">corp IDs</div>
             </div>
         </div>
+        {{--Results table--}}
         <div class="col-md-9 col-xs-12">
             <div class="bracket">
                 @include('tournaments.partials.tabledin',
@@ -48,19 +57,25 @@
     </div>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
+        var defaultFilter = "approved=1&concluded=1&end={{ $nowdate }}",
+                packlist = [],
+                currentPack = "";
+
         // table entries
-        getTournamentData("approved=1&concluded=1&end={{ $nowdate }}", function(data) {
+        getTournamentData(defaultFilter, function(data) {
             updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', data);
             $('.filter').prop("disabled", false);
         });
 
         // statistics charts
-        google.charts.setOnLoadCallback(drawCharts);
+        google.charts.setOnLoadCallback(initCharts);
         google.charts.load('current', {'packages':['corechart']});
-        function drawCharts() {
+        function initCharts() {
             // KtM get packs
             getKTMDataPacks(function (packs) {
-                updateIdStats(packs[packs.length-1]);
+                packlist = packs;
+                currentPack = packs[packs.length-1];
+                updateIdStats(currentPack);
             });
         }
     </script>

@@ -50,6 +50,7 @@ function updateDiscover(filter, map, geocoder) {
     });
 }
 
+// update filter settings for the Upcoming page
 function filterDiscover(default_filter, map, geocoder, infowindow) {
     var filter = default_filter,
         type = document.getElementById('tournament_type_id').value,

@@ -310,6 +310,35 @@ input[type="checkbox"] {
     font-weight: bold;
     font-style: normal;
 }
+.loader-chart {
+    color: #000;
+    opacity: 0.8;
+    width: 100%;
+    position: relative;
+    text-align: center;
+    margin: 1rem 0;
+    font-style: italic;
+}
+.loader-chart:before {
+    content: '[';
+    display: inline-block;
+    -webkit-animation: pulse 0.4s alternate infinite ease-in-out;
+    animation: pulse 0.4s alternate infinite ease-in-out;
+    margin-right: 5px;
+    font-weight: bold;
+    font-style: normal;
+}
+.loader-chart:after {
+    content: ']';
+    display: inline-block;
+    -webkit-animation: pulse 0.4s alternate infinite ease-in-out;
+    animation: pulse 0.4s alternate infinite ease-in-out;
+    -webkit-animation-delay: 0.4s;
+    animation-delay: 0.4s;
+    margin-left: 5px;
+    font-weight: bold;
+    font-style: normal;
+}
 @-webkit-keyframes pulse {
     to {
         -webkit-transform: scale(0.8);

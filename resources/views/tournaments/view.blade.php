@@ -102,8 +102,10 @@
                     <i class="fa fa-bar-chart" aria-hidden="true"></i>
                     Statistics
                 </h5>
+                <div class="loader-chart stat-load">loading</div>
                 <div id="stat-chart-runner"></div>
                 <div class="text-xs-center small-text p-b-1">runner IDs</div>
+                <div class="loader-chart stat-load">loading</div>
                 <div id="stat-chart-corp"></div>
                 <div class="text-xs-center small-text">corp IDs</div>
             </div>
@@ -335,6 +337,7 @@
                     async: true,
                     success: function (data) {
                         var playernum = parseInt('{{ $tournament->players_number }}');
+                        $('.stat-load').addClass('hidden-xs-up');
                         drawEntryStats(data, 'runner', 'stat-chart-runner', playernum);
                         drawEntryStats(data, 'corp', 'stat-chart-corp', playernum);
                     }
