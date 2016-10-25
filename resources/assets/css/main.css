@@ -202,6 +202,10 @@ input[type="checkbox"] {
     font-size: 80%;
     font-style: italic;
 }
+.integration img {
+    max-width: 100%;
+    height: auto;
+}
 
 /*import user in entries table*/
 .import-user {
