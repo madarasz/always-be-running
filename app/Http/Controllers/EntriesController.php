@@ -136,7 +136,7 @@ class EntriesController extends Controller
         $identities = CardIdentity::get();
         $identities_titles=$identities->pluck('title', 'id')->all();
         $identities_factions=$identities->pluck('faction_code', 'id')->all();
-        $entries = Entry::where('tournament_id', $id)->get()->all();
+        $entries = Entry::where('tournament_id', $id)->where('runner_deck_identity', '!=', '')->get()->all();
 
         foreach($entries as $entry) {
 
@@ -146,7 +146,7 @@ class EntriesController extends Controller
                 $user_name = null;
             }
 
-            $this_entry = [
+            array_push($result, [
                 'user_id' => $entry['user'],
                 'user_name' => $user_name,
                 'user_import_name' => $entry['import_username'],
@@ -155,20 +155,14 @@ class EntriesController extends Controller
                 'runner_deck_title' => $entry['runner_deck_title'],
                 'runner_deck_identity_id' => $entry['runner_deck_identity'],
                 'runner_deck_url' => $this->deckUrl($entry['runner_deck_id'], $entry['runner_deck_type']),
+                'runner_deck_identity_title' => $identities_titles[$entry['runner_deck_identity']],
+                'runner_deck_identity_faction' => $identities_factions[$entry['runner_deck_identity']],
                 'corp_deck_title' => $entry['corp_deck_title'],
                 'corp_deck_identity_id' => $entry['corp_deck_identity'],
-                'corp_deck_url' => $this->deckUrl($entry['corp_deck_id'], $entry['corp_deck_type'])
-            ];
-
-            // if deck IDs are defined
-            if (strlen($entry['runner_deck_identity']) > 0 && strlen($entry['corp_deck_identity']) > 0) {
-                $this_entry['runner_deck_identity_title'] = $identities_titles[$entry['runner_deck_identity']];
-                $this_entry['runner_deck_identity_faction'] = $identities_factions[$entry['runner_deck_identity']];
-                $this_entry['corp_deck_identity_title'] = $identities_titles[$entry['corp_deck_identity']];
-                $this_entry['corp_deck_identity_faction'] = $identities_factions[$entry['corp_deck_identity']];
-            }
-
-            array_push($result, $this_entry);
+                'corp_deck_url' => $this->deckUrl($entry['corp_deck_id'], $entry['corp_deck_type']),
+                'corp_deck_identity_title' => $identities_titles[$entry['corp_deck_identity']],
+                'corp_deck_identity_faction' => $identities_factions[$entry['corp_deck_identity']]
+            ]);
         }
 
         return response()->json($result);
