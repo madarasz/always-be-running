@@ -14,7 +14,7 @@ class TournamentTypeSeeder extends Seeder
         DB::table('tournament_types')->insert(
             array(
                 array(
-                    'type_name' => 'seasonal tournament',
+                    'type_name' => 'GNK / seasonal tournament',
                     'order' => 1
                 ),
                 array(
@@ -34,7 +34,7 @@ class TournamentTypeSeeder extends Seeder
                     'order' => 5
                 ),
                 array(
-                    'type_name' => 'casual tournament',
+                    'type_name' => 'casual / non-FFG tournament',
                     'order' => 6
                 ),
                 array(
