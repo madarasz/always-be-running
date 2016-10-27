@@ -49,10 +49,10 @@ class EntriesController extends Controller
         // getting registration for tournament or imported entry
         $reg_entry = Entry::where('user', $user_id)->where('tournament_id', $id)->first();
         $import_entry = Entry::where('tournament_id', $id)->whereNull('user')->where(function($q) use ($request) {
-                $q->where('rank', $request->rank)->where('rank_top', $request->rank_top);
+                $q->where('rank', $request->rank)->orWhere('rank_top', $request->rank_top);
             })->first();
 
-        // merging with import entry
+	// merging with import entry
         if (!is_null($import_entry) &&     // if there is an import entry
             $import_entry->runner_deck_identity == $runner_deck['identity'] &&   // and IDs match
             $import_entry->corp_deck_identity == $corp_deck['identity'] &&
