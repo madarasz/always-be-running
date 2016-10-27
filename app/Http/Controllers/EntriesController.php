@@ -102,6 +102,8 @@ class EntriesController extends Controller
             $entry->runner_deck_id = null;
             $entry->corp_deck_title = '';
             $entry->runner_deck_title = '';
+            $entry->runner_deck_identity = '';
+            $entry->corp_deck_identity = '';
             $entry->save();
         }
 
