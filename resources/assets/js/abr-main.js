@@ -151,6 +151,10 @@ function factionCodeToColor(faction) {
 
 // short version of ID titles
 function shortenID(fulltitle) {
+    if (!fulltitle || fulltitle.length == 0) {
+        return "unknown";
+    }
+
     // when you need the part after ":"
     var special_cases = ['Haas-Bioroid', 'Jinteki:', 'NBN', 'Weyland Consortium'],
         found = false;
