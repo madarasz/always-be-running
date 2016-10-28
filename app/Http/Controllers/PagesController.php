@@ -42,7 +42,8 @@ class PagesController extends Controller
         $tournament_types = [-1 => '---'] + $tournament_types;
         $countries = [-1 => '---'] + $countries;
         $states = [-1 => '---'] + $states;
-        return view('upcoming', compact('message', 'nowdate', 'tournament_types', 'countries', 'states'));
+        $page_section = 'upcoming';
+        return view('upcoming', compact('message', 'nowdate', 'tournament_types', 'countries', 'states', 'page_section'));
     }
 
     public function results(Request $request)
@@ -57,7 +58,8 @@ class PagesController extends Controller
         $countries = [-1 => '---'] + $countries;
         $tournament_cardpools = [-1 => '---'] + $tournament_cardpools;
         $message = session()->has('message') ? session('message') : '';
-        return view('results', compact('registered', 'message', 'nowdate', 'tournament_types', 'countries', 'tournament_cardpools'));
+        $page_section = 'results';
+        return view('results', compact('registered', 'message', 'nowdate', 'tournament_types', 'countries', 'tournament_cardpools', 'page_section'));
     }
 
     /**
@@ -73,7 +75,8 @@ class PagesController extends Controller
         $this->authorize('logged_in', Tournament::class, $request->user());
         $user = $request->user()->id;
         $message = session()->has('message') ? session('message') : '';
-        return view('organize', compact('user', 'message'));
+        $page_section = 'organize';
+        return view('organize', compact('user', 'message', 'page_section'));
     }
 
     public function personal(Request $request)
@@ -84,7 +87,8 @@ class PagesController extends Controller
         $message = session()->has('message') ? session('message') : '';
         $user = $request->user()->id;
         $username = $request->user()->name;
-        return view('personal', compact('message', 'user', 'username'));
+        $page_section = 'personal';
+        return view('personal', compact('message', 'user', 'username', 'page_section'));
     }
 
     public function about()

@@ -43,8 +43,9 @@ class AdminController extends Controller
             $last_pack = '';
         }
 
+        $page_section = 'admin';
         return view('admin', compact('user', 'to_approve', 'deleted', 'nowdate', 'message',
-            'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles'));
+            'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles', 'page_section'));
     }
 
     public function approveTournament($id, Request $request)

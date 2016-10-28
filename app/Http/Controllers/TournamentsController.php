@@ -45,7 +45,8 @@ class TournamentsController extends Controller
             $tournament->cardpool_id = key(array_slice($cardpools,1,1));
         }
 
-        return view('tournaments.create', compact('tournament_types', 'tournament', 'cardpools'));
+        $page_section = 'organize';
+        return view('tournaments.create', compact('tournament_types', 'tournament', 'cardpools', 'page_section'));
     }
 
     /**
@@ -60,7 +61,8 @@ class TournamentsController extends Controller
         $this->authorize('own', $tournament, $request->user());
         $tournament_types = TournamentType::pluck('type_name', 'id')->all();
         $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
-        return view('tournaments.edit', compact('tournament', 'id', 'tournament_types', 'cardpools'));
+        $page_section = 'organize';
+        return view('tournaments.edit', compact('tournament', 'id', 'tournament_types', 'cardpools', 'page_section'));
     }
 
     /**
@@ -163,7 +165,7 @@ class TournamentsController extends Controller
 
         if (strpos($request->headers->get('referer'), 'tournaments') !== false) {
             $user = $request->user()->id;
-            return view('organize', ['user' => $user])->with('message', 'Tournament deleted.');    // deleted from tournament details page
+            return view('organize', ['user' => $user, 'page_section' => 'organize'])->with('message', 'Tournament deleted.');    // deleted from tournament details page
         } else {
             return back()->with('message', 'Tournament deleted.');  // deleted from Organize or Admin page
         }

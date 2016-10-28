@@ -23,6 +23,12 @@ table.abr-table tr td {
 .bg-inverse {
     background-color: #222 !important;
 }
+.nav-item.active {
+    margin: -0.5rem;
+    padding: 0.5rem;
+    background-color: #3894b7;
+    background-image: linear-gradient(to bottom,#3894b7,#317f9e 100%);
+}
 
 /*labels*/
 .label {
