@@ -21,7 +21,7 @@
                             <br/><br/>
                             Additional tournament types:
                             <ul>
-                                <li><strong>casual tournament:</strong></li>
+                                <li><strong>non-FFG tournament:</strong> a tournament not supported by FFG or its prize pack / casual</strong></li>
                                 <li><strong>online event:</strong> You are playing via Jinteki.net/OCTGN. No location is required.</li>
                                 <li><strong>non-tournament:</strong> There are no rounds, points, rankings at the end. Just play.</li>
                             </ul>'])
