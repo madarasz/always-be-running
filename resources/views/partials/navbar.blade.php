@@ -14,7 +14,7 @@
         </button>
         <div class="collapse navbar-toggleable-sm" id="navbar-collapse-1">
             <ul class="nav navbar-nav pull-left">
-                <li class="nav-item{{ @$page_section == 'upcoming' ? ' active' : '' }}"><a class="nav-link" href="/upcoming">Upcoming</a></li>
+                <li class="nav-item{{ @$page_section == 'upcoming' ? ' active' : '' }}"><a class="nav-link" href="/#">Upcoming</a></li>
                 <li class="nav-item{{ @$page_section == 'results' ? ' active' : '' }}"><a class="nav-link" href="/results">Results</a></li>
                 <li class="nav-item{{ @$page_section == 'organize' ? ' active' : '' }}"><a class="nav-link" href="/organize">Organize</a></li>
                 @if (Auth::check() && Auth::user()->admin == 1)
