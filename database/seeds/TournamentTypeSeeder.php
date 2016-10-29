@@ -34,7 +34,7 @@ class TournamentTypeSeeder extends Seeder
                     'order' => 5
                 ),
                 array(
-                    'type_name' => 'casual / non-FFG tournament',
+                    'type_name' => 'non-FFG tournament',
                     'order' => 6
                 ),
                 array(
