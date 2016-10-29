@@ -7,6 +7,32 @@
     @include('tournaments.modals.claim')
     <div class="row">
         <div class="col-md-4 col-xs-12">
+            {{--User info--}}
+            <div class="bracket">
+                <h5>
+                    <i class="fa fa-user" aria-hidden="true"></i>
+                    User
+                </h5>
+                <div class="text-xs-center">
+                    @if ($user)
+                        <h6>{{ $user->name }}</h6>
+                        <div class="user-counts">
+                            {{ $created_count }} tournament{{ $created_count > 1 ? 's' : '' }} organized<br/>
+                            {{ $claim_count }} tournament claim{{ $claim_count > 1 ? 's' : '' }}<br/>
+                            {{ $user->published_decks }} published deck{{ $user->published_decks > 1 ? 's' : '' }}
+                            @if ($user->private_decks)
+                                <br/>
+                                {{ $user->private_decks }} private deck{{ $user->private_decks > 1 ? 's' : '' }}
+                            @endif
+                        </div>
+                    @else
+                        <div class="m-b-1 m-t-1">
+                            <a href="/oauth2/redirect">Login via NetrunnerDB</a>
+                        </div>
+                    @endif
+                </div>
+            </div>
+            {{--My calendar--}}
             <div class="bracket">
                 <h5>
                     <i class="fa fa-calendar" aria-hidden="true"></i>
@@ -146,7 +172,7 @@
         {{--</div>--}}
     {{--</div>--}}
     <script type="text/javascript">
-        getTournamentData('foruser={{ $user }}', function(data) {
+        getTournamentData('foruser={{ $user->id }}', function(data) {
             $('.loader').addClass('hidden-xs-up');
             updateTournamentTable('#my-table', ['title', 'location', 'date', 'cardpool', 'user_claim'], 'no tournaments to show', '', data);
             updateTournamentCalendar(data);

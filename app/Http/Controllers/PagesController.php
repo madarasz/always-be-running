@@ -85,10 +85,12 @@ class PagesController extends Controller
             return view('loginreq');
         }
         $message = session()->has('message') ? session('message') : '';
-        $user = $request->user()->id;
+        $user = $request->user();
+        $created_count = Tournament::where('creator', $user->id)->count();
+        $claim_count = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')->count();
         $username = $request->user()->name;
         $page_section = 'personal';
-        return view('personal', compact('message', 'user', 'username', 'page_section'));
+        return view('personal', compact('message', 'user', 'username', 'page_section', 'created_count', 'claim_count'));
     }
 
     public function about()
