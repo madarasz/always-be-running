@@ -178,8 +178,14 @@ class TournamentsController extends Controller
      * @return mixed JSON result
      */
     public function tournamentJSON(Request $request) {
+        // order by
+        if (is_null($request->input('concluded'))) {
+            $ordering = 'asc';
+        } else {
+            $ordering = 'desc';
+        }
         // initial query
-        $tournaments = Tournament::orderBy('date')
+        $tournaments = Tournament::orderBy('date', $ordering)
             ->with(array('tournament_type' => function($query){
                 $query->select('id', 'type_name');
             }, 'cardpool' => function($query){
