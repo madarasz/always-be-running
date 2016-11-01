@@ -172,7 +172,7 @@
     </div>
 </div>
 <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_MAPS_API')}}&libraries=places&callback=initializeMap">
+        src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_MAPS_API')}}&libraries=places&language=en&callback=initializeMap">
 </script>
 <script type="text/javascript">
 
