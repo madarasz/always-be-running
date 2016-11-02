@@ -35,3 +35,4 @@ Route::get('/logout', 'NetrunnerDBController@logout');
 Route::get('/api/tournaments', 'TournamentsController@tournamentJSON');
 Route::get('/api/userdecks', 'NetrunnerDBController@getUserDecksJSON');
 Route::get('/api/entries', 'EntriesController@entriesJSON');
+Route::post('/api/nrtm', 'TournamentsController@NRTMEndpoint');

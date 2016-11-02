@@ -52,11 +52,20 @@
                             <div class="col-md-6 col-xs-12 col-sm-height">
                                 <div class="card inside-full-height">
                                     <div class="card-block text-xs-center">
-                                        <div class="card-title">Import results from NRTM.json</div>
-                                        <div class="p-b-3">Having trouble? Read the <a href="/faq#nrtm" target="_blank">F.A.Q</a></div>
+                                        <div class="card-title">
+                                            Import results from NRTM
+                                            <div class="small-text">Having trouble? Read the <a href="/faq#nrtm" target="_blank">F.A.Q.</a></div>
+                                        </div>
                                         {!! Form::open(['url' => '', 'files' => true, 'id' => 'conclude-nrtm']) !!}
-                                            {{--TODO: mandatory field--}}
-                                            <input id="jsonresults" name="jsonresults" type="file" style="max-width: 100%;" required>
+                                            <div class="form-group text-xs-left">
+                                                {!! Form::label('jsonresults', 'From NRTM.json file') !!}
+                                                <input id="jsonresults" class="form-control" name="jsonresults" type="file">
+                                            </div>
+                                            <div class="p-b-1"><strong>OR</strong></div>
+                                            <div class="form-group text-xs-left">
+                                                {!! Html::decode(Form::label('conclusion_code', 'Conclusion code <sup>(coming soon)</sup>')) !!}
+                                                {!! Form::text('conclusion_code', null, ['class' => 'form-control', 'placeholder' => 'provided by NRTM']) !!}
+                                            </div>
                                             <div class="button-spacer"></div>
                                             <div class="inside-bottom-center">
                                                 {!! Form::submit('Conclude via import', ['class' => 'btn btn-conclude']) !!}

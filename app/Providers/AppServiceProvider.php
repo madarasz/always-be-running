@@ -25,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend('players_top', function($attribute, $value, $parameters, $validator) {
             return ($parameters[0] > $parameters[1]); // players number should be greater than the top cut player number
         });
+        // validator for NRTM conclusion code
+        Validator::extend('conc_code', function($attribute, $value, $parameters, $validator) {
+            return (file_exists('tjsons/nrtm/import_'.$parameters[0].'.json')); // NRTM temp upload exists
+        });
     }
 
     /**
