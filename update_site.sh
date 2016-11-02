@@ -2,5 +2,5 @@
 php artisan down
 git pull
 php artisan migrate
-gulp
+gulp --production
 php artisan up
