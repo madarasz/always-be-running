@@ -10,53 +10,43 @@ function codeAddress(data, map, geocoder, infowindow) {
     }
     map.markers = [];
     var bounds = new google.maps.LatLngBounds();
-    var countAddress = 0;
+    // putting down markers
     for (i = 0; i < data.length; i++) {
-        if (data[i].location !== 'online') {
-            countAddress++;
-        }
-    }
-    for (i = 0; i < data.length; i++) {
-        if (data[i].location !== 'online') {
-            countAddress --;
-            var address = data[i].address.length > 0 ? data[i].address : data[i].location;
-            geocoder.geocode({'address': address}, ownGeocodeCallback(data[i], countAddress == 0, map, bounds, infowindow));
-        }
-    }
-}
-
-function ownGeocodeCallback(data, isLast, map, bounds, infowindow) {
-    var geocodeCallback = function (results, status) {
-        if (status == google.maps.GeocoderStatus.OK) {
-            // create marker
-            var marker = new google.maps.Marker({
-                map: map,
-                position: results[0].geometry.location
-            });
+        if (data[i].location !== 'online' && data[i].location_lat && data[i].location_lng) {
+            var latlng = new google.maps.LatLng(data[i].location_lat, data[i].location_lng),
+                infotext = renderInfoText(data[i]),
+                marker = new google.maps.Marker({
+                    map: map,
+                    position: latlng
+                });
             map.markers.push(marker);
             bounds.extend(marker.getPosition());
-            // set listener for infowindow
-            marker.addListener('click', function () {
-                infowindow.setContent(renderInfoText(data));
-                infowindow.open(map, marker);
-            });
-        } else {
-            console.log('Geocode was not successful for the following address: ' + data.address + '/' + data.location);
-        }
-        if (isLast) {
-            // avoiding to much zoom
-            var zoombounds = 0.002;
-            if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
-                var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat() + zoombounds, bounds.getNorthEast().lng() + zoombounds);
-                var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat() - zoombounds, bounds.getNorthEast().lng() - zoombounds);
-                bounds.extend(extendPoint1);
-                bounds.extend(extendPoint2);
-            }
-            map.fitBounds(bounds);
 
+            // searching for the same location, merging
+            for (var u = 0; u < i; u++) {
+                if (data[i].location_lng == data[u].location_lng && data[i].location_lat == data[u].location_lat) {
+                    infotext = renderInfoText(data[u]) + '<hr/>' + renderInfoText(data[i]);
+                }
+            }
+
+            // set listener for infowindow
+            marker.addListener('click', (function (infotext, infowindow, map, marker) {
+                return function() {
+                    infowindow.setContent(infotext);
+                    infowindow.open(map, marker);
+                }
+            })(infotext, infowindow, map, marker));
         }
-    };
-    return geocodeCallback;
+    }
+    // avoiding to much zoom
+    var zoombounds = 0.002;
+    if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
+        var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat() + zoombounds, bounds.getNorthEast().lng() + zoombounds);
+        var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat() - zoombounds, bounds.getNorthEast().lng() - zoombounds);
+        bounds.extend(extendPoint1);
+        bounds.extend(extendPoint2);
+    }
+    map.fitBounds(bounds);
 }
 
 function renderInfoText(data) {

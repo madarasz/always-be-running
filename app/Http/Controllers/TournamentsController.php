@@ -250,6 +250,8 @@ class TournamentsController extends Controller
                 'date' => $tournament->date,
                 'cardpool' => $tournament->cardpool['name'],
                 'location' => $location,
+                'location_lat' => $tournament->location_lat,
+                'location_lng' => $tournament->location_long,
                 'address' => $tournament->location_address,
                 'store' => $tournament->location_store,
                 'contact' => $tournament->contact,
