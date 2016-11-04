@@ -66,6 +66,12 @@ var tournamentShorters = {
 };
 
 var idShorter = function (a,b) {
+    if (b[0] === 'unknown') {
+        return -1;
+    }
+    if (a[0] === 'unknown') {
+        return 1;
+    }
     return (b[1] - a[1]);
 };
 
@@ -94,7 +100,7 @@ function imageURL(title) {
 
 // pie charts on IDs on tournament detail page
 function drawEntryStats(data, side, element, playersNum) {
-    var stat_results = [['ID', 'number of decks', 'faction']];
+    var stat_results = [['ID', 'number of decks', 'faction']], unknown = -1;
     for (var i = 0, len = data.length; i < len; i++) {
         var found = false;
         for (var u = 1, len2 = stat_results.length; u < len2; u++) {
@@ -106,16 +112,23 @@ function drawEntryStats(data, side, element, playersNum) {
         }
         if (!found) {
             stat_results.push([shortenID(data[i][side+'_deck_identity_title']), 1, data[i][side+'_deck_identity_faction']]);
+            if (shortenID(data[i][side+'_deck_identity_title']) === 'unknown') {
+                unknown = stat_results.length-1;
+            }
         }
 
     }
 
-    stat_results.sort(idShorter);
-
     // adding unknown IDs
     if (data.length < playersNum ) {
-        stat_results.push(['unknown', playersNum - data.length, 'unknown']);
+        if (unknown == -1) {
+            stat_results.push(['unknown', playersNum - data.length, 'unknown']);
+        } else {
+            stat_results[unknown][1] = stat_results[unknown][1] + playersNum - data.length;
+        }
     }
+
+    stat_results.sort(idShorter);
 
     var slices = [];
     for (var u = 1, len2 = stat_results.length; u < len2; u++) {

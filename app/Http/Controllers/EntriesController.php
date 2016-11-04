@@ -136,7 +136,9 @@ class EntriesController extends Controller
         $identities = CardIdentity::get();
         $identities_titles=$identities->pluck('title', 'id')->all();
         $identities_factions=$identities->pluck('faction_code', 'id')->all();
-        $entries = Entry::where('tournament_id', $id)->where('runner_deck_identity', '!=', '')->get()->all();
+        $entries = Entry::where('tournament_id', $id)->where(function($q) {
+            $q->where('runner_deck_identity', '!=', '')->orWhere('corp_deck_identity', '!=', '');
+        })->get()->all();
 
         foreach($entries as $entry) {
 
