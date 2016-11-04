@@ -52,10 +52,16 @@ class EntriesController extends Controller
                 $q->where('rank', $request->rank)->orWhere('rank_top', $request->rank_top);
             })->first();
 
+    // top rank null adjust
+    if (is_null($import_entry->rank_top)) {
+        $import_entry->rank_top = 0;
+    }
+//    dd($import_entry, $import_entry->runner_deck_identity, $runner_deck['identity'], $import_entry->corp_deck_identity,
+//        $corp_deck['identity'], $import_entry->rank, $request->rank, $import_entry->rank_top, $request->rank_top);
 	// merging with import entry
         if (!is_null($import_entry) &&     // if there is an import entry
-            $import_entry->runner_deck_identity == $runner_deck['identity'] &&   // and IDs match
-            $import_entry->corp_deck_identity == $corp_deck['identity'] &&
+            ($import_entry->runner_deck_identity == $runner_deck['identity'] || strlen($import_entry->runner_deck_identity) < 1) &&   // and IDs match
+            ($import_entry->corp_deck_identity == $corp_deck['identity'] || strlen($import_entry->corp_deck_identity) < 1) &&
             $import_entry->rank == $request->rank && $import_entry->rank_top == $request->rank_top) // and rank, top_rank match
         {
                 Entry::destroy($import_entry->id);    // delete import entry
