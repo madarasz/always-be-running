@@ -24,7 +24,7 @@
             <ul class="nav navbar-nav pull-right">
                 @if (Auth::check())
                     <li class="nav-item{{ @$page_section == 'personal' ? ' active' : '' }}"><a class="nav-link" href="/personal">Personal</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout"><i class="fa fa-power-off" title="Logout"></i></a></li>
                 @else
                     <li class="nav-item"><a class="nav-link" href="/oauth2/redirect">Login via NetrunnerDB</a></li>
                 @endif
