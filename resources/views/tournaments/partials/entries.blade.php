@@ -31,7 +31,9 @@
 
             {{--corp deck--}}
             <td>
-                <img src="/img/ids/{{ $entry->corp_deck_identity }}.png">&nbsp;
+                @if ($entry->corp_deck_identity)
+                    <img src="/img/ids/{{ $entry->corp_deck_identity }}.png">&nbsp;
+                @endif
                 @if ($entry->corp_deck_id)
                     {{--public deck--}}
                     @if ($entry->corp_deck_type == 1)
@@ -52,7 +54,9 @@
             </td>
             {{--runner deck--}}
             <td>
-                <img src="/img/ids/{{ $entry->runner_deck_identity }}.png">&nbsp;
+                @if ($entry->runner_deck_identity)
+                    <img src="/img/ids/{{ $entry->runner_deck_identity }}.png">&nbsp;
+                @endif
                 @if ($entry->runner_deck_id)
                     {{--public deck--}}
                     @if ($entry->runner_deck_type == 1)
