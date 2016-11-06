@@ -35,6 +35,7 @@
                 <p>
                     If you want to use your <em>private</em> decks here, please enable the <strong>Share your decks</strong>
                     option in your NetrunnerDB <a href="https://netrunnerdb.com/en/user/profile">account settings</a>.
+                    After this is done, <strong>relogin into Always be Running.net</strong>, so changes take effect.
                 </p>
                 <p class="p-t-2">
                     <a name="other-deckbuilders"></a><strong>Do you plan to integrate with other deckbuilders?</strong>
