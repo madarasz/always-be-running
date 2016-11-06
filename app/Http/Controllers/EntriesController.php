@@ -52,19 +52,21 @@ class EntriesController extends Controller
                 $q->where('rank', $request->rank)->orWhere('rank_top', $request->rank_top);
             })->first();
 
-    // top rank null adjust
-    if (is_null($import_entry->rank_top)) {
-        $import_entry->rank_top = 0;
-    }
-//    dd($import_entry, $import_entry->runner_deck_identity, $runner_deck['identity'], $import_entry->corp_deck_identity,
-//        $corp_deck['identity'], $import_entry->rank, $request->rank, $import_entry->rank_top, $request->rank_top);
-	// merging with import entry
+        // top rank null adjust
+        if (!is_null($import_entry) && is_null($import_entry->rank_top)) {
+            $import_entry->rank_top = 0;
+        }
+
+	    // merging with import entry
         if (!is_null($import_entry) &&     // if there is an import entry
             ($import_entry->runner_deck_identity == $runner_deck['identity'] || strlen($import_entry->runner_deck_identity) < 1) &&   // and IDs match
             ($import_entry->corp_deck_identity == $corp_deck['identity'] || strlen($import_entry->corp_deck_identity) < 1) &&
             $import_entry->rank == $request->rank && $import_entry->rank_top == $request->rank_top) // and rank, top_rank match
         {
-                Entry::destroy($import_entry->id);    // delete import entry
+            Entry::destroy($import_entry->id);    // delete import entry
+            $merge_name = $import_entry->import_username;
+        } else {
+            $merge_name = null;
         }
 
         $entry = [
@@ -77,7 +79,8 @@ class EntriesController extends Controller
             'runner_deck_id' => $runner_deck['id'],
             'runner_deck_title' => $runner_deck['title'],
             'runner_deck_identity' => $runner_deck['identity'],
-            'runner_deck_type' => $runner_deck['type']
+            'runner_deck_type' => $runner_deck['type'],
+            'import_username' => $merge_name
         ];
 
         if (is_null($reg_entry)) {   // new claim
