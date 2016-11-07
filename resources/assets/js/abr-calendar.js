@@ -1,7 +1,14 @@
 //contains JS for the calendar
 
+// converts to MM-DD-YY format from YYYY.MM.DD
 function convertDateForCalendar(dataString) {
     return dataString.substr(5,2) + '-' + dataString.substr(8,2) + '-' + dataString.substr(0,4);
+}
+// concerts to MM-DD-YY from Date object
+function convertDateObjectForCalendar(date) {
+    return ('0'+(date.getMonth()+1)).slice(-2)+
+        '-'+('0'+date.getDate()).slice(-2)+
+        '-'+date.getFullYear();
 }
 
 function nowDate() {
@@ -28,17 +35,7 @@ function leadingZero(number) {
     }
 }
 
-function updateTournamentCalendar(data) {
-    var calendardata = {};
-    $.each(data, function (index, element) {
-        var entry = '<a href="/tournaments/' + element.id + '">' + element.title + '</a><small>' + element.location + '</small>';
-        if (typeof calendardata[convertDateForCalendar(element.date)] == "undefined") {
-            calendardata[convertDateForCalendar(element.date)] = [entry];
-        } else {
-            calendardata[convertDateForCalendar(element.date)].push(entry);
-        }
-    });
-
+function drawCalendar(calendardata) {
     $(function() {
 
         var $wrapper = $( '#custom-inner' ),
@@ -96,4 +93,37 @@ function updateTournamentCalendar(data) {
         }
 
     });
+}
+
+function updateTournamentCalendar(data) {
+    var $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    $.each(data, function (index, element) {
+        if (element.date) {
+            var entry = '<a href="/tournaments/' + element.id + '">' + element.title + '</a><small>' + element.location + '</small>';
+            if (typeof calendardata[convertDateForCalendar(element.date)] == "undefined") {
+                calendardata[convertDateForCalendar(element.date)] = [entry];
+            } else {
+                calendardata[convertDateForCalendar(element.date)].push(entry);
+            }
+        } else {
+            // get first day
+            var dateCounter = new Date();
+            while (element.recurring_day !== $days[dateCounter.getDay()-1]) {
+                dateCounter.setDate(dateCounter.getDate() + 1);
+            }
+            // add to calendar for 52 weeks
+            for (var i = 0; i < 52; i++) {
+                var entry = '<div class="recurring-block"><a href="/tournaments/' + element.id + '">' + element.title +
+                    '</a> <i class="fa fa-repeat recurring" aria-hidden="true"></i> <small>' + element.location + '</small></div>';
+                if (typeof calendardata[convertDateObjectForCalendar(dateCounter)] == "undefined") {
+                    calendardata[convertDateObjectForCalendar(dateCounter)] = [entry];
+                } else {
+                    calendardata[convertDateObjectForCalendar(dateCounter)].push(entry);
+                }
+                dateCounter.setDate(dateCounter.getDate() + 7);
+            }
+        }
+    });
+
+
 }

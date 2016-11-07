@@ -27,7 +27,7 @@ class TournamentRequest extends Request
 
         $rules = [
             'title' => 'required',
-            'date' => 'required|date_format:Y.m.d.',
+            'date' => 'date_format:Y.m.d.',
             'players_number' => 'integer|between:1,1000'.$player_rules,
             'top_number' => 'integer|between:0,1000|players_top:'.Request::get('players_number').','.Request::get('top_number')
         ];
@@ -96,6 +96,13 @@ class TournamentRequest extends Request
             $input['concluded'] = 0;
             $input['players_number'] = null;
             $input['top_number'] = null;
+            if ($input['recur_weekly'] == 0) {
+                $input['recur_weekly'] = null;
+            } else {    // recurring event
+                $input['date'] = null;
+            }
+        } else {
+            $input['recur_weekly'] = null;
         }
 
         $this->replace($input);

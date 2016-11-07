@@ -1,7 +1,6 @@
 //contains JS for the Google Maps integration
 
-function codeAddress(data, map, geocoder, infowindow) {
-    // delete markers
+function clearMapMarkers(map) {
     if (typeof map.markers != 'undefined') {
         for (var i = 0; i < map.markers.length; i++) {
             map.markers[i].setMap(null);
@@ -9,7 +8,25 @@ function codeAddress(data, map, geocoder, infowindow) {
         }
     }
     map.markers = [];
-    var bounds = new google.maps.LatLngBounds();
+}
+
+// returns google maps marker image URL with certain color
+function markerIconUrl(color) {
+    switch (color) {
+        case 'red':
+            return 'http://mt.googleapis.com/vt/icon/name=icons/spotlight/spotlight-poi.png';
+        case 'blue':
+            return 'http://mt.google.com/vt/icon?name=icons/spotlight/spotlight-waypoint-blue.png';
+        case 'purple':
+            return 'http://mt.google.com/vt/icon/name=icons/spotlight/spotlight-ad.png';
+        default:
+            return 'http://mt.googleapis.com/vt/icon/name=icons/spotlight/spotlight-poi.png';
+    }
+}
+
+function codeAddress(data, map, bounds, infowindow, callback) {
+
+
     // putting down markers
     for (i = 0; i < data.length; i++) {
         if (data[i].location !== 'online' && data[i].location_lat && data[i].location_lng) {
@@ -17,15 +34,22 @@ function codeAddress(data, map, geocoder, infowindow) {
                 infotext = renderInfoText(data[i]),
                 marker = new google.maps.Marker({
                     map: map,
-                    position: latlng
+                    position: latlng,
+                    icon: data[i].date ? markerIconUrl('red') : markerIconUrl('blue'),
+                    title: infotext
                 });
             map.markers.push(marker);
             bounds.extend(marker.getPosition());
 
             // searching for the same location, merging
-            for (var u = 0; u < i; u++) {
-                if (data[i].location_lng == data[u].location_lng && data[i].location_lat == data[u].location_lat) {
-                    infotext = renderInfoText(data[u]) + '<hr/>' + renderInfoText(data[i]);
+            for (var u = 0; u < map.markers.length - 1; u++) {
+                if (Math.abs(data[i].location_lng - map.markers[u].getPosition().lng()) < 0.000001 &&
+                    Math.abs(data[i].location_lat - map.markers[u].getPosition().lat()) < 0.000001) {
+                    infotext =  map.markers[u].getTitle() + '<hr/>' + renderInfoText(data[i]);
+                    // in case tournament and weekly
+                    if (map.markers[u].getIcon() !== marker.getIcon()) {
+                        marker.setIcon(markerIconUrl('purple'));
+                    }
                 }
             }
 
@@ -47,17 +71,28 @@ function codeAddress(data, map, geocoder, infowindow) {
         bounds.extend(extendPoint2);
     }
     map.fitBounds(bounds);
+
+    // make callback if exists
+    typeof callback === 'function' && callback.apply(this, arguments);
 }
 
 function renderInfoText(data) {
-    var html = '<a href="/tournaments/' + data.id + '"><strong>' + data.title + '</strong></a><br/>' +
-        '<em>' + data.type + '</em><br/>' +
-        '<strong>city</strong>: ' + data.location + '<br/>';
+    var html = '<a href="/tournaments/' + data.id + '"><strong>' + data.title + '</strong></a><br/>';
+    if (data.date) {
+        html = html + '<em>' + data.type + '</em><br/>';
+    } else {
+        html = html + '<em>recurring event</em><br/>';
+    }
+    html = html + '<strong>city</strong>: ' + data.location + '<br/>';
     if (data.store !== '') {
         html = html + '<strong>store</strong>: ' + data.store + '<br/>';
     }
-    html = html + '<strong>date</strong>: ' + data.date + '<br/>' +
-        '<strong>cardpool</strong>: ' + data.cardpool;
+    if (data.date) {
+        html = html + '<strong>date</strong>: ' + data.date + '<br/>' +
+            '<strong>cardpool</strong>: ' + data.cardpool;
+    } else {
+        html = html + '<strong>recurring</strong>: ' + data.recurring_day;
+    }
     if (data.contact !== '') {
         html = html + '<br/><strong>contact</strong>: ' + data.contact;
     }

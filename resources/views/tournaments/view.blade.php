@@ -354,14 +354,6 @@
                 </div>
             @endif
             </div>
-            {{--Comments--}}
-            <div class="bracket">
-                <h5>
-                    <i class="fa fa-comments-o" aria-hidden="true"></i>
-                    Comments
-                </h5>
-                @include('partials.tobedeveloped')
-            </div>
         </div>
     </div>
     {{--Statistics chart--}}

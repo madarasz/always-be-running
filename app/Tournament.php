@@ -11,7 +11,8 @@ class Tournament extends Model
     public $timestamps = true;
     protected $fillable = ['title', 'date', 'location_country', 'location_state', 'location_city', 'location_store',
         'location_address', 'location_place_id', 'players_number', 'description', 'concluded', 'decklist', 'top_number', 'creator',
-        'tournament_type_id', 'start_time', 'cardpool_id', 'conflict', 'contact', 'import', 'location_lat', 'location_long'];
+        'tournament_type_id', 'start_time', 'cardpool_id', 'conflict', 'contact', 'import', 'location_lat', 'location_long',
+        'recur_weekly'];
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
     public function tournament_type() {
@@ -47,5 +48,14 @@ class Tournament extends Model
         $conflict_rank_top = Entry::where('tournament_id', $this->id)->where('rank_top', '>', 0)
             ->groupBy('rank_top')->havingRaw('count(rank_top) > 1')->first();
         $this->update(['conflict' => is_null($conflict_rank) && is_null($conflict_rank_top) ? 0 : 1]);
+    }
+
+    public function recurDay() {
+        if (is_null($this->recur_weekly)) {
+            return null;
+        } else {
+            $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            return $days[$this->recur_weekly -1];
+        }
     }
 }

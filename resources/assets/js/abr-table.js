@@ -25,10 +25,10 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
         // date
         if ($.inArray('date', columns) > -1) {
             newrow.append($('<td>').append($('<span>', {
-                text: element.date.substring(0, 5),
+                text: element.date ? element.date.substring(0, 5) : element.recurring_day,
                 class: 'line-breaker'
             }), $('<span>', {
-                text: element.date.substring(5),
+                text: element.date ? element.date.substring(5) : '',
                 class: 'line-breaker'
             })));
         }
@@ -36,6 +36,12 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
         if ($.inArray('location', columns) > -1) {
             newrow.append($('<td>', {
                 text: element.location
+            }));
+        }
+        // recurring day
+        if ($.inArray('recurday', columns) > -1) {
+            newrow.append($('<td>', {
+                text: element.recurring_day
             }));
         }
         // cardpool

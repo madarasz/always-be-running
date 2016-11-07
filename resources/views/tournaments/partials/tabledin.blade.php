@@ -23,6 +23,9 @@
         @if( in_array('location', $columns) )
             <th>location</th>
         @endif
+        @if( in_array('recurday', $columns) )
+            <th>day of the week</th>
+        @endif
         @if( in_array('cardpool', $columns) )
             <th>cardpool</th>
         @endif

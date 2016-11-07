@@ -208,6 +208,13 @@ class TournamentsController extends Controller
         if ($request->input('type')) {
             $tournaments = $tournaments->where('tournament_type_id', $request->input('type'));
         }
+        if (!is_null($request->input('recur'))) {
+            if ($request->input('recur')) {
+                $tournaments = $tournaments->whereNotNull('recur_weekly')->orderBy('recur_weekly');
+            } else {
+                $tournaments = $tournaments->whereNull('recur_weekly');
+            }
+        }
         if ($request->input('country')) {
             $tournaments = $tournaments->where('location_country', $request->input('country'));
         }
@@ -262,7 +269,8 @@ class TournamentsController extends Controller
                 'top_count' => $tournament->top_number,
                 'registration_count' => $tournament->registration_number(),
                 'claim_count' => $tournament->claim_number(),
-                'claim_conflict' => $tournament->conflict == 1
+                'claim_conflict' => $tournament->conflict == 1,
+                'recurring_day' => $tournament->recur_weekly ? $tournament->recurDay() : null
             ]);
 
             // user specific claim

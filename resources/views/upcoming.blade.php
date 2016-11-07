@@ -15,21 +15,21 @@
                         <div class="input-group">
                             {!! Form::label('tournament_type_id', 'Type:') !!}
                             {!! Form::select('tournament_type_id', $tournament_types,
-                                null, ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder, infowindow)', 'disabled' => '']) !!}
+                                null, ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, infowindow)', 'disabled' => '']) !!}
                         </div>
                     </div>
                     <div class="col-md-3 col-xs-12" id="filter-country">
                         <div class="input-group">
                             {!! Form::label('location_country', 'Country:') !!}
                             {!! Form::select('location_country', $countries, null,
-                                ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, geocoder, infowindow)', 'disabled' => '']) !!}
+                                ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, infowindow)', 'disabled' => '']) !!}
                         </div>
                     </div>
                     <div class="col-md-3 col-xs-12 hidden-xs-up" id="filter-state">
                         <div class="input-group">
                             {!! Form::label('location_state', 'US State:') !!}
                             {!! Form::select('location_state', $states,
-                                        null, ['class' => 'form-control filter', 'onchange'=>'filterDiscover(default_filter, map, geocoder, infowindow)', 'disabled' => '']) !!}
+                                        null, ['class' => 'form-control filter', 'onchange'=>'filterDiscover(default_filter, map, infowindow)', 'disabled' => '']) !!}
                         </div>
                     </div>
                 </div>
@@ -59,6 +59,10 @@
                     }
                 </style>
                 @include('partials.calendar')
+                {{--<div class="form-group">--}}
+                    <input type="checkbox" id="hide-recurring" onchange="hideRecurring()"/>
+                    <label for="hide-recurring">hide weekly events</label>
+                {{--</div>--}}
             </div>
         </div>
         <div class="col-md-6 col-xs-12">
@@ -67,6 +71,22 @@
                 <div class="map-wrapper">
                     <div id="map"></div>
                 </div>
+                <div class="text-xs-center">
+                    <em>
+                        <img src="" id="marker-tournament" class="map-legend-icon"/> tournament -
+                        <img src="" id="marker-recurring" class="map-legend-icon"/> weekly event -
+                        <img src="" id="marker-both" class="map-legend-icon"/> both
+                    </em>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="bracket">
+                @include('tournaments.partials.tabledin',
+                ['columns' => ['title', 'location', 'recurday'],
+                'title' => 'Weekly events', 'id' => 'recur-table', 'icon' => 'fa-repeat', 'loader' => true])
             </div>
         </div>
     </div>
@@ -75,18 +95,31 @@
     </script>
     <script type="text/javascript">
 
-        var geocoder, map, infowindow,
-            default_filter = 'start={{ $nowdate }}&approved=1';
+        // map legend
+        document.getElementById('marker-tournament').setAttribute('src', markerIconUrl('red'));
+        document.getElementById('marker-recurring').setAttribute('src', markerIconUrl('blue'));
+        document.getElementById('marker-both').setAttribute('src', markerIconUrl('purple'));
+
+        var map, infowindow, bounds, calendardata = {},
+            default_filter = 'start={{ $nowdate }}&approved=1&recur=0';
 
         function initializeMap() {
             map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 1,
                 center: {lat: 40.157053, lng: 19.329297}
             });
-            geocoder = new google.maps.Geocoder();
             infowindow = new google.maps.InfoWindow();
+            bounds = new google.maps.LatLngBounds();
             $('.filter').prop("disabled", false);
-            updateDiscover(default_filter, map, geocoder, infowindow);
+            clearMapMarkers(map);
+            // get tournaments
+            updateDiscover('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'],
+                    default_filter, map, bounds, infowindow, function() {
+                        // get weekly events
+                        updateDiscover('#recur-table', ['title', 'location', 'recurday'], 'approved=1&recur=1', map, bounds, infowindow, function() {
+                            drawCalendar(calendardata);
+                        });
+                    });
         }
 
     </script>

@@ -23,7 +23,7 @@
                             <ul>
                                 <li><strong>non-FFG tournament:</strong> a tournament not supported by FFG or its prize pack / casual</strong></li>
                                 <li><strong>online event:</strong> You are playing via Jinteki.net/OCTGN. No location is required.</li>
-                                <li><strong>non-tournament:</strong> There are no rounds, points, rankings at the end. Just play.</li>
+                                <li><strong>non-tournament:</strong> This is not a tournament. Just play. <em>Weekly recurrence</em> is an option.</li>
                             </ul>'])
                         {!! Form::select('tournament_type_id', $tournament_types,
                             old('tournament_type_id', $tournament->tournament_type_id),
@@ -106,7 +106,7 @@
         <div class="bracket">
             {{--Date--}}
             <div class="form-group">
-                {!! Html::decode(Form::label('date', 'Date<sup class="text-danger">*</sup>')) !!}
+                {!! Html::decode(Form::label('date', 'Date<sup class="text-danger" id="req-date">*</sup>')) !!}
                 <div class="input-group">
                     {!! Form::text('date', old('date', $tournament->date),
                                  ['class' => 'form-control', 'required' => '', 'placeholder' => 'YYYY.MM.DD.']) !!}
@@ -119,6 +119,23 @@
             <div class="form-group">
                 {!! Form::label('start_time', 'Starting time') !!}
                 {!! Form::text('start_time', old('start_time', $tournament->start_time), ['class' => 'form-control', 'placeholder' => 'HH:MM']) !!}
+            </div>
+            {{--Weekly reoccurance--}}
+            <div class="form-group">
+                {!! Form::label('recur_weekly', 'Weekly recurrence') !!}
+                @include('partials.popover', ['direction' => 'right', 'content' =>
+                            'Select if the event recurs weekly. This is ideal for weekly get-togethers.
+                            This option is only available for the <strong>non-tournament event</strong> type.<br/>
+                            <br/>
+                            Recurring events are listed separately.'])
+                <div style="position: relative">
+                    <div id="overlay-weekly" class="overlay" style="top: 0; bottom: 0">
+                        <div>only 'non-tournament' may have recurrence</div>
+                    </div>
+                    {!! Form::select('recur_weekly', ['0' => '- no recurrence -', '1' => 'Monday', '2' => 'Tuesday',
+                        '3' => 'Wednesday', '4' => 'Thursday', '5' => 'Friday', '6' => 'Saturday', '7' => 'Sunday'],
+                        old('recur_weekly', $tournament->recur_weekly), ['class' => 'form-control', 'onchange' => 'recurCheck()']) !!}
+                </div>
             </div>
         </div>
         {{--Location--}}

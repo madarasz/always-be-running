@@ -506,3 +506,20 @@ blockquote {
         display: block;
     }
 }
+
+/* map legend for map icons */
+.map-legend-icon {
+    height: 20px;
+    width: auto;
+}
+
+/*calendar, only show reoccur symbol once*/
+.fc-calendar-events > .fc-calendar-event + .fc-calendar-event .recurring {
+    display: none;
+}
+.recurring {
+    color: #aaa;
+}
+.fc-content.fc-content-hidden:after {
+    display: none !important;
+}

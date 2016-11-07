@@ -15,8 +15,25 @@ function changeTournamentType() {
     // non-tournament event, disable conclusion
     if ($("#tournament_type_id option:selected").html() === 'non-tournament event') {
         $('#overlay-conclusion').removeClass('hidden-xs-up');
+        $('#overlay-weekly').addClass('hidden-xs-up');
     } else {
         $('#overlay-conclusion').addClass('hidden-xs-up');
+        $('#overlay-weekly').removeClass('hidden-xs-up');
+    }
+    recurCheck();
+}
+
+function recurCheck() {
+    if ($("#tournament_type_id option:selected").html() === 'non-tournament event' &&
+        $("#recur_weekly option:selected").html() !== '- no recurrence -') {
+            document.getElementById('date').setAttribute('disabled','');
+            $('#req-date').addClass('hidden-xs-up');
+            document.getElementById('date').removeAttribute('required');
+
+    } else {
+        document.getElementById('date').removeAttribute('disabled');
+        $('#req-date').removeClass('hidden-xs-up');
+        document.getElementById('date').setAttribute('required','');
     }
 }
 
@@ -39,19 +56,20 @@ function getTournamentData(filters, callback) {
     });
 }
 
-function updateDiscover(filter, map, geocoder) {
+function updateDiscover(table, columns, filter, map, bounds, infowindow, callback) {
     $('.loader').removeClass('hidden-xs-up');
-    $('#discover-table').find('tbody').empty();
+    $(table).find('tbody').empty();
+
     getTournamentData(filter, function(data) {
         $('.loader').addClass('hidden-xs-up');
-        updateTournamentTable('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'], 'no tournaments to show', '', data);
+        updateTournamentTable(table, columns, 'no tournaments to show', '', data);
         updateTournamentCalendar(data);
-        codeAddress(data, map, geocoder, infowindow);
+        codeAddress(data, map, bounds, infowindow, callback);
     });
 }
 
 // update filter settings for the Upcoming page
-function filterDiscover(default_filter, map, geocoder, infowindow) {
+function filterDiscover(default_filter, map, infowindow) {
     var filter = default_filter,
         type = document.getElementById('tournament_type_id').value,
         countrySelector = document.getElementById('location_country'),
@@ -89,7 +107,18 @@ function filterDiscover(default_filter, map, geocoder, infowindow) {
         $('#filter-spacer').removeClass('hidden-xs-up');
     }
 
-    updateDiscover(filter, map, geocoder, infowindow);
+    clearMapMarkers(map);
+    var bounds = new google.maps.LatLngBounds();
+    calendardata = {};
+    // get tournaments
+    updateDiscover('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'], filter+'&recur=0', map, bounds,
+        infowindow, function() {
+            // get weekly events
+            updateDiscover('#recur-table', ['title', 'location', 'recurday'], filter.substr(filter.indexOf('&'))+'&recur=1', map, bounds, infowindow, function() {
+                drawCalendar(calendardata);
+                hideRecurring();
+            });
+        });
 }
 
 function conclusionCheck() {
@@ -170,5 +199,22 @@ function shortenID(fulltitle) {
         return fulltitle.split(':')[1]; // after :
     } else {
         return fulltitle.split(':')[0]; // before :
+    }
+}
+
+// checkbox for hiding recurring events on Upcoming page calendar
+function hideRecurring() {
+    if (document.getElementById('hide-recurring').checked) {
+        $('.fc-content').each(function() {
+            var recurringCount = $(this).find('.recurring').length;
+            if (recurringCount && recurringCount == $(this).find('.fc-calendar-event').length) {
+                $(this).addClass('fc-content-hidden');
+            }
+            $(this).find('.recurring-block').addClass('hidden-xs-up');
+        });
+
+    } else {
+        $('.fc-content-hidden').removeClass('fc-content-hidden');
+        $('.recurring-block').removeClass('hidden-xs-up');
     }
 }
