@@ -523,3 +523,10 @@ blockquote {
 .fc-content.fc-content-hidden:after {
     display: none !important;
 }
+
+/* 500 page */
+.stacktrace {
+    font-family: monospace;
+    font-size: 70%;
+    text-align: left;
+}
