@@ -5,6 +5,8 @@ Route::get('upcoming', 'PagesController@upcoming'); //some redundancy
 Route::get('results', 'PagesController@results');
 Route::get('organize', 'PagesController@organize');
 Route::get('personal', 'PagesController@personal');
+Route::get('profile/{id}', 'PagesController@profile')->name('profile.show');
+Route::post('profile/{id}', 'PagesController@updateProfile');
 Route::get('about', 'PagesController@about');
 Route::get('faq', 'PagesController@faq');
 Route::get('markdown', 'PagesController@markdown');

@@ -12,7 +12,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'id', 'sharing', 'email', 'published_decks', 'private_decks'
+        'name', 'id', 'sharing', 'email', 'published_decks', 'private_decks',
+        'username_real', 'username_preferred', 'username_jinteki', 'username_stimhack', 'username_twitter'
     ];
 
     /**
@@ -25,4 +26,12 @@ class User extends Authenticatable
     ];
 
     protected $primaryKey = 'id';
+
+    public function displayUsername() {
+        if ($this->username_preferred) {
+            return $this->username_preferred;
+        } else {
+            return $this->name;
+        }
+    }
 }

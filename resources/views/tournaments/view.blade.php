@@ -24,7 +24,9 @@
             <span id="tournament-type">{{ $type }}</span> -
             <em>
                 created by
-                <span id="tournament-creator">{{ $tournament->user->name }}</span>
+                <span id="tournament-creator">
+                    <a href="/profile/{{ $tournament->user->id }}">{{ $tournament->user->displayUsername() }}</a>
+                </span>
             </em>
             @if ($user && $user->admin)
                 <div class="alert alert-success view-indicator" id="viewing-as-admin">
@@ -333,7 +335,7 @@
                 <ul id="registered-players">
                 @foreach ($entries as $entry)
                     @if ($entry->player)
-                        <li>{{ $entry->player->name }}</li>
+                        <li><a href="/profile/{{ $entry->player->id }}">{{ $entry->player->displayUsername() }}</a></li>
                     @endif
                 @endforeach
                 </ul>

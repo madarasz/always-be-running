@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Entry;
+use App\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Tournament;
 use App\TournamentType;
@@ -108,5 +110,37 @@ class PagesController extends Controller
     public function markdown()
     {
         return view('markdown');
+    }
+
+    public function profile(Request $request, $id)
+    {
+        // own profile
+        $request_id =  Auth::user()->id;
+        if ($id == $request_id) {
+            $page_section = 'profile';
+        }
+        $user = User::where('id', $id)->first();
+
+        // non existing user
+        if (is_null($user)) {
+            abort(404);
+        }
+
+        $message = session()->has('message') ? session('message') : '';
+        $created_count = Tournament::where('creator', $user->id)->count();
+        $claim_count = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')->count();
+        $username = $user->name;
+        return view('profile', compact('user', 'created_count', 'claim_count', 'username', 'page_section', 'message'));
+    }
+
+    function updateProfile(Request $request) {
+        // edit only for self
+        if ($request->id != Auth::user()->id) {
+            abort(403);
+        }
+        $user = User::findorFail($request->id);
+        $user->update($request->all());
+        return redirect()->route('profile.show', $request->id)
+            ->with('message', 'Profile updated.');
     }
 }
