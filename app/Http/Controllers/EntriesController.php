@@ -48,9 +48,15 @@ class EntriesController extends Controller
 
         // getting registration for tournament or imported entry
         $reg_entry = Entry::where('user', $user_id)->where('tournament_id', $id)->first();
-        $import_entry = Entry::where('tournament_id', $id)->where('user', 0)->where(function($q) use ($request) {
+        $tournament = Tournament::where('id', $id)->first();
+        // with top
+        if ($tournament->top_number) {
+            $import_entry = Entry::where('tournament_id', $id)->where('user', 0)->where(function ($q) use ($request) {
                 $q->where('rank', $request->rank)->orWhere('rank_top', $request->rank_top);
             })->first();
+        } else { // without top
+            $import_entry = Entry::where('tournament_id', $id)->where('user', 0)->where('rank', $request->rank)->first();
+        }
 
         // top rank null adjust
         if (!is_null($import_entry) && is_null($import_entry->rank_top)) {
@@ -94,7 +100,6 @@ class EntriesController extends Controller
         }
 
         // add conflict if needed
-        $tournament = Tournament::where('id', $id)->first();
         $tournament->updateConflict();
 
         return redirect()->back()->with('message', 'You have claimed a spot on the tournament.');
