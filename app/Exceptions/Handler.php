@@ -45,7 +45,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-//        return parent::render($request, $e);
-        return view('errors.500', ['exception' => $e]);
+        if ($e instanceof AuthorizationException || $e instanceof HttpException ||
+            $e instanceof ModelNotFoundException || $e instanceof ValidationException) {
+            return parent::render($request, $e);
+        } else {
+            return view('errors.500', ['exception' => $e]);
+        }
     }
 }
