@@ -1,6 +1,10 @@
 <hr />
 <footer>
-    <p>&copy; Necro 2016 - [<a href="/faq">F.A.Q.</a>] - [<a href="/about">About</a>]</p>
+    <p>
+        &copy; Necro 2016 - [<a href="/faq">F.A.Q.</a>] - [<a href="/about">About</a>] -
+        <a href="https://twitter.com/alwaysberunnin"><img src="/img/social-twitter.png"/></a> -
+        <a href="https://www.facebook.com/alwaysberunning"><img src="/img/social-fb.png"/></a>
+    </p>
     <p class="legal-bullshit">The information presented on this site about Android:Netrunner, both literal and graphical,
             is copyrighted by Fantasy Flight Games and/or Wizards of the Coast.<br/>
             This website is not produced, endorsed, supported, or affiliated with Fantasy Flight Games and/or
