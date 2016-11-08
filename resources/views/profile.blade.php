@@ -4,7 +4,7 @@
     {!! Form::open(['url' => '/profile/'.$user->id, 'id' => 'profile-form']) !!}
     <h4 class="page-header p-b-1">
         {{--Edit button--}}
-        @if (Auth::user()->id == $user->id)
+        @if (Auth::check() && Auth::user()->id == $user->id)
             <div class="pull-right">
                 <a class="btn btn-primary" href="#" onclick="profileSwitchEdit()" id="button-edit">
                     <i class="fa fa-pencil" aria-hidden="true"></i> Edit

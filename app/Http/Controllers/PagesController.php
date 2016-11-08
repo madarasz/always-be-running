@@ -115,10 +115,13 @@ class PagesController extends Controller
     public function profile(Request $request, $id)
     {
         // own profile
-        $request_id =  Auth::user()->id;
-        if ($id == $request_id) {
-            $page_section = 'profile';
+        if (Auth::check()) {
+            $request_id = Auth::user()->id;
+            if ($id == $request_id) {
+                $page_section = 'profile';
+            }
         }
+
         $user = User::where('id', $id)->first();
 
         // non existing user
