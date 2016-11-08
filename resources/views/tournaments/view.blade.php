@@ -67,7 +67,14 @@
                         </span>
                         <br/>
                     @endunless
-                    <span id="tournament-date">{{ $tournament->date }}</span>
+                    <span id="tournament-date">
+                        @if ($tournament->date)
+                            {{ $tournament->date }}
+                        @else
+                            <br/>
+                            <em>recurring: {{ $tournament->recurDay() }}</em>
+                        @endif
+                    </span>
                 </h5>
                 {{--Details--}}
                 <p><strong>Legal cardpool up to:</strong> <span id="cardpool"><em>{{ $tournament->cardpool->name }}</em></span></p>
