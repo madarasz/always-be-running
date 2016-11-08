@@ -42,6 +42,11 @@
                         <li><a href="http://www.codrops.com">jquery.calendario.js</a></li>
                         <li><a href="https://github.com/Lusitanian/PHPoAuthLib">PHPoAuthLib</a></li>
                     </ul>
+                    Thank you to these awesome people for sending ideas and bug reports:
+                    <ul>
+                        <li>Guv_bubbs</li>
+                        <li>Chiphead404</li>
+                    </ul>
                 </p>
             </div>
         </div>
