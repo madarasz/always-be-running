@@ -418,10 +418,12 @@ class TournamentsController extends Controller
 
                 // checking top cut
                 $ranktop = 0;
-                foreach($json['eliminationPlayers'] as $topcut) {
-                    if ($topcut['id'] == $swiss['id']) {
-                        $ranktop = $topcut['rank'];
-                        break;
+                if (array_key_exists('eliminationPlayers', $json)) {
+                    foreach ($json['eliminationPlayers'] as $topcut) {
+                        if ($topcut['id'] == $swiss['id']) {
+                            $ranktop = $topcut['rank'];
+                            break;
+                        }
                     }
                 }
 
