@@ -12,7 +12,7 @@
 @unless (empty($loader))
     <div class="loader">&nbsp;</div>
 @endunless
-<table class="table table-sm table-striped abr-table" id="{{ $id }}">
+<table class="table table-sm table-striped abr-table{{ @$doublerow ? ' table-doublerow' : '' }}" id="{{ $id }}">
     <thead>
         @if( in_array('title', $columns) )
             <th>title</th>

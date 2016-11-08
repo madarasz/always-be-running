@@ -530,3 +530,8 @@ blockquote {
     font-size: 70%;
     text-align: left;
 }
+
+/*table height*/
+.table-doublerow td {
+    height: 4em;
+}
