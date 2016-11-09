@@ -3,7 +3,9 @@
 function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data) {
     var nowdate = nowDate();
     $.each(data, function (index, element) {
-        newrow = $('<tr>').appendTo(elementID + ' > tbody');
+        newrow = $('<tr>', {
+            class: element.type === 'worlds championship' ? 'row-worlds' : ''
+        }).appendTo(elementID + ' > tbody');
 
         // if zero rows
         if (data.length == 0) {

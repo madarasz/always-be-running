@@ -157,6 +157,11 @@ table.abr-table tr td {
     border: 0;
 }
 
+/* worlds in results table */
+.row-worlds {
+    background-color: #fcf3da !important;
+}
+
 .form-group.row {
     margin-bottom: 0;
 }
