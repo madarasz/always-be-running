@@ -83,7 +83,7 @@ class EntriesController extends Controller
         if (!is_null($import_entry) &&     // if there is an import entry
             ($import_entry->runner_deck_identity == $runner_deck['identity'] || strlen($import_entry->runner_deck_identity) < 1) &&   // and IDs match
             ($import_entry->corp_deck_identity == $corp_deck['identity'] || strlen($import_entry->corp_deck_identity) < 1) &&
-            $import_entry->rank == $request->rank && $import_entry->rank_top == $request->rank_top) // and rank, top_rank match
+            $import_entry->rank == $request->rank && (!$tournament->top_number || $import_entry->rank_top == $request->rank_top)) // and rank, top_rank match
         {
             Entry::destroy($import_entry->id);    // delete import entry
             $merge_name = $import_entry->import_username;
