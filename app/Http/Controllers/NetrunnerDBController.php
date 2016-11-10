@@ -122,7 +122,7 @@ class NetrunnerDBController extends Controller
 
         $response_code = $this->get_http_response_code($URL.$deckid);
         if ($response_code != "200") {
-            return 'wrong response code: '.$response_code;
+            return ['error' => 'wrong response code: '.$response_code, 'side' => ''];
         }
 
         // query deck
