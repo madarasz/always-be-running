@@ -103,12 +103,27 @@ class NetrunnerDBController extends Controller
     }
 
     /**
+     * Check response code of URL.
+     * @param $url
+     * @return string
+     */
+    function get_http_response_code($url) {
+        $headers = get_headers($url);
+        return substr($headers[0], 9, 3);
+    }
+
+    /**
      * Gets deck info from NetrunnerDB.
      * @param $deckid
      * @return deck info
      */
     public function getDeckInfo($deckid) {
         $URL = 'https://netrunnerdb.com/api/2.0/public/decklist/';
+
+        $response_code = $this->get_http_response_code($URL.$deckid);
+        if ($response_code != "200") {
+            return 'wrong response code: '.$response_code;
+        }
 
         // query deck
         $response = json_decode(file_get_contents($URL.$deckid), true);
