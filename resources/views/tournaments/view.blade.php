@@ -122,6 +122,7 @@
         </div>
         {{--Standings and claims--}}
         <div class="col-md-8 col-xs-12">
+            @include('errors.list')
             {{--Tournament description--}}
             @unless($tournament->description === '')
                 <div class="bracket">
@@ -257,7 +258,6 @@
                             </div>
                         {{--Creating new claim--}}
                         @else
-                            @include('errors.list')
                             @include('tournaments.modals.claim')
                             <div class="text-xs-center">
                                 <button class="btn btn-claim" data-toggle="modal"

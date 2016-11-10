@@ -102,6 +102,23 @@ class NetrunnerDBController extends Controller
         return $result;
     }
 
+    /**
+     * Gets deck info from NetrunnerDB.
+     * @param $deckid
+     * @return deck info
+     */
+    public function getDeckInfo($deckid) {
+        $URL = 'https://netrunnerdb.com/api/2.0/public/decklist/';
+
+        // query deck
+        $response = json_decode(file_get_contents($URL.$deckid), true);
+        $runner_ids = CardIdentity::where('runner', 1)->get()->pluck('id')->all();
+        $corp_ids = CardIdentity::where('runner', 0)->get()->pluck('id')->all();
+        $info = $this->classifyDeck($response['data'][0], $runner_ids, $corp_ids);
+        return ['id' => $deckid, 'identity' => $info['identity'], 'side' => $info['side'],
+            'title' => $response['data'][0]['name'], 'type' => 1];
+    }
+
     private function sortDecks(&$deckSource, &$target, &$runner_ids, &$corp_ids)
     {
         foreach ($deckSource as $deck)

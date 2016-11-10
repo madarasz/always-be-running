@@ -36,7 +36,7 @@
                                 <div class="deck-loader">loading</div>
                                 <div class="form-group">
                                     {!! Form::label('corp_deck', 'corporation deck') !!}
-                                    {!! Form::select('corp_deck', [], null, ['class' => 'form-control']) !!}
+                                    {!! Form::select('corp_deck', [], null, ['class' => 'form-control', 'id' => 'corp_deck']) !!}
                                     <div class="alert alert-danger hidden-xs-up" id="no-corp-deck">
                                         <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                                         You don't have any decklist available on NetrunnerDB.
@@ -47,7 +47,7 @@
                                 <div class="deck-loader">loading</div>
                                 <div class="form-group">
                                     {!! Form::label('runner_deck', 'runner deck') !!}
-                                    {!! Form::select('runner_deck', [], null, ['class' => 'form-control']) !!}
+                                    {!! Form::select('runner_deck', [], null, ['class' => 'form-control', 'id' => 'runner_deck']) !!}
                                     <div class="alert alert-danger hidden-xs-up" id="no-runner-deck">
                                         <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                                         You don't have any decklist available on NetrunnerDB.
@@ -59,6 +59,37 @@
                         <div class="text-xs-center hidden-xs-up m-b-1" id="claim-user-login">
                             You are not logged in.<br/>
                             <a href="/oauth2/redirect">Login via NetrunnerDB</a> to claim spot.
+                        </div>
+                        {{--claim with other--}}
+                        <div class="row">
+                            <div class="col-xs-12 text-xs-right">
+                                <a data-toggle="collapse" href="#collapse-other-decks" aria-expanded="false" aria-controls="collapse-other-decks">
+                                    <em>claim with other</em>
+                                </a>
+                                @include('partials.popover', ['direction' => 'top', 'content' =>
+                            'Use this option if you want to claim with a <strong>published</strong> deck
+                            of another user. You can find the deck ID in the URL:<br/>
+                            <em>e.g.: netrunnerdb.com/en/decklist/<strong>38734</strong></em>'])
+                            </div>
+                        </div>
+                        {{--Dropdown selectors for decks--}}
+                        <div class="row collapse" id="collapse-other-decks">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="form-group">
+                                    {!! Form::label('other_corp_deck', 'corporation deck ID') !!}
+                                    {!! Form::text('other_corp_deck', null, ['class' => 'form-control',
+                                        'oninput' => "switchDeck('corp_deck', 'other_corp_deck')",
+                                        'placeholder' => 'published deck ID']) !!}
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <div class="form-group">
+                                    {!! Form::label('other_runner_deck', 'runner deck ID') !!}
+                                    {!! Form::text('other_runner_deck', null, ['class' => 'form-control',
+                                        'oninput' => "switchDeck('runner_deck', 'other_runner_deck')",
+                                        'placeholder' => 'published deck ID']) !!}
+                                </div>
+                            </div>
                         </div>
                         {{--Sumbit claim--}}
                         <div class="text-xs-center">
@@ -198,5 +229,25 @@
             });
         }
     });
+
+    // other decks collapse display fix
+    $('#collapse-other-decks').on('shown.bs.collapse', function () {
+        $('#collapse-other-decks').css({
+            'display': 'flex'
+        });
+    }).on('hidden.bs.collapse', function () {
+        $('#collapse-other-decks').css({
+            'display': 'none'
+        });
+    });
+
+    // claim modal: disable own decks if other deck ID is provided
+    function switchDeck(idOwn, idOther) {
+        if (document.getElementById(idOther).value.length > 0) {
+            document.getElementById(idOwn).setAttribute('disabled','');
+        } else {
+            document.getElementById(idOwn).removeAttribute('disabled');
+        }
+    }
 
 </script>

@@ -43,8 +43,24 @@ class EntriesController extends Controller
     {
         $this->authorize('logged_in', Tournament::class, $request->user());
         $user_id = $request->user()->id;
-        $corp_deck = json_decode(stripslashes($request->corp_deck), true);
-        $runner_deck = json_decode(stripslashes($request->runner_deck), true);
+
+        // claim by own decks / decks by IDs
+        if ($request->other_corp_deck) {
+            $corp_deck = app('App\Http\Controllers\NetrunnerDBController')->getDeckInfo($request->other_corp_deck);
+            if ($corp_deck['side'] !== 'corp') {
+                return redirect()->back()->withErrors(['Corp deck ID must point to a corp deck.']);
+            }
+        } else {
+            $corp_deck = json_decode(stripslashes($request->corp_deck), true);
+        }
+        if ($request->other_runner_deck) {
+            $runner_deck = app('App\Http\Controllers\NetrunnerDBController')->getDeckInfo($request->other_runner_deck);
+            if ($runner_deck['side'] !== 'runner') {
+                return redirect()->back()->withErrors(['Runner deck ID must point to a runner deck.']);
+            }
+        } else {
+            $runner_deck = json_decode(stripslashes($request->runner_deck), true);
+        }
 
         // getting registration for tournament or imported entry
         $reg_entry = Entry::where('user', $user_id)->where('tournament_id', $id)->first();
