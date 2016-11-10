@@ -34,4 +34,8 @@ class User extends Authenticatable
             return $this->name;
         }
     }
+
+    public function badges() {
+        return $this->belongsToMany('App\Badge', 'badge_user', 'user_id', 'badge_id');
+    }
 }

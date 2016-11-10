@@ -118,6 +118,9 @@ class EntriesController extends Controller
         // add conflict if needed
         $tournament->updateConflict();
 
+        // add badges
+        App('App\Http\Controllers\BadgeController')->addClaimBadges($request->user()->id);
+
         return redirect()->back()->with('message', 'You have claimed a spot on the tournament.');
     }
 
@@ -140,6 +143,9 @@ class EntriesController extends Controller
         // remove conflict if needed
         $tournament = Tournament::where('id', $entry->tournament_id)->first();
         $tournament->updateConflict();
+
+        // remove badges
+        App('App\Http\Controllers\BadgeController')->refreshClaimBadges($request->user()->id);
 
         return redirect()->back()->with('message', 'You removed your claim from the tournament.');
     }

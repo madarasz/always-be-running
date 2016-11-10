@@ -10,11 +10,13 @@ Route::post('profile/{id}', 'PagesController@updateProfile');
 Route::get('about', 'PagesController@about');
 Route::get('faq', 'PagesController@faq');
 Route::get('markdown', 'PagesController@markdown');
+Route::get('badges', 'BadgeController@badges');
 
-Route::get('admin', 'AdminController@lister');
+Route::get('admin', 'AdminController@lister')->name('admin');
 Route::get('admin/identities/update', 'NetrunnerDBController@requestIdentities');
 Route::get('admin/cycles/update', 'NetrunnerDBController@requestCycles');
 Route::get('admin/packs/update', 'NetrunnerDBController@requestPacks');
+Route::get('admin/badges/refresh', 'BadgeController@refreshBadges');
 
 Route::resource('tournaments', 'TournamentsController');
 Route::get('tournaments/{id}/approve', 'AdminController@approveTournament');

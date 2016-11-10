@@ -5,6 +5,11 @@
     @include('partials.message')
     <div class="row">
         <div class="col-xs-12">
+            <a href="/admin/badges/refresh" class="btn btn-primary">Refresh badges</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
             <div class="bracket">
             @include('tournaments.partials.table',
                 ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',

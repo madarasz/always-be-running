@@ -26,7 +26,7 @@
         <div class="col-md-4 col-xs-12">
             {{--User info--}}
             <div class="bracket">
-                <h5>
+                <h5 class="p-b-1">
                     <i class="fa fa-user" aria-hidden="true"></i>
                     User
                 </h5>
@@ -45,11 +45,21 @@
             </div>
             {{--Badges--}}
             <div class="bracket">
-                <h5>
+                <h5 class="p-b-1">
                     <i class="fa fa-trophy" aria-hidden="true"></i>
                     Badges
+                    @include('partials.popover', ['direction' => 'top', 'content' =>
+                            'You receive badges for claiming spots on tournaments and/or creating them.<br/>
+                            <br/>
+                            <a href="/badges/">full list of badges</a>'])
                 </h5>
-                @include('partials.tobedeveloped')
+                <div class="text-xs-center">
+                    @forelse($user->badges as $badge)
+                        <img src="/img/badges/{{ $badge->filename }}" alt="{{ $badge->name }}"/>
+                    @empty
+                        <div class="m-b-2 font-italic text-xs-center">no badges yet</div>
+                    @endforelse
+                </div>
             </div>
         </div>
         <div class="col-md-8 col-xs-12">
@@ -83,7 +93,7 @@
                     WARNING: we cannot ensure the authenticity of these usernames
                 </div>
                 <div class="form-group row">
-                    <label for="username_real" class="col-xs-3 col-form-label">name:</label>
+                    <label for="username_real" class="col-xs-3 col-form-label">real name:</label>
                     <div class="col-xs-9">
                         <div class="col-form-label profile-text">{{ $user->username_real }}</div>
                         <input class="form-control profile-field hidden-xs-up" type="text" id="username_real"
