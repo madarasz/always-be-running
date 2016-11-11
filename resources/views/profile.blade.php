@@ -33,7 +33,7 @@
                 <div class="text-xs-center p-b-1">
                     <h6>{{ $user->displayUsername() }}</h6>
                     <div class="user-counts">
-                        {{ $created_count }} tournament{{ $created_count > 1 ? 's' : '' }} organized<br/>
+                        {{ $created_count }} tournament{{ $created_count > 1 ? 's' : '' }} created<br/>
                         {{ $claim_count }} tournament claim{{ $claim_count > 1 ? 's' : '' }}<br/>
                         {{ $user->published_decks }} published deck{{ $user->published_decks > 1 ? 's' : '' }}
                         @if ($user->private_decks)
@@ -49,13 +49,15 @@
                     <i class="fa fa-trophy" aria-hidden="true"></i>
                     Badges
                     @include('partials.popover', ['direction' => 'top', 'content' =>
-                            'You receive badges for claiming spots on tournaments and/or creating them.<br/>
+                            'You receive badges for claiming spots on tournaments or creating them.<br/>
                             <br/>
                             <a href="/badges/">full list of badges</a>'])
                 </h5>
                 <div class="text-xs-center">
                     @forelse($user->badges as $badge)
-                        <img src="/img/badges/{{ $badge->filename }}" alt="{{ $badge->name }}"/>
+                        <img src="/img/badges/{{ $badge->filename }}" data-html="true"
+                             data-toggle="tooltip" data-placement="top"
+                             title="<strong>{{ $badge->name }}</strong><br/>{{ $badge->description }}"/>
                     @empty
                         <div class="m-b-2 font-italic text-xs-center">no badges yet</div>
                     @endforelse

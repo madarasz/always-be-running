@@ -2,6 +2,11 @@
 $(function () {
     $('[data-toggle="popover"]').popover();
 });
+// enable all tooltips
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+});
+
 
 //overlay changes based on tournament type on tournament form
 function changeTournamentType() {

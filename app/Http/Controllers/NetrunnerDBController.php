@@ -98,6 +98,8 @@ class NetrunnerDBController extends Controller
             'published_decks' => $countPublicDecks,
             'private_decks' => $countPrivateDecks
         ]);
+        // badges
+        App('App/Http/Controllers/NetrunnerDBController')->addDeckBadges(Auth::user()->id);
 
         return $result;
     }
