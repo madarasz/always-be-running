@@ -172,8 +172,8 @@ class BadgeController extends Controller
             if (strlen($tournament->description) > 1000 &&
                 preg_match('/[^!]\[([^\]]+)\]\(([^)]+)\)/', $tournament->description) && //link
                 preg_match('/!\[([^\]]+)\]\(([^)]+)\)/', $tournament->description)) { //image
-                $this->addBadge($userid, 20);
-                break;
+                    $this->addBadge($userid, 20); // Fancy T.O.
+                    break;
             }
         }
     }

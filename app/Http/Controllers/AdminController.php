@@ -66,9 +66,9 @@ class AdminController extends Controller
         $tournament->save();
         // update badges
         if ($outcome) {
-            App('App/Http/Controllers/NetrunnerDBController')->addTOBadges($tournament->creator);
+            App('App\Http\Controllers\BadgeController')->addTOBadges($tournament->creator);
         } else {
-            App('App/Http/Controllers/NetrunnerDBController')->refreshTOBadges($tournament->creator);
+            App('App\Http\Controllers\BadgeController')->refreshTOBadges($tournament->creator);
         }
 
         return back()->with('message', $message);
