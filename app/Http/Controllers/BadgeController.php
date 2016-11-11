@@ -149,7 +149,7 @@ class BadgeController extends Controller
         }
     }
 
-    private function addDeckBadges($userid) {
+    public function addDeckBadges($userid) {
         $user = User::where('id', $userid)->first();
         if ($user->published_decks >= 20) {
             $this->addBadge($userid, 21);   // Hard-working publisher
