@@ -42,10 +42,11 @@
                         <li><a href="http://www.codrops.com">jquery.calendario.js</a></li>
                         <li><a href="https://github.com/Lusitanian/PHPoAuthLib">PHPoAuthLib</a></li>
                     </ul>
-                    Thank you to these awesome people for sending ideas and bug reports:
+                    Thank you to these awesome people for their technical help, sending ideas or bug reports:
                     <ul>
-                        <li>Guv_bubbs</li>
-                        <li>Chiphead404</li>
+                        @foreach($helpers as $helper)
+                            <li><a href="profile/{{$helper->id}}">{{$helper->name}}</a></li>
+                        @endforeach
                     </ul>
                 </p>
             </div>

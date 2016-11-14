@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Entry;
 use App\User;
+use App\Badge;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Tournament;
@@ -99,7 +100,8 @@ class PagesController extends Controller
 
     public function about()
     {
-        return view('about');
+        $helpers = Badge::where('id', 24)->first()->users()->get();
+        return view('about', ['helpers' => $helpers]);
     }
 
     public function faq()
