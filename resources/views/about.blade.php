@@ -41,6 +41,7 @@
                         <li><a href="https://github.com/eternicode/bootstrap-datepicker">Datepicker for Bootstrap</a></li>
                         <li><a href="http://www.codrops.com">jquery.calendario.js</a></li>
                         <li><a href="https://github.com/Lusitanian/PHPoAuthLib">PHPoAuthLib</a></li>
+                        <li><a href="http://fontawesome.io/">Font Awesome</a></li>
                     </ul>
                     Thank you to these awesome people for their technical help, sending ideas or bug reports:
                     <ul>

@@ -19,4 +19,11 @@ class Entry extends Model
     public function player() {
         return $this->hasOne(User::class, 'id', 'user');
     }
+
+    public function rank() {
+        if ($this->rank_top) {
+            return $this->rank_top;
+        }
+        return $this->rank;
+    }
 }

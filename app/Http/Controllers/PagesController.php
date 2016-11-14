@@ -134,8 +134,10 @@ class PagesController extends Controller
         $message = session()->has('message') ? session('message') : '';
         $created_count = Tournament::where('creator', $user->id)->count();
         $claim_count = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')->count();
+        $claims = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')->get();
+        $created = Tournament::where('creator', $user->id)->where('approved', 1)->get();
         $username = $user->name;
-        return view('profile', compact('user', 'created_count', 'claim_count', 'username', 'page_section', 'message'));
+        return view('profile', compact('user', 'claims', 'created', 'created_count', 'claim_count', 'username', 'page_section', 'message'));
     }
 
     function updateProfile(Request $request) {

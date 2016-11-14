@@ -63,6 +63,52 @@
                     @endforelse
                 </div>
             </div>
+            {{--Claims--}}
+            @if ($claim_count)
+                <div class="bracket">
+                    <h5>
+                        <i class="fa fa-list-ol" aria-hidden="true"></i>
+                        Claims ({{$claim_count}})
+                    </h5>
+                    <ul>
+                        @foreach($claims as $claim)
+                            <li>
+                                #{{ $claim->rank() }} / {{ $claim->tournament()->first()->players_number }}
+                                <img src="/img/ids/{{ $claim->runner_deck_identity }}.png">&nbsp;<img src="/img/ids/{{ $claim->corp_deck_identity }}.png">
+                                <a href="/tournaments/{{ $claim->tournament()->first()->id}}">
+                                    {{ $claim->tournament()->first()->title }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            {{--Created tournaments--}}
+            @if ($created_count)
+                <div class="bracket">
+                    <h5>
+                        <i class="fa fa-list-alt" aria-hidden="true"></i>
+                        Created tournaments ({{$created_count}})
+                    </h5>
+                    <ul>
+                        @foreach($created as $tournament)
+                            <li>
+                                <a href="/tournaments/{{ $tournament->id}}">
+                                    {{ $tournament->title }}
+                                </a><br/>
+                                <div class="small-text">
+                                    {{ $tournament->tournament_type()->first()->type_name }} -
+                                    @if($tournament->tournament_type_id != 7)
+                                        {{ $tournament->location_country }}, {{$tournament->location_country === 'United States' ? $tournament->location_state.', ' : ''}}{{ $tournament->location_city }}
+                                    @else
+                                        online
+                                    @endif
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
         </div>
         <div class="col-md-8 col-xs-12">
             {{--Usernames--}}
