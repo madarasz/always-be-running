@@ -8,6 +8,7 @@ use App\Http\Requests;
 use App\Entry;
 use App\Tournament;
 use App\User;
+use App\CardIdentity;
 use Illuminate\Support\Facades\DB;
 
 class BadgeController extends Controller
@@ -63,6 +64,7 @@ class BadgeController extends Controller
         $this->addTournamentBadges($userid, 2016, 3);
         $this->addTournamentBadges($userid, 2016, 2);
         $this->addPlayerLevelBadges($userid);
+        $this->addFactionBadges($userid);
     }
 
     /**
@@ -139,13 +141,42 @@ class BadgeController extends Controller
     }
 
     private function addPlayerLevelBadges($userid) {
-        $count = Entry::where('user', $userid)->whereNotNull('runner_deck_id')->count();
+        $count = Entry::where('user', $userid)->where('runner_deck_id', '>', 0)->count();
         if ($count >= 25) {
             $this->addBadge($userid, 15);   // GOLD player
         } elseif ($count >= 10) {
             $this->addBadge($userid, 14);   // SILVER player
         } elseif ($count >= 3) {
             $this->addBadge($userid, 13);   // BRONZE player
+        }
+    }
+
+    private function addFactionBadges($userid) {
+        $mini = Entry::where('user', $userid)->whereIn('runner_deck_identity', ['09029', '09045', '09037'])->first();
+        if ($mini) {
+            $this->addBadge($userid, 27); // minority report
+        }
+
+        $shapers = CardIdentity::where('faction_code','shaper')->pluck('id');
+        $crims = CardIdentity::where('faction_code','criminal')->pluck('id');
+        $anarchs = CardIdentity::where('faction_code','anarch')->pluck('id');
+
+        if (Entry::where('user', $userid)->whereIn('runner_deck_identity', $shapers)->first() &&
+            Entry::where('user', $userid)->whereIn('runner_deck_identity', $crims)->first() &&
+            Entry::where('user', $userid)->whereIn('runner_deck_identity', $anarchs)->first()) {
+            $this->addBadge($userid, 28); // self-modifying personality
+        }
+
+        $nbn = CardIdentity::where('faction_code','nbn')->pluck('id');
+        $hb = CardIdentity::where('faction_code','haas-bioroid')->pluck('id');
+        $weyland = CardIdentity::where('faction_code','weyland-cons')->pluck('id');
+        $jinteki = CardIdentity::where('faction_code','jinteki')->pluck('id');
+
+        if (Entry::where('user', $userid)->whereIn('corp_deck_identity', $nbn)->first() &&
+            Entry::where('user', $userid)->whereIn('corp_deck_identity', $hb)->first() &&
+            Entry::where('user', $userid)->whereIn('corp_deck_identity', $weyland)->first() &&
+            Entry::where('user', $userid)->whereIn('corp_deck_identity', $jinteki)->first()) {
+            $this->addBadge($userid, 29); // diversified portfolio
         }
     }
 
