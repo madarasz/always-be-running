@@ -3,22 +3,57 @@
 @section('content')
     <h4 class="page-header">Badges</h4>
     <div class="row">
-        <div class="col-md-10 col-xs-12 offset-md-1">
+        <div class="col-md-6 col-xs-12">
             <div class="bracket">
                 <p>
-                    <strong>These are the currently available badges on the site:</strong>
+                    <strong>For all players:</strong>
                 </p>
                 @foreach($badges as $badge)
-                    <div class="row p-b-1">
-                        <div class="col-xs-2 text-xs-right">
-                            <img src="/img/badges/{{ $badge->filename }}"/>
-                        </div>
-                        <div class="col-xs-10">
-                            <strong>{{ $badge->name }}</strong><br/>
-                            {{ $badge->description }}<br/>
-                            <div class="small-text">(belonging to {{ $badge->users()->count() }} user{{ $badge->users()->count() > 1 ? 's' : '' }})</div>
-                        </div>
-                    </div>
+                    @if ($badge->order > 2000 && $badge->order < 3000)
+                        @include('partials.badgelist')
+                    @endif
+                @endforeach
+            </div>
+            <div class="bracket">
+                <p>
+                    <strong>For tournament organizers:</strong>
+                </p>
+                @foreach($badges as $badge)
+                    @if ($badge->order > 3000 && $badge->order < 4000)
+                        @include('partials.badgelist')
+                    @endif
+                @endforeach
+            </div>
+        </div>
+        <div class="col-md-6 col-xs-12">
+            <div class="bracket">
+                <p>
+                    <strong>For competative players:</strong>
+                </p>
+                @foreach($badges as $badge)
+                    @if ($badge->year)
+                        @include('partials.badgelist')
+                    @endif
+                @endforeach
+            </div>
+            <div class="bracket">
+                <p>
+                    <strong>For heavy NetrunnerDB users:</strong>
+                </p>
+                @foreach($badges as $badge)
+                    @if ($badge->order > 4000)
+                        @include('partials.badgelist')
+                    @endif
+                @endforeach
+            </div>
+            <div class="bracket">
+                <p>
+                    <strong>Other badges:</strong>
+                </p>
+                @foreach($badges as $badge)
+                    @if ($badge->order < 100)
+                        @include('partials.badgelist')
+                    @endif
                 @endforeach
             </div>
         </div>

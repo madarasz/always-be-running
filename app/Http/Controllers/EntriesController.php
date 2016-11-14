@@ -25,6 +25,10 @@ class EntriesController extends Controller
                 'tournament_id' => $id
             ]);
         }
+
+        // add badges
+        App('App\Http\Controllers\BadgeController')->addRecurringBadge($user_id);
+
         return redirect()->back()->with('message', 'You have been registered for the tournament.');
     }
 
@@ -36,6 +40,10 @@ class EntriesController extends Controller
         if (!is_null($entry)) {
             Entry::destroy($entry->id);
         }
+
+        // remove badges if needed
+        App('App\Http\Controllers\BadgeController')->refreshClaimBadges($user_id);
+
         return redirect()->back()->with('message', 'You have unregistered from the tournament.');
     }
 

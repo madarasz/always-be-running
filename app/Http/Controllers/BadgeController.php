@@ -65,6 +65,7 @@ class BadgeController extends Controller
         $this->addTournamentBadges($userid, 2016, 2);
         $this->addPlayerLevelBadges($userid);
         $this->addFactionBadges($userid);
+        $this->addRecurringBadge($userid);
     }
 
     /**
@@ -206,6 +207,14 @@ class BadgeController extends Controller
                     $this->addBadge($userid, 20); // Fancy T.O.
                     break;
             }
+        }
+    }
+
+    public function addRecurringBadge($userid) {
+        $recurring = Tournament::where('recur_weekly', '>', 0)->where('approved', 1)->whereNull('deleted_at')->pluck('id');
+        $tournaments = Entry::where('user', $userid)->whereIn('tournament_id', $recurring)->first();
+        if ($tournaments) {
+            $this->addBadge($userid, 30); // trapped in time
         }
     }
 
