@@ -26,4 +26,24 @@ class Entry extends Model
         }
         return $this->rank;
     }
+
+    public function corp_deck_url() {
+        if ($this->corp_deck_type == 1) {
+            return "https://netrunnerdb.com/en/decklist/".$this->corp_deck_id;  // public
+        } elseif ($this->corp_deck_type == 2) {
+            return "https://netrunnerdb.com/en/deck/view/".$this->corp_deck_id;  // private
+        } else {
+            return "";
+        }
+    }
+
+    public function runner_deck_url() {
+        if ($this->runner_deck_type == 1) {
+            return "https://netrunnerdb.com/en/decklist/".$this->runner_deck_id;  // public
+        } elseif ($this->runner_deck_type == 2) {
+            return "https://netrunnerdb.com/en/deck/view/".$this->runner_deck_id;  // private
+        } else {
+            return "";
+        }
+    }
 }

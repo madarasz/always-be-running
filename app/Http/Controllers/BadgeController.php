@@ -103,7 +103,7 @@ class BadgeController extends Controller
      */
     private function addTournamentBadges($userid, $year, $type) {
         $tounamentIds = Tournament::where('tournament_type_id', $type)
-            ->where('date', '>', $year)->where('date', '<', ($year+1))->where('approved', 1)->pluck('id');
+            ->where('date', '>', $year)->where('date', '<', ($year+1))->where('approved', 1)->whereNull('deleted_at')->pluck('id');
 
         // worlds winner
         $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('rank_top', 1)->first();
@@ -130,7 +130,7 @@ class BadgeController extends Controller
     }
 
     private function addTOLevelBadges($userid) {
-        $count = Tournament::where('creator', $userid)->where('approved', 1)->count();
+        $count = Tournament::where('creator', $userid)->where('approved', 1)->whereNull('deleted_at')->count();
         if ($count >= 20) {
             $this->addBadge($userid, 18); // GOLD T.O.
         } elseif ($count >= 8) {
@@ -191,14 +191,14 @@ class BadgeController extends Controller
     }
 
     private function addNRTMBadge($userid) {
-        $count = Tournament::where('creator', $userid)->where('approved', 1)->where('import', 1)->count();
+        $count = Tournament::where('creator', $userid)->where('approved', 1)->where('import', 1)->whereNull('deleted_at')->count();
         if ($count >= 3) {
             $this->addBadge($userid, 26); // NRTM preacher
         }
     }
 
     private function addFancyTOBadge($userid) {
-        $tournaments = Tournament::where('creator', $userid)->where('approved', 1)->get();
+        $tournaments = Tournament::where('creator', $userid)->where('approved', 1)->whereNull('deleted_at')->get();
         foreach ($tournaments as $tournament) {
             if (strlen($tournament->description) > 1000 &&
                 preg_match('/[^!]\[([^\]]+)\]\(([^)]+)\)/', $tournament->description) && //link
