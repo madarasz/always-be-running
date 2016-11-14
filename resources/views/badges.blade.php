@@ -15,7 +15,8 @@
                         </div>
                         <div class="col-xs-10">
                             <strong>{{ $badge->name }}</strong><br/>
-                            {{ $badge->description }}
+                            {{ $badge->description }}<br/>
+                            <div class="small-text">(belonging to {{ $badge->users()->count() }} users)</div>
                         </div>
                     </div>
                 @endforeach
