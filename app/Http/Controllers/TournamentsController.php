@@ -346,6 +346,7 @@ class TournamentsController extends Controller
     public function concludeNRTM($id, Requests\NRTMRequest $request) {
         $tournament = Tournament::findorFail($id);
         $this->authorize('own', $tournament, $request->user());
+        $errors = [];
 
         // conclusion code
         if ($request->input('conclusion_code')) {
@@ -353,7 +354,7 @@ class TournamentsController extends Controller
             rename('tjsons/nrtm/import_'.$request->input('conclusion_code').'.json', 'tjsons/'.$tournament->id.'.json');
             // process file
             $json = json_decode(file_get_contents('tjsons/' . $tournament->id . '.json'), true);
-            $this->processNRTMjson($json, $tournament);
+            $this->processNRTMjson($json, $tournament, $errors);
         } else {
             // process JSON file
             if ($request->hasFile('jsonresults') && $request->file('jsonresults')->isValid()) {
@@ -361,15 +362,22 @@ class TournamentsController extends Controller
                 $request->file('jsonresults')->move('tjsons', $tournament->id . '.json');
                 // process file
                 $json = json_decode(file_get_contents('tjsons/' . $tournament->id . '.json'), true);
-                $this->processNRTMjson($json, $tournament);
+                $this->processNRTMjson($json, $tournament, $errors);
+            } else {
+                array_push($errors, 'There was a problem with uploading the file.');
             }
         }
 
         $tournament->update(['concluded' => true]);
 
         // redirecting to show newly created tournament
-        return redirect()->route('tournaments.show', $tournament->id)
-            ->with('message', 'Tournament concluded by NRTM import.');
+        if (count($errors)) {
+            return redirect()->route('tournaments.show', $tournament->id)
+                ->withErrors($errors);
+        } else {
+            return redirect()->route('tournaments.show', $tournament->id)
+                ->with('message', 'Tournament concluded by NRTM import.');
+        }
     }
 
     /**
@@ -377,7 +385,6 @@ class TournamentsController extends Controller
      * @param Request $request
      * @return response conclusion code
      */
-    // TODO: authentication?
     public function NRTMEndpoint(Request $request) {
         if ($request->hasFile('jsonresults') && $request->file('jsonresults')->isValid()) {
             // generate code
@@ -398,53 +405,68 @@ class TournamentsController extends Controller
      * @param $json NRTM JSON
      * @param $tournament tournament object
      */
-    private function processNRTMjson($json, &$tournament) {
+    private function processNRTMjson($json, &$tournament, &$errors) {
 
-        $tournament->concluded = true;
-        $tournament->import = 1;
-        $tournament->top_number = $json['cutToTop']; // number of players in top cut
-        $tournament->players_number = count($json['players']); // number of players
-        foreach($json['players'] as $swiss) {
+        if ($json['players']) {
+            $tournament->concluded = true;
+            $tournament->import = 1;
+            $tournament->top_number = $json['cutToTop']; // number of players in top cut
+            $tournament->players_number = count($json['players']); // number of players
 
-            // get identities
-            $corp = CardIdentity::where('title', 'LIKE', '%'.$swiss['corpIdentity'].'%')->first();
-            $runner = CardIdentity::where('title', 'LIKE', '%'.$swiss['runnerIdentity'].'%')->first();
-            $existing = Entry::where('tournament_id', $tournament->id)->where('rank', $swiss['rank'])->first();
+            foreach ($json['players'] as $swiss) {
 
-            // create claims with IDs, skipping this if there is a user claim on the same rank with same IDs
-            if (!is_null($corp) && !is_null($runner) && // identities are found
-                (is_null($existing) || strcmp($runner->id, $existing->runner_deck_identity) != 0 ||
-                    strcmp($corp->id, $existing->corp_deck_identity) != 0)) { // no entry or conflicting entry
+                // get identities
+                $corp = CardIdentity::where('title', 'LIKE', '%' . $swiss['corpIdentity'] . '%')->first();
+                $runner = CardIdentity::where('title', 'LIKE', '%' . $swiss['runnerIdentity'] . '%')->first();
+                $existing = Entry::where('tournament_id', $tournament->id)->where('rank', $swiss['rank'])->first();
 
-                // checking top cut
-                $ranktop = 0;
-                if (array_key_exists('eliminationPlayers', $json)) {
-                    foreach ($json['eliminationPlayers'] as $topcut) {
-                        if ($topcut['id'] == $swiss['id']) {
-                            $ranktop = $topcut['rank'];
-                            break;
-                        }
-                    }
+                // error handling
+                if (is_null($corp)) {
+                    array_push($errors, 'Cannot find corporation identity "' . $swiss['corpIdentity'] . '". Be sure to download faction names in NRTM. See F.A.Q. for help.');
+                }
+                if (is_null($runner)) {
+                    array_push($errors, 'Cannot find runner identity "' . $swiss['runnerIdentity'] . '". Be sure to download faction names in NRTM. See F.A.Q. for help.');
                 }
 
-                // saving new claim
-                Entry::create([
-                    'approved' => 1,
-                    'tournament_id' => $tournament->id,
-                    'rank' => $swiss['rank'],
-                    'rank_top' => $ranktop,
-                    'corp_deck_identity' => $corp->id,
-                    'corp_deck_title' => $swiss['corpIdentity'],
-                    'runner_deck_identity' => $runner->id,
-                    'runner_deck_title' => $swiss['runnerIdentity'],
-                    'import_username' => $swiss['name']
-                ]);
+                // create claims with IDs, skipping this if there is a user claim on the same rank with same IDs
+                if (!is_null($corp) && !is_null($runner) && // identities are found
+                    (is_null($existing) || strcmp($runner->id, $existing->runner_deck_identity) != 0 ||
+                        strcmp($corp->id, $existing->corp_deck_identity) != 0)
+                ) { // no entry or conflicting entry
+
+                    // checking top cut
+                    $ranktop = 0;
+                    if (array_key_exists('eliminationPlayers', $json)) {
+                        foreach ($json['eliminationPlayers'] as $topcut) {
+                            if ($topcut['id'] == $swiss['id']) {
+                                $ranktop = $topcut['rank'];
+                                break;
+                            }
+                        }
+                    }
+
+                    // saving new claim
+                    Entry::create([
+                        'approved' => 1,
+                        'tournament_id' => $tournament->id,
+                        'rank' => $swiss['rank'],
+                        'rank_top' => $ranktop,
+                        'corp_deck_identity' => $corp->id,
+                        'corp_deck_title' => $swiss['corpIdentity'],
+                        'runner_deck_identity' => $runner->id,
+                        'runner_deck_title' => $swiss['runnerIdentity'],
+                        'import_username' => $swiss['name']
+                    ]);
+                }
             }
+
+            $tournament->save();
+
+            // create conflict if needed
+            $tournament->updateConflict();
+
+        } else {
+            array_push($errors, 'There was an error with the uploaded file.');
         }
-
-        $tournament->save();
-
-        // create conflict if needed
-        $tournament->updateConflict();
     }
 }
