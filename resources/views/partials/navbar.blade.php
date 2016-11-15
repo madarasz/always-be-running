@@ -14,17 +14,29 @@
         </button>
         <div class="collapse navbar-toggleable-sm" id="navbar-collapse-1">
             <ul class="nav navbar-nav pull-left">
-                <li class="nav-item{{ @$page_section == 'upcoming' ? ' active' : '' }}"><a class="nav-link" href="/#">Upcoming</a></li>
-                <li class="nav-item{{ @$page_section == 'results' ? ' active' : '' }}"><a class="nav-link" href="/results">Results</a></li>
-                <li class="nav-item{{ @$page_section == 'organize' ? ' active' : '' }}"><a class="nav-link" href="/organize">Organize</a></li>
+                <li class="nav-item{{ @$page_section == 'upcoming' ? ' active' : '' }}">
+                    <a class="nav-link" href="/#">Upcoming</a>
+                </li>
+                <li class="nav-item{{ @$page_section == 'results' ? ' active' : '' }}">
+                    <a class="nav-link" href="/results">Results</a>
+                </li>
+                <li class="nav-item notif-badge{{ @$page_section == 'organize' ? ' active' : '' }}" id="nav-organize">
+                    <a class="nav-link" href="/organize">Organize</a>
+                </li>
                 @if (Auth::check() && Auth::user()->admin == 1)
-                    <li class="nav-item{{ @$page_section == 'admin' ? ' active' : '' }}"><a class="nav-link" href="/admin">Admin</a></li>
+                    <li class="nav-item notif-badge{{ @$page_section == 'admin' ? ' active' : '' }}" id="nav-admin">
+                        <a class="nav-link" href="/admin">Admin</a>
+                    </li>
                 @endif
             </ul>
             <ul class="nav navbar-nav pull-right">
                 @if (Auth::check())
-                    <li class="nav-item{{ @$page_section == 'personal' ? ' active' : '' }}"><a class="nav-link" href="/personal">Personal</a></li>
-                    <li class="nav-item{{ @$page_section == 'profile' ? ' active' : '' }}"><a class="nav-link" href="/profile/{{ Auth::user()->id }}">Profile</a></li>
+                    <li class="nav-item notif-badge{{ @$page_section == 'personal' ? ' active' : '' }}" id="nav-personal">
+                        <a class="nav-link" href="/personal">Personal</a>
+                    </li>
+                    <li class="nav-item{{ @$page_section == 'profile' ? ' active' : '' }}">
+                        <a class="nav-link" href="/profile/{{ Auth::user()->id }}">Profile</a>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="/logout"><i class="fa fa-power-off" title="Logout"></i></a></li>
                 @else
                     <li class="nav-item"><a class="nav-link" href="/oauth2/redirect">Login via NetrunnerDB</a></li>

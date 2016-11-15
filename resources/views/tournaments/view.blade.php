@@ -361,6 +361,10 @@
                         </div>
                     @endif
                 </div>
+            @elseif ($user_entry && !$user_entry->rank)
+                <div class="text-xs-center">
+                    <a href="{{"/tournaments/$tournament->id/unregister"}}" class="btn btn-danger" id="unregister"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</a>
+                </div>
             @endif
             </div>
         </div>

@@ -223,3 +223,24 @@ function hideRecurring() {
         $('.recurring-block').removeClass('hidden-xs-up');
     }
 }
+
+// update navbar notification badges
+function updateNavBadges() {
+    // navbar notifications
+    $.ajax({
+        url: '/api/useralert',
+        dataType: "json",
+        async: true,
+        success: function (data) {
+            if (data.organizeAlert) {
+                document.getElementById('nav-organize').setAttribute("data-badge", data.organizeAlert);
+            }
+            if (data.adminAlerts) {
+                document.getElementById('nav-admin').setAttribute("data-badge", data.adminAlerts);
+            }
+            if (data.personalAlerts) {
+                document.getElementById('nav-personal').setAttribute("data-badge", data.personalAlerts);
+            }
+        }
+    });
+}

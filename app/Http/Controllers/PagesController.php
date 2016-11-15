@@ -140,7 +140,7 @@ class PagesController extends Controller
         return view('profile', compact('user', 'claims', 'created', 'created_count', 'claim_count', 'username', 'page_section', 'message'));
     }
 
-    function updateProfile(Request $request) {
+    public function updateProfile(Request $request) {
         // edit only for self
         if ($request->id != Auth::user()->id) {
             abort(403);
@@ -149,5 +149,32 @@ class PagesController extends Controller
         $user->update($request->all());
         return redirect()->route('profile.show', $request->id)
             ->with('message', 'Profile updated.');
+    }
+
+    /**
+     * API endpoint for user notification badges.
+     * @return json
+     */
+    public function getAlertCount() {
+        if (!Auth::user()) {
+            abort(403);
+        }
+
+        $userid = Auth::user()->id;
+        $toclaim = Tournament::where('concluded', 1)->where('approved', 1)->whereNull('deleted_at')->pluck('id');
+        $nowdate = date('Y.m.d.', time());
+
+        $result = [
+            'personalAlerts' => Entry::where('user', $userid)->whereIn('tournament_id', $toclaim)
+                ->whereNull('rank')->count(),
+            'organizeAlert' =>Tournament::where('creator', $userid)->where('concluded', 0)->where('date', '<', $nowdate)
+                ->where('approved', 1)->whereNull('deleted_at')->count()
+        ];
+
+        if (Auth::user()->admin) {
+            $result['adminAlerts'] = Tournament::whereNull('approved')->whereNull('deleted_at')->count();
+        }
+
+        return response()->json($result);
     }
 }
