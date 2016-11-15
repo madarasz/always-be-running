@@ -43,7 +43,8 @@ elixir(function(mix) {
             '../../../public/css/app.css',
             'bootstrap-datepicker.css',
             'main.css'
-        ]);
+        ])
+        .version(['css/all.css', 'js/all.js']);
 
     gulp.task("test", function() {
         shell('nightwatch -c tests/nightwatch/nightwatch.json');

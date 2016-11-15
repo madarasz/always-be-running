@@ -21,6 +21,7 @@ public/ms-icon-*
 public/apple-*
 public/android-*
 public/browserconfig.xml
+public/build
 tests/nightwatch/bin
 selenium-debug.log
 tests/nightwatch/reports
