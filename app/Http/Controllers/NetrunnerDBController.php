@@ -192,7 +192,8 @@ class NetrunnerDBController extends Controller
             'id' => $userData['id'],
             'name' => $userData['username'],
             'email' => $userData['email'],
-            'sharing' => $userData['sharing']
+            'sharing' => $userData['sharing'],
+            'reputation' => $userData['reputation']
         ];
 
         // check if user is already in DB
