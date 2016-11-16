@@ -14,6 +14,12 @@
     @include('partials.message')
     @include('errors.list')
 
+    {{--Notification for conclude--}}
+    <div class="alert alert-warning view-indicator notif-badge-page hidden-xs-up" id="notif-organize" data-badge="">
+        <i class="fa fa-clock-o" aria-hidden="true"></i>
+        You have tournaments waiting for conclusion.
+    </div>
+
     {{--Table for tournaments created by me--}}
     <div class="row">
         <div class="col-xs-12">

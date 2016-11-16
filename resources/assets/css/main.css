@@ -563,3 +563,39 @@ blockquote {
     border-radius:50%;
     box-shadow:0 0 1px #333;
 }
+.notif-badge-page {
+    position:relative;
+}
+.notif-badge-page[data-badge]:after {
+    content:attr(data-badge);
+    position:absolute;
+    top:-0.5rem;
+    left:-0.5rem;
+    font-size:.7rem;
+    background: darkred;
+    color:white;
+    width:1rem;height:1rem;
+    text-align:center;
+    line-height:1rem;
+    border-radius:50%;
+    box-shadow:0 0 1px #333;
+}
+/* new badge for profile badges */
+.new-badge:after {
+    content:'NEW';
+    position:absolute;
+    top:0;
+    right:0;
+    font-size:.7em;
+    background:#BFDC7A;;
+    color:#6a6340;;
+    text-align:center;
+    border-radius:10%;
+    box-shadow:0 0 1px #333;
+    font-weight: bold;
+    padding: 0 3px;
+}
+.new-badge {
+    position: relative;
+    display: inline-block;
+}

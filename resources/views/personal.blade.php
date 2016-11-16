@@ -4,6 +4,13 @@
     <h4 class="page-header">Personal</h4>
     @include('partials.message')
     @include('errors.list')
+
+    {{--Notification for claim--}}
+    <div class="alert alert-warning view-indicator notif-badge-page hidden-xs-up" id="notif-personal" data-badge="">
+        <i class="fa fa-clock-o" aria-hidden="true"></i>
+        You have tournament spots waiting to be claimed.
+    </div>
+
     @include('tournaments.modals.claim')
     <div class="row">
         <div class="col-md-4 col-xs-12">

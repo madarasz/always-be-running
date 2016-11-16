@@ -161,14 +161,14 @@ class PagesController extends Controller
         }
 
         $userid = Auth::user()->id;
-        $toclaim = Tournament::where('concluded', 1)->where('approved', 1)->whereNull('deleted_at')->pluck('id');
+        $toclaim = Tournament::where('concluded', 1)->whereNull('deleted_at')->pluck('id');
         $nowdate = date('Y.m.d.', time());
 
         $result = [
             'personalAlerts' => Entry::where('user', $userid)->whereIn('tournament_id', $toclaim)
                 ->whereNull('rank')->count(),
             'organizeAlert' =>Tournament::where('creator', $userid)->where('concluded', 0)->where('date', '<', $nowdate)
-                ->where('approved', 1)->whereNull('deleted_at')->count()
+                ->whereNull('deleted_at')->count()
         ];
 
         if (Auth::user()->admin) {

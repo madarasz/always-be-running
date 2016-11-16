@@ -232,14 +232,27 @@ function updateNavBadges() {
         dataType: "json",
         async: true,
         success: function (data) {
+            // organize page alerts
             if (data.organizeAlert) {
                 document.getElementById('nav-organize').setAttribute("data-badge", data.organizeAlert);
+                if ($('#notif-organize').length) {
+                    $('#notif-organize').removeClass('hidden-xs-up');
+                    document.getElementById('notif-organize').setAttribute("data-badge", data.organizeAlert);
+                }
             }
             if (data.adminAlerts) {
                 document.getElementById('nav-admin').setAttribute("data-badge", data.adminAlerts);
+                if ($('#notif-approve').length) {
+                    $('#notif-approve').removeClass('hidden-xs-up');
+                    document.getElementById('notif-approve').setAttribute("data-badge", data.adminAlerts);
+                }
             }
             if (data.personalAlerts) {
                 document.getElementById('nav-personal').setAttribute("data-badge", data.personalAlerts);
+                if ($('#notif-personal').length) {
+                    $('#notif-personal').removeClass('hidden-xs-up');
+                    document.getElementById('notif-personal').setAttribute("data-badge", data.personalAlerts);
+                }
             }
         }
     });

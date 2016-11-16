@@ -3,6 +3,13 @@
 @section('content')
     <h4 class="page-header">Administration</h4>
     @include('partials.message')
+
+    {{--Notification for approve--}}
+    <div class="alert alert-warning view-indicator notif-badge-page hidden-xs-up" id="notif-approve" data-badge="">
+        <i class="fa fa-clock-o" aria-hidden="true"></i>
+        You have tournaments waiting for approval.
+    </div>
+
     <div class="row">
         <div class="col-xs-12">
             <a href="/admin/badges/refresh" class="btn btn-primary">Refresh badges</a>
