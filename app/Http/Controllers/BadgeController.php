@@ -189,6 +189,13 @@ class BadgeController extends Controller
         if ($user->private_decks >= 150) {
             $this->addBadge($userid, 25);   // Keeper of many secrets
         }
+        if ($user->reputation >= 1000) {
+            $this->addBadge($userid, 31);   // NetrunnerDB VIP
+        } elseif ($user->reputation >= 500) {
+            $this->addBadge($userid, 32);   // NetrunnerDB Celeb
+        } elseif ($user->reputation >= 100) {
+            $this->addBadge($userid, 33);   // NetrunnerDB Known
+        }
     }
 
     private function addNRTMBadge($userid) {
