@@ -201,7 +201,7 @@ class BadgeController extends Controller
     private function addFancyTOBadge($userid) {
         $tournaments = Tournament::where('creator', $userid)->where('approved', 1)->whereNull('deleted_at')->get();
         foreach ($tournaments as $tournament) {
-            if (strlen($tournament->description) > 1000 &&
+            if (strlen($tournament->description) > 600 &&
                 preg_match('/[^!]\[([^\]]+)\]\(([^)]+)\)/', $tournament->description) && //link
                 preg_match('/!\[([^\]]+)\]\(([^)]+)\)/', $tournament->description)) { //image
                     $this->addBadge($userid, 20); // Fancy T.O.
