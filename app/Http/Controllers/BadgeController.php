@@ -10,6 +10,7 @@ use App\Tournament;
 use App\User;
 use App\CardIdentity;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class BadgeController extends Controller
 {
@@ -251,6 +252,16 @@ class BadgeController extends Controller
         })->first();
         if (!$found) {
             $user->badges()->attach($badgeid);
+        }
+    }
+
+    /**
+     * Set 'seen' flag to true for all badges of user.
+     * @param $userid
+     */
+    public function changeBadgesToSeen($userid) {
+        if (Auth::user() && Auth::user()->id == $userid) {
+            DB::table('badge_user')->where('user_id', $userid)->update(['seen' => 1]);
         }
     }
 }

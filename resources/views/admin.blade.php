@@ -5,7 +5,7 @@
     @include('partials.message')
 
     {{--Notification for approve--}}
-    <div class="alert alert-warning view-indicator notif-badge-page hidden-xs-up" id="notif-approve" data-badge="">
+    <div class="alert alert-warning view-indicator notif-red notif-badge-page hidden-xs-up" id="notif-approve" data-badge="">
         <i class="fa fa-clock-o" aria-hidden="true"></i>
         You have tournaments waiting for approval.
     </div>

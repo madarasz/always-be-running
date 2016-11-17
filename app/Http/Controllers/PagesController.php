@@ -137,7 +137,8 @@ class PagesController extends Controller
         $claims = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')->get();
         $created = Tournament::where('creator', $user->id)->where('approved', 1)->whereNull('deleted_at')->get();
         $username = $user->name;
-        return view('profile', compact('user', 'claims', 'created', 'created_count', 'claim_count', 'username', 'page_section', 'message'));
+        return view('profile', compact('user', 'claims', 'created', 'created_count', 'claim_count',
+            'username', 'page_section', 'message'));
     }
 
     public function updateProfile(Request $request) {
@@ -168,7 +169,8 @@ class PagesController extends Controller
             'personalAlerts' => Entry::where('user', $userid)->whereIn('tournament_id', $toclaim)
                 ->whereNull('rank')->count(),
             'organizeAlert' =>Tournament::where('creator', $userid)->where('concluded', 0)->where('date', '<', $nowdate)
-                ->whereNull('deleted_at')->count()
+                ->whereNull('deleted_at')->count(),
+            'profileAlerts' => Auth::user()->badges()->wherePivot('seen', 0)->count()
         ];
 
         if (Auth::user()->admin) {

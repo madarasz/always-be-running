@@ -555,8 +555,6 @@ blockquote {
     top:-0.25rem;
     right:-0.75rem;
     font-size:.7em;
-    background:darkred;
-    color:white;
     width:18px;height:18px;
     text-align:center;
     line-height:18px;
@@ -572,13 +570,19 @@ blockquote {
     top:-0.5rem;
     left:-0.5rem;
     font-size:.7rem;
-    background: darkred;
-    color:white;
     width:1rem;height:1rem;
     text-align:center;
     line-height:1rem;
     border-radius:50%;
     box-shadow:0 0 1px #333;
+}
+.notif-red:after {
+    background: darkred;
+    color:white;
+}
+.notif-green:after {
+    background:#BFDC7A;
+    color:#6a6340;
 }
 /* new badge for profile badges */
 .new-badge:after {
@@ -587,8 +591,6 @@ blockquote {
     top:0;
     right:0;
     font-size:.7em;
-    background:#BFDC7A;;
-    color:#6a6340;;
     text-align:center;
     border-radius:10%;
     box-shadow:0 0 1px #333;
@@ -597,5 +599,8 @@ blockquote {
 }
 .new-badge {
     position: relative;
+    display: inline-block;
+}
+.inline-block {
     display: inline-block;
 }

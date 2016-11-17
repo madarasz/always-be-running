@@ -6,7 +6,7 @@
     @include('errors.list')
 
     {{--Notification for claim--}}
-    <div class="alert alert-warning view-indicator notif-badge-page hidden-xs-up" id="notif-personal" data-badge="">
+    <div class="alert alert-warning view-indicator notif-red notif-badge-page hidden-xs-up" id="notif-personal" data-badge="">
         <i class="fa fa-clock-o" aria-hidden="true"></i>
         You have tournament spots waiting to be claimed.
     </div>

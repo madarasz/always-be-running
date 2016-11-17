@@ -20,21 +20,21 @@
                 <li class="nav-item{{ @$page_section == 'results' ? ' active' : '' }}">
                     <a class="nav-link" href="/results">Results</a>
                 </li>
-                <li class="nav-item notif-badge{{ @$page_section == 'organize' ? ' active' : '' }}" id="nav-organize">
+                <li class="nav-item notif-red notif-badge{{ @$page_section == 'organize' ? ' active' : '' }}" id="nav-organize">
                     <a class="nav-link" href="/organize">Organize</a>
                 </li>
                 @if (Auth::check() && Auth::user()->admin == 1)
-                    <li class="nav-item notif-badge{{ @$page_section == 'admin' ? ' active' : '' }}" id="nav-admin">
+                    <li class="nav-item notif-red notif-badge{{ @$page_section == 'admin' ? ' active' : '' }}" id="nav-admin">
                         <a class="nav-link" href="/admin">Admin</a>
                     </li>
                 @endif
             </ul>
             <ul class="nav navbar-nav pull-right">
                 @if (Auth::check())
-                    <li class="nav-item notif-badge{{ @$page_section == 'personal' ? ' active' : '' }}" id="nav-personal">
+                    <li class="nav-item notif-red notif-badge{{ @$page_section == 'personal' ? ' active' : '' }}" id="nav-personal">
                         <a class="nav-link" href="/personal">Personal</a>
                     </li>
-                    <li class="nav-item{{ @$page_section == 'profile' ? ' active' : '' }}">
+                    <li class="nav-item notif-green notif-badge{{ @$page_section == 'profile' ? ' active' : '' }}" id="nav-profile">
                         <a class="nav-link" href="/profile/{{ Auth::user()->id }}">Profile</a>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="/logout"><i class="fa fa-power-off" title="Logout"></i></a></li>

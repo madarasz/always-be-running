@@ -42,3 +42,4 @@ Route::get('/api/entries', 'EntriesController@entriesJSON');
 Route::post('/api/nrtm', 'TournamentsController@NRTMEndpoint');
 Route::get('/api/useralert', 'PagesController@getAlertCount');
 Route::get('/api/as/{id}', 'ASController@index');
+Route::post('/api/badgesseen/{id}', 'BadgeController@changeBadgesToSeen');

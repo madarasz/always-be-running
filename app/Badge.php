@@ -14,6 +14,6 @@ class Badge extends Model
     protected $primaryKey = 'id';
 
     public function users() {
-        return $this->belongsToMany('App\User');
+        return $this->belongsToMany('App\User')->withPivot('seen');
     }
 }

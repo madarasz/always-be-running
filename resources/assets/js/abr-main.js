@@ -240,6 +240,7 @@ function updateNavBadges() {
                     document.getElementById('notif-organize').setAttribute("data-badge", data.organizeAlert);
                 }
             }
+            // admin page alerts
             if (data.adminAlerts) {
                 document.getElementById('nav-admin').setAttribute("data-badge", data.adminAlerts);
                 if ($('#notif-approve').length) {
@@ -247,11 +248,25 @@ function updateNavBadges() {
                     document.getElementById('notif-approve').setAttribute("data-badge", data.adminAlerts);
                 }
             }
+            // personal page alerts
             if (data.personalAlerts) {
                 document.getElementById('nav-personal').setAttribute("data-badge", data.personalAlerts);
                 if ($('#notif-personal').length) {
                     $('#notif-personal').removeClass('hidden-xs-up');
                     document.getElementById('notif-personal').setAttribute("data-badge", data.personalAlerts);
+                }
+            }
+            // profile page alerts
+            if (data.profileAlerts) {
+                document.getElementById('nav-profile').setAttribute("data-badge", data.profileAlerts);
+                if ($('#notif-profile').length) {
+                    $('#notif-profile').removeClass('hidden-xs-up');
+                    document.getElementById('notif-profile').setAttribute("data-badge", data.profileAlerts);
+                    // set badges to 'seen'
+                    if (document.getElementById('nav-profile').classList.contains('active')) {
+                        $.post('/api/badgesseen/' + window.location.href.split("/").pop(),
+                            { '_token': document.getElementsByName('_token')[0].value});
+                    }
                 }
             }
         }
