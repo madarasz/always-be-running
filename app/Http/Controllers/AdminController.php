@@ -65,11 +65,7 @@ class AdminController extends Controller
         $tournament->approved = $outcome;
         $tournament->save();
         // update badges
-        if ($outcome) {
-            App('App\Http\Controllers\BadgeController')->addTOBadges($tournament->creator);
-        } else {
-            App('App\Http\Controllers\BadgeController')->refreshTOBadges($tournament->creator);
-        }
+        App('App\Http\Controllers\BadgeController')->addTOBadges($tournament->creator);
 
         return back()->with('message', $message);
     }

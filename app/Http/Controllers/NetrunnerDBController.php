@@ -42,7 +42,7 @@ class NetrunnerDBController extends Controller
                 // redirect back to the original page
                 $login_url = $request->cookie('login_url');
                 if (is_null($login_url)) {
-                    return redirect()->action('PagesController@home');
+                    return redirect()->action('PagesController@upcoming');
                 } else {
                     return redirect($login_url);
                 }
@@ -65,7 +65,7 @@ class NetrunnerDBController extends Controller
         // redirect back, if possible
         $logout_url = $request->headers->get('referer');
         if (strpos($logout_url, 'edit') || strpos($logout_url, 'admin')) {
-            return redirect()->action('PagesController@home');
+            return redirect()->action('PagesController@upcoming');
         } else {
             return back();
         }
@@ -99,7 +99,7 @@ class NetrunnerDBController extends Controller
             'private_decks' => $countPrivateDecks
         ]);
         // badges
-        App('App\Http\Controllers\BadgeController')->addDeckBadges(Auth::user()->id);
+        App('App\Http\Controllers\BadgeController')->addNDBBadges(Auth::user()->id);
 
         return $result;
     }

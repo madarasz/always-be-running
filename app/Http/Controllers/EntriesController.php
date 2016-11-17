@@ -26,8 +26,10 @@ class EntriesController extends Controller
             ]);
         }
 
-        // add badges
-        App('App\Http\Controllers\BadgeController')->addRecurringBadge($user_id);
+        // add badges for registration on recurring
+        if (Tournament::where('id', $id)->whereNull('date')->first()) {
+            App('App\Http\Controllers\BadgeController')->addClaimBadges($user_id);
+        }
 
         return redirect()->back()->with('message', 'You have been registered for the tournament.');
     }
@@ -42,7 +44,9 @@ class EntriesController extends Controller
         }
 
         // remove badges if needed
-        App('App\Http\Controllers\BadgeController')->refreshClaimBadges($user_id);
+        if (Tournament::where('id', $id)->whereNull('date')->first()) {
+            App('App\Http\Controllers\BadgeController')->addClaimBadges($user_id);
+        }
 
         return redirect()->back()->with('message', 'You have unregistered from the tournament.');
     }
@@ -152,8 +156,8 @@ class EntriesController extends Controller
         $tournament = Tournament::where('id', $entry->tournament_id)->first();
         $tournament->updateConflict();
 
-        // remove badges
-        App('App\Http\Controllers\BadgeController')->refreshClaimBadges($request->user()->id);
+        // remove badges if needed
+        App('App\Http\Controllers\BadgeController')->addClaimBadges($request->user()->id);
 
         return redirect()->back()->with('message', 'You removed your claim from the tournament.');
     }

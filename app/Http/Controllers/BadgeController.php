@@ -26,7 +26,7 @@ class BadgeController extends Controller
     }
 
     /**
-     * Recalculates badges for all users
+     * Recalculates badges for all users, for admins.
      */
     public function refreshBadges(Request $request) {
         $this->authorize('admin', Tournament::class, $request->user());
@@ -35,11 +35,9 @@ class BadgeController extends Controller
         $users = User::all();
 
         foreach($users as $user) {
-            $this->detachAutoBadges($user->id, true);
-            $this->detachAutoBadges($user->id, false);
             $this->addClaimBadges($user->id);
             $this->addTOBadges($user->id);
-            $this->addDeckBadges($user->id);
+            $this->addNDBBadges($user->id);
         }
 
         $badgesAfter = DB::table('badge_user')->count();
@@ -47,64 +45,49 @@ class BadgeController extends Controller
     }
 
     /**
-     * Removes and readds all claim based badges
-     * @param $userid
-     */
-    public function refreshClaimBadges($userid) {
-        $this->detachAutoBadges($userid, true);
-        $this->addClaimBadges($userid);
-    }
-
-    /**
      * Adds all claim based badges for user.
      * @param $userid
      */
     public function addClaimBadges($userid) {
-        $this->addTournamentBadges($userid, 2016, 5);
-        $this->addTournamentBadges($userid, 2016, 4);
-        $this->addTournamentBadges($userid, 2016, 3);
-        $this->addTournamentBadges($userid, 2016, 2);
-        $this->addPlayerLevelBadges($userid);
-        $this->addFactionBadges($userid);
-        $this->addRecurringBadge($userid);
-        $this->addRoadBadge($userid);
+        // prepare badges array
+        $badges = Badge::where('year', 2016)->pluck('id')->all();
+        $badges = array_merge([13, 14, 15, 27, 28, 29, 30, 34], $badges);
+        $badges = array_combine($badges, array_fill(1, count($badges), false));
+
+        $this->addChampionshipBadges($userid, 2016, 5, $badges);
+        $this->addChampionshipBadges($userid, 2016, 4, $badges);
+        $this->addChampionshipBadges($userid, 2016, 3, $badges);
+        $this->addChampionshipBadges($userid, 2016, 2, $badges);
+        $this->addPlayerLevelBadges($userid, $badges);
+        $this->addFactionBadges($userid, $badges);
+        $this->addRecurringBadge($userid, $badges);
+        $this->addRoadBadge($userid, $badges);
+
+        $this->refreshUserBadges($userid, $badges);
     }
 
     /**
-     * Recalculates all TO based badges for user.
+     * Adds, removes badges related to tournament organizing.
      * @param $userid
      */
-    public function refreshTOBadges($userid) {
-        $this->detachAutoBadges($userid, false);
-        $this->addTOBadges($userid);
-    }
-
     public function addTOBadges($userid) {
-        $this->addTOLevelBadges($userid);
-        $this->addNRTMBadge($userid);
-        $this->addFancyTOBadge($userid);
+        $badges = [16 => false, 17 => false, 18 => false, 26 => false, 20 => false];
+
+        $this->addTOLevelBadges($userid, $badges);
+        $this->addNRTMBadge($userid, $badges);
+        $this->addFancyTOBadge($userid, $badges);
+
+        $this->refreshUserBadges($userid, $badges);
     }
 
     /**
-     * Removes all automated badges.
-     * @param $userid
-     */
-    public function detachAutoBadges($userid, $claims) {
-        if ($claims) {
-            $removedBadges = Badge::where('auto', 1)->whereNotNull('tournament_type_id')->pluck('id')->all();
-        } else {
-            $removedBadges = Badge::where('auto', 1)->whereNull('tournament_type_id')->pluck('id')->all();
-        }
-        User::where('id', $userid)->first()->badges()->detach($removedBadges);
-    }
-
-    /**
-     * Adds tournament badges to user
+     * Adds tournament badges to badge list
      * @param $userid
      * @year
      * @type
+     * @badges badge list
      */
-    private function addTournamentBadges($userid, $year, $type) {
+    private function addChampionshipBadges($userid, $year, $type, &$badges) {
         $tounamentIds = Tournament::where('tournament_type_id', $type)
             ->where('date', '>', $year)->where('date', '<', ($year+1))->where('approved', 1)->whereNull('deleted_at')->pluck('id');
 
@@ -112,7 +95,7 @@ class BadgeController extends Controller
         $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('rank_top', 1)->first();
         if ($found) {
             $badgeid = Badge::where('tournament_type_id', $type)->where('year', $year)->where('winlevel', 1)->first()->id;
-            $this->addBadge($userid, $badgeid);
+            $badges[$badgeid] = true;
         } elseif ($type > 2) {
 
             // worlds top 16
@@ -120,44 +103,44 @@ class BadgeController extends Controller
 
             if ($found) {
                 $badgeid = Badge::where('tournament_type_id', $type)->where('year', $year)->where('winlevel', 2)->first()->id;
-                $this->addBadge($userid, $badgeid);
+                $badges[$badgeid] = true;
             } elseif ($type == 5) {
                 // participation
                 $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('runner_deck_id', '>', 0)->first();
                 if ($found) {
                     $badgeid = Badge::where('tournament_type_id', $type)->where('year', $year)->where('winlevel', 5)->first()->id;
-                    $this->addBadge($userid, $badgeid);
+                    $badges[$badgeid] = true;
                 }
             }
         }
     }
 
-    private function addTOLevelBadges($userid) {
+    private function addTOLevelBadges($userid, &$badges) {
         $count = Tournament::where('creator', $userid)->where('approved', 1)->whereNull('deleted_at')->count();
         if ($count >= 20) {
-            $this->addBadge($userid, 18); // GOLD T.O.
+            $badges[18] = true; // GOLD T.O.
         } elseif ($count >= 8) {
-            $this->addBadge($userid, 17);   // SILVER T.O.
+            $badges[17] = true;   // SILVER T.O.
         } elseif ($count >= 2) {
-            $this->addBadge($userid, 16);   // BRONZE T.O.
+            $badges[16] = true;   // BRONZE T.O.
         }
     }
 
-    private function addPlayerLevelBadges($userid) {
+    private function addPlayerLevelBadges($userid, &$badges) {
         $count = Entry::where('user', $userid)->where('runner_deck_id', '>', 0)->count();
         if ($count >= 25) {
-            $this->addBadge($userid, 15);   // GOLD player
+            $badges[15] = true;   // GOLD player
         } elseif ($count >= 10) {
-            $this->addBadge($userid, 14);   // SILVER player
+            $badges[14] = true;   // SILVER player
         } elseif ($count >= 3) {
-            $this->addBadge($userid, 13);   // BRONZE player
+            $badges[13] = true;   // BRONZE player
         }
     }
 
-    private function addFactionBadges($userid) {
+    private function addFactionBadges($userid, &$badges) {
         $mini = Entry::where('user', $userid)->whereIn('runner_deck_identity', ['09029', '09045', '09037'])->first();
         if ($mini) {
-            $this->addBadge($userid, 27); // minority report
+            $badges[27] = true; // minority report
         }
 
         $shapers = CardIdentity::where('faction_code','shaper')->pluck('id');
@@ -167,7 +150,7 @@ class BadgeController extends Controller
         if (Entry::where('user', $userid)->whereIn('runner_deck_identity', $shapers)->first() &&
             Entry::where('user', $userid)->whereIn('runner_deck_identity', $crims)->first() &&
             Entry::where('user', $userid)->whereIn('runner_deck_identity', $anarchs)->first()) {
-            $this->addBadge($userid, 28); // self-modifying personality
+            $badges[28] = true; // self-modifying personality
         }
 
         $nbn = CardIdentity::where('faction_code','nbn')->pluck('id');
@@ -179,11 +162,11 @@ class BadgeController extends Controller
             Entry::where('user', $userid)->whereIn('corp_deck_identity', $hb)->first() &&
             Entry::where('user', $userid)->whereIn('corp_deck_identity', $weyland)->first() &&
             Entry::where('user', $userid)->whereIn('corp_deck_identity', $jinteki)->first()) {
-            $this->addBadge($userid, 29); // diversified portfolio
+            $badges[29] = true; // diversified portfolio
         }
     }
 
-    private function addRoadBadge($userid) {
+    private function addRoadBadge($userid, &$badges) {
         $stores = Tournament::where('tournament_type_id', 2)->where('approved', 1)->whereNull('deleted_at')->pluck('id');
         $regionals = Tournament::where('tournament_type_id', 3)->where('approved', 1)->whereNull('deleted_at')->pluck('id');
         $nationals = Tournament::where('tournament_type_id', 4)->where('approved', 1)->whereNull('deleted_at')->pluck('id');
@@ -191,67 +174,61 @@ class BadgeController extends Controller
         if (Entry::where('user', $userid)->whereIn('tournament_id', $stores)->where('rank', '>', 0)->first() &&
             Entry::where('user', $userid)->whereIn('tournament_id', $regionals)->where('rank', '>', 0)->first() &&
             Entry::where('user', $userid)->whereIn('tournament_id', $nationals)->where('rank', '>', 0)->first()) {
-                $this->addBadge($userid, 34); // road to worlds
+            $badges[34] = true; // road to worlds
         }
 
     }
 
-    public function addDeckBadges($userid) {
+    /**
+     * Adds NetrunnerDB related badges to user.
+     * These badges are never removed.
+     * @param $userid
+     */
+    public function addNDBBadges($userid) {
         $user = User::where('id', $userid)->first();
+        $badges = [];
+
         if ($user->published_decks >= 20) {
-            $this->addBadge($userid, 21);   // Hard-working publisher
+            array_push($badges, 21); // Hard-working publisher
         }
         if ($user->private_decks >= 150) {
-            $this->addBadge($userid, 25);   // Keeper of many secrets
+            array_push($badges, 25);   // Keeper of many secrets
         }
         if ($user->reputation >= 1000) {
-            $this->addBadge($userid, 31);   // NetrunnerDB VIP
+            array_push($badges, 31);   // NetrunnerDB VIP
         } elseif ($user->reputation >= 500) {
-            $this->addBadge($userid, 32);   // NetrunnerDB Celeb
+            array_push($badges, 32);   // NetrunnerDB Celeb
         } elseif ($user->reputation >= 100) {
-            $this->addBadge($userid, 33);   // NetrunnerDB Known
+            array_push($badges, 33);   // NetrunnerDB Known
         }
+
+        $user->badges()->sync($badges, false);
     }
 
-    private function addNRTMBadge($userid) {
+    private function addNRTMBadge($userid, &$badges) {
         $count = Tournament::where('creator', $userid)->where('approved', 1)->where('import', 1)->whereNull('deleted_at')->count();
         if ($count >= 3) {
-            $this->addBadge($userid, 26); // NRTM preacher
+            $badges[26] = true; // NRTM preacher
         }
     }
 
-    private function addFancyTOBadge($userid) {
+    private function addFancyTOBadge($userid, &$badges) {
         $tournaments = Tournament::where('creator', $userid)->where('approved', 1)->whereNull('deleted_at')->get();
         foreach ($tournaments as $tournament) {
             if (strlen($tournament->description) > 600 &&
                 preg_match('/[^!]\[([^\]]+)\]\(([^)]+)\)/', $tournament->description) && //link
                 preg_match('/!\[([^\]]+)\]\(([^)]+)\)/', $tournament->description)) { //image
-                    $this->addBadge($userid, 20); // Fancy T.O.
+                    $badges[20] = true; // Fancy T.O.
                     break;
             }
         }
     }
 
-    public function addRecurringBadge($userid) {
+    private function addRecurringBadge($userid, &$badges) {
         $recurring = Tournament::where('recur_weekly', '>', 0)->where('approved', 1)->whereNull('deleted_at')->pluck('id');
         $tournaments = Entry::where('user', $userid)->whereIn('tournament_id', $recurring)->first();
         if ($tournaments) {
-            $this->addBadge($userid, 30); // trapped in time
-        }
-    }
-
-    /**
-     * Add badge to user if not already present.
-     * @param $userid
-     * @param $badgeid
-     */
-    private function addBadge($userid, $badgeid) {
-        $user = User::where('id', $userid)->first();
-        $found = User::where('id', $userid)->whereHas('badges', function($q) use ($badgeid) {
-            $q->where('badge_id', $badgeid);
-        })->first();
-        if (!$found) {
-            $user->badges()->attach($badgeid);
+            $badges[30] = true; // trapped in time
         }
     }
 
@@ -263,5 +240,25 @@ class BadgeController extends Controller
         if (Auth::user() && Auth::user()->id == $userid) {
             DB::table('badge_user')->where('user_id', $userid)->update(['seen' => 1]);
         }
+    }
+
+    /**
+     * Updates badges of users
+     * @param $userid
+     * @param $badges array keys with false value are removed, keys with true value are added
+     */
+    private function refreshUserBadges($userid, $badges) {
+        $user = User::where('id', $userid)->first();
+        $to_add = []; $to_remove = [];
+        foreach ($badges as $badgeid => $value) {
+            if ($value) {
+                array_push($to_add, $badgeid);
+            } else {
+                array_push($to_remove, $badgeid);
+            }
+        }
+
+        $user->badges()->sync($to_add, false);
+        $user->badges()->detach($to_remove);
     }
 }
