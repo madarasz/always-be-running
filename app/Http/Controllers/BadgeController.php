@@ -66,6 +66,7 @@ class BadgeController extends Controller
         $this->addPlayerLevelBadges($userid);
         $this->addFactionBadges($userid);
         $this->addRecurringBadge($userid);
+        $this->addRoadBadge($userid);
     }
 
     /**
@@ -179,6 +180,19 @@ class BadgeController extends Controller
             Entry::where('user', $userid)->whereIn('corp_deck_identity', $jinteki)->first()) {
             $this->addBadge($userid, 29); // diversified portfolio
         }
+    }
+
+    private function addRoadBadge($userid) {
+        $stores = Tournament::where('tournament_type_id', 2)->where('approved', 1)->whereNull('deleted_at')->pluck('id');
+        $regionals = Tournament::where('tournament_type_id', 3)->where('approved', 1)->whereNull('deleted_at')->pluck('id');
+        $nationals = Tournament::where('tournament_type_id', 4)->where('approved', 1)->whereNull('deleted_at')->pluck('id');
+
+        if (Entry::where('user', $userid)->whereIn('tournament_id', $stores)->where('rank', '>', 0)->first() &&
+            Entry::where('user', $userid)->whereIn('tournament_id', $regionals)->where('rank', '>', 0)->first() &&
+            Entry::where('user', $userid)->whereIn('tournament_id', $nationals)->where('rank', '>', 0)->first()) {
+                $this->addBadge($userid, 34); // road to worlds
+        }
+
     }
 
     public function addDeckBadges($userid) {

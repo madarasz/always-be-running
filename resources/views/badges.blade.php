@@ -31,7 +31,7 @@
                     <strong>For competative players:</strong>
                 </p>
                 @foreach($badges as $badge)
-                    @if ($badge->year)
+                    @if ($badge->order > 100 && $badge->order < 1000)
                         @include('partials.badgelist')
                     @endif
                 @endforeach
