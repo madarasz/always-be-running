@@ -51,7 +51,7 @@ class BadgeController extends Controller
     public function addClaimBadges($userid) {
         // prepare badges array
         $badges = Badge::where('year', 2016)->pluck('id')->all();
-        $badges = array_merge([13, 14, 15, 27, 28, 29, 30, 34], $badges);
+        $badges = array_merge([13, 14, 15, 27, 28, 29, 30, 34, 35], $badges);
         $badges = array_combine($badges, array_fill(1, count($badges), false));
 
         $this->addChampionshipBadges($userid, 2016, 5, $badges);
@@ -62,6 +62,7 @@ class BadgeController extends Controller
         $this->addFactionBadges($userid, $badges);
         $this->addRecurringBadge($userid, $badges);
         $this->addRoadBadge($userid, $badges);
+        $this->addCOS($userid, $badges);
 
         $this->refreshUserBadges($userid, $badges);
     }
@@ -226,9 +227,19 @@ class BadgeController extends Controller
 
     private function addRecurringBadge($userid, &$badges) {
         $recurring = Tournament::where('recur_weekly', '>', 0)->where('approved', 1)->whereNull('deleted_at')->pluck('id');
-        $tournaments = Entry::where('user', $userid)->whereIn('tournament_id', $recurring)->first();
-        if ($tournaments) {
+        if (Entry::where('user', $userid)->whereIn('tournament_id', $recurring)->first()) {
             $badges[30] = true; // trapped in time
+        }
+    }
+
+    private function addCOS($userid, &$badges) {
+        $tournaments = Tournament::whereIn('tournament_type_id', [1, 6, 7])->where('players_number', '>', 7)->where('approved', 1)->whereNull('deleted_at')->pluck('id');
+        $entries = Entry::where('user', $userid)->whereIn('tournament_id', $tournaments)->get();
+        foreach ($entries as $entry) {
+            if ($entry->rank() == 1) {
+                $badges[35] = true; // champion of sorts
+                break;
+            }
         }
     }
 
