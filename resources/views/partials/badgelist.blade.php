@@ -7,7 +7,7 @@
         {{ $badge->description }}<br/>
         <div class="small-text">
             (belonging to {{ $badge->users()->count() }} user{{ $badge->users()->count() > 1 ? 's' : '' }})
-            @if (Auth::user()->admin && $badge->users()->count())
+            @if (Auth::user() && Auth::user()->admin && $badge->users()->count())
                 <br/>
                 <strong>admin user info:</strong>
                 @foreach($badge->users()->get() as $badgeuser)
