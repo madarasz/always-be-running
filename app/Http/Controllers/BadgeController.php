@@ -249,7 +249,7 @@ class BadgeController extends Controller
         $country_count = DB::table('entries')->join('tournaments', 'entries.tournament_id', '=', 'tournaments.id')
             ->selectRaw('*, count(*)')->where('entries.user', $userid)->where('tournaments.tournament_type_id', '!=', 7)
             ->where('tournaments.approved', 1)->whereNull('tournaments.deleted_at')->groupBy('tournaments.location_country')
-            ->get();
+            ->where('entries.rank', '>', 0)->get();
         if (count($country_count) >= 3) {
             $badges[36] = true; // travelling player
         }
