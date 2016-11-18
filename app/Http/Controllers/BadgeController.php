@@ -64,6 +64,7 @@ class BadgeController extends Controller
         $this->addRoadBadge($userid, $badges);
         $this->addCOS($userid, $badges);
         $this->addTravellerPlayer($userid, $badges);
+        $this->addCharity($userid, $badges); // won't be deleted
 
         $this->refreshUserBadges($userid, $badges);
     }
@@ -263,6 +264,13 @@ class BadgeController extends Controller
             Tournament::where('creator', $userid)->where('tournament_type_id', 4)->where('concluded', 1)
                 ->where('approved', 1)->whereNull('deleted_at')->first()) {
                 $badges[37] = true; // community champion
+        }
+    }
+
+    private function addCharity($userid, &$badges) {
+        $charities = Tournament::where('charity', 1)->where('approved', 1)->whereNull('deleted_at')->pluck('id');
+        if (Entry::where('user', $userid)->whereIn('tournament_id', $charities)->where('rank', '>', 0)->first()) {
+            $badges[38] = true; // charity
         }
     }
 

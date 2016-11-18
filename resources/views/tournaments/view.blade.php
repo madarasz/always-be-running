@@ -28,6 +28,12 @@
                     <a href="/profile/{{ $tournament->user->id }}">{{ $tournament->user->displayUsername() }}</a>
                 </span>
             </em>
+            {{--Charity--}}
+            @if ($tournament->charity)
+                -
+                <i title="charity" class="fa fa-heart text-danger"></i>
+                charity event
+            @endif
             @if ($user && $user->admin)
                 <div class="alert alert-success view-indicator" id="viewing-as-admin">
                     <i class="fa fa-info-circle" aria-hidden="true"></i>

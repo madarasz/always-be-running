@@ -4,7 +4,8 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
     var nowdate = nowDate();
     $.each(data, function (index, element) {
         newrow = $('<tr>', {
-            class: element.type === 'worlds championship' ? 'row-worlds' : ''
+            class: element.type === 'worlds championship' ? 'row-worlds' : '',
+            id: elementID.substr(1) + '-row-' + (index+1)
         }).appendTo(elementID + ' > tbody');
 
         // if zero rows
@@ -19,10 +20,20 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
 
         // title
         if ($.inArray('title', columns) > -1) {
-            newrow.append($('<td>').append($('<a>', {
+            cell = $('<td>');
+
+            // charity
+            if (element.charity) {
+                cell.append($('<i>', {
+                    'title': 'charity',
+                    'class': 'fa fa-heart text-danger'
+                }), ' ');
+            }
+
+            cell.append($('<a>', {
                 text: element.title,
                 href: '/tournaments/' + element.id
-            })));
+            })).appendTo(newrow);
         }
         // date
         if ($.inArray('date', columns) > -1) {

@@ -270,7 +270,8 @@ class TournamentsController extends Controller
                 'registration_count' => $tournament->registration_number(),
                 'claim_count' => $tournament->claim_number(),
                 'claim_conflict' => $tournament->conflict == 1,
-                'recurring_day' => $tournament->recur_weekly ? $tournament->recurDay() : null
+                'recurring_day' => $tournament->recur_weekly ? $tournament->recurDay() : null,
+                'charity' => $tournament->charity == 1
             ]);
 
             // user specific claim
