@@ -51,7 +51,7 @@ class BadgeController extends Controller
     public function addClaimBadges($userid) {
         // prepare badges array
         $badges = Badge::where('year', 2016)->pluck('id')->all();
-        $badges = array_merge([13, 14, 15, 27, 28, 29, 30, 34, 35], $badges);
+        $badges = array_merge([13, 14, 15, 27, 28, 29, 30, 34, 35, 36], $badges);
         $badges = array_combine($badges, array_fill(1, count($badges), false));
 
         $this->addChampionshipBadges($userid, 2016, 5, $badges);
@@ -63,6 +63,7 @@ class BadgeController extends Controller
         $this->addRecurringBadge($userid, $badges);
         $this->addRoadBadge($userid, $badges);
         $this->addCOS($userid, $badges);
+        $this->addTravellerPlayer($userid, $badges);
 
         $this->refreshUserBadges($userid, $badges);
     }
@@ -72,11 +73,12 @@ class BadgeController extends Controller
      * @param $userid
      */
     public function addTOBadges($userid) {
-        $badges = [16 => false, 17 => false, 18 => false, 26 => false, 20 => false];
+        $badges = [16 => false, 17 => false, 18 => false, 26 => false, 20 => false, 37 => false];
 
         $this->addTOLevelBadges($userid, $badges);
         $this->addNRTMBadge($userid, $badges);
         $this->addFancyTOBadge($userid, $badges);
+        $this->addTOChampion($userid, $badges);
 
         $this->refreshUserBadges($userid, $badges);
     }
@@ -129,11 +131,11 @@ class BadgeController extends Controller
 
     private function addPlayerLevelBadges($userid, &$badges) {
         $count = Entry::where('user', $userid)->where('runner_deck_id', '>', 0)->count();
-        if ($count >= 25) {
+        if ($count >= 20) {
             $badges[15] = true;   // GOLD player
-        } elseif ($count >= 10) {
+        } elseif ($count >= 8) {
             $badges[14] = true;   // SILVER player
-        } elseif ($count >= 3) {
+        } elseif ($count >= 2) {
             $badges[13] = true;   // BRONZE player
         }
     }
@@ -240,6 +242,27 @@ class BadgeController extends Controller
                 $badges[35] = true; // champion of sorts
                 break;
             }
+        }
+    }
+
+    private function addTravellerPlayer($userid, &$badges) {
+        $country_count = DB::table('entries')->join('tournaments', 'entries.tournament_id', '=', 'tournaments.id')
+            ->selectRaw('*, count(*)')->where('entries.user', $userid)->where('tournaments.tournament_type_id', '!=', 7)
+            ->where('tournaments.approved', 1)->whereNull('tournaments.deleted_at')->groupBy('tournaments.location_country')
+            ->get();
+        if (count($country_count) >= 3) {
+            $badges[36] = true; // travelling player
+        }
+    }
+
+    private function addTOChampion($userid, &$badges) {
+        if (Tournament::where('creator', $userid)->where('tournament_type_id', 2)->where('concluded', 1)
+                ->where('approved', 1)->whereNull('deleted_at')->first() &&
+            Tournament::where('creator', $userid)->where('tournament_type_id', 3)->where('concluded', 1)
+                ->where('approved', 1)->whereNull('deleted_at')->first() &&
+            Tournament::where('creator', $userid)->where('tournament_type_id', 4)->where('concluded', 1)
+                ->where('approved', 1)->whereNull('deleted_at')->first()) {
+                $badges[37] = true; // community champion
         }
     }
 
