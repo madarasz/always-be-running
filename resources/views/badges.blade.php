@@ -68,7 +68,8 @@
             Some of these icons are made by&nbsp;
             <a href="http://okodesign.ru/">Elias Bikbulatov</a>,
             <a href="http://www.freepik.com/">Freepik</a>,
-            <a href="http://simpleicon.com/">SimpleIcon</a>
+            <a href="http://simpleicon.com/">SimpleIcon</a>,
+            <a href="http://pixelbazaar.com/preview">Zlatko Najdenovski</a>
             &nbsp;from&nbsp; <a href="http://www.flaticon.com/">http://www.flaticon.com/</a>.
         </div>
     </div>
