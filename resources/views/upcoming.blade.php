@@ -60,10 +60,10 @@
                     }
                 </style>
                 @include('partials.calendar')
-                {{--<div class="form-group">--}}
+                <div class="text-xs-center">
                     <input type="checkbox" id="hide-recurring" onchange="hideRecurring()"/>
                     <label for="hide-recurring">hide weekly events</label>
-                {{--</div>--}}
+                </div>
             </div>
         </div>
         <div class="col-md-6 col-xs-12">

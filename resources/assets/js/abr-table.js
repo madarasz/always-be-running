@@ -5,6 +5,20 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
     var nowdate = nowDate(),
         paging = document.getElementById(elementID.substr(1) + '-controls').dataset;
 
+    // if zero rows
+    if (data.length == 0) {
+        $(elementID + ' > tbody').append($('<tr>')).append($('<td>', {
+            text: emptyMessage,
+            colspan: columns.length,
+            'class': 'text-xs-center small-text'
+        }));
+
+        // remove loader animation
+        $(elementID+'-loader').addClass('hidden-xs-up');
+
+        return 0;
+    }
+
     $.each(data, function (index, element) {
         // row class: highlight worlds, hide paged
         var rowclass = '';
@@ -19,16 +33,6 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
             class: rowclass,
             id: elementID.substr(1) + '-row-' + (index+1)
         }).appendTo(elementID + ' > tbody');
-
-        // if zero rows
-        if (data.length == 0) {
-            newrow.append($('<td>', {
-                text: emptyMessage,
-                colspan: columns.length,
-                'class': 'text-xs-center'
-            }));
-            return 0;
-        }
 
         // title
         if ($.inArray('title', columns) > -1) {
