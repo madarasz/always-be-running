@@ -179,10 +179,10 @@ class TournamentsController extends Controller
      */
     public function tournamentJSON(Request $request) {
         // order by
-        if (is_null($request->input('concluded'))) {
-            $ordering = 'asc';
-        } else {
+        if ($request->input('concluded')) {
             $ordering = 'desc';
+        } else {
+            $ordering = 'asc';
         }
         // initial query
         $tournaments = Tournament::orderBy('date', $ordering)
