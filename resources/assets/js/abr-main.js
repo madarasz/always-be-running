@@ -122,6 +122,8 @@ function filterDiscover(default_filter, map, infowindow) {
             updateDiscover('#recur-table', ['title', 'location', 'recurday'], filter.substr(filter.indexOf('&'))+'&recur=1', map, bounds, infowindow, function() {
                 drawCalendar(calendardata);
                 hideRecurring();
+                updatePaging('discover-table');
+                updatePaging('recur-table');
             });
         });
 }

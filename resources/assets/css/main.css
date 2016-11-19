@@ -604,3 +604,10 @@ blockquote {
 .inline-block {
     display: inline-block;
 }
+
+/* for a elements with no href */
+.fake-link {
+    color: #0275d8 !important;
+    text-decoration: underline;
+    cursor: pointer;
+}

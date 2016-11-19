@@ -42,7 +42,8 @@
             <div class="bracket">
                 @include('tournaments.partials.tabledin',
                 ['columns' => ['title', 'location', 'date', 'players', 'cardpool', 'type'],
-                'title' => 'Upcoming tournaments', 'id' => 'discover-table', 'icon' => 'fa-list-alt', 'loader' => true])
+                'title' => 'Upcoming tournaments', 'id' => 'discover-table', 'icon' => 'fa-list-alt',
+                'loader' => true, 'maxrows' => 10])
             </div>
         </div>
     </div>
@@ -85,8 +86,8 @@
         <div class="col-xs-12">
             <div class="bracket">
                 @include('tournaments.partials.tabledin',
-                ['columns' => ['title', 'location', 'recurday'],
-                'title' => 'Weekly events', 'id' => 'recur-table', 'icon' => 'fa-repeat', 'loader' => true])
+                ['columns' => ['title', 'location', 'recurday'], 'title' => 'Weekly events',
+                'id' => 'recur-table', 'icon' => 'fa-repeat', 'loader' => true, 'maxrows' => 10])
             </div>
         </div>
     </div>

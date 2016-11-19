@@ -1,10 +1,22 @@
 //Contains JS for the dynamic tables
 
 function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data) {
-    var nowdate = nowDate();
+
+    var nowdate = nowDate(),
+        paging = document.getElementById(elementID.substr(1) + '-controls').dataset;
+
     $.each(data, function (index, element) {
+        // row class: highlight worlds, hide paged
+        var rowclass = '';
+        if (element.type === 'worlds championship') {
+            rowclass = 'row-worlds';
+        }
+        if (paging.maxrows && index >= paging.maxrows) {
+            rowclass = 'hidden-xs-up ' + rowclass;
+        }
+
         newrow = $('<tr>', {
-            class: element.type === 'worlds championship' ? 'row-worlds' : '',
+            class: rowclass,
             id: elementID.substr(1) + '-row-' + (index+1)
         }).appendTo(elementID + ' > tbody');
 
@@ -266,4 +278,65 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
         }
 
     }, columns, emptyMessage);
+
+    // paging
+    updatePaging(elementID.substr(1));
+}
+
+// update paging data
+function updatePaging(elementId) {
+    var paging = document.getElementById(elementId + '-controls').dataset,
+        tablelength = $('#' + elementId + ' tbody tr').length;
+    paging.currentpage = 1;
+
+    if (paging.maxrows && paging.maxrows <= tablelength) {
+        paging.totalrows = tablelength;
+        $('#' + elementId + '-controls').removeClass('hidden-xs-up');
+        document.getElementById(elementId + '-number-total').innerHTML = tablelength;
+    } else {
+        $('#' + elementId + '-controls').addClass('hidden-xs-up');
+    }
+
+    updatePageControls(elementId);
+}
+
+// clicking paging arrows for tournament table, direction==true forward, direction==false backward
+function doTournamentPaging(elementId, direction) {
+    var paging = document.getElementById(elementId + '-controls').dataset;
+
+    if (direction) {
+        paging.currentpage++;
+    } else {
+        paging.currentpage--;
+    }
+
+    // hide all rows
+    $('#'+elementId+' tbody tr').addClass('hidden-xs-up');
+
+    updatePageControls(elementId);
+
+    // show new rows
+    for (var i = (paging.currentpage-1) * paging.maxrows + 1; i <= paging.torows; i++) {
+        $('#'+elementId+'-row-'+i).removeClass('hidden-xs-up');
+    }
+}
+
+// update paging text and controls
+function updatePageControls(elementId) {
+    var paging = document.getElementById(elementId + '-controls').dataset;
+
+    document.getElementById(elementId + '-number-from').innerHTML = (paging.currentpage-1) * paging.maxrows + 1;
+    if ((paging.currentpage) * paging.maxrows < paging.totalrows) {
+        paging.torows = (paging.currentpage) * paging.maxrows;
+        $('#'+elementId+'-controls-forward').removeClass('hidden-xs-up');
+    } else {
+        paging.torows = paging.totalrows;
+        $('#'+elementId+'-controls-forward').addClass('hidden-xs-up');
+    }
+    document.getElementById(elementId + '-number-to').innerHTML = paging.torows;
+    if (paging.currentpage == 1) {
+        $('#'+elementId+'-controls-back').addClass('hidden-xs-up');
+    } else {
+        $('#'+elementId+'-controls-back').removeClass('hidden-xs-up');
+    }
 }
