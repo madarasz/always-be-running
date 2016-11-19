@@ -29,6 +29,9 @@
         @if( in_array('cardpool', $columns) )
             <th>cardpool</th>
         @endif
+        @if( in_array('creator', $columns) )
+            <th>creator</th>
+        @endif
         @if( in_array('type', $columns) )
             <th class="hidden-md-down">type</th>
         @endif
@@ -48,6 +51,12 @@
             <th class="text-xs-center hidden-sm-down">players</th>
             <th class="text-xs-center hidden-xs-down hidden-md-up">
                 @include('partials.popover', ['direction' => 'top', 'content' => 'players'])
+            </th>
+        @endif
+        @if( in_array('regs', $columns) )
+            <th class="text-xs-center hidden-sm-down">regs</th>
+            <th class="text-xs-center hidden-xs-down hidden-md-up">
+                @include('partials.popover', ['direction' => 'top', 'content' => 'registered players'])
             </th>
         @endif
         @if( in_array('claims', $columns) )

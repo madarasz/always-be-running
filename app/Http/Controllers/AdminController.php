@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\CardCycle;
 use App\CardIdentity;
 use App\CardPack;
+use App\Badge;
 use App\Tournament;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Requests;
 
@@ -17,10 +19,6 @@ class AdminController extends Controller
     {
         $this->authorize('admin', Tournament::class, $request->user());
         $nowdate = date('Y.m.d.');
-        $to_approve = Tournament::where(function($query) {
-                $query->where('approved', 0)->orWhereNull('approved');
-            })->where('deleted_at', null)->get();
-        $deleted = Tournament::onlyTrashed()->get();
         $message = session()->has('message') ? session('message') : '';
         $cycles = CardCycle::orderBy('position', 'desc')->get();
         $packs = [];
@@ -43,8 +41,12 @@ class AdminController extends Controller
             $last_pack = '';
         }
 
+        $badge_type_count = Badge::count();
+        $badge_count = DB::table('badge_user')->count();
+        $unseen_badge_count = DB::table('badge_user')->where('seen', 0)->count();
+
         $page_section = 'admin';
-        return view('admin', compact('user', 'to_approve', 'deleted', 'nowdate', 'message',
+        return view('admin', compact('user', 'message', 'nowdate', 'badge_type_count', 'badge_count', 'unseen_badge_count',
             'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles', 'page_section'));
     }
 

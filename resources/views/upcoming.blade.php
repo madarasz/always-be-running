@@ -41,7 +41,7 @@
         <div class="col-xs-12">
             <div class="bracket">
                 @include('tournaments.partials.tabledin',
-                ['columns' => ['title', 'location', 'date', 'players', 'cardpool', 'type'],
+                ['columns' => ['title', 'location', 'date', 'regs', 'cardpool', 'type'],
                 'title' => 'Upcoming tournaments', 'id' => 'discover-table', 'icon' => 'fa-list-alt',
                 'loader' => true, 'maxrows' => 10])
             </div>

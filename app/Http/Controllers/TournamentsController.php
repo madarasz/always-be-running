@@ -194,7 +194,11 @@ class TournamentsController extends Controller
 
         // filtering
         if (!is_null($request->input('approved'))) {
-            $tournaments = $tournaments->where('approved',$request->input('approved'));
+            if ($request->input('approved') != 'null') {
+                $tournaments = $tournaments->where('approved', $request->input('approved'));
+            } else {
+                $tournaments = $tournaments->whereNull('approved');
+            }
         }
         if ($request->input('start')) {
             $tournaments = $tournaments->where('date', '>=', $request->input('start'));
@@ -228,7 +232,7 @@ class TournamentsController extends Controller
             $tournaments = $tournaments->where('creator', $request->input('creator'));
         }
         if ($request->input('deleted')) {
-            $tournaments = $tournaments->whereNotNull('deleted_at');
+            $tournaments = $tournaments->onlyTrashed();
         }
         if ($request->input('foruser')) {
             $tournaments = $tournaments->whereIn('id', function($query) use ($request) {
@@ -255,6 +259,8 @@ class TournamentsController extends Controller
                 'title' => $tournament->title,
                 'type' => $tournament->tournament_type['type_name'],
                 'date' => $tournament->date,
+                'creator_id' => $tournament->creator,
+                'creator_name' => $tournament->user()->first()->name,
                 'cardpool' => $tournament->cardpool['name'],
                 'location' => $location,
                 'location_lat' => $tournament->location_lat,

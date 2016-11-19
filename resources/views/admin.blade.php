@@ -4,70 +4,143 @@
     <h4 class="page-header">Administration</h4>
     @include('partials.message')
 
-    {{--Notification for approve--}}
-    <div class="alert alert-warning view-indicator notif-red notif-badge-page hidden-xs-up" id="notif-approve" data-badge="">
-        <i class="fa fa-clock-o" aria-hidden="true"></i>
-        You have tournaments waiting for approval.
-    </div>
+    {{--Conclude modal--}}
+    @include('tournaments.modals.conclude')
 
-    <div class="row">
-        <div class="col-xs-12">
-            <a href="/admin/badges/refresh" class="btn btn-primary">Refresh badges</a>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="bracket">
-            @include('tournaments.partials.table',
-                ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
-                    'action_edit', 'action_approve', 'action_reject', 'action_delete' ],
-                'data' => $to_approve, 'title' => 'Pending/Rejected tournaments',
-                'empty_message' => 'no pending tournaments', 'id' => 'pending'])
+    {{--Tabs--}}
+    <ul id="admin-tabs" class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#tab-tournaments" role="tab">Tournaments</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#tab-packs" role="tab">Packs</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#tab-badges" role="tab">Badges</a>
+        </li>
+    </ul>
+
+    {{--Tab panes--}}
+    <div class="tab-content">
+        {{--Tournaments--}}
+        <div class="tab-pane active" id="tab-tournaments" role="tabpanel">
+            {{--Notification for approve--}}
+            <div class="alert alert-warning view-indicator notif-red notif-badge-page hidden-xs-up" id="notif-approve" data-badge="">
+                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                You have tournaments waiting for approval.
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="bracket">
+                        {{--Pending--}}
+                        @include('tournaments.partials.tabledin',
+                            ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
+                                'action_edit', 'action_approve', 'action_reject', 'action_delete'],
+                            'title' => 'Pending tournaments', 'id' => 'pending', 'icon' => 'fa-question-circle-o', 'loader' => true])
+                        @include('tournaments.partials.tabledin',
+                            ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
+                                'action_edit', 'action_approve', 'action_delete'],
+                            'title' => 'Rejected tournaments', 'id' => 'rejected', 'icon' => 'fa-thumbs-down', 'loader' => true])
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="bracket">
+                        {{--Late conclusion--}}
+                        @include('tournaments.partials.tabledin',
+                            ['columns' => ['title', 'date', 'cardpool', 'creator', 'approval', 'conclusion', 'players', 'action_delete'],
+                            'title' => 'Tournaments to be concluded', 'subtitle' => 'creators should conclude these',
+                            'id' => 'late', 'icon' => 'fa-clock-o ', 'loader' => true])
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="bracket">
+                        {{--Deleted--}}
+                        @include('tournaments.partials.tabledin',
+                            ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
+                                'action_edit', 'action_restore'],
+                            'title' => 'Deleted tournaments', 'id' => 'deleted', 'icon' => 'fa-times-circle-o', 'loader' => true])
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="bracket">
-            @include('tournaments.partials.table',
-                ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
-                    'action_edit', 'action_restore'],
-                'data' => $deleted, 'title' => 'Deleted tournaments',
-                'empty_message' => 'no deleted tournaments', 'id' => 'deleted'])
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6 col-xs-12">
-            <div class="bracket">
-                <h5>Card data</h5>
-                <a href="/admin/cycles/update" class="btn-primary btn btn-sm">Update Card cycles</a> Card cycle count: {{ $count_cycles }} (last: <em>{{ $last_cycle }}</em>)<br/>
-                <a href="/admin/packs/update" class="btn-primary btn btn-sm">Update Card packs</a> Card pack count: {{ $count_packs }} (last: <em>{{ $last_pack }}</em>)<br/>
-                <a href="/admin/identities/update" class="btn-primary btn btn-sm">Update Identities</a> Identity count: {{ $count_ids }} (last: <em>{{ $last_id }}</em>)
-            </div>
-        </div>
-        <div class="col-md-6 col-xs-12">
-            <div class="bracket">
-                <h5>Cardpool usage</h5>
-                <ul>
-                    @for($i = 0; $i < count ($cycles); $i++)
-                        <li>{{ $cycles[$i]->name }}</li>
+        {{--Packs--}}
+        <div class="tab-pane" id="tab-packs" role="tabpanel">
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <div class="bracket">
+                        <h5>Card data</h5>
+                        <a href="/admin/cycles/update" class="btn-primary btn btn-sm">Update Card cycles</a> Card cycle count: {{ $count_cycles }} (last: <em>{{ $last_cycle }}</em>)<br/>
+                        <a href="/admin/packs/update" class="btn-primary btn btn-sm">Update Card packs</a> Card pack count: {{ $count_packs }} (last: <em>{{ $last_pack }}</em>)<br/>
+                        <a href="/admin/identities/update" class="btn-primary btn btn-sm">Update Identities</a> Identity count: {{ $count_ids }} (last: <em>{{ $last_id }}</em>)
+                    </div>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <div class="bracket">
+                        <h5>Cardpool usage</h5>
                         <ul>
-                            @foreach ($packs[$i] as $pack)
-                                <li>
-                                    {{ $pack->name }}
-                                    @if ($pack->usable)
-                                        <a href="{{ "/packs/$pack->id/disable" }}" class="btn-danger btn btn-xs">disable</a>
-                                    @else
-                                        <a href="{{ "/packs/$pack->id/enable" }}" class="btn-success btn btn-xs">enable</a>
-                                    @endif
-                                </li>
-                            @endforeach
+                            @for($i = 0; $i < count ($cycles); $i++)
+                                <li>{{ $cycles[$i]->name }}</li>
+                                <ul>
+                                    @foreach ($packs[$i] as $pack)
+                                        <li>
+                                            {{ $pack->name }}
+                                            @if ($pack->usable)
+                                                <a href="{{ "/packs/$pack->id/disable" }}" class="btn-danger btn btn-xs">disable</a>
+                                            @else
+                                                <a href="{{ "/packs/$pack->id/enable" }}" class="btn-success btn btn-xs">enable</a>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endfor
                         </ul>
-                    @endfor
-                </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{--Badges--}}
+        <div class="tab-pane" id="tab-badges" role="tabpanel">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="bracket">
+                        Badge types: {{ $badge_type_count }}<br/>
+                        Badges: {{ $badge_count }}<br/>
+                        Unseen badges: {{ $unseen_badge_count }}<br/>
+                        <a href="/admin/badges/refresh" class="btn btn-primary">Refresh badges</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        // activate tabs
+        $('#admin-tabs a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+
+        // get tournament data
+        getTournamentData("approved=null", function(data) {
+            updateTournamentTable('#pending', ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
+                'action_edit', 'action_approve', 'action_reject', 'action_delete'], 'no pending tournaments', '{{ csrf_token() }}', data);
+            getTournamentData("approved=0", function(data) {
+                updateTournamentTable('#rejected', ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
+                    'action_edit', 'action_approve', 'action_delete'], 'no rejected tournaments', '{{ csrf_token() }}', data);
+                getTournamentData("approved=1&concluded=0&recur=0&end={{ $nowdate }}", function(data) {
+                    updateTournamentTable('#late', ['title', 'date', 'cardpool', 'creator', 'approval', 'conclusion', 'players', 'action_delete'],
+                            'no late tournaments', '{{ csrf_token() }}', data);
+                    getTournamentData("deleted=1", function(data) {
+                        updateTournamentTable('#deleted', ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
+                            'action_edit', 'action_restore'], 'no deleted tournaments', '{{ csrf_token() }}', data);
+                    });
+                });
+
+            });
+        });
+    </script>
 @stop
 

@@ -82,6 +82,13 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 html: element.cardpool
             }));
         }
+        // creator
+        if ($.inArray('creator', columns) > -1) {
+            newrow.append($('<td>').append($('<a>', {
+                text: element.creator_name,
+                href: '/profile/' + element.creator_id
+            })));
+        }
         // type
         if ($.inArray('type', columns) > -1) {
             newrow.append($('<td>', {
