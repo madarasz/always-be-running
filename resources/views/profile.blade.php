@@ -189,7 +189,10 @@
                     <label for="username_twitter" class="col-xs-3 col-form-label">Twitter:</label>
                     <div class="col-xs-9">
                         <div class="col-form-label profile-text">
-                            <a href="https://twitter.com/{{ $user->username_twitter }}">{{ '@'.$user->username_twitter }}</a></div>
+                            <a href="https://twitter.com/{{ $user->username_twitter }}">
+                                {{ $user->username_twitter ? '@'.$user->username_twitter : '' }}
+                            </a>
+                        </div>
                         <input class="form-control profile-field hidden-xs-up" type="text" id="username_twitter"
                                name="username_twitter" placeholder="username without @" value="{{ $user->username_twitter }}">
                     </div>
