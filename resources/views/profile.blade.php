@@ -53,9 +53,12 @@
                             +1 point for each like on your decklist<br/>
                             +1 point for each like on your card review'])
                         @endif
+                        {{--Admin info--}}
                         @if (Auth::user() && Auth::user()->admin)
                             <br/>
-                            <strong>admin info - email: </strong> {{ $user->email }}
+                            <strong>admin info - email:</strong> {{ $user->email }}
+                            <br/>
+                            <strong>admin info - last login:</strong> {{ $user->updated_at }}
                         @endif
                     </div>
                 </div>
