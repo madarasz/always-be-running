@@ -10,7 +10,7 @@
                 @include('tournaments.partials.tabledin',
                     ['columns' => ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims' ],
                     'title' => 'Tournament results from the past', 'id' => 'results', 'icon' => 'fa-list-alt',
-                    'subtitle' => 'only concluded tournaments', 'doublerow' => true])
+                    'subtitle' => 'only concluded tournaments', 'doublerow' => true, 'loader' => true])
             </div>
         </div>
         <div class="col-md-4 pull-md-8 col-lg-3 pull-lg-9 col-col-sm-12">

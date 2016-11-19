@@ -62,11 +62,10 @@ function getTournamentData(filters, callback) {
 }
 
 function updateDiscover(table, columns, filter, map, bounds, infowindow, callback) {
-    $('.loader').removeClass('hidden-xs-up');
+    $(table + '-loader').removeClass('hidden-xs-up');
     $(table).find('tbody').empty();
 
     getTournamentData(filter, function(data) {
-        $('.loader').addClass('hidden-xs-up');
         updateTournamentTable(table, columns, 'no tournaments to show', '', data);
         updateTournamentCalendar(data);
         codeAddress(data, map, bounds, infowindow, callback);

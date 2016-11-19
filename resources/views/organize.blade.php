@@ -26,8 +26,8 @@
             <div class="bracket">
             @include('tournaments.partials.tabledin',
                 ['columns' => ['title', 'date', 'location', 'cardpool', 'approval', 'conclusion', 'players', 'claims',
-                    'action_edit', 'action_delete' ],
-                'title' => 'Tournaments created by me', 'id' => 'created', 'icon' => 'fa-list-alt'])
+                    'action_edit', 'action_delete' ], 'doublerow' => true,
+                'title' => 'Tournaments created by me', 'id' => 'created', 'icon' => 'fa-list-alt', 'loader' => true])
             </div>
         </div>
     </div>

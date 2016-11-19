@@ -71,8 +71,11 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
         }
         // cardpool
         if ($.inArray('cardpool', columns) > -1) {
+            if (element.cardpool === '- not yet known -') {
+                element.cardpool = element.cardpool.replace(/ /g,'&nbsp;');
+            }
             newrow.append($('<td>', {
-                text: element.cardpool
+                html: element.cardpool
             }));
         }
         // type
@@ -278,6 +281,9 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
         }
 
     }, columns, emptyMessage);
+
+    // remove loader animation
+    $(elementID+'-loader').addClass('hidden-xs-up');
 
     // paging
     updatePaging(elementID.substr(1));

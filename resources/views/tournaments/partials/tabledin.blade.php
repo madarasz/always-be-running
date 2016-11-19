@@ -10,7 +10,7 @@
     @endunless
 </h5>
 @unless (empty($loader))
-    <div class="loader">&nbsp;</div>
+    <div class="loader" id="{{ $id }}-loader">&nbsp;</div>
 @endunless
 <table class="table table-sm table-striped abr-table{{ @$doublerow ? ' table-doublerow' : '' }}" id="{{ $id }}">
     <thead>
