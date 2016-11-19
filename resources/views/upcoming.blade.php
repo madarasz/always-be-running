@@ -101,7 +101,7 @@
         document.getElementById('marker-both').setAttribute('src', markerIconUrl('purple'));
 
         var map, infowindow, bounds, calendardata = {},
-            default_filter = 'start={{ $nowdate }}&approved=1&recur=0';
+            default_filter = 'start={{ $nowdate }}&approved=1&recur=0&concluded=0';
 
         function initializeMap() {
             map = new google.maps.Map(document.getElementById('map'), {
