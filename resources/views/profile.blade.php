@@ -58,6 +58,8 @@
                             <br/>
                             <strong>admin info - email:</strong> {{ $user->email }}
                             <br/>
+                            <strong>admin info - first login:</strong> {{ $user->created_at }}
+                            <br/>
                             <strong>admin info - last login:</strong> {{ $user->updated_at }}
                         @endif
                     </div>

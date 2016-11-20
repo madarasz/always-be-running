@@ -243,10 +243,12 @@ function updateNavBadges() {
             }
             // admin page alerts
             if (data.adminAlerts) {
-                document.getElementById('nav-admin').setAttribute("data-badge", data.adminAlerts);
-                if ($('#notif-approve').length) {
-                    $('#notif-approve').removeClass('hidden-xs-up');
-                    document.getElementById('notif-approve').setAttribute("data-badge", data.adminAlerts);
+                document.getElementById('nav-admin').setAttribute("data-badge", data.adminAlerts.total);
+                if ($('#notif-tournament').length) {
+                    $('#notif-tournament').removeClass('hidden-xs-up');
+                    $('#pending-title').addClass('notif-red notif-badge-page').attr('data-badge', data.adminAlerts.pendingAlerts);
+                    $('#conflict-title').addClass('notif-red notif-badge-page').attr('data-badge', data.adminAlerts.conflictAlerts);
+                    document.getElementById('tabf-tournament').setAttribute("data-badge", data.adminAlerts.total);
                 }
             }
             // personal page alerts

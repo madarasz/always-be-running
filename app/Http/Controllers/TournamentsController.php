@@ -231,6 +231,9 @@ class TournamentsController extends Controller
         if ($request->input('creator')) {
             $tournaments = $tournaments->where('creator', $request->input('creator'));
         }
+        if (!is_null($request->input('conflict'))) {
+            $tournaments = $tournaments->where('conflict', $request->input('conflict'));
+        }
         if ($request->input('deleted')) {
             $tournaments = $tournaments->onlyTrashed();
         }

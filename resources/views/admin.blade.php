@@ -9,7 +9,7 @@
 
     {{--Tabs--}}
     <ul id="admin-tabs" class="nav nav-tabs" role="tablist">
-        <li class="nav-item">
+        <li class="nav-item notif-red notif-badge" id="tabf-tournament">
             <a class="nav-link active" data-toggle="tab" href="#tab-tournaments" role="tab">Tournaments</a>
         </li>
         <li class="nav-item">
@@ -25,9 +25,9 @@
         {{--Tournaments--}}
         <div class="tab-pane active" id="tab-tournaments" role="tabpanel">
             {{--Notification for approve--}}
-            <div class="alert alert-warning view-indicator notif-red notif-badge-page hidden-xs-up" id="notif-approve" data-badge="">
+            <div class="alert alert-warning view-indicator hidden-xs-up" id="notif-tournament">
                 <i class="fa fa-clock-o" aria-hidden="true"></i>
-                You have tournaments waiting for approval.
+                You have tournaments waiting for approval or having conflicts.
             </div>
             <div class="row">
                 <div class="col-xs-12">
@@ -47,11 +47,22 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div class="bracket">
+                        {{--Conflict--}}
+                        @include('tournaments.partials.tabledin',
+                            ['columns' => ['title', 'date', 'type', 'creator', 'approval', 'players', 'claims', 'action_delete'],
+                            'title' => 'Conflicts',
+                            'id' => 'conflict', 'icon' => 'fa-exclamation-triangle', 'loader' => true])
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="bracket">
                         {{--Late conclusion--}}
                         @include('tournaments.partials.tabledin',
-                            ['columns' => ['title', 'date', 'cardpool', 'creator', 'approval', 'conclusion', 'players', 'action_delete'],
+                            ['columns' => ['title', 'date', 'location', 'creator', 'conclusion', 'regs', 'action_delete'],
                             'title' => 'Tournaments to be concluded', 'subtitle' => 'creators should conclude these',
-                            'id' => 'late', 'icon' => 'fa-clock-o ', 'loader' => true])
+                            'id' => 'late', 'icon' => 'fa-clock-o', 'loader' => true])
                     </div>
                 </div>
             </div>
@@ -130,15 +141,18 @@
             getTournamentData("approved=0", function(data) {
                 updateTournamentTable('#rejected', ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
                     'action_edit', 'action_approve', 'action_delete'], 'no rejected tournaments', '{{ csrf_token() }}', data);
-                getTournamentData("approved=1&concluded=0&recur=0&end={{ $nowdate }}", function(data) {
-                    updateTournamentTable('#late', ['title', 'date', 'cardpool', 'creator', 'approval', 'conclusion', 'players', 'action_delete'],
-                            'no late tournaments', '{{ csrf_token() }}', data);
-                    getTournamentData("deleted=1", function(data) {
-                        updateTournamentTable('#deleted', ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
-                            'action_edit', 'action_restore'], 'no deleted tournaments', '{{ csrf_token() }}', data);
+                getTournamentData("conflict=1", function(data) {
+                    updateTournamentTable('#conflict', ['title', 'date', 'type', 'creator', 'approval', 'players', 'claims', 'action_delete'],
+                            'no tournaments with conflicts', '{{ csrf_token() }}', data);
+                    getTournamentData("approved=1&concluded=0&recur=0&end={{ $nowdate }}", function(data) {
+                        updateTournamentTable('#late', ['title', 'date', 'location', 'creator', 'conclusion', 'players', 'action_delete'],
+                                'no late tournaments', '{{ csrf_token() }}', data);
+                        getTournamentData("deleted=1", function(data) {
+                            updateTournamentTable('#deleted', ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
+                                'action_edit', 'action_restore'], 'no deleted tournaments', '{{ csrf_token() }}', data);
+                        });
                     });
                 });
-
             });
         });
     </script>

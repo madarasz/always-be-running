@@ -174,7 +174,13 @@ class PagesController extends Controller
         ];
 
         if (Auth::user()->admin) {
-            $result['adminAlerts'] = Tournament::whereNull('approved')->whereNull('deleted_at')->count();
+            $pending = Tournament::whereNull('approved')->whereNull('deleted_at')->count();
+            $conflict = Tournament::where('conflict', 1)->whereNull('deleted_at')->count();
+            $result['adminAlerts'] = [
+                'total' => $pending + $conflict,
+                'pendingAlerts' => $pending,
+                'conflictAlerts' => $conflict
+            ];
         }
 
         return response()->json($result);
