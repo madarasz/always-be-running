@@ -365,17 +365,27 @@ class TournamentsController extends Controller
             // process file
             $json = json_decode(file_get_contents('tjsons/' . $tournament->id . '.json'), true);
             $this->processNRTMjson($json, $tournament, $errors);
-        } else {
-            // process JSON file
-            if ($request->hasFile('jsonresults') && $request->file('jsonresults')->isValid()) {
+        } elseif ($request->hasFile('jsonresults') && $request->file('jsonresults')->isValid()) { // NRTM JSON
                 // store file
                 $request->file('jsonresults')->move('tjsons', $tournament->id . '.json');
                 // process file
                 $json = json_decode(file_get_contents('tjsons/' . $tournament->id . '.json'), true);
                 $this->processNRTMjson($json, $tournament, $errors);
-            } else {
+        } elseif ($request->hasFile('csvresults') && $request->file('csvresults')->isValid()) { // CSV file
+                // store file
+                $request->file('csvresults')->move('tjsons', $tournament->id . '.csv');
+                // process file
+                $handle = fopen('tjsons/' . $tournament->id . '.csv', 'r');
+                $csv = []; $topcut = 0;
+                while ($row = fgetcsv($handle, 0, ';')) {
+                    array_push($csv, $row);
+                    if (intval($row[2]) > $topcut) {
+                        $topcut = intval($row[2]);
+                    }
+                }
+                $this->processCSV($csv, $tournament, $topcut, $errors);
+        } else {
                 array_push($errors, 'There was a problem with uploading the file.');
-            }
         }
 
         $tournament->update(['concluded' => true]);
@@ -386,7 +396,7 @@ class TournamentsController extends Controller
                 ->withErrors($errors);
         } else {
             return redirect()->route('tournaments.show', $tournament->id)
-                ->with('message', 'Tournament concluded by NRTM import.');
+                ->with('message', 'Tournament concluded by import.');
         }
     }
 
@@ -432,17 +442,14 @@ class TournamentsController extends Controller
 
                 // error handling
                 if (is_null($corp)) {
-                    array_push($errors, 'Cannot find corporation identity "' . $swiss['corpIdentity'] . '". Be sure to download faction names in NRTM. See F.A.Q. for help.');
+                    array_push($errors, 'Cannot find corporation identity "' . $swiss['corpIdentity'] . '". Be sure to download faction names in NRTM. See F.A.Q.');
                 }
                 if (is_null($runner)) {
-                    array_push($errors, 'Cannot find runner identity "' . $swiss['runnerIdentity'] . '". Be sure to download faction names in NRTM. See F.A.Q. for help.');
+                    array_push($errors, 'Cannot find runner identity "' . $swiss['runnerIdentity'] . '". Be sure to download faction names in NRTM. See F.A.Q.');
                 }
 
                 // create claims with IDs, skipping this if there is a user claim on the same rank with same IDs
-                if (!is_null($corp) && !is_null($runner) && // identities are found
-                    (is_null($existing) || strcmp($runner->id, $existing->runner_deck_identity) != 0 ||
-                        strcmp($corp->id, $existing->corp_deck_identity) != 0)
-                ) { // no entry or conflicting entry
+                if ($this->assessNewClaimNeed($corp, $runner, $existing)) { // no entry or conflicting entry
 
                     // checking top cut
                     $ranktop = 0;
@@ -479,4 +486,69 @@ class TournamentsController extends Controller
             array_push($errors, 'There was an error with the uploaded file.');
         }
     }
+
+    /**
+     * Updates tournament anonym claims based on CSV results.
+     * @param $csv array
+     * @param $tournament
+     * @param $topcut number of players in top-cut
+     * @param $errors
+     */
+    private function processCSV($csv, &$tournament, $topcut, &$errors) {
+        $tournament->concluded = true;
+        $tournament->import = 1;
+        $tournament->top_number = $topcut; // number of players in top cut
+        $tournament->players_number = count($csv); // number of players
+
+        foreach($csv as $row) {
+            // error handling
+            if (count($row) < 5) {
+                array_push($errors, 'Cannot process: '.implode($row, ';').
+                    ' - expected format is: name;swiss-rank;topcut-rank;runnerID;corpID' );
+                return false;
+            }
+            // get identities
+            $corp = CardIdentity::where('title', 'LIKE', '%' . $row[4] . '%')->first();
+            $runner = CardIdentity::where('title', 'LIKE', '%' . $row[3] . '%')->first();
+            $existing = Entry::where('tournament_id', $tournament->id)->where('rank', $row[1])->first();
+
+            // error handling
+            if (is_null($corp)) {
+                array_push($errors, 'Cannot find corporation identity "' . $row[4] . '". Be sure to use correct faction names. See F.A.Q.');
+            }
+            if (is_null($runner)) {
+                array_push($errors, 'Cannot find runner identity "' . $row[3] . '". Be sure to use correct faction names. See F.A.Q.');
+            }
+
+            // create new claim if needed
+            if ($this->assessNewClaimNeed($corp, $runner, $existing)) {
+
+                // saving new claim
+                Entry::create([
+                    'approved' => 1,
+                    'tournament_id' => $tournament->id,
+                    'rank' => $row[1],
+                    'rank_top' => $row[2],
+                    'corp_deck_identity' => $corp->id,
+                    'corp_deck_title' => $row[4],
+                    'runner_deck_identity' => $runner->id,
+                    'runner_deck_title' => $row[3],
+                    'import_username' => $row[0]
+                ]);
+
+            }
+        }
+
+        $tournament->save();
+
+        // create conflict if needed
+        $tournament->updateConflict();
+    }
+
+    private function assessNewClaimNeed($corp, $runner, $existing) {
+        return !is_null($corp) && !is_null($runner) && // identities are found
+            (is_null($existing) || strcmp($runner->id, $existing->runner_deck_identity) != 0 ||
+                strcmp($corp->id, $existing->corp_deck_identity) != 0);
+    }
 }
+

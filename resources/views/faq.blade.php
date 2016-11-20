@@ -9,7 +9,7 @@
                     <a href="#why-ndb">Why do I have to login with my NetrunnerDB user?</a><br>
                     <a href="#ndb-sharing">I cannot see my decks when I am claiming my spot at a tournament.</a><br>
                     <a href="#other-deckbuilders">Do you plan to integrate with other deckbuilders?</a><br>
-                    <a href="#nrtm">How do I import the tournament results from NRTM?</a><br>
+                    <a href="#nrtm">How do I import the tournament results?</a><br>
                     <a href="#more-questions">I have more questions or ideas.</a><br>
                 </p>
                 <hr/>
@@ -45,7 +45,10 @@
                     endpoints and has a wide userbase.
                 </p>
                 <p class="p-t-2">
-                    <a name="nrtm"></a><strong>How do I import the tournament results from NRTM?</strong>
+                    <a name="nrtm"></a><strong>How do I import the tournament results?</strong>
+                </p>
+                <p>
+                    You can either do it by NRTM or a CSV file that you prepare.
                 </p>
                 <p>
                     <a href="https://itunes.apple.com/us/app/nrtm/id695468874?mt=8">NRTM</a> is a Netrunner tournament
@@ -60,6 +63,19 @@
                         <img src="/img/icon_ios_upload.png"/> <strong>Export as Email / Dropbox</strong>.</li>
                     <li>Upload the <strong>NRTM.json</strong> file you received when you conclude the tournament.</li>
                 </ul>
+                <p>
+                    If you are uploading a CSV file, you have follow this format:<br/>
+                    <blockquote class="help-markdown">name;swiss-rank;topcut-rank;runnerID;corpID</blockquote><br/>
+                    If there were no top-cut or the player did not reach top-cut, use "0" (zero)
+                    in the <em>top-cut rank</em> field. The ID fields should be the (substring of the)
+                    official card name or the 5 digit card code. Example:
+                    <blockquote class="help-markdown">
+                        Pete;1;0;Kit;Near-Earth Hub<br/>
+                        Tristan;2;0;Hayley;Engineering the Future<br/>
+                        Alice;3;0;Omar;Controlling the Message<br/>
+                        Ed;4;0;Khan;Architects of Tomorrow<br/>
+                    </blockquote>
+                </p>
                 <p class="p-t-2">
                     <a name="more-questions"></a><strong>I have more questions or ideas.</strong>
                 </p>

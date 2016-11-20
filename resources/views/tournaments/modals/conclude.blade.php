@@ -48,12 +48,12 @@
                             <div class="col-xs-12 text-xs-center hidden-md-up section-manual">
                                 <strong>OR</strong>
                             </div>
-                            {{--Import via NRTM--}}
+                            {{--Import--}}
                             <div class="col-md-6 col-xs-12 col-sm-height">
                                 <div class="card inside-full-height">
                                     <div class="card-block text-xs-center">
                                         <div class="card-title">
-                                            Import results from NRTM
+                                            Import results
                                             <div class="small-text">Having trouble? Read the <a href="/faq#nrtm" target="_blank">F.A.Q.</a></div>
                                         </div>
                                         {!! Form::open(['url' => '', 'files' => true, 'id' => 'conclude-nrtm']) !!}
@@ -63,8 +63,20 @@
                                             </div>
                                             <div class="p-b-1"><strong>OR</strong></div>
                                             <div class="form-group text-xs-left">
-                                                {!! Html::decode(Form::label('conclusion_code', 'Conclusion code <sup>(coming soon)</sup>')) !!}
+                                                {!! Html::decode(Form::label('conclusion_code', 'NRTM conclusion code<br/><sup>(coming soon)</sup>')) !!}
                                                 {!! Form::text('conclusion_code', null, ['class' => 'form-control', 'placeholder' => 'provided by NRTM']) !!}
+                                            </div>
+                                            <div class="p-b-1"><strong>OR</strong></div>
+                                            <div class="form-group text-xs-left">
+                                                {!! Form::label('csvresults', 'CSV file') !!}
+                                                @include('partials.popover', ['direction' => 'top', 'content' =>
+                                                    '<strong>required row format:</strong><br/>
+                                                    <em>name;swiss-rank;topcut-rank;runnerID;corpID</em><br/>
+                                                    <br/>
+                                                    If there were no top-cut or the player did not reach top-cut, use "0" (zero)
+                                                    in the <em>top-cut rank</em> field. The ID fields should be the (substring of the)
+                                                    official card name. Eg. "Andromeda" works.'])
+                                                <input id="csvresults" class="form-control" name="csvresults" type="file">
                                             </div>
                                             <div class="button-spacer"></div>
                                             <div class="inside-bottom-center">

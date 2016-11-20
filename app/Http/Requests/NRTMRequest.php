@@ -24,14 +24,14 @@ class NRTMRequest extends Request
     public function rules()
     {
         return [
-            'jsonresults' => 'required_without:conclusion_code',
-            'conclusion_code' => 'conc_code:'.Request::get('conclusion_code')
+            'jsonresults' => 'required_without_all:conclusion_code,csvresults',
+            'conclusion_code' => 'conc_code:'.Request::get('conclusion_code'),
         ];
     }
 
     public function messages() {
         return [
-            'jsonresults.required_without' => 'Either upload the NRTM file or provide the conclusion code.',
+            'jsonresults.required_without' => 'Use one of the fields to upload results.',
             'conclusion_code.conc_code' => 'Conclusion code does not exist or has been already used. Please try reuploading in the app again.'
         ];
     }
