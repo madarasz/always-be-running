@@ -286,12 +286,12 @@
                 @if ($user && ($user->admin || $user->id == $tournament->creator))
                     <div class="text-xs-center">
                         @if ($tournament->import)
-                            {{--Clear NRTM--}}
+                            {{--Clear import--}}
                             {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id/clearanonym"]) !!}
                                 {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove all claims by import', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'id' => 'button-clear-nrtm')) !!}
                             {!! Form::close() !!}
                         @else
-                            {{--Import NRTM--}}
+                            {{--Import--}}
                             <button class="btn btn-conclude btn-xs" data-toggle="modal" data-hide-manual="true"
                                     data-target="#concludeModal" data-tournament-id="{{$tournament->id}}"
                                     data-subtitle="{{$tournament->title.' - '.$tournament->date}}" id="button-import-nrtm">
@@ -325,14 +325,16 @@
                     The tournament creator should set it to 'concluded', so players can make claims.
                 </div>
                 {{--Conclude modal, button--}}
-                @include('errors.list')
-                <div class="text-xs-center">
-                    <button class="btn btn-conclude" data-toggle="modal" data-target="#concludeModal"
-                            data-tournament-id="{{$tournament->id}}"
-                            data-subtitle="{{$tournament->title.' - '.$tournament->date}}" id="button-conclude">
-                        <i class="fa fa-check" aria-hidden="true"></i> Conclude
-                    </button>
-                </div>
+                @if ($user && ($user->admin || $user->id == $tournament->creator))
+                    @include('errors.list')
+                    <div class="text-xs-center">
+                        <button class="btn btn-conclude" data-toggle="modal" data-target="#concludeModal"
+                                data-tournament-id="{{$tournament->id}}"
+                                data-subtitle="{{$tournament->title.' - '.$tournament->date}}" id="button-conclude">
+                            <i class="fa fa-check" aria-hidden="true"></i> Conclude
+                        </button>
+                    </div>
+                @endif
                 <hr/>
             @endif
             {{--List of registered players--}}
