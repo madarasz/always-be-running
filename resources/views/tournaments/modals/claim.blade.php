@@ -57,7 +57,11 @@
                         </div>
                         {{--Login prompt if user is not logged in--}}
                         <div class="text-xs-center hidden-xs-up m-b-1" id="claim-user-login">
-                            You are not logged in.<br/>
+                            <div class="alert alert-danger" id="no-runner-deck">
+                                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                                There was a problem with reaching NetrunnerDB.<br/>
+                                Please try logging in again.
+                            </div>
                             <a href="/oauth2/redirect">Login via NetrunnerDB</a> to claim spot.
                         </div>
                         {{--claim with other--}}

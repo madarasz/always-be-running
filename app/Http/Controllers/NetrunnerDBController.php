@@ -87,7 +87,7 @@ class NetrunnerDBController extends Controller
         // private deck data
         if (Auth::user()->sharing)
         {
-            $private = json_decode($this->oauth->request('https://netrunnerdb.com/api/2.0/private/decks'), true);
+            $private = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/private/decks'), true);
             $this->sortDecks($private['data'], $result['privateNetrunnerDB'], $runner_ids, $corp_ids);
         }
 
