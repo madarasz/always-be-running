@@ -68,7 +68,7 @@
                     <blockquote class="help-markdown">name;swiss-rank;topcut-rank;runnerID;corpID</blockquote><br/>
                     If there were no top-cut or the player did not reach top-cut, use "0" (zero)
                     in the <em>top-cut rank</em> field. The ID fields should be the (substring of the)
-                    official card name or the 5 digit card code. Example:
+                    official card name. Example:
                     <blockquote class="help-markdown">
                         Pete;1;0;Kit;Near-Earth Hub<br/>
                         Tristan;2;0;Hayley;Engineering the Future<br/>
