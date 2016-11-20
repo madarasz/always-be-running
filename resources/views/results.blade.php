@@ -1,7 +1,7 @@
 @extends('layout.general')
 
 @section('content')
-    <h4 class="page-header">Results</h4>
+    <h4 class="page-header">Netrunner Tournament Results</h4>
     @include('partials.message')
     <div class="row">
         {{--Results table--}}
