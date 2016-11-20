@@ -3,19 +3,11 @@
 // gets the available data pack names from KtM
 function getKTMDataPacks(callback) {
     $.ajax({
-        url: "http://www.knowthemeta.com/JSON/Cardpacks",
+        url: "http://www.knowthemeta.com/JSON/Cardpoolnames",
         dataType: "json",
         async: true,
         success: function (data) {
-            var result = [];
-            for (var i = 0, len = data.length; i < len; i++) {
-                if (data[i].datapacks.length) {
-                    result = result.concat(data[i].datapacks);
-                } else {
-                    result.push(data[i].title);
-                }
-            }
-            callback(result);
+            callback(data);
         }
     });
 }
@@ -250,7 +242,7 @@ function filterResults(filter, packlist) {
             currentPack = cardpoolName;
             // no filter is statistics for latest pack
             if (cardpoolName === '---') {
-                cardpoolName = packlist[packlist.length-1];
+                cardpoolName = packlist[0];
             }
             updateIdStats(cardpoolName);
         }

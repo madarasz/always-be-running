@@ -77,8 +77,7 @@
             // KtM get packs
             getKTMDataPacks(function (packs) {
                 packlist = packs;
-                currentPack = packs[packs.length-1];
-                updateIdStats(currentPack);
+                updateIdStats(packs[0]);
             });
         }
 
