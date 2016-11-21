@@ -231,7 +231,7 @@
                                         </a>
                                     {{--private deck--}}
                                     @elseif ($user_entry->corp_deck_type == 2)
-                                        <a href="{{ "https://netcorpdb.com/en/deck/view/".$user_entry->corp_deck_id }}">
+                                        <a href="{{ "https://netrunnerdb.com/en/deck/view/".$user_entry->corp_deck_id }}">
                                             {{ $user_entry->corp_deck_title }}
                                         </a>
                                     @else
