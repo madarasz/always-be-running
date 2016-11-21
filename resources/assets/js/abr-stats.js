@@ -210,7 +210,7 @@ function filterResults(filter, packlist) {
         cardpool = document.getElementById('cardpool').value,
         cardpoolName = $("#cardpool option:selected").text(),
         countrySelector = document.getElementById('location_country'),
-        country = countrySelector.options[parseInt(countrySelector.value)+1].innerHTML;
+        country = countrySelector.options[parseInt(countrySelector.selectedIndex)].innerHTML;
     // type filtering
     if (type > 0) {
         filter = filter + '&type=' + type;
