@@ -18,10 +18,10 @@
                     </button>
                     {{--Approval --}}
                     @if ($user && $user->admin)
-                        @if ($tournament->approved !== 1)
+                        @if ($tournament->approved != 1)
                             <a href="/tournaments/{{ $tournament->id }}/approve" class="btn btn-success" id="approve-button"><i class="fa fa-thumbs-up" aria-hidden="true"></i> Approve</a>
                         @endif
-                        @if ($tournament->approved !== 0)
+                        @if ($tournament->approved != 0)
                             <a href="/tournaments/{{ $tournament->id }}/reject" class="btn btn-danger" id="reject-button"><i class="fa fa-thumbs-down" aria-hidden="true"></i> Reject</a>
                         @endif
                     @endif
