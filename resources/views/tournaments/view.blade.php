@@ -1,22 +1,34 @@
 @extends('layout.general')
 
 @section('content')
-    @include('tournaments.modals.conclude')
+    @if ($user && ($user->admin || $user->id == $tournament->creator))
+        @include('tournaments.modals.conclude')
+        @include('tournaments.modals.transfer')
+    @endif
     {{--Header--}}
     <h4 class="page-header">
         @if ($user && ($user->admin || $user->id == $tournament->creator))
             <div class="pull-right" id="control-buttons">
-                {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id"]) !!}
                     {{--Edit--}}
                     <a href="{{ "/tournaments/$tournament->id/edit" }}" class="btn btn-primary" id="edit-button"><i class="fa fa-pencil" aria-hidden="true"></i> Update</a>
+                    {{--Transfer--}}
+                    <button class="btn btn-primary" data-toggle="modal" data-hide-manual="true"
+                            data-target="#transferModal" id="button-transfer">
+                        <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i> Transfer
+                    </button>
                     {{--Approval --}}
                     @if ($user && $user->admin)
-                        <a href="/tournaments/{{ $tournament->id }}/approve" class="btn btn-success" id="approve-button"><i class="fa fa-thumbs-up" aria-hidden="true"></i> Approve</a>
-                        <a href="/tournaments/{{ $tournament->id }}/reject" class="btn btn-danger" id="reject-button"><i class="fa fa-thumbs-down" aria-hidden="true"></i> Reject</a>
+                        @if ($tournament->approved !== 1)
+                            <a href="/tournaments/{{ $tournament->id }}/approve" class="btn btn-success" id="approve-button"><i class="fa fa-thumbs-up" aria-hidden="true"></i> Approve</a>
+                        @endif
+                        @if ($tournament->approved !== 0)
+                            <a href="/tournaments/{{ $tournament->id }}/reject" class="btn btn-danger" id="reject-button"><i class="fa fa-thumbs-down" aria-hidden="true"></i> Reject</a>
+                        @endif
                     @endif
                     {{--Delete--}}
-                    {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Delete tournament', array('type' => 'submit', 'class' => 'btn btn-danger', 'id' => 'delete-button')) !!}
-                {!! Form::close() !!}
+                    {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id", 'class' => 'inline-block']) !!}
+                        {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Delete tournament', array('type' => 'submit', 'class' => 'btn btn-danger', 'id' => 'delete-button')) !!}
+                    {!! Form::close() !!}
             </div>
         @endif
         <span id="tournament-title">{{ $tournament->title }}</span><br/>

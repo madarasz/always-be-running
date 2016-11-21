@@ -25,6 +25,7 @@ Route::get('tournaments/{id}/restore', 'AdminController@restoreTournament');
 Route::get('packs/{id}/enable', 'AdminController@enablePack');
 Route::get('packs/{id}/disable', 'AdminController@disablePack');
 
+Route::patch('tournaments/{id}/transfer', 'TournamentsController@transfer');
 Route::get('tournaments/{id}/register', 'EntriesController@register');
 Route::get('tournaments/{id}/unregister', 'EntriesController@unregister');
 Route::post('tournaments/{id}/claim', 'EntriesController@claim');

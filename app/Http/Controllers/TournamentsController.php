@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\CardPack;
 use App\Entry;
+use App\User;
 use App\Tournament;
 use App\TournamentType;
 use App\CardIdentity;
@@ -84,6 +85,30 @@ class TournamentsController extends Controller
     }
 
     /**
+     * Transfers tournament.
+     * @param $id tournament id
+     * @param Request $request
+     * @return redirects
+     */
+    public function transfer($id, Request $request)
+    {
+        $tournament = Tournament::findorFail($id);
+        $oldowner = $tournament->creator;
+        $this->authorize('own', $tournament, $request->user());
+        $tournament->update($request->all());
+
+        // update badges
+        if ($tournament->approved) {
+            App('App\Http\Controllers\BadgeController')->addTOBadges($tournament->creator);
+            App('App\Http\Controllers\BadgeController')->addTOBadges($oldowner);
+        }
+
+        // redirecting to show newly created tournament
+        return redirect()->route('tournaments.show', $tournament->id)
+            ->with('message', 'Tournament transferred.');
+    }
+
+    /**
      * Shows tournament information.
      * @param $id tournament id
      * @param Request $request
@@ -97,6 +122,11 @@ class TournamentsController extends Controller
             (!$request->user() || $request->user()->admin == 0 && $request->user()->id != $tournament->creator))
         {
             abort(403);
+        }
+
+        // all usernames for transferring
+        if ($request->user() && ($request->user()->admin || $request->user()->id == $tournament->creator)) {
+            $all_users = User::orderBy('name')->pluck('name', 'id');
         }
 
         $type = $tournament->tournament_type->type_name;
@@ -128,7 +158,7 @@ class TournamentsController extends Controller
 
         return view('tournaments.view',
             compact('tournament', 'message', 'type', 'nowdate', 'user', 'entries',
-                'user_entry', 'entries_swiss', 'entries_top', 'regcount'));
+                'user_entry', 'entries_swiss', 'entries_top', 'regcount', 'all_users'));
     }
 
     /**
