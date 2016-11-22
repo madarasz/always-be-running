@@ -57,16 +57,19 @@
                                             <div class="small-text">Having trouble? Read the <a href="/faq#nrtm" target="_blank">F.A.Q.</a></div>
                                         </div>
                                         {!! Form::open(['url' => '', 'files' => true, 'id' => 'conclude-nrtm']) !!}
+                                            {{--Conclusion code--}}
                                             <div class="form-group text-xs-left">
-                                                {!! Form::label('jsonresults', 'From NRTM.json file') !!}
+                                                {!! Html::decode(Form::label('conclusion_code', 'NRTM conclusion code')) !!}
+                                                {!! Form::text('conclusion_code', null, ['class' => 'form-control', 'placeholder' => 'provided by NRTM']) !!}
+                                            </div>
+                                            <div><strong>OR</strong></div>
+                                            {{--JSON--}}
+                                            <div class="form-group text-xs-left">
+                                                {!! Form::label('jsonresults', 'NRTM.json file') !!}
                                                 <input id="jsonresults" class="form-control" name="jsonresults" type="file">
                                             </div>
                                             <div class="p-b-1"><strong>OR</strong></div>
-                                            <div class="form-group text-xs-left">
-                                                {!! Html::decode(Form::label('conclusion_code', 'NRTM conclusion code<br/><sup>(coming soon)</sup>')) !!}
-                                                {!! Form::text('conclusion_code', null, ['class' => 'form-control', 'placeholder' => 'provided by NRTM']) !!}
-                                            </div>
-                                            <div class="p-b-1"><strong>OR</strong></div>
+                                            {{--CSV--}}
                                             <div class="form-group text-xs-left">
                                                 {!! Form::label('csvresults', 'CSV file') !!}
                                                 @include('partials.popover', ['direction' => 'top', 'content' =>

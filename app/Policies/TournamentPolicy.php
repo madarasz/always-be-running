@@ -19,23 +19,20 @@ class TournamentPolicy
     {
     }
 
-    public function before($user, $ability) {
-        if ($user->admin) {
-            return true;
-        }
-    }
-
     public function logged_in(User $user) {
         return !is_null($user);
     }
 
     public function own(User $user, Tournament $tournament) {
-        return $user->id == $tournament->creator;
+        return $user->admin || $user->id == $tournament->creator;
     }
 
-    public function admin() {
-        // just for admin, handled in before call
-        return false;
+    public function purge(User $user, Tournament $tournament) {
+        return $user->id == 1276 || $user->id == $tournament->creator || ($user->admin && $tournament->incomplete);
+    }
+
+    public function admin(User $user) {
+        return $user->admin;
     }
 
 }

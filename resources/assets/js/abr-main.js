@@ -139,6 +139,14 @@ function conclusionCheck() {
     }
 }
 
+function hideNonRequired() {
+    if (document.getElementById('hide-non').checked) {
+        $('.hide-nonrequired').addClass('hidden-xs-up');
+    } else {
+        $('.hide-nonrequired').removeClass('hidden-xs-up');
+    }
+}
+
 function percentageToString(fraction) {
     return Math.round(fraction * 1000) / 10 + '%';
 }
@@ -234,11 +242,17 @@ function updateNavBadges() {
         async: true,
         success: function (data) {
             // organize page alerts
-            if (data.organizeAlert) {
-                document.getElementById('nav-organize').setAttribute("data-badge", data.organizeAlert);
-                if ($('#notif-organize').length) {
-                    $('#notif-organize').removeClass('hidden-xs-up');
-                    document.getElementById('notif-organize').setAttribute("data-badge", data.organizeAlert);
+            if (data.organizeAlert.total) {
+                document.getElementById('nav-organize').setAttribute("data-badge", data.organizeAlert.total);
+                if ($('#notif-conclude').length) {
+                    if (data.organizeAlert.concludeAlert) {
+                        $('#notif-conclude').removeClass('hidden-xs-up');
+                        document.getElementById('notif-conclude').setAttribute("data-badge", data.organizeAlert.concludeAlert);
+                    }
+                    if (data.organizeAlert.incompleteAlert) {
+                        $('#notif-incomplete').removeClass('hidden-xs-up');
+                        document.getElementById('notif-incomplete').setAttribute("data-badge", data.organizeAlert.incompleteAlert);
+                    }
                 }
             }
             // admin page alerts

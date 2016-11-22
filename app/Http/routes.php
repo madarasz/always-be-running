@@ -3,7 +3,7 @@
 Route::get('/', 'PagesController@upcoming');
 Route::get('upcoming', 'PagesController@upcoming'); //some redundancy
 Route::get('results', 'PagesController@results');
-Route::get('organize', 'PagesController@organize');
+Route::get('organize', 'PagesController@organize')->name('organize');
 Route::get('personal', 'PagesController@personal');
 Route::get('profile/{id}', 'PagesController@profile')->name('profile.show');
 Route::post('profile/{id}', 'PagesController@updateProfile');
@@ -26,9 +26,11 @@ Route::get('packs/{id}/enable', 'AdminController@enablePack');
 Route::get('packs/{id}/disable', 'AdminController@disablePack');
 
 Route::patch('tournaments/{id}/transfer', 'TournamentsController@transfer');
+Route::get('tournaments/{id}/entries', 'EntriesController@massEditEntries');
 Route::get('tournaments/{id}/register', 'EntriesController@register');
 Route::get('tournaments/{id}/unregister', 'EntriesController@unregister');
 Route::post('tournaments/{id}/claim', 'EntriesController@claim');
+Route::delete('tournaments/{id}/purge', 'TournamentsController@purge');
 Route::delete('entries/{id}', 'EntriesController@unclaim');
 Route::delete('tournaments/{id}/clearanonym', 'TournamentsController@clearAnonym');
 Route::post('tournaments/{id}/conclude/manual', 'TournamentsController@concludeManual');

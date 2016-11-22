@@ -235,4 +235,10 @@ class EntriesController extends Controller
             default: return "";
         }
     }
+
+    public function massEditEntries($id, Request $request) {
+        $tournament = Tournament::findorFail($id);
+        $this->authorize('own', $tournament, $request->user());
+        return view('tournaments.entries', compact('tournament'));
+    }
 }

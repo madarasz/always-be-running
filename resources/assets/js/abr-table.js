@@ -229,6 +229,13 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
             cell.append(element.claim_count);
 
         }
+        // created at
+        if ($.inArray('created_at', columns) > -1) {
+            newrow.append($('<td>', {
+                text: element.created_at,
+                class: 'text-xs-center font-italic'
+            }));
+        }
         // action_edit
         if ($.inArray('action_edit', columns) > -1) {
             newrow.append($('<td>').append($('<a>', {
@@ -287,6 +294,27 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 'class': 'btn btn-danger btn-xs'
             }).append($('<i>', {
                 'class': 'fa fa-trash',
+                'aria-hidden': true
+            }), ' delete'))));
+        }
+        // action_purge
+        if ($.inArray('action_purge', columns) > -1) {
+            newrow.append($('<td>').append($('<form>', {
+                method: 'POST',
+                action: '/tournaments/' + element.id + '/purge'
+            }).append($('<input>', {
+                name: '_method',
+                type: 'hidden',
+                value: 'DELETE'
+            }), $('<input>', {
+                name: '_token',
+                type: 'hidden',
+                value: csrftoken
+            }), $('<button>', {
+                type: 'submit',
+                'class': 'btn btn-danger btn-xs'
+            }).append($('<i>', {
+                'class': 'fa fa-times',
                 'aria-hidden': true
             }), ' delete'))));
         }

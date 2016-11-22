@@ -65,6 +65,9 @@
                 @include('partials.popover', ['direction' => 'top', 'content' => 'claims'])
             </th>
         @endif
+        @if( in_array('created_at', $columns) )
+            <th class="text-xs-center">created at</th>
+        @endif
         @if( in_array('action_view', $columns) )
             <th></th>
         @endif
@@ -78,6 +81,9 @@
             <th></th>
         @endif
         @if( in_array('action_delete', $columns) )
+            <th></th>
+        @endif
+        @if( in_array('action_purge', $columns) )
             <th></th>
         @endif
         @if( in_array('action_restore', $columns) )

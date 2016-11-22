@@ -33,7 +33,7 @@ class PagesController extends Controller
         $nowdate = date('Y.m.d.', time() - 86400); // actually yesterday, to be on the safe side
         $tournaments = Tournament::where(function($q) use ($nowdate) {
                 $q->where('date', '>=', $nowdate)->orWhereNotNull('recur_weekly');
-            })->where('approved', 1)->whereNull('deleted_at');
+            })->where('approved', 1);
         $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->unique()->all())->pluck('type_name', 'id')->all();
         $countries = $tournaments->where('location_country', '!=', '')->orderBy('location_country')->pluck('location_country')->unique()->all();
         $states = $tournaments->pluck('location_state')->unique()->all();
@@ -54,7 +54,7 @@ class PagesController extends Controller
     public function results(Request $request)
     {
         $nowdate = date('Y.m.d.', time() + 86400); // actually tomorrow, to be on the safe side
-        $tournaments = Tournament::where('date', '<=', $nowdate)->where('approved', 1)->where('concluded',1)->whereNull('deleted_at');
+        $tournaments = Tournament::where('date', '<=', $nowdate)->where('approved', 1)->where('concluded',1);
         $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->unique()->all())->pluck('type_name', 'id')->all();
         $tournament_cardpools = CardPack::whereIn('id', $tournaments->pluck('cardpool_id')->unique()->all())->where('id', '!=', 'unknown')
             ->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
@@ -133,10 +133,10 @@ class PagesController extends Controller
         }
 
         $message = session()->has('message') ? session('message') : '';
-        $created_count = Tournament::where('creator', $user->id)->where('approved', 1)->whereNull('deleted_at')->count();
+        $created_count = Tournament::where('creator', $user->id)->where('approved', 1)->count();
         $claim_count = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')->count();
         $claims = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')->get();
-        $created = Tournament::where('creator', $user->id)->where('approved', 1)->whereNull('deleted_at')->get();
+        $created = Tournament::where('creator', $user->id)->where('approved', 1)->get();
         $username = $user->name;
         return view('profile', compact('user', 'claims', 'created', 'created_count', 'claim_count',
             'username', 'page_section', 'message'));
@@ -163,20 +163,25 @@ class PagesController extends Controller
         }
 
         $userid = Auth::user()->id;
-        $toclaim = Tournament::where('concluded', 1)->whereNull('deleted_at')->pluck('id');
+        $toclaim = Tournament::where('concluded', 1)->pluck('id');
         $nowdate = date('Y.m.d.', time());
+        $toconclude = Tournament::where('creator', $userid)->where('concluded', 0)->where('date', '<', $nowdate)->count();
+        $tocomplete = Tournament::where('creator', $userid)->where('incomplete', 1)->count();
 
         $result = [
             'personalAlerts' => Entry::where('user', $userid)->whereIn('tournament_id', $toclaim)
                 ->whereNull('rank')->count(),
-            'organizeAlert' =>Tournament::where('creator', $userid)->where('concluded', 0)->where('date', '<', $nowdate)
-                ->whereNull('deleted_at')->count(),
+            'organizeAlert' => [
+                'total' => $tocomplete + $toconclude,
+                'concludeAlert' => $toconclude,
+                'incompleteAlert' => $tocomplete
+            ],
             'profileAlerts' => Auth::user()->badges()->wherePivot('seen', 0)->count()
         ];
 
         if (Auth::user()->admin) {
-            $pending = Tournament::whereNull('approved')->whereNull('deleted_at')->count();
-            $conflict = Tournament::where('conflict', 1)->whereNull('deleted_at')->count();
+            $pending = Tournament::whereNull('approved')->count();
+            $conflict = Tournament::where('conflict', 1)->count();
             $result['adminAlerts'] = [
                 'total' => $pending + $conflict,
                 'pendingAlerts' => $pending,
