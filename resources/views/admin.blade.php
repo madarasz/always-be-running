@@ -71,7 +71,7 @@
                     <div class="bracket">
                         {{--Deleted--}}
                         @include('tournaments.partials.tabledin',
-                            ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
+                            ['columns' => ['title', 'date', 'creator', 'approval', 'conclusion', 'players', 'decks',
                                 'action_edit', 'action_restore', 'action_purge'],
                             'title' => 'Deleted tournaments', 'subtitle' => 'only creator and Necro can hard delete',
                             'id' => 'deleted', 'icon' => 'fa-times-circle-o', 'loader' => true])
@@ -160,7 +160,7 @@
                         updateTournamentTable('#late', ['title', 'date', 'location', 'creator', 'conclusion', 'players', 'action_delete'],
                                 'no late tournaments', '{{ csrf_token() }}', data);
                         getTournamentData("deleted=1", function(data) {
-                            updateTournamentTable('#deleted', ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
+                            updateTournamentTable('#deleted', ['title', 'date', 'creator', 'approval', 'conclusion', 'players', 'decks',
                                 'action_edit', 'action_restore', 'action_purge'], 'no deleted tournaments', '{{ csrf_token() }}', data);
                             getTournamentData("incomplete=1", function(data) {
                                 updateTournamentTable('#incomplete', ['title', 'date', 'location', 'cardpool', 'creator', 'players',
