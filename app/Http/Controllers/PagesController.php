@@ -180,7 +180,7 @@ class PagesController extends Controller
         ];
 
         if (Auth::user()->admin) {
-            $pending = Tournament::whereNull('approved')->count();
+            $pending = Tournament::whereNull('approved')->where('incomplete', 0)->count();
             $conflict = Tournament::where('conflict', 1)->count();
             $result['adminAlerts'] = [
                 'total' => $pending + $conflict,
