@@ -80,6 +80,13 @@
                     {!! Form::label('concluded', 'tournament has already ended') !!}
                 </small>
             </h5>
+            {{--Imported values warning--}}
+            @if ($tournament->import)
+                <div class="alert alert-warning view-indicator" id="warning-imported-values">
+                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                    These values were set by importing results. Only change if necessary.
+                </div>
+            @endif
             <div class="row">
                 {{--Player number--}}
                 <div class="col-md-6 col-xs-12">

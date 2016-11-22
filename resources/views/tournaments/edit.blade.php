@@ -3,7 +3,7 @@
 @section('content')
     <h4 class="page-header">Edit tournament</h4>
     @if ($tournament->incomplete)
-        <div class="alert alert-danger view-indicator" id="viewing-as-admin">
+        <div class="alert alert-danger view-indicator" id="warning-incomplete">
             <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
             Please fill out the required fields to complete your import.
         </div>
