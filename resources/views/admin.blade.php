@@ -72,8 +72,20 @@
                         {{--Deleted--}}
                         @include('tournaments.partials.tabledin',
                             ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
-                                'action_edit', 'action_restore'],
-                            'title' => 'Deleted tournaments', 'id' => 'deleted', 'icon' => 'fa-times-circle-o', 'loader' => true])
+                                'action_edit', 'action_restore', 'action_purge'],
+                            'title' => 'Deleted tournaments', 'subtitle' => 'only creator and Necro can hard delete',
+                            'id' => 'deleted', 'icon' => 'fa-times-circle-o', 'loader' => true])
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="bracket">
+                        @include('tournaments.partials.tabledin',
+                            ['columns' => ['title', 'date', 'location', 'cardpool', 'creator', 'players',
+                                'created_at', 'action_edit', 'action_purge' ],
+                            'title' => 'Incomplete imports',
+                            'id' => 'incomplete', 'icon' => 'fa-exclamation-triangle', 'loader' => true])
                     </div>
                 </div>
             </div>
@@ -149,7 +161,11 @@
                                 'no late tournaments', '{{ csrf_token() }}', data);
                         getTournamentData("deleted=1", function(data) {
                             updateTournamentTable('#deleted', ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
-                                'action_edit', 'action_restore'], 'no deleted tournaments', '{{ csrf_token() }}', data);
+                                'action_edit', 'action_restore', 'action_purge'], 'no deleted tournaments', '{{ csrf_token() }}', data);
+                            getTournamentData("incomplete=1", function(data) {
+                                updateTournamentTable('#incomplete', ['title', 'date', 'location', 'cardpool', 'creator', 'players',
+                                    'created_at', 'action_edit', 'action_purge'], 'no incomplete items', '{{ csrf_token() }}', data);
+                            });
                         });
                     });
                 });

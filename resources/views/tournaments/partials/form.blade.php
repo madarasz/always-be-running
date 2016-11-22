@@ -13,7 +13,7 @@
                 {{--Tournament type--}}
                 <div class="col-md-6 col-xs-12">
                     <div class="form-group">
-                        {!! Form::label('tournament_type_id', 'Type') !!}
+                        {!! Html::decode(Form::label('tournament_type_id', 'Type<sup class="text-danger" id="req-date">*</sup>')) !!}
                         @include('partials.popover', ['direction' => 'right', 'content' =>
                             'Confused about the official Netrunner tournament types?
                             Read the <a href="https://www.fantasyflightgames.com/en/more/android-netrunner-organized-play/" target="_blank">FFG\'s Organized Play</a> page.
@@ -33,25 +33,25 @@
                 {{--Cardpool--}}
                 <div class="col-md-6 col-xs-12">
                     <div class="form-group">
-                        {!! Form::label('cardpool_id', 'Legal cardpool up to') !!}
+                        {!! Html::decode(Form::label('cardpool_id', 'Legal cardpool up to<sup class="text-danger" id="req-date">*</sup>')) !!}
                         {!! Form::select('cardpool_id', $cardpools,
                                     old('cardpool_id', $tournament->cardpool_id), ['class' => 'form-control']) !!}
                     </div>
                 </div>
             </div>
             {{--Mandatory decklist--}}
-            <div class="form-group">
+            <div class="form-group hide-nonrequired">
                 {!! Form::checkbox('decklist', null, in_array(old('decklist', $tournament->decklist), ['1', 'on'], true), ['id' => 'decklist']) !!}
                 {!! Form::label('decklist', 'decklist is mandatory') !!}
             </div>
             {{--Contact--}}
-            <div class="form-group">
+            <div class="form-group hide-nonrequired">
                 {!! Form::label('contact', 'Contact') !!}
                 {!! Form::text('contact', old('contact', $tournament->contact),
                      ['class' => 'form-control', 'placeholder' => 'T.O. phone number or email']) !!}
             </div>
             {{--Description--}}
-            <div class="form-group">
+            <div class="form-group hide-nonrequired">
                 {!! Form::label('description', 'Description') !!}
                 <div class="pull-right">
                     <small><a href="http://commonmark.org/help/" target="_blank" rel="nofollow"><img src="/img/markdown_icon.png"/></a> formatting is supported</small>
@@ -66,7 +66,7 @@
             </div>
         </div>
         {{--Conclusion--}}
-        <div class="bracket">
+        <div class="bracket hide-nonrequired">
             {{--Overlay--}}
             <div id="overlay-conclusion" class="overlay hidden-xs-up">
                 <div>'non-tournament' events have no conclusion</div>
@@ -116,12 +116,12 @@
                 </div>
             </div>
             {{--Starting time--}}
-            <div class="form-group">
+            <div class="form-group hide-nonrequired">
                 {!! Form::label('start_time', 'Starting time') !!}
                 {!! Form::text('start_time', old('start_time', $tournament->start_time), ['class' => 'form-control', 'placeholder' => 'HH:MM']) !!}
             </div>
             {{--Weekly reoccurance--}}
-            <div class="form-group">
+            <div class="form-group hide-nonrequired">
                 {!! Form::label('recur_weekly', 'Weekly recurrence') !!}
                 @include('partials.popover', ['direction' => 'right', 'content' =>
                             'Select if the event recurs weekly. This is ideal for weekly get-togethers.
@@ -179,12 +179,15 @@
 </div>
 <div class="row">
     <div class="col-xs-12">
-        <p class="text-danger">
-            <sup>*</sup> required fields
+        <p class="text-xs-center">
+            <span class="text-danger"><sup>*</sup> required fields</span> -
+            {!! Form::checkbox('hide-non', null, in_array(old('hide-non', $tournament->incomplete), [1, '1', 'on'], true),
+                ['id' => 'hide-non', 'onchange' => 'hideNonRequired()']) !!}
+            {!! Form::label('hide-non', 'hide non-required fields') !!}
         </p>
         <p class="text-xs-center">
-        {!! Form::submit($submitButton, ['class' => 'btn btn-primary']) !!}
-            <br/>
+            {!! Form::submit($submitButton, ['class' => 'btn btn-primary']) !!}
+                    <br/>
         </p>
     </div>
 </div>
@@ -198,6 +201,7 @@
 
     conclusionCheck();
     changeTournamentType();
+    hideNonRequired();
 
     $('#date').datepicker({
         autoclose: true,

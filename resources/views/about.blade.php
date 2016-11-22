@@ -10,7 +10,7 @@
                     Contact
                 </h5>
                 <p>This site is created by <strong>Necro</strong>.</p>
-                <p>You can contact me via: info ( at ) alwaysberunning.net</p>
+                <p>You can contact me via: alwaysberunning (at) gmail.com</p>
                 <p>All ideas, suggestions, feedback are welcome.</p>
                 <p>Bugs and feaure requests: <a href="https://github.com/madarasz/always-be-running">Github</a></p>
             </div>

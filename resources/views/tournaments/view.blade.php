@@ -26,9 +26,14 @@
                         @endif
                     @endif
                     {{--Delete--}}
-                    {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id", 'class' => 'inline-block']) !!}
-                        {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Delete tournament', array('type' => 'submit', 'class' => 'btn btn-danger', 'id' => 'delete-button')) !!}
-                    {!! Form::close() !!}
+                    @if (is_null($tournament->deleted_at))
+                        {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id", 'class' => 'inline-block']) !!}
+                            {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Delete tournament', array('type' => 'submit', 'class' => 'btn btn-danger', 'id' => 'delete-button')) !!}
+                        {!! Form::close() !!}
+                    {{--Restore--}}
+                    @elseif ($user->admin)
+                        <a href="/tournaments/{{ $tournament->id }}/restore" class="btn btn-primary" id="restore-button"><i class="fa fa-recycle" aria-hidden="true"></i> Restore</a>
+                    @endif
             </div>
         @endif
         <span id="tournament-title">{{ $tournament->title }}</span><br/>
@@ -45,6 +50,18 @@
                 -
                 <i title="charity" class="fa fa-heart text-danger"></i>
                 charity event
+            @endif
+            @if ($tournament->incomplete)
+                <div class="alert alert-danger view-indicator" id="viewing-as-admin">
+                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                    This is tournament is incomplete. Please UPDATE and fill out missing fields.
+                </div>
+            @endif
+            @if ($tournament->deleted_at)
+                <div class="alert alert-danger view-indicator" id="viewing-as-admin">
+                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                    This is a deleted tournament. Admins can restore it.
+                </div>
             @endif
             @if ($user && $user->admin)
                 <div class="alert alert-success view-indicator" id="viewing-as-admin">

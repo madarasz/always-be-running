@@ -58,7 +58,7 @@ class TournamentsController extends Controller
      */
     public function edit($id, Request $request)
     {
-        $tournament = Tournament::findOrFail($id);
+        $tournament = Tournament::withTrashed()->findOrFail($id);
         $this->authorize('own', $tournament, $request->user());
         $tournament_types = TournamentType::pluck('type_name', 'id')->all();
         $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
@@ -74,9 +74,10 @@ class TournamentsController extends Controller
      */
     public function update($id, Requests\TournamentRequest $request)
     {
-        $tournament = Tournament::findorFail($id);
+        $tournament = Tournament::withTrashed()->findorFail($id);
         $this->authorize('own', $tournament, $request->user());
         $request->sanitize_data();
+        $tournament->update(['incomplete' => 0]); // clear incomplete flag if validation was ok
         $tournament->update($request->all());
 
         // redirecting to show newly created tournament
@@ -116,9 +117,9 @@ class TournamentsController extends Controller
      */
     public function show($id, Request $request)
     {
-        $tournament = Tournament::findorFail($id);
-        // rejected tournaments can only be seen by creator and admins
-        if ($tournament->approved === 0 &&
+        $tournament = Tournament::withTrashed()->findorFail($id);
+        // rejected or soft deleted tournaments can only be seen by creator and admins
+        if (($tournament->approved === 0 || $tournament->deleted_at) &&
             (!$request->user() || $request->user()->admin == 0 && $request->user()->id != $tournament->creator))
         {
             abort(403);
@@ -191,14 +192,31 @@ class TournamentsController extends Controller
     {
         $tournament = Tournament::findorFail($id);
         $this->authorize('own', $tournament, $request->user());
-        Tournament::destroy($id);
+        $user = $request->user()->id;
 
-        if (strpos($request->headers->get('referer'), 'tournaments') !== false) {
-            $user = $request->user()->id;
+        Tournament::destroy($id);
+        if (strpos($request->headers->get('referer'), 'tournaments') !== false && $tournament->creator == $user) {
             return view('organize', ['user' => $user, 'page_section' => 'organize'])->with('message', 'Tournament deleted.');    // deleted from tournament details page
         } else {
             return back()->with('message', 'Tournament deleted.');  // deleted from Organize or Admin page
         }
+    }
+
+    /**
+     * Deletes tournament and its entries forever.
+     * Required authorization: you are the creator, or you are admin and tournament is incomplete or you are Necro
+     * @param $id
+     * @param Request $request
+     */
+    public function purge($id, Request $request) {
+        $tournament = Tournament::withTrashed()->findorFail($id);
+        $this->authorize('purge', $tournament, $request->user());
+
+        // hard delete tournament, delete its entries
+        $tournament->entries()->delete();
+        $tournament->forceDelete();
+
+        return back()->with('message', 'Tournament hard deleted.');
     }
 
     /**
@@ -223,6 +241,11 @@ class TournamentsController extends Controller
             }));
 
         // filtering
+        if ($request->input('incomplete')) {
+            $tournaments = $tournaments->where('incomplete', '1');
+        } else {
+            $tournaments = $tournaments->where('incomplete', '0');
+        }
         if (!is_null($request->input('approved'))) {
             if ($request->input('approved') != 'null') {
                 $tournaments = $tournaments->where('approved', $request->input('approved'));
@@ -294,6 +317,7 @@ class TournamentsController extends Controller
                 'date' => $tournament->date,
                 'creator_id' => $tournament->creator,
                 'creator_name' => $tournament->user()->first()->name,
+                'created_at' => $tournament->created_at->format('Y.m.d. H:i:s'),
                 'cardpool' => $tournament->cardpool['name'],
                 'location' => $location,
                 'location_lat' => $tournament->location_lat,
@@ -384,8 +408,23 @@ class TournamentsController extends Controller
      * @return mixed
      */
     public function concludeNRTM($id, Requests\NRTMRequest $request) {
-        $tournament = Tournament::findorFail($id);
-        $this->authorize('own', $tournament, $request->user());
+        // check if existing tournament or create via importing
+        if ($id == -1) {
+            // create via importing
+            $this->authorize('logged_in', Tournament::class, $request->user());
+            $tournament = Tournament::create([
+                'creator' => $request->user()->id,
+                'tournament_type_id' => 1,
+                'cardpool_id' => 'unknown',
+                'concluded' => 1,
+                'incomplete' => 1
+            ]);
+        } else {
+            // conclude existing tournament
+            $tournament = Tournament::findorFail($id);
+            $this->authorize('own', $tournament, $request->user());
+        }
+
         $errors = [];
 
         // conclusion code
@@ -420,11 +459,22 @@ class TournamentsController extends Controller
 
         $tournament->update(['concluded' => true]);
 
-        // redirecting to show newly created tournament
-        if (count($errors)) {
+        if ($id == -1) {    // new tournament via import
+            // there was a failure, do not accept
+            if (count($errors)) {
+                $tournament->entries()->delete();
+                $tournament->forceDelete();
+                array_unshift($errors, 'Problem(s) occured during import. Please fix these issues first:');
+                return redirect()->route('organize', $tournament->id)
+                    ->withErrors($errors);
+            } else {
+                return redirect()->route('tournaments.edit', $tournament->id);
+            }
+
+        } elseif (count($errors)) { // redirecting to show errors
             return redirect()->route('tournaments.show', $tournament->id)
                 ->withErrors($errors);
-        } else {
+        } else {    // redirecting to show newly concluded tournament
             return redirect()->route('tournaments.show', $tournament->id)
                 ->with('message', 'Tournament concluded by import.');
         }
@@ -457,7 +507,7 @@ class TournamentsController extends Controller
      */
     private function processNRTMjson($json, &$tournament, &$errors) {
 
-        if ($json['players']) {
+        if (array_key_exists('players', $json)) {
             $tournament->concluded = true;
             $tournament->import = 1;
             $tournament->top_number = $json['cutToTop']; // number of players in top cut
@@ -507,6 +557,11 @@ class TournamentsController extends Controller
                 }
             }
 
+            // update tournament metadata with JSON if missing
+            if (!strlen($tournament->title) && array_key_exists('name', $json)) {
+                $tournament->title = $json['name'];
+            }
+
             $tournament->save();
 
             // create conflict if needed
@@ -523,6 +578,7 @@ class TournamentsController extends Controller
      * @param $tournament
      * @param $topcut number of players in top-cut
      * @param $errors
+     * @return boolean
      */
     private function processCSV($csv, &$tournament, $topcut, &$errors) {
         $tournament->concluded = true;
