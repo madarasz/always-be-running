@@ -508,6 +508,14 @@ class TournamentsController extends Controller
     private function processNRTMjson($json, &$tournament, &$errors) {
 
         if (array_key_exists('players', $json)) {
+
+            // error checking
+            if (!array_key_exists('corpIdentity', $json['players'][0]) ||
+                (!array_key_exists('runnerIdentity', $json['players'][0]))) {
+                    array_push($errors, 'JSON is missing identities. Please update your NRTM app.');
+                    return false;
+            }
+
             $tournament->concluded = true;
             $tournament->import = 1;
             $tournament->top_number = $json['cutToTop']; // number of players in top cut
@@ -568,7 +576,7 @@ class TournamentsController extends Controller
             $tournament->updateConflict();
 
         } else {
-            array_push($errors, 'There was an error with the uploaded file.');
+            array_push($errors, 'There was an error with the uploaded file. Please update your NRTM app.');
         }
     }
 
