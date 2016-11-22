@@ -75,7 +75,7 @@
                 Conclusion
                 <small class="form-group text-xs-center">
                     -
-                    {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), ['1', 'on'], true),
+                    {!! Form::checkbox('concluded', null, in_array(old('concluded', $tournament->concluded), [1, '1', 'on'], true),
                         ['onclick' => 'conclusionCheck()', 'id' => 'concluded']) !!}
                     {!! Form::label('concluded', 'tournament has already ended') !!}
                 </small>
@@ -146,7 +146,7 @@
             </div>
             {{--Location input--}}
             <div class="form-group">
-                {!! Form::label('location_search', 'Location') !!}
+                {!! Html::decode(Form::label('location_search', 'Location<sup class="text-danger hidden-xs-up req-conclusion">*</sup>')) !!}
                 @include('partials.popover', ['direction' => 'top', 'content' =>
                             'Use the input field to search for the location of the tournament.
                             Providing the city is enough, but locating the store or address helps players.'])
