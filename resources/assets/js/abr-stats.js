@@ -257,7 +257,11 @@ function drawAdminChart() {
         dataType: "json",
         async: true,
         success: function (data) {
-            var chartData = google.visualization.arrayToDataTable(transformForAdminCharts(data));
+            document.getElementById("stat-total-users").innerHTML = data.totalUsers;
+            document.getElementById("stat-total-tournaments").innerHTML = data.totalTournaments;
+            document.getElementById("stat-total-entries").innerHTML = data.totalEntries;
+            var chartData = google.visualization.arrayToDataTable(transformForAdminCharts(data)),
+                geoData = google.visualization.arrayToDataTable(transformForAdminGeoCharts(data.countries));
             var options = {
                 curveType: 'function',
                 legend: { position: 'right' },
@@ -265,9 +269,14 @@ function drawAdminChart() {
                 height: 500,
                 vAxis: { viewWindowMode:'explicit', viewWindow: {min: 0}},
                 hAxis: { title: 'weeks'}
+            }, geoOptions = {
+                height: 500,
+                width: 900
             };
-            var chart = new google.visualization.LineChart(document.getElementById('chart1'));
+            var chart = new google.visualization.LineChart(document.getElementById('chart1')),
+                chart2 = new google.visualization.GeoChart(document.getElementById('chart2'));
             chart.draw(chartData, options);
+            chart2.draw(geoData, geoOptions);
         }
     });
 }
@@ -281,6 +290,14 @@ function transformForAdminCharts(data) {
     for (var i = weeks.firstweek; i <= weeks.lastweek; i++) {
         result.push([formatWeekNumber(i), getStatData(data.newEntriesByWeek, i), getStatData(data.newTournamentsByWeek, i),
             getStatData(data.newUsersByWeek, i)]);
+    }
+    return result;
+}
+
+function transformForAdminGeoCharts(data) {
+    var result = [['country', 'tournaments']];
+    for (var i= 0, len = data.length; i < len; i++) {
+        result.push([data[i].location_country, parseInt(data[i].total)]);
     }
     return result;
 }

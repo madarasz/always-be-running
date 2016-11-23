@@ -105,13 +105,16 @@ class AdminController extends Controller
             ->where('approved', 1)->whereNotNull('created_at')->groupBy(DB::raw('WEEK(created_at, 3)'))->get(), 'week');
         $users = $this->getWeekNumber(DB::table('users')->select('created_at as week', DB::raw('count(*) as total'))
             ->whereNotNull('created_at')->groupBy(DB::raw('WEEK(created_at, 3)'))->get(), 'week');
+        $countries = Tournament::where('approved', 1)->select('location_country', DB::raw('count(*) as total'))
+            ->groupBy('location_country')->get();
         $result = [
             'totalEntries' => Entry::where('user', '>', 0)->whereNotNull('created_at')->count(),
             'newEntriesByWeek' => $entries,
             'totalTournaments' => Tournament::where('approved', 1)->whereNotNull('created_at')->count(),
             'newTournamentsByWeek' => $tournaments,
             'totalUsers' => User::whereNotNull('created_at')->count(),
-            'newUsersByWeek' => $users
+            'newUsersByWeek' => $users,
+            'countries' => $countries
         ];
         return response()->json($result);
     }
