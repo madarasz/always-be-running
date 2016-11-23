@@ -248,3 +248,66 @@ function filterResults(filter, packlist) {
         }
     });
 }
+
+
+// draws admin chart
+function drawAdminChart() {
+    $.ajax({
+        url: '/api/adminstats',
+        dataType: "json",
+        async: true,
+        success: function (data) {
+            var chartData = google.visualization.arrayToDataTable(transformForAdminCharts(data));
+            var options = {
+                curveType: 'function',
+                legend: { position: 'right' },
+                width: 900,
+                height: 500,
+                vAxis: { viewWindowMode:'explicit', viewWindow: {min: 0}},
+                hAxis: { title: 'weeks'}
+            };
+            var chart = new google.visualization.LineChart(document.getElementById('chart1'));
+            chart.draw(chartData, options);
+        }
+    });
+}
+
+// transforms data for drawing admin charts
+function transformForAdminCharts(data) {
+    var weeks = { firstweek: 999999, lastweek: 0}, result = [['week', 'new entries', 'new tournaments', 'new users']];
+    getStatRange(data.newEntriesByWeek, weeks);
+    getStatRange(data.newTournamentsByWeek, weeks);
+    getStatRange(data.newUsersByWeek, weeks);
+    for (var i = weeks.firstweek; i <= weeks.lastweek; i++) {
+        result.push([formatWeekNumber(i), getStatData(data.newEntriesByWeek, i), getStatData(data.newTournamentsByWeek, i),
+            getStatData(data.newUsersByWeek, i)]);
+    }
+    return result;
+}
+
+// formats week numbers
+function formatWeekNumber(week) {
+    return "'" + week.toString().substr(2,2) + " #" + week.toString().substr(4,2);
+}
+
+// calculates first and last week for admin stats
+function getStatRange(data, result) {
+    for (var i = 0, len = data.length; i < len; i++) {
+        if (data[i].week > result.lastweek) {
+            result.lastweek = data[i].week;
+        }
+        if (data[i].week < result.firstweek) {
+            result.firstweek = data[i].week;
+        }
+    }
+}
+// returns admin stat data for desired week
+function getStatData(data, week) {
+    for (var i = 0, len = data.length; i < len; i++) {
+        if (data[i].week == week) {
+            return data[i].total;
+        }
+    }
+    return 0;
+}
+

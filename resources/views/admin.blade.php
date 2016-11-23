@@ -18,6 +18,9 @@
         <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#tab-badges" role="tab">Badges</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#tab-stats" role="tab">Stats</a>
+        </li>
     </ul>
 
     {{--Tab panes--}}
@@ -138,13 +141,22 @@
                 </div>
             </div>
         </div>
+        {{--Stats--}}
+        <div class="tab-pane" id="tab-stats" role="tabpanel">
+            <div id="chart1"></div>
+        </div>
     </div>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
         // activate tabs
         $('#admin-tabs a').click(function (e) {
             e.preventDefault();
             $(this).tab('show');
         });
+
+        // charts
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawAdminChart);
 
         // get tournament data
         getTournamentData("approved=null", function(data) {

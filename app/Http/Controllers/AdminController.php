@@ -6,6 +6,8 @@ use App\CardCycle;
 use App\CardIdentity;
 use App\CardPack;
 use App\Badge;
+use App\User;
+use App\Entry;
 use App\Tournament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -93,5 +95,35 @@ class AdminController extends Controller
         $pack->usable = $outcome;
         $pack->save();
         return back()->with('message', $message);
+    }
+
+    public function adminStats(Request $request) {
+        $this->authorize('admin', Tournament::class, $request->user());
+        $entries = $this->getWeekNumber(DB::table('entries')->select('created_at as week', DB::raw('count(*) as total'))
+            ->where('user', '>', 0)->whereNotNull('created_at')->groupBy(DB::raw('WEEK(created_at, 3)'))->get(), 'week');
+        $tournaments = $this->getWeekNumber(DB::table('tournaments')->select('created_at as week', DB::raw('count(*) as total'))
+            ->where('approved', 1)->whereNotNull('created_at')->groupBy(DB::raw('WEEK(created_at, 3)'))->get(), 'week');
+        $users = $this->getWeekNumber(DB::table('users')->select('created_at as week', DB::raw('count(*) as total'))
+            ->whereNotNull('created_at')->groupBy(DB::raw('WEEK(created_at, 3)'))->get(), 'week');
+        $result = [
+            'totalEntries' => Entry::where('user', '>', 0)->whereNotNull('created_at')->count(),
+            'newEntriesByWeek' => $entries,
+            'totalTournaments' => Tournament::where('approved', 1)->whereNotNull('created_at')->count(),
+            'newTournamentsByWeek' => $tournaments,
+            'totalUsers' => User::whereNotNull('created_at')->count(),
+            'newUsersByWeek' => $users
+        ];
+        return response()->json($result);
+    }
+
+    private function getWeekNumber($array, $datefield) {
+        $result = [];
+        foreach($array as $element) {
+            $row = (array)$element;
+            $date = new \DateTime($row[$datefield]);
+            $row[$datefield] = $date->format('YW');
+            array_push($result, $row);
+        }
+        return $result;
     }
 }
