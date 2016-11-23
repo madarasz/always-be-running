@@ -305,7 +305,7 @@ function getStatRange(data, result) {
 function getStatData(data, week) {
     for (var i = 0, len = data.length; i < len; i++) {
         if (data[i].week == week) {
-            return data[i].total;
+            return parseInt(data[i].total);
         }
     }
     return 0;
