@@ -147,6 +147,30 @@ function hideNonRequired() {
     }
 }
 
+// toggle manually adding entries on tournament view page
+function toggleEntriesEdit(value) {
+    if (value) {
+        $('#section-edit-entries').removeClass('hidden-xs-up');
+        $('.delete-anonym').removeClass('hidden-xs-up');
+        $('#button-done-entries').removeClass('hidden-xs-up');
+        $('#button-edit-entries').addClass('hidden-xs-up');
+        recalculateDeckNames();
+    } else {
+        $('#section-edit-entries').addClass('hidden-xs-up');
+        $('.delete-anonym').addClass('hidden-xs-up');
+        $('#button-done-entries').addClass('hidden-xs-up');
+        $('#button-edit-entries').removeClass('hidden-xs-up');
+    }
+}
+
+// recalculating deck names from IDs while adding manually entries
+function recalculateDeckNames() {
+    var corp = document.getElementById('corp_deck_identity'),
+        runner = document.getElementById('runner_deck_identity');
+    document.getElementById('corp_deck_title').value = shortenID(corp.options[corp.selectedIndex].text);
+    document.getElementById('runner_deck_title').value = shortenID(runner.options[runner.selectedIndex].text);
+}
+
 function percentageToString(fraction) {
     return Math.round(fraction * 1000) / 10 + '%';
 }

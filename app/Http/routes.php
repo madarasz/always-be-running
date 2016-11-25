@@ -31,6 +31,8 @@ Route::get('tournaments/{id}/unregister', 'EntriesController@unregister');
 Route::post('tournaments/{id}/claim', 'EntriesController@claim');
 Route::delete('tournaments/{id}/purge', 'TournamentsController@purge');
 Route::delete('entries/{id}', 'EntriesController@unclaim');
+Route::delete('entries/anonym/{id}', 'EntriesController@deleteAnonym');
+Route::post('entries/anonym', 'EntriesController@addAnonym');
 Route::delete('tournaments/{id}/clearanonym', 'TournamentsController@clearAnonym');
 Route::post('tournaments/{id}/conclude/manual', 'TournamentsController@concludeManual');
 Route::post('tournaments/{id}/conclude/nrtm', 'TournamentsController@concludeNRTM');

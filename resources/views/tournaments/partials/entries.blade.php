@@ -86,6 +86,12 @@
                         @endif
                     {!! Form::close() !!}
                 </td>
+            @elseif ($user && ($user->admin || $user->id == $creator))
+                <td>
+                    {!! Form::open(['method' => 'DELETE', 'url' => "/entries/anonym/$entry->id"]) !!}
+                        {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i>', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs hidden-xs-up delete-anonym')) !!}
+                    {!! Form::close() !!}
+                </td>
             @else
                 <td></td>
             @endif

@@ -164,7 +164,7 @@ class EntriesController extends Controller
 
     /**
      * API endpont for tournament results
-     * @param $id Tournament ID
+     * @param $request Request
      * @return mixed
      */
     public function entriesJSON(Request $request) {
@@ -228,6 +228,12 @@ class EntriesController extends Controller
         return response()->json($result);
     }
 
+    /**
+     * Generates deck URL.
+     * @param $deckid int deckID
+     * @param $type int 1 = public, 2 = private
+     * @return string URL
+     */
     public function deckUrl($deckid, $type) {
         switch ($type) {
             case 1: return "https://netrunnerdb.com/en/decklist/".$deckid;
@@ -236,9 +242,51 @@ class EntriesController extends Controller
         }
     }
 
-    public function massEditEntries($id, Request $request) {
-        $tournament = Tournament::findorFail($id);
+    /**
+     * Deletes anonym entry.
+     * @param Request $request
+     * @param $id int Entry ID
+     * @return redirect
+     */
+    public function deleteAnonym(Request $request, $id) {
+        $entry = Entry::findOrFail($id);
+        $tournament = Tournament::findOrFail($entry->tournament_id);
+
+        // auth check
         $this->authorize('own', $tournament, $request->user());
-        return view('tournaments.entries', compact('tournament'));
+
+        // delete
+        Entry::destroy($id);
+
+        // add conflict if needed
+        $tournament->updateConflict();
+
+        // delete imported flag if needed
+        if (!Entry::where('tournament_id', $entry->tournament_id)->where('user', 0)->first()) {
+            $tournament->update(['import' => 0]);
+        }
+
+        return back()->with('message', 'Entry deleted.')->with('editmode', 1);
+    }
+
+    /**
+     * Adds anonym entry
+     * @param Request $request
+     * @param $id int Tournament ID
+     */
+    public function addAnonym(Request $request) {
+        $tournament = Tournament::findOrFail($request->tournament_id);
+
+        // auth check
+        $this->authorize('own', $tournament, $request->user());
+
+        // add anonym entry
+        Entry::create($request->all());
+
+        // add conflict if needed
+        $tournament->update(['import' => 1]);
+        $tournament->updateConflict();
+
+        return back()->with('message', 'Entry added.')->with('editmode', 1);
     }
 }

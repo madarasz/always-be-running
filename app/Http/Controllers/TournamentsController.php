@@ -125,9 +125,13 @@ class TournamentsController extends Controller
             abort(403);
         }
 
-        // all usernames for transferring
+        // all usernames for transferring, IDs for adding entries
         if ($request->user() && ($request->user()->admin || $request->user()->id == $tournament->creator)) {
             $all_users = User::orderBy('name')->pluck('name', 'id');
+            $runnerIDs = $this->categorizeIDs(CardIdentity::where('runner', 1)
+                ->orderBy('faction_code')->orderBy('title')->get());
+            $corpIDs = $this->categorizeIDs(CardIdentity::where('runner', 0)
+                ->orderBy('faction_code')->orderBy('title')->get());
         }
 
         $type = $tournament->tournament_type->type_name;
@@ -158,7 +162,7 @@ class TournamentsController extends Controller
         }
 
         return view('tournaments.view',
-            compact('tournament', 'message', 'type', 'nowdate', 'user', 'entries',
+            compact('tournament', 'message', 'type', 'nowdate', 'user', 'entries', 'runnerIDs', 'corpIDs',
                 'user_entry', 'entries_swiss', 'entries_top', 'regcount', 'all_users'));
     }
 
@@ -643,6 +647,47 @@ class TournamentsController extends Controller
         return !is_null($corp) && !is_null($runner) && // identities are found
             (is_null($existing) || strcmp($runner->id, $existing->runner_deck_identity) != 0 ||
                 strcmp($corp->id, $existing->corp_deck_identity) != 0);
+    }
+
+    /**
+     * Puts IDs in a 2 dimensional array based on their faction.
+     * Special filtering for mini-factions and draft ID which are moved to the end of the array.
+     * Future proof if new factions created.
+     * @param $identities
+     * @return array
+     */
+    private function categorizeIDs($identities) {
+
+        // preprocessing: mini-factions, draft
+        foreach($identities as $id) {
+            if (in_array($id->faction_code, ['adam', 'apex', 'sunny-lebeau'])) {
+                $id->faction_code = 'mini-factions';
+            }
+            if ($id->pack_code === 'draft') {
+                $id->faction_code = 'draft';
+            }
+        }
+
+        // sorting into
+        $result = [];
+        foreach($identities as $id) {
+            if (!array_key_exists($id->faction_code, $result)) {
+                $result[$id->faction_code] = [];
+            }
+            $result[$id->faction_code][$id->id] = $id->title;
+        }
+
+        // postprocessing: mini-factions, draft to the end
+        if (array_key_exists('mini-factions', $result)) {
+            $mini = $result['mini-factions'];
+            unset($result['mini-factions']);
+            $result['mini-factions'] = $mini;
+        }
+        $draft = $result['draft'];
+        unset($result['draft']);
+        $result['draft'] = $draft;
+
+        return $result;
     }
 }
 
