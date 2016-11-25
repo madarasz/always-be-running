@@ -114,6 +114,11 @@
                     </span>
                 </h5>
                 {{--Details--}}
+                @if ($tournament->link_facebook)
+                    <p><strong><a href="{{ $tournament->link_facebook }}" rel="nofollow">
+                                Facebook {{ strpos($tournament->link_facebook, 'event') ? 'event' : 'group' }}
+                    </a></strong></p>
+                @endif
                 <p><strong>Legal cardpool up to:</strong> <span id="cardpool"><em>{{ $tournament->cardpool->name }}</em></span></p>
                 @if($tournament->decklist == 1)
                     <p><strong><u><span id="decklist-mandatory">decklist is mandatory!</span></u></strong></p>

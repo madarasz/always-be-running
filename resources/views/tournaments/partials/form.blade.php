@@ -50,6 +50,12 @@
                 {!! Form::text('contact', old('contact', $tournament->contact),
                      ['class' => 'form-control', 'placeholder' => 'T.O. phone number or email']) !!}
             </div>
+            {{--FB link--}}
+            <div class="form-group hide-nonrequired">
+                {!! Form::label('link_facebook', 'Facebook event/group') !!}
+                {!! Form::text('link_facebook', old('link_facebook', $tournament->link_facebook),
+                     ['class' => 'form-control', 'placeholder' => 'URL of Facebook event or group']) !!}
+            </div>
             {{--Description--}}
             <div class="form-group hide-nonrequired">
                 {!! Form::label('description', 'Description') !!}
