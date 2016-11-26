@@ -377,7 +377,7 @@
                                 </div><br/>
                                 <div class="form-group">
                                     {!! Form::label('corp_deck_identity', 'corp ID') !!}
-                                    <select name="corp_deck_identity" class="form-control" id="corp_deck_identity">
+                                    <select name="corp_deck_identity" class="form-control" id="corp_deck_identity" onchange="recalculateDeckNames()">
                                         @foreach($corpIDs as $key => $faction)
                                             <optgroup label="{{ $key }}">
                                                 @foreach($faction as $code => $id)
@@ -389,7 +389,7 @@
                                 </div>
                                 <div class="form-group p-b-1">
                                     {!! Form::label('runner_deck_identity', 'runner ID') !!}
-                                    <select name="runner_deck_identity" class="form-control" id="runner_deck_identity">
+                                    <select name="runner_deck_identity" class="form-control" id="runner_deck_identity" onchange="recalculateDeckNames()">
                                         @foreach($runnerIDs as $key => $faction)
                                             <optgroup label="{{ $key }}">
                                                 @foreach($faction as $code => $id)
