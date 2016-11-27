@@ -15,21 +15,27 @@
                         <div class="input-group">
                             {!! Form::label('tournament_type_id', 'Type:') !!}
                             {!! Form::select('tournament_type_id', $tournament_types,
-                                null, ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, infowindow)', 'disabled' => '']) !!}
+                                null, ['class' => 'form-control filter',
+                                'onchange' => "filterDiscover(default_filter, '".@$default_country_id."', map, infowindow)", 'disabled' => '']) !!}
                         </div>
                     </div>
                     <div class="col-md-3 col-xs-12" id="filter-country">
                         <div class="input-group">
                             {!! Form::label('location_country', 'Country:') !!}
                             {!! Form::select('location_country', $countries, null,
-                                ['class' => 'form-control filter', 'onchange' => 'filterDiscover(default_filter, map, infowindow)', 'disabled' => '']) !!}
+                                ['class' => 'form-control filter',
+                                'onchange' => "filterDiscover(default_filter, '".@$default_country_id."', map, infowindow)", 'disabled' => '']) !!}
+                        </div>
+                        <div class="legal-bullshit text-xs-center hidden-xs-up" id="label-default-country">
+                            using user's default filter
                         </div>
                     </div>
                     <div class="col-md-3 col-xs-12 hidden-xs-up" id="filter-state">
                         <div class="input-group">
                             {!! Form::label('location_state', 'US State:') !!}
                             {!! Form::select('location_state', $states,
-                                        null, ['class' => 'form-control filter', 'onchange'=>'filterDiscover(default_filter, map, infowindow)', 'disabled' => '']) !!}
+                                        null, ['class' => 'form-control filter',
+                                        'onchange'=>"filterDiscover(default_filter, '".@$default_country_id."', map, infowindow)", 'disabled' => '']) !!}
                         </div>
                     </div>
                 </div>
@@ -103,6 +109,14 @@
 
         var map, infowindow, bounds, calendardata = {},
             default_filter = 'start={{ $nowdate }}&approved=1&recur=0&concluded=0';
+
+        @if (@$default_country)
+            // user's default country
+            default_filter = default_filter + '&country=' + '{{ $default_country }}';
+            $('#label-default-country').removeClass('hidden-xs-up');
+            document.getElementById('location_country').value = '{{ $default_country_id }}';
+            $('#filter-country').addClass('active-filter');
+        @endif
 
         function initializeMap() {
             map = new google.maps.Map(document.getElementById('map'), {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Entry;
 use App\User;
 use App\Badge;
+use App\CardIdentity;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Tournament;
@@ -15,20 +16,8 @@ use App\Http\Requests;
 
 class PagesController extends Controller
 {
-    public function home(Request $request)
-    {
-        $yesterday = date('Y.m.d.', time() - 86400);
-        $tomorrow = date('Y.m.d.', time() + 86400);
-        $message = session()->has('message') ? session('message') : '';
-        $user = $request->user();
-        if ($user) {
-            $created_count = Tournament::where('creator', $user->id)->count();
-            $claim_count = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')->count();
-        }
-        return view('home', compact('message', 'user', 'created_count', 'claim_count', 'yesterday', 'tomorrow'));
-    }
 
-    public function upcoming()
+    public function upcoming(Request $request)
     {
         $nowdate = date('Y.m.d.', time() - 86400); // actually yesterday, to be on the safe side
         $tournaments = Tournament::where(function($q) use ($nowdate) {
@@ -43,12 +32,21 @@ class PagesController extends Controller
         $countries = array_values($countries);
         $states = array_values($states);
         $message = session()->has('message') ? session('message') : '';
+
         // adding empty filters
         $tournament_types = [-1 => '---'] + $tournament_types;
         $countries = [-1 => '---'] + $countries;
         $states = [-1 => '---'] + $states;
         $page_section = 'upcoming';
-        return view('upcoming', compact('message', 'nowdate', 'tournament_types', 'countries', 'states', 'page_section'));
+
+        // user's default filter
+        if ($request->user() && $request->user()->autofilter_upcoming && $request->user()->country_id) {
+            $default_country = $request->user()->country->name;
+            $default_country_id = array_search($default_country, $countries, true);
+        }
+
+        return view('upcoming', compact('message', 'nowdate', 'tournament_types', 'countries', 'states', 'page_section',
+            'default_country', 'default_country_id'));
     }
 
     public function results(Request $request)
@@ -59,13 +57,22 @@ class PagesController extends Controller
         $tournament_cardpools = CardPack::whereIn('id', $tournaments->pluck('cardpool_id')->unique()->all())->where('id', '!=', 'unknown')
             ->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $countries = $tournaments->where('location_country', '!=', '')->pluck('location_country')->unique()->all();
+
         // adding empty filters
         $tournament_types = [-1 => '---'] + $tournament_types;
         $countries = [-1 => '---'] + $countries;
         $tournament_cardpools = [-1 => '---'] + $tournament_cardpools;
         $message = session()->has('message') ? session('message') : '';
         $page_section = 'results';
-        return view('results', compact('registered', 'message', 'nowdate', 'tournament_types', 'countries', 'tournament_cardpools', 'page_section'));
+
+        // user's default filter
+        if ($request->user() && $request->user()->autofilter_results && $request->user()->country_id) {
+            $default_country = $request->user()->country->name;
+            $default_country_id = array_search($default_country, $countries, true);
+        }
+
+        return view('results', compact('registered', 'message', 'nowdate', 'tournament_types', 'countries',
+            'tournament_cardpools', 'page_section', 'default_country', 'default_country_id'));
     }
 
     /**
@@ -122,15 +129,12 @@ class PagesController extends Controller
             $request_id = Auth::user()->id;
             if ($id == $request_id) {
                 $page_section = 'profile';
+                $countries = \Countries::orderBy('name')->get();
+                $factions = CardIdentity::where('pack_code', '!=', 'draft')->groupBy('faction_code')->get();
             }
         }
 
-        $user = User::where('id', $id)->first();
-
-        // non existing user
-        if (is_null($user)) {
-            abort(404);
-        }
+        $user = User::findOrFail($id);
 
         $message = session()->has('message') ? session('message') : '';
         $created_count = Tournament::where('creator', $user->id)->where('approved', 1)->count();
@@ -139,7 +143,7 @@ class PagesController extends Controller
         $created = Tournament::where('creator', $user->id)->where('approved', 1)->get();
         $username = $user->name;
         return view('profile', compact('user', 'claims', 'created', 'created_count', 'claim_count',
-            'username', 'page_section', 'message'));
+            'username', 'page_section', 'message', 'countries', 'factions'));
     }
 
     public function updateProfile(Request $request) {
@@ -147,6 +151,11 @@ class PagesController extends Controller
         if ($request->id != Auth::user()->id) {
             abort(403);
         }
+
+        // checkbox fix
+        $request->merge(['autofilter_upcoming' => $request->autofilter_upcoming === 'on']);
+        $request->merge(['autofilter_results' => $request->autofilter_results === 'on']);
+
         $user = User::findorFail($request->id);
         $user->update($request->all());
         return redirect()->route('profile.show', $request->id)

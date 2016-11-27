@@ -41,7 +41,7 @@
             </div>
             {{--Mandatory decklist--}}
             <div class="form-group hide-nonrequired">
-                {!! Form::checkbox('decklist', null, in_array(old('decklist', $tournament->decklist), ['1', 'on'], true), ['id' => 'decklist']) !!}
+                {!! Form::checkbox('decklist', null, in_array(old('decklist', $tournament->decklist), [1, '1', 'on'], true), ['id' => 'decklist']) !!}
                 {!! Form::label('decklist', 'decklist is mandatory') !!}
             </div>
             {{--Contact--}}

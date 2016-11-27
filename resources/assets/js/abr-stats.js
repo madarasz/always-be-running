@@ -205,7 +205,7 @@ function updateIdStats(packname) {
 
 
 // update filter settings for the Results page
-function filterResults(filter, packlist) {
+function filterResults(filter, packlist, default_country) {
     var type = document.getElementById('tournament_type_id').value,
         cardpool = document.getElementById('cardpool').value,
         cardpoolName = $("#cardpool option:selected").text(),
@@ -231,6 +231,12 @@ function filterResults(filter, packlist) {
         $('#filter-cardpool').addClass('active-filter');
     } else {
         $('#filter-cardpool').removeClass('active-filter');
+    }
+    // user's default country
+    if (countrySelector.value == default_country) {
+        $('#label-default-country').removeClass('hidden-xs-up');
+    } else {
+        $('#label-default-country').addClass('hidden-xs-up');
     }
 
     $('.loader').removeClass('hidden-xs-up');

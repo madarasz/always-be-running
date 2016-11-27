@@ -209,9 +209,67 @@
                     <i class="fa fa-book" aria-hidden="true"></i>
                     About
                 </h5>
+                {{--Country--}}
+                <div class="form-group row">
+                    <label for="username_real" class="col-xs-3 col-form-label">country:</label>
+                    <div class="col-xs-9">
+                        <div class="col-form-label profile-text">
+                            @if ($user->country)
+                                <img src="/img/flags/{{ $user->country->flag }}"/>
+                                {{ $user->country->name }}
+                            @else
+                                --- not set ---
+                            @endif
+                        </div>
+                        @if (@$countries)
+                            <select class="form-control profile-field hidden-xs-up" id="country_id"
+                                   name="country_id">
+                                <option value="0">--- not set ---</option>
+                                @foreach($countries as $country)
+                                    <option value="{{ $country->id }}" {{ $user->country_id == $country->id ? 'selected' : '' }}>
+                                        {{ $country->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div>
+                                {!! Form::checkbox('autofilter_upcoming', null,
+                                    in_array($user->autofilter_upcoming, [1, '1', 'on'], true),
+                                    ['id' => 'autofilter_upcoming', 'class' => 'profile-field hidden-xs-up']) !!}
+                                <label for="autofilter_upcoming" class="small-text profile-field {{ $user->autofilter_upcoming ? '' :'hidden-xs-up' }}">
+                                    <em>use as default filter for Upcoming tournaments</em>
+                                </label>
+                            </div>
+                            <div>
+                                {!! Form::checkbox('autofilter_results', null,
+                                    in_array($user->autofilter_results, [1, '1', 'on'], true),
+                                    ['id' => 'autofilter_results', 'class' => 'profile-field hidden-xs-up']) !!}
+                                <label for="autofilter_results" class="small-text profile-field {{ $user->autofilter_results ? '' :'hidden-xs-up' }}">
+                                    <em>use as default filter for tournament Results</em>
+                                </label>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                {{--Favorite faction--}}
+                <div class="form-group row">
+                    <label for="favorite_faction" class="col-xs-3 col-form-label">favorite faction:</label>
+                    <div class="col-xs-9">
+                        <div class="col-form-label profile-text">
+                            <span id="faction_logo" class="icon"></span>
+                            <span id="faction_text"></span>
+                        </div>
+                        <select class="form-control profile-field hidden-xs-up" id="favorite_faction"
+                                name="favorite_faction">
+                            <option value="">--- not set ---</option>
+                            @foreach($factions as $faction)
+                                <option value="{{ $faction->faction_code }}" {{ $user->favorite_faction === $faction->faction_code ? 'selected' : ''}}></option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
                 {{--Website--}}
                 <div class="form-group row">
-                    <label for="username_real" class="col-xs-3 col-form-label">website:</label>
+                    <label for="website" class="col-xs-3 col-form-label">website:</label>
                     <div class="col-xs-9">
                         <div class="col-form-label profile-text">
                             <a href="{{ $user->website }}">{{ $user->website }}</a>
@@ -266,6 +324,16 @@
             $('#button-cancel').addClass('hidden-xs-up');
             $('#button-edit').removeClass('hidden-xs-up');
         }
+
+        @if ($factions)
+            $('#favorite_faction option').each(function(i, obj) {
+                if (i > 0) {
+                    obj.text = factionCodeToFactionTitle(obj.value);
+                }
+            });
+            document.getElementById('faction_text').textContent = factionCodeToFactionTitle('{{ $user->favorite_faction }}');
+            $('#faction_logo').addClass('icon-' + '{{ $user->favorite_faction }}');
+        @endif
     </script>
 @stop
 

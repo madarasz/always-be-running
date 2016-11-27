@@ -11,6 +11,11 @@ body {
     }
 }
 
+/* checkbox fix */
+input[type="checkbox"] {
+    margin-top: 0.4em;
+}
+
 /*because valign middle*/
 table.abr-table tr td {
     vertical-align: middle;

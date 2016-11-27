@@ -42,6 +42,7 @@ elixir(function(mix) {
             'calendario_abr.css',
             '../../../public/css/app.css',
             'bootstrap-datepicker.css',
+            'netrunner.css',
             'main.css'
         ])
         .version(['css/all.css', 'js/all.js']);

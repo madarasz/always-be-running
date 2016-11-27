@@ -73,7 +73,7 @@ function updateDiscover(table, columns, filter, map, bounds, infowindow, callbac
 }
 
 // update filter settings for the Upcoming page
-function filterDiscover(default_filter, map, infowindow) {
+function filterDiscover(default_filter, default_country, map, infowindow) {
     var filter = default_filter,
         type = document.getElementById('tournament_type_id').value,
         countrySelector = document.getElementById('location_country'),
@@ -109,6 +109,12 @@ function filterDiscover(default_filter, map, infowindow) {
     if (country !== 'United States') {
         $('#filter-state').addClass('hidden-xs-up');
         $('#filter-spacer').removeClass('hidden-xs-up');
+    }
+    // user's default country
+    if (countrySelector.value == default_country) {
+        $('#label-default-country').removeClass('hidden-xs-up');
+    } else {
+        $('#label-default-country').addClass('hidden-xs-up');
     }
 
     clearMapMarkers(map);
@@ -316,4 +322,14 @@ function updateNavBadges() {
             }
         }
     });
+}
+
+function factionCodeToFactionTitle(code) {
+    switch (code) {
+        case 'weyland-cons': return 'Weyland Consortium';
+        case 'haas-bioroid': return 'Haas-Bioroid';
+        case 'sunny-lebeau': return 'Sunny Lebeau';
+    }
+    return code.charAt(0).toUpperCase() + code.substr(1);
+
 }

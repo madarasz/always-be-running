@@ -21,17 +21,23 @@
                     <div class="form-group" id="filter-cardpool">
                         {!! Form::label('cardpool', 'Cardpool') !!}
                         {!! Form::select('cardpool', $tournament_cardpools,
-                            null, ['class' => 'form-control filter', 'onchange' => 'filterResults(defaultFilter, packlist)', 'disabled' => '']) !!}
+                            null, ['class' => 'form-control filter',
+                            'onchange' => "filterResults(defaultFilter, packlist, '".@$default_country_id."')", 'disabled' => '']) !!}
                     </div>
                     <div class="form-group" id="filter-type">
                         {!! Form::label('tournament_type_id', 'Type') !!}
                         {!! Form::select('tournament_type_id', $tournament_types,
-                            null, ['class' => 'form-control filter', 'onchange' => 'filterResults(defaultFilter, packlist)', 'disabled' => '']) !!}
+                            null, ['class' => 'form-control filter',
+                            'onchange' => "filterResults(defaultFilter, packlist, '".@$default_country_id."')", 'disabled' => '']) !!}
                     </div>
                     <div class="form-group" id="filter-country">
                         {!! Form::label('location_country', 'Country') !!}
                         {!! Form::select('location_country', $countries, null,
-                            ['class' => 'form-control filter', 'onchange' => 'filterResults(defaultFilter, packlist)', 'disabled' => '']) !!}
+                            ['class' => 'form-control filter',
+                            'onchange' => "filterResults(defaultFilter, packlist, '".@$default_country_id."')", 'disabled' => '']) !!}
+                        <div class="legal-bullshit text-xs-center hidden-xs-up" id="label-default-country">
+                            using user's default filter
+                        </div>
                     </div>
                 {!! Form::close() !!}
             </div>
@@ -63,6 +69,14 @@
                 packlist = [],
                 currentPack = "",
                 runnerIDs = [], corpIDs = [];
+
+        @if (@$default_country)
+            // user's default country
+            defaultFilter = defaultFilter + '&country=' + '{{ $default_country }}';
+            $('#label-default-country').removeClass('hidden-xs-up');
+            document.getElementById('location_country').value = '{{ $default_country_id }}';
+            $('#filter-country').addClass('active-filter');
+        @endif
 
         // table entries
         getTournamentData(defaultFilter, function(data) {
