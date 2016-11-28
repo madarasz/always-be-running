@@ -108,11 +108,13 @@
         document.getElementById('marker-both').setAttribute('src', markerIconUrl('purple'));
 
         var map, infowindow, bounds, calendardata = {},
-            default_filter = 'start={{ $nowdate }}&approved=1&recur=0&concluded=0';
+            default_filter = 'start={{ $nowdate }}&approved=1&recur=0&concluded=0',
+            recur_filter = 'approved=1&recur=1';
 
         @if (@$default_country)
             // user's default country
             default_filter = default_filter + '&country=' + '{{ $default_country }}';
+            recur_filter = recur_filter + '&country=' + '{{ $default_country }}';
             $('#label-default-country').removeClass('hidden-xs-up');
             document.getElementById('location_country').value = '{{ $default_country_id }}';
             $('#filter-country').addClass('active-filter');
@@ -131,7 +133,7 @@
             updateDiscover('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'],
                     default_filter, map, bounds, infowindow, function() {
                         // get weekly events
-                        updateDiscover('#recur-table', ['title', 'location', 'recurday'], 'approved=1&recur=1', map, bounds, infowindow, function() {
+                        updateDiscover('#recur-table', ['title', 'location', 'recurday'], recur_filter, map, bounds, infowindow, function() {
                             drawCalendar(calendardata);
                         });
                     });
