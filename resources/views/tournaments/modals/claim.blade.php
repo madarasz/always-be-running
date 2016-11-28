@@ -225,7 +225,7 @@
             // note: ordering by date is note done, relying on NetrunnerDB
             $.each(data, function (index, element) {
                 rootElement.append($('<option>', {
-                    value: "{ \"title\": \"" + element.name.replace(/'/g, "\\'") +
+                    value: "{ \"title\": \"" + element.name.replace(/'/g, "\\'").replace(/"/g, "\\\\\"") +
                     "\", \"id\": \"" + element.id + "\", \"identity\": \"" + element.identity +
                     "\", \"type\": \"" + type + "\" }",
                     text: element.name
