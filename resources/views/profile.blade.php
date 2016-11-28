@@ -327,15 +327,16 @@
             $('#button-edit').removeClass('hidden-xs-up');
         }
 
+        // favorite faction
         @if (@$factions)
             $('#favorite_faction option').each(function(i, obj) {
                 if (i > 0) {
                     obj.text = factionCodeToFactionTitle(obj.value);
                 }
             });
-            document.getElementById('faction_text').textContent = factionCodeToFactionTitle('{{ $user->favorite_faction }}');
-            $('#faction_logo').addClass('icon-' + '{{ $user->favorite_faction }}');
         @endif
+        document.getElementById('faction_text').textContent = factionCodeToFactionTitle('{{ $user->favorite_faction }}');
+        $('#faction_logo').addClass('icon-' + '{{ $user->favorite_faction }}');
     </script>
 @stop
 

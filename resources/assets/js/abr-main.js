@@ -326,6 +326,7 @@ function updateNavBadges() {
 
 function factionCodeToFactionTitle(code) {
     switch (code) {
+        case '' : return '--- not set ---'
         case 'weyland-cons': return 'Weyland Consortium';
         case 'haas-bioroid': return 'Haas-Bioroid';
         case 'sunny-lebeau': return 'Sunny Lebeau';
