@@ -258,13 +258,15 @@
                             <span id="faction_logo" class="icon"></span>
                             <span id="faction_text"></span>
                         </div>
-                        <select class="form-control profile-field hidden-xs-up" id="favorite_faction"
-                                name="favorite_faction">
-                            <option value="">--- not set ---</option>
-                            @foreach($factions as $faction)
-                                <option value="{{ $faction->faction_code }}" {{ $user->favorite_faction === $faction->faction_code ? 'selected' : ''}}></option>
-                            @endforeach
-                        </select>
+                        @if (@$factions)
+                            <select class="form-control profile-field hidden-xs-up" id="favorite_faction"
+                                    name="favorite_faction">
+                                <option value="">--- not set ---</option>
+                                @foreach($factions as $faction)
+                                    <option value="{{ $faction->faction_code }}" {{ $user->favorite_faction === $faction->faction_code ? 'selected' : ''}}></option>
+                                @endforeach
+                            </select>
+                        @endif
                     </div>
                 </div>
                 {{--Website--}}
@@ -325,7 +327,7 @@
             $('#button-edit').removeClass('hidden-xs-up');
         }
 
-        @if ($factions)
+        @if (@$factions)
             $('#favorite_faction option').each(function(i, obj) {
                 if (i > 0) {
                     obj.text = factionCodeToFactionTitle(obj.value);
