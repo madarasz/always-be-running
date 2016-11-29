@@ -14,13 +14,13 @@ function clearMapMarkers(map) {
 function markerIconUrl(color) {
     switch (color) {
         case 'red':
-            return 'http://mt.googleapis.com/vt/icon/name=icons/spotlight/spotlight-poi.png';
+            return 'https://mt.googleapis.com/vt/icon/name=icons/spotlight/spotlight-poi.png';
         case 'blue':
-            return 'http://mt.google.com/vt/icon?name=icons/spotlight/spotlight-waypoint-blue.png';
+            return 'https://mt.google.com/vt/icon?name=icons/spotlight/spotlight-waypoint-blue.png';
         case 'purple':
-            return 'http://mt.google.com/vt/icon/name=icons/spotlight/spotlight-ad.png';
+            return 'https://mt.google.com/vt/icon/name=icons/spotlight/spotlight-ad.png';
         default:
-            return 'http://mt.googleapis.com/vt/icon/name=icons/spotlight/spotlight-poi.png';
+            return 'https://mt.googleapis.com/vt/icon/name=icons/spotlight/spotlight-poi.png';
     }
 }
 
