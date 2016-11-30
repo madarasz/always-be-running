@@ -16,10 +16,14 @@
     @include('partials.message')
     @include('errors.list')
 
-    {{--Notification for conclude, incomplete--}}
+    {{--Notifications for conclude, unknown cardpool incomplete--}}
     <div class="alert alert-warning view-indicator notif-red notif-badge-page hidden-xs-up" id="notif-conclude" data-badge="">
         <i class="fa fa-clock-o" aria-hidden="true"></i>
         You have tournaments waiting for conclusion.
+    </div>
+    <div class="alert alert-warning view-indicator notif-red notif-badge-page hidden-xs-up" id="notif-cardpool" data-badge="">
+        <i class="fa fa-clock-o" aria-hidden="true"></i>
+        It's time to set the cardpool for some of your tournaments.
     </div>
     <div class="alert alert-warning view-indicator notif-red notif-badge-page hidden-xs-up" id="notif-incomplete" data-badge="">
         <i class="fa fa-clock-o" aria-hidden="true"></i>

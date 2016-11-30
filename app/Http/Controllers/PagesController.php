@@ -175,16 +175,19 @@ class PagesController extends Controller
         $userid = Auth::user()->id;
         $toclaim = Tournament::where('concluded', 1)->pluck('id');
         $nowdate = date('Y.m.d.', time());
+        $weeklaterdate = date('Y.m.d.', time() + 86400 * 7);
         $toconclude = Tournament::where('creator', $userid)->where('concluded', 0)->where('date', '<', $nowdate)->count();
         $tocomplete = Tournament::where('creator', $userid)->where('incomplete', 1)->count();
-
+        $tocardpool = Tournament::where('creator', $userid)->whereNotNull('date')->where('cardpool_id', 'unknown')
+            ->where('date', '<', $weeklaterdate)->count();
         $result = [
             'personalAlerts' => Entry::where('user', $userid)->whereIn('tournament_id', $toclaim)
                 ->whereNull('rank')->count(),
             'organizeAlert' => [
-                'total' => $tocomplete + $toconclude,
+                'total' => $tocomplete + $toconclude + $tocardpool,
                 'concludeAlert' => $toconclude,
-                'incompleteAlert' => $tocomplete
+                'incompleteAlert' => $tocomplete,
+                'unknownCardpoolAlert' => $tocardpool
             ],
             'profileAlerts' => Auth::user()->badges()->wherePivot('seen', 0)->count()
         ];

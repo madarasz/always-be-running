@@ -283,6 +283,10 @@ function updateNavBadges() {
                         $('#notif-incomplete').removeClass('hidden-xs-up');
                         document.getElementById('notif-incomplete').setAttribute("data-badge", data.organizeAlert.incompleteAlert);
                     }
+                    if (data.organizeAlert.unknownCardpoolAlert) {
+                        $('#notif-cardpool').removeClass('hidden-xs-up');
+                        document.getElementById('notif-cardpool').setAttribute("data-badge", data.organizeAlert.unknownCardpoolAlert);
+                    }
                 }
             }
             // admin page alerts

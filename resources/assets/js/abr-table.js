@@ -3,6 +3,7 @@
 function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data) {
 
     var nowdate = nowDate(),
+        weeklater = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0,10).replace(/-/g, ".")+'.',
         paging = document.getElementById(elementID.substr(1) + '-controls').dataset;
 
     // if zero rows
@@ -75,11 +76,17 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
         }
         // cardpool
         if ($.inArray('cardpool', columns) > -1) {
+            var warning = false;
             if (element.cardpool === '- not yet known -') {
+                // time to update
+                if ($.inArray('action_edit', columns) > -1 && element.date < weeklater) {
+                    warning = true;
+                }
                 element.cardpool = element.cardpool.replace(/ /g,'&nbsp;');
             }
-            newrow.append($('<td>', {
-                html: element.cardpool
+            newrow.append(cell = $('<td>', {
+                html: element.cardpool,
+                style: warning ? 'color: red' : ''
             }));
         }
         // creator
