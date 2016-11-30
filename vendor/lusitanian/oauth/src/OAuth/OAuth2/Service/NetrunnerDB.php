@@ -113,8 +113,9 @@ class NetrunnerDB extends AbstractService
                 return $this->request($path, $method, $body, $extraHeaders);
             } catch(\Exception $ex) {
                 // if all fails logout user
+                Log::alert("Coudn't refresh oauth token", $ex);
                 Auth::logout();
-                return '{ "data": []}';
+                return '{ "data": [], "error": "Couldn\'t refresh oauth token"}';
             }
         }
     }
