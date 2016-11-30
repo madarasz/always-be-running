@@ -344,6 +344,7 @@
         } else if(period === 'year') this.year = ++this.year;
       }
       this._generateTemplate(false, callback);
+      hideRecurring(); // ABR entry, hide recurring events if needed
     },
 
     /*************************

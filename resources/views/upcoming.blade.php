@@ -67,7 +67,7 @@
                 </style>
                 @include('partials.calendar')
                 <div class="text-xs-center">
-                    <input type="checkbox" id="hide-recurring" onchange="hideRecurring()"/>
+                    <input type="checkbox" id="hide-recurring" checked onchange="hideRecurring()"/>
                     <label for="hide-recurring">hide weekly events</label>
                 </div>
             </div>
@@ -135,6 +135,7 @@
                         // get weekly events
                         updateDiscover('#recur-table', ['title', 'location', 'recurday'], recur_filter, map, bounds, infowindow, function() {
                             drawCalendar(calendardata);
+                            hideRecurring();
                         });
                     });
         }

@@ -56,7 +56,8 @@ class PagesController extends Controller
         $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->unique()->all())->pluck('type_name', 'id')->all();
         $tournament_cardpools = CardPack::whereIn('id', $tournaments->pluck('cardpool_id')->unique()->all())->where('id', '!=', 'unknown')
             ->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
-        $countries = $tournaments->where('location_country', '!=', '')->pluck('location_country')->unique()->all();
+        $countries = $tournaments->where('location_country', '!=', '')->orderBy('location_country')
+            ->pluck('location_country')->unique()->all();
 
         // adding empty filters
         $tournament_types = [-1 => '---'] + $tournament_types;
