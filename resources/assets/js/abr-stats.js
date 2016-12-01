@@ -3,7 +3,7 @@
 // gets the available data pack names from KtM
 function getKTMDataPacks(callback) {
     $.ajax({
-        url: "http://www.knowthemeta.com/JSON/Cardpoolnames",
+        url: "/api/ktmproxy/cardpoolnames",
         dataType: "json",
         async: true,
         success: function (data) {
@@ -13,30 +13,30 @@ function getKTMDataPacks(callback) {
 }
 
 // update the popular IDs box on the homepage
-function updatePopularIds(packname) {
-    // update pack name
-    $('#hot-packname').html(packname.replace(new RegExp(' ', 'g'), '&nbsp;'));
-    // get runner
-    $.ajax({
-        url: "http://www.knowthemeta.com/JSON/Tournament/runner/" + packname,
-        dataType: "json",
-        async: true,
-        success: function (data) {
-            data.ids.sort(tournamentShorters.byAllStanding);
-            addCardStat('#hot-id-runner', data.ids[0], data.allStandingCount, data.topStandingCount);
-            // get corp
-            $.ajax({
-                url: "http://www.knowthemeta.com/JSON/Tournament/corp/" + packname,
-                dataType: "json",
-                async: true,
-                success: function (data) {
-                    data.ids.sort(tournamentShorters.byAllStanding);
-                    addCardStat('#hot-id-corp', data.ids[0], data.allStandingCount, data.topStandingCount);
-                }
-            });
-        }
-    });
-}
+//function updatePopularIds(packname) {
+//    // update pack name
+//    $('#hot-packname').html(packname.replace(new RegExp(' ', 'g'), '&nbsp;'));
+//    // get runner
+//    $.ajax({
+//        url: "http://www.knowthemeta.com/JSON/Tournament/runner/" + packname,
+//        dataType: "json",
+//        async: true,
+//        success: function (data) {
+//            data.ids.sort(tournamentShorters.byAllStanding);
+//            addCardStat('#hot-id-runner', data.ids[0], data.allStandingCount, data.topStandingCount);
+//            // get corp
+//            $.ajax({
+//                url: "http://www.knowthemeta.com/JSON/Tournament/corp/" + packname,
+//                dataType: "json",
+//                async: true,
+//                success: function (data) {
+//                    data.ids.sort(tournamentShorters.byAllStanding);
+//                    addCardStat('#hot-id-corp', data.ids[0], data.allStandingCount, data.topStandingCount);
+//                }
+//            });
+//        }
+//    });
+//}
 
 // for sorting tournament drilldown data from KtM
 var tournamentShorters = {
@@ -68,27 +68,27 @@ var idShorter = function (a,b) {
 };
 
 // adds card with statistics
-function addCardStat(element, card, allCount, topCount) {
-    $(element).append($('<a>', {
-        href: 'http://www.knowthemeta.com/Cards/' + card.title + '/'
-    }).append($('<img>', {
-        src: imageURL(card.title)
-    }), $('<div>', {
-        class: 'small-text',
-        text: card.title
-    })), $('<div>', {
-        class: 'small-text',
-        text: 'all: ' + percentageToString(card.allStandingCount / allCount) +
-        ' - top: ' + percentageToString(card.topStandingCount / topCount)
-    }));
-    $(element).removeClass('loader');
-}
+//function addCardStat(element, card, allCount, topCount) {
+//    $(element).append($('<a>', {
+//        href: 'http://www.knowthemeta.com/Cards/' + card.title + '/'
+//    }).append($('<img>', {
+//        src: imageURL(card.title)
+//    }), $('<div>', {
+//        class: 'small-text',
+//        text: card.title
+//    })), $('<div>', {
+//        class: 'small-text',
+//        text: 'all: ' + percentageToString(card.allStandingCount / allCount) +
+//        ' - top: ' + percentageToString(card.topStandingCount / topCount)
+//    }));
+//    $(element).removeClass('loader');
+//}
 
 // generates image URL for KtM
-function imageURL(title) {
-    return "http://www.knowthemeta.com/static/img/cards/netrunner-" +
-        title.toLowerCase().replace(new RegExp(" ", 'g'), "-").replace(new RegExp("[^a-z0-9.-]", 'g'), "") + ".png";
-}
+//function imageURL(title) {
+//    return "http://www.knowthemeta.com/static/img/cards/netrunner-" +
+//        title.toLowerCase().replace(new RegExp(" ", 'g'), "-").replace(new RegExp("[^a-z0-9.-]", 'g'), "") + ".png";
+//}
 
 // pie charts on IDs on tournament detail page
 function drawEntryStats(data, side, element, playersNum) {
@@ -172,7 +172,7 @@ function updateIdStats(packname) {
     $('.stat-load').removeClass('hidden-xs-up');
     // get runner
     $.ajax({
-        url: "http://www.knowthemeta.com/JSON/Tournament/runner/" + packname,
+        url: "/api/ktmproxy/cardpool/runner/" + packname,
         dataType: "json",
         async: true,
         success: function (data) {
@@ -183,7 +183,7 @@ function updateIdStats(packname) {
             drawResultStats('stat-chart-runner', data.ids, 0.04);
             // get corp
             $.ajax({
-                url: "http://www.knowthemeta.com/JSON/Tournament/corp/" + packname,
+                url: "/api/ktmproxy/cardpool/corp/" + packname,
                 dataType: "json",
                 async: true,
                 success: function (data) {

@@ -48,3 +48,6 @@ Route::get('/api/useralert', 'PagesController@getAlertCount');
 Route::get('/api/as/{id}', 'ASController@index');
 Route::post('/api/badgesseen/{id}', 'BadgeController@changeBadgesToSeen');
 Route::get('/api/adminstats', 'AdminController@adminStats');
+// https proxies for loading KnowTheMeta data
+Route::get('/api/ktmproxy/cardpoolnames', 'KTMProxy@getCardpoolNames');
+Route::get('/api/ktmproxy/cardpool/{side}/{pack}', 'KTMProxy@getCardpoolStat');
