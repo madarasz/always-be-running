@@ -54,7 +54,7 @@
                                     <div class="card-block text-xs-center">
                                         <div class="card-title">
                                             Import results
-                                            <div class="small-text">Having trouble? Read the <a href="/faq#nrtm" target="_blank">F.A.Q.</a></div>
+                                            <div class="small-text">Having trouble? Read the <a href="/faq#import" target="_blank">F.A.Q.</a></div>
                                         </div>
                                         {!! Form::open(['url' => '', 'files' => true, 'id' => 'conclude-nrtm']) !!}
                                             {{--Conclusion code--}}

@@ -105,6 +105,24 @@ table.abr-table tr td {
 .bracket:before{ left: 0; border-right: 0; pointer-events: none; }
 .bracket:after{ right: 0; border-left: 0; pointer-events: none; }
 
+.bracket-mini{
+    display: inline-block;
+    position: relative;
+    padding: 0.25em 0.5em 1em 0.5em;
+    margin-top: 2em;
+}
+.bracket-mini:before, .bracket-mini:after{
+    content: '';
+    display: block;
+    height: 100%;
+    width: 15px;
+    border: 1px solid #333;
+    position: absolute;
+    top: -5px;
+}
+.bracket-mini:before{ left: 0; border-right: 0; pointer-events: none; }
+.bracket-mini:after{ right: 0; border-left: 0; pointer-events: none; }
+
 .navbar-brand-image {
     float: left;
     height: 30px;
@@ -615,4 +633,12 @@ blockquote {
     color: #0275d8 !important;
     text-decoration: underline;
     cursor: pointer;
+}
+
+/* anchor fix */
+a.anchor {
+    display: block;
+    position: relative;
+    top: -75px;
+    visibility: hidden;
 }

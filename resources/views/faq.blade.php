@@ -9,12 +9,12 @@
                     <a href="#why-ndb">Why do I have to login with my NetrunnerDB user?</a><br>
                     <a href="#ndb-sharing">I cannot see my decks when I am claiming my spot at a tournament.</a><br>
                     <a href="#other-deckbuilders">Do you plan to integrate with other deckbuilders?</a><br>
-                    <a href="#nrtm">How do I import the tournament results?</a><br>
+                    <a href="#import">How do I import the tournament results?</a><br>
                     <a href="#more-questions">I have more questions or ideas.</a><br>
                 </p>
                 <hr/>
                 <p>
-                    <a name="why-ndb"></a><strong>Why do I have to login with my NetrunnerDB user?</strong>
+                    <a name="why-ndb" class="anchor"></a><strong>Why do I have to login with my NetrunnerDB user?</strong>
                 </p>
                 <p>
                     Because you will be able to link the decks created at NetrunnerDB with the tournaments you participated at.
@@ -27,7 +27,7 @@
                     being logged in on NetrunnerDB and then redirected back.
                 </p>
                 <p class="p-t-2">
-                    <a name="ndb-sharing"></a><strong>I cannot see my decks when I am claiming my spot at a tournament.</strong>
+                    <a name="ndb-sharing" class="anchor"></a><strong>I cannot see my decks when I am claiming my spot at a tournament.</strong>
                 </p>
                 <p>
                     By default I can only access your <em>published</em> decks.
@@ -38,38 +38,54 @@
                     After this is done, <strong>relogin into Always be Running.net</strong>, so changes take effect.
                 </p>
                 <p class="p-t-2">
-                    <a name="other-deckbuilders"></a><strong>Do you plan to integrate with other deckbuilders?</strong>
+                    <a name="other-deckbuilders" class="anchor"></a><strong>Do you plan to integrate with other deckbuilders?</strong>
                 </p>
                 <p>
                     This is not planned. Though the possibility is there if the deckbuilder site has the needed API
                     endpoints and has a wide userbase.
                 </p>
                 <p class="p-t-2">
-                    <a name="nrtm"></a><strong>How do I import the tournament results?</strong>
+                    <a name="import" class="anchor"></a><strong>How do I import the tournament results?</strong>
                 </p>
                 <p>
-                    You can either do it by <strong>NRTM</strong> or a <strong>CSV</strong> file that you prepare.
+                    You can do it in bulk either by <strong><a href="#import-nrtm">NRTM</a></strong> or a
+                    <strong><a href="#import-csv">CSV</a></strong> file that you prepare.
+                    Or you can <strong><a href="#import-manual">import manually</a></strong>.
                 </p>
                 <ul>
                     <li>
                         <p>
+                            <a name="import-nrtm" class="anchor"></a>
                             <a href="https://itunes.apple.com/us/app/nrtm/id695468874?mt=8">NRTM</a> is a Netrunner tournament
                             manager app for iOS.</p>
                         <p>
                             First, download the identity names
                             from NetrunnerDB by going to <strong>Settings</strong> >> <strong>Edit Names</strong> >>
-                            <strong>Download from NetrunnerDB.com</strong>. Then you can proceed with exporting the results:
+                            <strong>Download from NetrunnerDB.com</strong>. Assign those identity names to your players.
+                            After the tournament finishes, you can proceed with exporting the results:
                         </p>
                         <ul>
                             <li>
-                                <img src="img/faq-nrtm1.png"/><br/>
+                                <div class="bracket-mini">
+                                    <img src="img/faq-nrtm1.png"/>
+                                </div>
+                                <br/>
                                 After the tournament is finished, go to tab <strong>More...</strong> >> <strong>Export</strong>.
-                                Click upload icon on top.<br/><br/>
-                                <img src="img/faq-nrtm2.png"/><br/>
-                                Select <strong>Upload to alwaysberunning.net</strong>.<br/><br/>
-                                <img src="img/faq-nrtm3.png"/><br/>
-                                After NRTM uploads the results, you will receive a <strong>conclusion code.</strong><br/><br/>
-                                <img src="img/faq-nrtm4.png"/><br/>
+                                Click upload icon on top.<br/>
+                                <div class="bracket-mini">
+                                    <img src="img/faq-nrtm2.png"/>
+                                </div>
+                                <br/>
+                                Select <strong>Upload to alwaysberunning.net</strong>.<br/>
+                                <div class="bracket-mini">
+                                    <img src="img/faq-nrtm3.png"/>
+                                </div>
+                                <br/>
+                                After NRTM uploads the results, you will receive a <strong>conclusion code.</strong><br/>
+                                <div class="bracket-mini">
+                                    <img src="img/faq-nrtm4.png"/>
+                                </div>
+                                <br/>
                                 When you are concluding the tournament on AlwaysBeRunning.net, provide this code.
 
                             </li>
@@ -81,6 +97,7 @@
                         </p>
                     </li>
                     <li>
+                        <a name="import-csv" class="anchor"></a>
                         <p>
                             If you are uploading a CSV file, you have to follow this format:<br/>
                         <blockquote class="help-markdown">name;swiss-rank;topcut-rank;runnerID;corpID</blockquote><br/>
@@ -95,9 +112,23 @@
                         </blockquote>
                         </p>
                     </li>
+                    <li>
+                        <a name="import-manual" class="anchor"></a>
+                        You can also import results manually, adding each player one-by-one.<br/>
+                        <div class="bracket-mini">
+                            <img src="img/faq-manual1.png"/>
+                        </div><br/>
+                        Go to your concluded tournament and click <strong>Import manually</strong>.<br/>
+                        <div class="bracket-mini">
+                            <img src="img/faq-manual2.png"/>
+                        </div><br/>
+                        You can now add the player names and IDs to the results. You cannot link users or decklists.
+                        Your players have to claim themselves to get those in. If you made a mistake you can delete
+                        entries with the red trashcan icon next to them.
+                    </li>
                 </ul>
                 <p class="p-t-2">
-                    <a name="more-questions"></a><strong>I have more questions or ideas.</strong>
+                    <a name="more-questions" class="anchor"></a><strong>I have more questions or ideas.</strong>
                 </p>
                 <p>
                     You can contact me via: info (at) alwaysberunning.net
