@@ -27,7 +27,7 @@ class EntriesController extends Controller
         }
 
         // add badges for registration on recurring
-        if (Tournament::where('id', $id)->whereNull('date')->first()) {
+        if (Tournament::withTrashed()->where('id', $id)->whereNull('date')->first()) {
             App('App\Http\Controllers\BadgeController')->addClaimBadges($user_id);
         }
 
@@ -44,7 +44,7 @@ class EntriesController extends Controller
         }
 
         // remove badges if needed
-        if (Tournament::where('id', $id)->whereNull('date')->first()) {
+        if (Tournament::withTrashed()->where('id', $id)->whereNull('date')->first()) {
             App('App\Http\Controllers\BadgeController')->addClaimBadges($user_id);
         }
 
@@ -76,7 +76,7 @@ class EntriesController extends Controller
 
         // getting registration for tournament or imported entry
         $reg_entry = Entry::where('user', $user_id)->where('tournament_id', $id)->first();
-        $tournament = Tournament::where('id', $id)->first();
+        $tournament = Tournament::withTrashed()->findOrFail($id);
         // with top
         if ($tournament->top_number) {
             $import_entry = Entry::where('tournament_id', $id)->where('user', 0)->where(function ($q) use ($request) {
@@ -153,7 +153,7 @@ class EntriesController extends Controller
         }
 
         // remove conflict if needed
-        $tournament = Tournament::where('id', $entry->tournament_id)->first();
+        $tournament = Tournament::withTrashed()->findOrFail($entry->tournament_id);
         $tournament->updateConflict();
 
         // remove badges if needed
@@ -250,7 +250,7 @@ class EntriesController extends Controller
      */
     public function deleteAnonym(Request $request, $id) {
         $entry = Entry::findOrFail($id);
-        $tournament = Tournament::findOrFail($entry->tournament_id);
+        $tournament = Tournament::withTrashed()->findOrFail($entry->tournament_id);
 
         // auth check
         $this->authorize('own', $tournament, $request->user());
@@ -275,7 +275,7 @@ class EntriesController extends Controller
      * @param $id int Tournament ID
      */
     public function addAnonym(Request $request) {
-        $tournament = Tournament::findOrFail($request->tournament_id);
+        $tournament = Tournament::withTrashed()->findOrFail($request->tournament_id);
 
         // auth check
         $this->authorize('own', $tournament, $request->user());

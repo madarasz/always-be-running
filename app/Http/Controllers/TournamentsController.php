@@ -371,7 +371,7 @@ class TournamentsController extends Controller
      */
     public function clearAnonym($id, Request $request) {
 
-        $tournament = Tournament::findorFail($id);
+        $tournament = Tournament::withTrashed()->findorFail($id);
         $this->authorize('own', $tournament, $request->user());
 
         // delete claims
