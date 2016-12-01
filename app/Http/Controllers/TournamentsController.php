@@ -41,10 +41,8 @@ class TournamentsController extends Controller
         $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $tournament = new Tournament();
 
-        // make cardpool default to cardpool after 'not yet known'
-        if (count($cardpools)>1) {
-            $tournament->cardpool_id = key(array_slice($cardpools,1,1));
-        }
+        // make cardpool default to 'not yet known'
+        $tournament->cardpool_id = 'unknown';
 
         $page_section = 'organize';
         return view('tournaments.create', compact('tournament_types', 'tournament', 'cardpools', 'page_section'));

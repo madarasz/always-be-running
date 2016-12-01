@@ -25,7 +25,7 @@ class PagesController extends Controller
             })->where('approved', 1);
         $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->unique()->all())->pluck('type_name', 'id')->all();
         $countries = $tournaments->where('location_country', '!=', '')->orderBy('location_country')->pluck('location_country')->unique()->all();
-        $states = $tournaments->pluck('location_state')->unique()->all();
+        $states = $tournaments->orderBy('location_state')->pluck('location_state')->unique()->all();
         if(($states_key = array_search('', $states)) !== false) {
             unset($states[$states_key]);
         }
