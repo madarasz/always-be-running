@@ -83,9 +83,15 @@ class NetrunnerDBController extends Controller
         $runner_ids = CardIdentity::where('runner', 1)->get()->pluck('id')->all();
         $corp_ids = CardIdentity::where('runner', 0)->get()->pluck('id')->all();
         $public = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/private/decklists'), true);
+
+        // error handling
+        if (array_key_exists('error', $public)) {
+            return ['error' => 'NetrunnerDB session lost'];
+        }
+
         $this->sortDecks($public['data'], $result['publicNetrunnerDB'], $runner_ids, $corp_ids);
         // private deck data
-        if (Auth::user()->sharing)
+        if (Auth::user() && Auth::user()->sharing)
         {
             $private = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/private/decks'), true);
             $this->sortDecks($private['data'], $result['privateNetrunnerDB'], $runner_ids, $corp_ids);
