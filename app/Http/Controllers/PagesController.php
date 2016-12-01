@@ -137,10 +137,12 @@ class PagesController extends Controller
 
         $user = User::findOrFail($id);
 
+        $deleted_tournaments = Tournament::withTrashed()->whereNotNull('deleted_at')->pluck('id')->all();
         $message = session()->has('message') ? session('message') : '';
         $created_count = Tournament::where('creator', $user->id)->where('approved', 1)->count();
         $claim_count = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')->count();
-        $claims = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')->get();
+        $claims = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')
+            ->whereNotIn('tournament_id', $deleted_tournaments)->get();
         $created = Tournament::where('creator', $user->id)->where('approved', 1)->get();
         $username = $user->name;
         return view('profile', compact('user', 'claims', 'created', 'created_count', 'claim_count',
