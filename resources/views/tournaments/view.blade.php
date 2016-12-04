@@ -359,7 +359,7 @@
                                     <div class="form-group">
                                         {!! Form::label('rank_top', 'top-cut') !!}
                                         {!! Form::select('rank_top',
-                                            array_combine(range(1, $tournament->top_number), range(1, $tournament->top_number)),
+                                            array_combine(range(0, $tournament->top_number), array_merge(['n/a'], range(1, $tournament->top_number))),
                                             null, ['class' => 'form-control']) !!}
                                     </div>
                                 @else
