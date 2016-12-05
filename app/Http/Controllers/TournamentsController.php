@@ -262,7 +262,8 @@ class TournamentsController extends Controller
             $tournaments = $tournaments->where('date', '<=', $request->input('end'));
         }
         if (!is_null($request->input('concluded'))) {
-            $tournaments = $tournaments->where('concluded', $request->input('concluded'));
+            $tournaments = $tournaments->where('tournament_type_id', '!=', 8)   // non-tournaments are left out
+                ->where('concluded', $request->input('concluded'));
         }
         if ($request->input('type')) {
             $tournaments = $tournaments->where('tournament_type_id', $request->input('type'));
