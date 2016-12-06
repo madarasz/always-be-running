@@ -34,8 +34,13 @@
                 <div class="col-md-6 col-xs-12">
                     <div class="form-group">
                         {!! Html::decode(Form::label('cardpool_id', 'Legal cardpool up to<sup class="text-danger" id="req-date">*</sup>')) !!}
+                        <div style="position: relative;">
+                            <div id="overlay-cardpool" class="overlay hidden-xs-up" style="top: 0; bottom: 0">
+                                <div>recurring event has no cardpool</div>
+                            </div>
                         {!! Form::select('cardpool_id', $cardpools,
                                     old('cardpool_id', $tournament->cardpool_id), ['class' => 'form-control']) !!}
+                        </div>
                     </div>
                 </div>
             </div>

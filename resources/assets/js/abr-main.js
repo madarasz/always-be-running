@@ -34,11 +34,12 @@ function recurCheck() {
             document.getElementById('date').setAttribute('disabled','');
             $('#req-date').addClass('hidden-xs-up');
             document.getElementById('date').removeAttribute('required');
-
+            $('#overlay-cardpool').removeClass('hidden-xs-up');
     } else {
         document.getElementById('date').removeAttribute('disabled');
         $('#req-date').removeClass('hidden-xs-up');
         document.getElementById('date').setAttribute('required','');
+        $('#overlay-cardpool').addClass('hidden-xs-up');
     }
 }
 

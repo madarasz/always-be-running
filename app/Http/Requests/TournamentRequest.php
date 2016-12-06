@@ -102,6 +102,7 @@ class TournamentRequest extends Request
                 $input['recur_weekly'] = null;
             } else {    // recurring event
                 $input['date'] = null;
+                $input['cardpool_id'] = 'unknown';
             }
         } else {
             $input['recur_weekly'] = null;
