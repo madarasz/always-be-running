@@ -178,7 +178,8 @@ class PagesController extends Controller
         $toclaim = Tournament::where('concluded', 1)->pluck('id');
         $nowdate = date('Y.m.d.', time());
         $weeklaterdate = date('Y.m.d.', time() + 86400 * 7);
-        $toconclude = Tournament::where('creator', $userid)->where('concluded', 0)->where('date', '<', $nowdate)->count();
+        $toconclude = Tournament::where('creator', $userid)->where('tournament_type_id', '!=', 8)
+            ->where('concluded', 0)->where('date', '<', $nowdate)->count();
         $tocomplete = Tournament::where('creator', $userid)->where('incomplete', 1)->count();
         $tocardpool = Tournament::where('creator', $userid)->whereNotNull('date')->where('cardpool_id', 'unknown')
             ->where('date', '<', $weeklaterdate)->count();
