@@ -76,6 +76,7 @@ function updateDiscover(table, columns, filter, map, bounds, infowindow, callbac
 // update filter settings for the Upcoming page
 function filterDiscover(default_filter, default_country, map, infowindow) {
     var filter = default_filter,
+        recur_filter = 'approved=1&recur=1',
         type = document.getElementById('tournament_type_id').value,
         countrySelector = document.getElementById('location_country'),
         stateSelector = document.getElementById('location_state'),
@@ -91,6 +92,7 @@ function filterDiscover(default_filter, default_country, map, infowindow) {
     // country filtering
     if (country !== '---') {
         filter = filter + '&country=' + country;
+        recur_filter = recur_filter + '&country=' + country;
         $('#filter-country').addClass('active-filter');
         if (country === 'United States') {
             $('#filter-state').removeClass('hidden-xs-up');
@@ -98,6 +100,7 @@ function filterDiscover(default_filter, default_country, map, infowindow) {
             // state filtering
             if (state !== '---') {
                 filter = filter + '&state=' + state;
+                recur_filter = recur_filter + '&state=' + state;
                 $('#filter-state').addClass('active-filter');
             } else {
                 $('#filter-state').removeClass('active-filter');
@@ -122,10 +125,10 @@ function filterDiscover(default_filter, default_country, map, infowindow) {
     var bounds = new google.maps.LatLngBounds();
     calendardata = {};
     // get tournaments
-    updateDiscover('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'], filter+'&recur=0', map, bounds,
+    updateDiscover('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'], filter, map, bounds,
         infowindow, function() {
             // get weekly events
-            updateDiscover('#recur-table', ['title', 'location', 'recurday'], filter.substr(filter.indexOf('&'))+'&recur=1', map, bounds, infowindow, function() {
+            updateDiscover('#recur-table', ['title', 'location', 'recurday'], recur_filter, map, bounds, infowindow, function() {
                 drawCalendar(calendardata);
                 hideRecurring();
                 updatePaging('discover-table');

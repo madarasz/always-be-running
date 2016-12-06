@@ -66,20 +66,21 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
         var defaultFilter = "approved=1&concluded=1&recur=0&end={{ $nowdate }}",
+                newFilter = defaultFilter,  // changed with user's default filter
                 packlist = [],
                 currentPack = "",
                 runnerIDs = [], corpIDs = [];
 
         @if (@$default_country)
             // user's default country
-            defaultFilter = defaultFilter + '&country=' + '{{ $default_country }}';
+            newFilter = defaultFilter + '&country=' + '{{ $default_country }}';
             $('#label-default-country').removeClass('hidden-xs-up');
             document.getElementById('location_country').value = '{{ $default_country_id }}';
             $('#filter-country').addClass('active-filter');
         @endif
 
         // table entries
-        getTournamentData(defaultFilter, function(data) {
+        getTournamentData(newFilter, function(data) {
             updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', data);
             $('.filter').prop("disabled", false);
         });
