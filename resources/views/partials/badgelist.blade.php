@@ -6,12 +6,11 @@
         <strong>{{ $badge->name }}</strong><br/>
         {{ $badge->description }}<br/>
         <div class="small-text">
-            (belonging to {{ $badge->users()->count() }} user{{ $badge->users()->count() > 1 ? 's' : '' }})
-            @if (Auth::user() && Auth::user()->admin && $badge->users()->count())
-                <br/>
-                <strong>admin user info:</strong>
-                @foreach($badge->users()->get() as $badgeuser)
-                    <a href="/profile/{{ $badgeuser->id }}">{{ $badgeuser->name }}</a>,
+            <?php $bcount = $badge->users()->count() ?>
+            belonging to {{ $bcount }} user{{ $bcount > 1 ? 's' : '' }}{{ $bcount ? ':' : '' }}
+            @if ($bcount)
+                @foreach($badge->users()->get() as $key=>$badgeuser)
+                    <a href="/profile/{{ $badgeuser->id }}">{{ $badgeuser->name }}</a>{{ $key != $bcount-1 ? ',' : ''}}
                 @endforeach
             @endif
         </div>
