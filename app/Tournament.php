@@ -58,4 +58,24 @@ class Tournament extends Model
             return $days[$this->recur_weekly -1];
         }
     }
+
+    public function seoTitle() {
+        //Lower case everything
+        $seoTitle = strtolower($this->title);
+        //Make alphanumeric (removes all other characters)
+        $seoTitle = preg_replace("/[^a-z0-9_\s-]/", "", $seoTitle);
+        //Clean up multiple dashes or whitespaces
+        $seoTitle = preg_replace("/[\s-]+/", " ", $seoTitle);
+        //Convert whitespaces and underscore to dash
+        $seoTitle = preg_replace("/[\s_]/", "-", $seoTitle);
+        //escape special cases
+        if (in_array($seoTitle, ['approve', 'register', 'reject', 'restore', 'unregister'])) {
+            $seoTitle = $seoTitle."-";
+        }
+        return $seoTitle;
+    }
+
+    public function seoUrl() {
+        return '/tournaments/'.$this->id.'/'.$this->seoTitle();
+    }
 }

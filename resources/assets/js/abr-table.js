@@ -49,7 +49,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
 
             cell.append($('<a>', {
                 text: element.title,
-                href: '/tournaments/' + element.id
+                href: element.url
             })).appendTo(newrow);
         }
         // date

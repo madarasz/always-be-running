@@ -36,6 +36,7 @@ Route::post('entries/anonym', 'EntriesController@addAnonym');
 Route::delete('tournaments/{id}/clearanonym', 'TournamentsController@clearAnonym');
 Route::post('tournaments/{id}/conclude/manual', 'TournamentsController@concludeManual');
 Route::post('tournaments/{id}/conclude/nrtm', 'TournamentsController@concludeNRTM');
+Route::get('tournaments/{id}/{slug}', 'TournamentsController@show')->name('tournaments.show.slug');
 
 Route::get('/oauth2/redirect', 'NetrunnerDBController@login');
 Route::get('/logout', 'NetrunnerDBController@logout');

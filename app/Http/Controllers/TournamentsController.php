@@ -25,7 +25,7 @@ class TournamentsController extends Controller
         $tournament = Tournament::create($request->all());
 
         // redirecting to show newly created tournament
-        return redirect()->route('tournaments.show', $tournament->id)
+        return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
             ->with('message', 'Tournament created.');
     }
 
@@ -79,7 +79,7 @@ class TournamentsController extends Controller
         $tournament->update($request->all());
 
         // redirecting to show newly created tournament
-        return redirect()->route('tournaments.show', $tournament->id)
+        return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
             ->with('message', 'Tournament updated.');
     }
 
@@ -103,7 +103,7 @@ class TournamentsController extends Controller
         }
 
         // redirecting to show newly created tournament
-        return redirect()->route('tournaments.show', $tournament->id)
+        return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
             ->with('message', 'Tournament transferred.');
     }
 
@@ -303,6 +303,7 @@ class TournamentsController extends Controller
 
         // modify and flatten result
         $result = [];
+        $appUrl = env('APP_URL');
         foreach($tournaments as $tournament) {
             // location
             if ($tournament->tournament_type_id == 7) {
@@ -337,7 +338,8 @@ class TournamentsController extends Controller
                 'claim_count' => $tournament->claim_number(),
                 'claim_conflict' => $tournament->conflict == 1,
                 'recurring_day' => $tournament->recur_weekly ? $tournament->recurDay() : null,
-                'charity' => $tournament->charity == 1
+                'charity' => $tournament->charity == 1,
+                'url' => $appUrl.$tournament->seoUrl()
             ]);
 
             // user specific claim
@@ -400,7 +402,7 @@ class TournamentsController extends Controller
         $tournament->update(array_merge($request->all(), ['concluded' => true]));
 
         // redirecting to show newly created tournament
-        return redirect()->route('tournaments.show', $tournament->id)
+        return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
             ->with('message', 'Tournament concluded.');
     }
 
@@ -478,7 +480,7 @@ class TournamentsController extends Controller
             return redirect()->route('tournaments.show', $tournament->id)
                 ->withErrors($errors);
         } else {    // redirecting to show newly concluded tournament
-            return redirect()->route('tournaments.show', $tournament->id)
+            return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
                 ->with('message', 'Tournament concluded by import.');
         }
     }

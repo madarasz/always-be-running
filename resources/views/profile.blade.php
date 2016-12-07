@@ -99,7 +99,7 @@
                             <li>
                                 #{{ $claim->rank() }} / {{ $claim->tournament()->first()->players_number }}
                                 <a href="{{ $claim->runner_deck_url() }}"><img src="/img/ids/{{ $claim->runner_deck_identity }}.png"></a>&nbsp;<a href="{{ $claim->corp_deck_url() }}"><img src="/img/ids/{{ $claim->corp_deck_identity }}.png"></a>
-                                <a href="/tournaments/{{ $claim->tournament()->first()->id}}">
+                                <a href="{{ $claim->tournament()->first()->seoUrl() }}">
                                     {{ $claim->tournament()->first()->title }}
                                 </a>
                             </li>
@@ -117,7 +117,7 @@
                     <ul>
                         @foreach($created as $tournament)
                             <li>
-                                <a href="/tournaments/{{ $tournament->id}}">
+                                <a href="{{ $tournament->seoUrl() }}">
                                     {{ $tournament->title }}
                                 </a><br/>
                                 <div class="small-text">
