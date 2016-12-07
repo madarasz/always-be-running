@@ -92,7 +92,7 @@
                 </small>
             </h5>
             {{--Imported values warning--}}
-            @if ($tournament->import)
+            @if ($tournament->import && $tournament->import != 3)
                 <div class="alert alert-warning view-indicator" id="warning-imported-values">
                     <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                     These values were set by importing results. Only change if necessary.

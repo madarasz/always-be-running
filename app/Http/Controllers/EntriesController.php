@@ -283,8 +283,10 @@ class EntriesController extends Controller
         // add anonym entry
         Entry::create($request->all());
 
+        if (!$tournament->import) {
+            $tournament->update(['import' => 3]);
+        }
         // add conflict if needed
-        $tournament->update(['import' => 1]);
         $tournament->updateConflict();
 
         return back()->with('message', 'Entry added.')->with('editmode', 1);

@@ -593,7 +593,7 @@ class TournamentsController extends Controller
      */
     private function processCSV($csv, &$tournament, $topcut, &$errors) {
         $tournament->concluded = true;
-        $tournament->import = 1;
+        $tournament->import = 2;
         $tournament->top_number = $topcut; // number of players in top cut
         $tournament->players_number = count($csv); // number of players
 
