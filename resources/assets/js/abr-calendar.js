@@ -96,7 +96,7 @@ function drawCalendar(calendardata) {
 }
 
 function updateTournamentCalendar(data) {
-    var $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     $.each(data, function (index, element) {
         if (element.date) {
             var entry = '<a href="/tournaments/' + element.id + '">' + element.title + '</a><small>' + element.location + '</small>';
@@ -108,7 +108,7 @@ function updateTournamentCalendar(data) {
         } else {
             // get first day
             var dateCounter = new Date();
-            while (element.recurring_day !== $days[dateCounter.getDay()-1]) {
+            while (element.recurring_day !== days[dateCounter.getDay()]) {
                 dateCounter.setDate(dateCounter.getDate() + 1);
             }
             // add to calendar for 52 weeks
