@@ -70,7 +70,7 @@ function pepareMatchRow(tbodyid, topcut, rowcClass, matchId) {
 function fillMatchPlayer(player, playernum, matchId, match) {
     if (player) {
         // player name
-        if (player.user_id) {
+        if (player.user_id > 0) {
             $('#' + matchId + 'p' + playernum +'n').append($('<a>', {
                 text: player.user_name,
                 href: '/profile/' + player.user_id
