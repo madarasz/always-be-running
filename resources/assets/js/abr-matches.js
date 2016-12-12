@@ -178,7 +178,7 @@ function displayMatches(id) {
                 for (var index = 0, len = data['players'].length; index < len; index ++) {
                     idToIndex[data['players'][index].id] = index;
                     for (var u = 0, len2 = chartData.length; u < len2; u++) {
-                        if (chartData[u].rank_swiss == data['players'][index].rank) {
+                        if (parseInt(chartData[u].rank_swiss) == parseInt(data['players'][index].rank)) {
                             data['players'][index].entry_id = u;
                             break;
                         }
