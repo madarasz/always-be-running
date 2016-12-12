@@ -642,3 +642,17 @@ a.anchor {
     top: -75px;
     visibility: hidden;
 }
+
+/* row-stripe */
+.row-colored {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+.table-match {
+    width: 100%;
+}
+.table-match td {
+    padding: 0.1em 0.3em;
+}
+#table-matches-top td {
+    width: 50%;
+}

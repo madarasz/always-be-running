@@ -215,6 +215,265 @@
                     @endif
                 </div>
             @endunless
+            {{--Matches--}}
+            @if (file_exists('tjsons/'.$tournament->id.'.json'))
+                <div class="bracket">
+                    <h5>
+                        <i class="fa fa-handshake-o" aria-hidden="true"></i>
+                        Matches
+                        <div class="pull-right">
+                            <button class="btn btn-primary btn-xs disabled" id="button-showmatches" disabled onclick="displayMatches({{ $tournament->id }})">
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                show
+                            </button>
+                        </div>
+                    </h5>
+                    <div id="content-matches" class="hidden-xs-up">
+                        <div id="loader-content" class="hidden-xs-up loader">loading</div>
+                        {{--Top cut--}}
+                        <h6 class="hidden-xs-up" id="header-top">Top-cut</h6>
+                        {{--Missing top--}}
+                        <div class="alert alert-warning view-indicator hidden-xs-up" id="warning-matches-top">
+                            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                            Elimination match data is missing.
+                        </div>
+                        <table id="table-matches-top" class="table-match hidden-xs-up p-b-2">
+                        </table>
+                        {{--Swiss rounds--}}
+                        <h6>Swiss rounds</h6>
+                        {{--Missing swiss--}}
+                        <div class="alert alert-warning view-indicator hidden-xs-up" id="warning-matches-swiss">
+                            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                            Swiss match data is missing.
+                        </div>
+                        <table id="table-matches-swiss" class="table-match">
+                        </table>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    function displayMatches(id) {
+                        $('#button-showmatches').addClass('hidden-xs-up');
+                        $('#loader-content').removeClass('hidden-xs-up');
+                        $('#content-matches').addClass('p-b-3');
+                        $.ajax({
+                            url: '/tjsons/' + id +'.json',
+                            dataType: "json",
+                            async: true,
+                            success: function (data) {
+                                if (!('rounds' in data)) {
+                                    $('#warning-matches-top').removeClass('hidden-xs-up');
+                                    $('#warning-matches-swiss').removeClass('hidden-xs-up');
+                                } else {
+                                    // enable top-cut
+                                    if (data.cutToTop) {
+                                        $('#header-top').removeClass('hidden-xs-up');
+                                        $('#table-matches-top').removeClass('hidden-xs-up');
+                                    }
+                                    // process players
+                                    var idToIndex = [];
+                                    for (var index = 0, len = data['players'].length; index < len; index ++) {
+                                        idToIndex[data['players'][index].id] = index;
+                                        for (var u = 0, len2 = chartData.length; u < len2; u++) {
+                                            if (chartData[u].rank_swiss == data['players'][index].rank) {
+                                                data['players'][index].entry_id = u;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    // process rounds
+                                    for (index = 0, len = data['rounds'].length; index < len; index++) {
+                                        // prepare tbody
+                                        var tbodyid;
+                                        if (data['rounds'][index][0].eliminationGame) {
+                                            // top cut
+                                            tbodyid = 'tbody-matches-top-' + (index + 1);
+                                            $('#table-matches-top').append($('<thead>').append($('<th>', {
+                                                text: 'Top-cut bracket'
+                                            })), $('<tbody>', {
+                                                id: tbodyid
+                                            }));
+                                        } else {
+                                            // swiss
+                                            tbodyid = 'tbody-matches-swiss-' + (index + 1);
+                                            $('#table-matches-swiss').append($('<thead>').append($('<th>', {
+                                                text: 'Round ' + (index + 1)
+                                            })), $('<tbody>', {
+                                                id: tbodyid
+                                            }));
+                                        }
+
+                                        // process round
+                                        for (u = 0, len2 = data['rounds'][index].length; u < len2; u++) {
+                                            var match = data['rounds'][index][u],
+                                                    player1 = null, player2 = null,
+                                                    matchId= 'match-'+index+'-'+u+'-',
+                                                    rowcClass = u % 2 ? '' : 'row-colored';
+                                            if (match.player1.id) {
+                                                player1 = chartData[data['players'][idToIndex[match.player1.id]].entry_id];
+                                            }
+                                            if (match.player2.id) {
+                                                player2 = chartData[data['players'][idToIndex[match.player2.id]].entry_id]
+                                            }
+                                            // prepare row
+                                            if (match.eliminationGame) {
+                                                // top-cut
+                                                $('#' + tbodyid).append($('<tr>', {
+                                                    class: rowcClass
+                                                }).append($('<td>', {
+                                                    class: 'text-xs-right',
+                                                    id: matchId + 'p1n'
+                                                }), $('<td>', {
+                                                    id: matchId + 'p2n'
+                                                })), $('<tr>', {
+                                                    class: rowcClass
+                                                }).append($('<td>', {
+                                                    class: 'text-xs-right font-weight-bold',
+                                                    id: matchId + 'p1-win'
+                                                }), $('<td>', {
+                                                    class: 'font-weight-bold',
+                                                    id: matchId + 'p2-win'
+                                                })), $('<tr>', {
+                                                    class: rowcClass
+                                                }).append($('<td>', {
+                                                    id: matchId + 'p1d',
+                                                    class: 'small-text text-xs-right'
+                                                }), $('<td>', {
+                                                    id: matchId + 'p2d',
+                                                    class: 'small-text'
+                                                })));
+                                            } else {
+                                                // swiss
+                                                $('#' + tbodyid).append($('<tr>', {
+                                                    class: rowcClass
+                                                }).append($('<td>', {
+                                                    class: 'text-xs-right',
+                                                    id: matchId + 'p1n'
+                                                }), $('<td>', {
+                                                    class: 'text-xs-center font-weight-bold',
+                                                    id: matchId + 'score'
+                                                }), $('<td>', {
+                                                    id: matchId + 'p2n'
+                                                })), $('<tr>', {
+                                                    class: rowcClass
+                                                }).append($('<td>', {
+                                                    id: matchId + 'p1c',
+                                                    class: 'small-text text-xs-right'
+                                                }), $('<td>', {
+                                                    class: 'small-text text-xs-center',
+                                                    id: matchId + 'score1'
+                                                }), $('<td>', {
+                                                    class: 'small-text',
+                                                    id: matchId + 'p2r'
+                                                })), $('<tr>', {
+                                                    class: rowcClass
+                                                }).append($('<td>', {
+                                                    class: 'small-text text-xs-right',
+                                                    id: matchId + 'p1r'
+                                                }), $('<td>', {
+                                                    class: 'small-text text-xs-center',
+                                                    id: matchId + 'score2'
+                                                }), $('<td>', {
+                                                    class: 'small-text',
+                                                    id: matchId + 'p2c'
+                                                })));
+                                            }
+                                            // fill row
+                                            if (player1) {
+                                                // player name
+                                                if (player1.user_id) {
+                                                    $('#' + matchId + 'p1n').append($('<a>', {
+                                                        text: player1.user_name,
+                                                        href: '/profile/' + player1.user_id
+                                                    }));
+                                                } else {
+                                                    $('#' + matchId + 'p1n').text(player1.user_import_name);
+                                                }
+                                                // decks
+                                                if (match.eliminationGame) {
+                                                    $('#' + matchId + 'p1d').append($('<span>', {
+                                                        text: player1[match.player1.role + '_deck_title'] + ' '
+                                                    }), $('<img>', {
+                                                        src: '/img/ids/' + player1[match.player1.role + '_deck_identity_id'] + '.png'
+                                                    }));
+                                                } else {
+                                                    $('#' + matchId + 'p1c').append($('<span>', {
+                                                        text: player1.corp_deck_title + ' '
+                                                    }), $('<img>', {
+                                                        src: '/img/ids/' + player1.corp_deck_identity_id + '.png'
+                                                    }));
+                                                    $('#' + matchId + 'p1r').append($('<span>', {
+                                                        text: player1.runner_deck_title + ' '
+                                                    }), $('<img>', {
+                                                        src: '/img/ids/' + player1.runner_deck_identity_id + '.png'
+                                                    }));
+                                                }
+                                            } else {
+                                                // BYE
+                                                $('#'+matchId+'p1c').append($('<span>', {
+                                                    text: 'BYE'
+                                                }));
+                                            }
+                                            if (player2) {
+                                                // player names
+                                                if (player2.user_id) {
+                                                    $('#' + matchId + 'p2n').append($('<a>', {
+                                                        text: player2.user_name,
+                                                        href: '/profile/' + player2.user_id
+                                                    }));
+                                                } else {
+                                                    $('#' + matchId + 'p2n').text(player2.user_import_name);
+                                                }
+                                                // decks
+                                                if (match.eliminationGame) {
+                                                    $('#' + matchId + 'p2d').append($('<img>', {
+                                                        src: '/img/ids/' + player2[match.player2.role + '_deck_identity_id']+ '.png'
+                                                    }), $('<span>', {
+                                                        text: ' ' + player2[match.player2.role + '_deck_title']
+                                                    }));
+
+                                                } else {
+                                                    $('#' + matchId + 'p2c').append($('<img>', {
+                                                        src: '/img/ids/' + player2.corp_deck_identity_id + '.png'
+                                                    }), $('<span>', {
+                                                        text: ' ' + player2.corp_deck_title
+                                                    }));
+                                                    $('#' + matchId + 'p2r').append($('<img>', {
+                                                        src: '/img/ids/' + player2.runner_deck_identity_id + '.png'
+                                                    }), $('<span>', {
+                                                        text: ' ' + player2.runner_deck_title
+                                                    }));
+                                                }
+                                            } else {
+                                                // BYE
+                                                $('#'+matchId+'p2r').append($('<span>', {
+                                                    text: 'BYE'
+                                                }));
+                                            }
+                                            // scores
+                                            if (match.eliminationGame) {
+                                                if (match.player1.winner) {
+                                                    $('#' + matchId + 'p1-win').text('WINS');
+                                                    $('#' + matchId + 'p2-win').text('LOSES');
+                                                } else {
+                                                    $('#' + matchId + 'p1-win').text('LOSES');
+                                                    $('#' + matchId + 'p2-win').text('WINS');
+                                                }
+                                            } else {
+                                                $('#' + matchId + 'score').html((match.player1.corpScore + match.player1.runnerScore) + '&nbsp;-&nbsp;' + (match.player2.corpScore + match.player2.runnerScore));
+                                                $('#' + matchId + 'score1').html(match.player1.corpScore + '&nbsp;-&nbsp;' + match.player2.runnerScore);
+                                                $('#' + matchId + 'score2').html(match.player1.runnerScore + '&nbsp;-&nbsp;' + match.player2.corpScore);
+                                            }
+                                        }
+                                    }
+                                }
+                                $('#loader-content').addClass('hidden-xs-up');
+                                $('#content-matches').removeClass('p-b-3').removeClass('hidden-xs-up');
+                            }
+                        });
+                    }
+                </script>
+            @endif
+            {{--Results--}}
             <div class="bracket">
             @if ($tournament->concluded)
                     <h5>
@@ -503,6 +762,7 @@
                         drawEntryStats(data, 'runner', 'stat-chart-runner', playernum);
                         drawEntryStats(data, 'corp', 'stat-chart-corp', playernum);
                         chartData = data;
+                        $('#button-showmatches').removeClass('disabled').prop("disabled", false);
                     }
                 });
             }
