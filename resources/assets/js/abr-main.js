@@ -342,3 +342,33 @@ function factionCodeToFactionTitle(code) {
     return code.charAt(0).toUpperCase() + code.substr(1);
 
 }
+
+// converts string to URL friendly string
+function convertToURLString (input) {
+    var output = input.toLowerCase();
+    output = output.replace(/[^a-z0-9_\s-]/g, "");
+    output = output.replace(/[\s-]+/g, " ");
+    output = output.replace(/[\s_]/g, "-");
+    return output;
+}
+
+// sometimes you need to go back, use with caution
+function convertFromURLString (input) {
+    return toTitleCase(input.replace(/-/g, " "));
+}
+
+// capitalize each first letter of each word
+function toTitleCase(str)
+{
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
+
+// collects options from html form select element
+function collectOptions(id) {
+    var resultOptions = {};
+    var options = document.getElementById(id).options;
+    for (var i = 0, len = options.length; i < len; i++) {
+        resultOptions[convertToURLString(options[i].text)] = options[i].value;
+    }
+    return resultOptions;
+}

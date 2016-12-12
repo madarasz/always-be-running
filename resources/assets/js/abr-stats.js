@@ -207,10 +207,10 @@ function updateIdStats(packname) {
 // update filter settings for the Results page
 function filterResults(filter, packlist, default_country) {
     var type = document.getElementById('tournament_type_id').value,
+        typeName = $("#tournament_type_id option:selected").text(),
         cardpool = document.getElementById('cardpool').value,
         cardpoolName = $("#cardpool option:selected").text(),
-        countrySelector = document.getElementById('location_country'),
-        country = countrySelector.options[parseInt(countrySelector.selectedIndex)].innerHTML;
+        country = $("#location_country option:selected").text();
     // type filtering
     if (type > 0) {
         filter = filter + '&type=' + type;
@@ -233,7 +233,7 @@ function filterResults(filter, packlist, default_country) {
         $('#filter-cardpool').removeClass('active-filter');
     }
     // user's default country
-    if (countrySelector.value == default_country) {
+    if (country === default_country) {
         $('#label-default-country').removeClass('hidden-xs-up');
     } else {
         $('#label-default-country').addClass('hidden-xs-up');
@@ -252,7 +252,16 @@ function filterResults(filter, packlist, default_country) {
             }
             updateIdStats(cardpoolName);
         }
+        updateResultsURL(cardpoolName, typeName, country);
     });
+}
+
+// updates
+function updateResultsURL(cardpool, type, country) {
+    var newUrl = '/results' + '/' + convertToURLString(cardpool)
+        + '/' + convertToURLString(type)
+        + '/' + convertToURLString(country);
+    window.history.pushState("Results", "Results - " + cardpool + " - " + type + " - " + country, newUrl);
 }
 
 

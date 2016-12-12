@@ -71,7 +71,35 @@
                 currentPack = "",
                 runnerIDs = [], corpIDs = [];
 
-        @if (@$default_country)
+        @if ($cardpool !== '' && $cardpool !== '-')
+            // cardpool from URL
+            var availableCardpools = collectOptions('cardpool'),
+                    requestedCardpool = '{{ $cardpool }}';
+            if (requestedCardpool in availableCardpools) {
+                document.getElementById('cardpool').value = availableCardpools[requestedCardpool];
+                newFilter = newFilter + '&cardpool=' + availableCardpools[requestedCardpool];
+            }
+        @endif
+
+        @if ($type !== '' && $type !== '-')
+            // type from URL
+            var availableTypes = collectOptions('tournament_type_id'),
+                    requestedType = '{{ $type }}';
+            if (requestedType in availableTypes) {
+                document.getElementById('tournament_type_id').value = availableTypes[requestedType];
+                newFilter = newFilter + '&type=' + availableTypes[requestedType];
+            }
+        @endif
+
+        @if ($country !== '' && $country !== '-')
+            // country from URL
+            var availableCountries = collectOptions('location_country'),
+                    requestedCountry = '{{ $country }}';
+            if (requestedCountry in availableCountries) {
+                document.getElementById('location_country').value = availableCountries[requestedCountry];
+                newFilter = newFilter + '&country=' + convertFromURLString(requestedCountry);
+            }
+        @elseif (@$default_country)
             // user's default country
             newFilter = defaultFilter + '&country=' + '{{ $default_country }}';
             $('#label-default-country').removeClass('hidden-xs-up');
