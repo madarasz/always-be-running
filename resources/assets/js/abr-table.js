@@ -51,6 +51,14 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 text: element.title,
                 href: element.url
             })).appendTo(newrow);
+
+            // match data
+            if (element.matchdata) {
+                cell.append(' ', $('<i>', {
+                    'title': 'charity',
+                    'class': 'fa fa-handshake-o'
+                }));
+            }
         }
         // date
         if ($.inArray('date', columns) > -1) {

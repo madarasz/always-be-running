@@ -10,7 +10,13 @@
                 @include('tournaments.partials.tabledin',
                     ['columns' => ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims' ],
                     'title' => 'Tournament results from the past', 'id' => 'results', 'icon' => 'fa-list-alt',
-                    'subtitle' => 'only concluded tournaments', 'doublerow' => true, 'loader' => true])
+                    'subtitle' => 'only concluded tournaments', 'doublerow' => true, 'loader' => true, 'maxrows' => 50])
+            </div>
+            <div class="text-xs-center small-text">
+                <i title="charity" class="fa fa-heart text-danger"></i>
+                charity |
+                <i class="fa fa-handshake-o" aria-hidden="true"></i>
+                match data available
             </div>
         </div>
         <div class="col-md-4 pull-md-8 col-lg-3 pull-lg-9 col-col-sm-12">

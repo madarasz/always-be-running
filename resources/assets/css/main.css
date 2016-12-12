@@ -653,6 +653,9 @@ a.anchor {
 .table-match td {
     padding: 0.1em 0.3em;
 }
+.table-match img {
+    padding: 0 3px;
+}
 #table-matches-top td {
     width: 50%;
 }
