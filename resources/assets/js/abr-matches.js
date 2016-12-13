@@ -243,7 +243,7 @@ function displayMatches(id) {
                                             addAsLast(doubleElimination.results[0], [0,1]);
                                             eliminationLosers.push(getPlayerName(player1));
                                         }
-                                    addDeckInfo(match, player1, player2, eliminationDecks, 0);
+                                        addDeckInfo(match, player1, player2, eliminationDecks, 0);
                                 } else {
                                     if (eliminationLosers.indexOf(getPlayerName(player1)) > -1 &&
                                         eliminationLosers.indexOf(getPlayerName(player2)) > -1 &&
@@ -263,12 +263,26 @@ function displayMatches(id) {
                                         addDeckInfo(match, player1, player2, eliminationDecks, 1);
                                     } else {
                                         // finals
+
                                         if (match.player1.winner) {
-                                            addAsLast(doubleElimination.results[2], [1,0]);
+                                            if (eliminationLosers.length < data.cutToTop) {
+                                                addAsLast(doubleElimination.results[2], [1, 0]);
+                                            } else {
+                                                addAsLast(doubleElimination.results[2], [0, 1]);    // jQuery brackets bugfix
+                                            }
+                                            eliminationLosers.push(getPlayerName(player2));
                                         } else {
-                                            addAsLast(doubleElimination.results[2], [0,1]);
+                                            if (eliminationLosers.length < data.cutToTop) {
+                                                addAsLast(doubleElimination.results[2], [0, 1]);
+                                            } else {
+                                                addAsLast(doubleElimination.results[2], [1, 0]);    // jQuery brackets bugfix
+                                            }
+                                            eliminationLosers.push(getPlayerName(player1));
                                         }
-                                        addDeckInfo(match, player1, player2, eliminationDecks, 2);
+
+                                        addDeckInfo(match, player1, player2, eliminationDecks, 2,
+                                            eliminationLosers.length > data.cutToTop);
+
                                     }
 
                                 }
@@ -328,11 +342,16 @@ function matchIframeHeight() {
 }
 
 
-function addDeckInfo(match, player1, player2, decks, index) {
+function addDeckInfo(match, player1, player2, decks, index, lastfinals) {
     var side_player1 = match.player1.role,
         side_player2 = match.player2.role;
 
-    addAsLast(decks[index], [player1[side_player1 + '_deck_identity_id'], player2[side_player2 + '_deck_identity_id']]);
+    if (!lastfinals) {
+        addAsLast(decks[index], [player1[side_player1 + '_deck_identity_id'], player2[side_player2 + '_deck_identity_id']]);
+    } else {
+        // jQuery brackets bugfix
+        addAsLast(decks[index], [player2[side_player2 + '_deck_identity_id'], player1[side_player1 + '_deck_identity_id']]);
+    }
 }
 
 function addIdsToTree(element, decks) {
