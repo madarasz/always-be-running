@@ -233,13 +233,15 @@
                         {{--Top cut--}}
                         <h6 class="hidden-xs-up" id="header-top">
                             Top-cut
-                            <div class="legal-bullshit">Elimination tree under development</div>
                         </h6>
                         {{--Missing top--}}
                         <div class="alert alert-warning view-indicator hidden-xs-up" id="warning-matches-top">
                             <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                             Elimination match data is missing.
                         </div>
+                        <div id="tree-top"></div>
+                        {{--double elimination tree iframe, to avoid nasty CSS clashes--}}
+                        <iframe src="/elimination" id="iframe-tree"></iframe>
                         <table id="table-matches-top" class="table-match hidden-xs-up m-b-2">
                         </table>
                         {{--Swiss rounds--}}

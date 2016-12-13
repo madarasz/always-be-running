@@ -168,11 +168,6 @@ function displayMatches(id) {
                 $('#warning-matches-top').removeClass('hidden-xs-up');
                 $('#warning-matches-swiss').removeClass('hidden-xs-up');
             } else {
-                // enable top-cut
-                if (data.cutToTop) {
-                    $('#header-top').removeClass('hidden-xs-up');
-                    $('#table-matches-top').removeClass('hidden-xs-up');
-                }
                 // process players
                 var idToIndex = [];
                 for (var index = 0, len = data['players'].length; index < len; index ++) {
@@ -185,6 +180,7 @@ function displayMatches(id) {
                     }
                 }
                 // process rounds
+                var doubleElimination = { teams: [], results: [[], [], []]}, eliminationPlayers = [], eliminationLosers = [];
                 for (index = 0, len = data['rounds'].length; index < len; index++) {
                     // prepare tbody
                     var tbodyid;
@@ -196,6 +192,9 @@ function displayMatches(id) {
                         })), $('<tbody>', {
                             id: tbodyid
                         }));
+                        doubleElimination.results[0].push([]);
+                        doubleElimination.results[1].push([]);
+                        doubleElimination.results[2].push([]);
                     } else {
                         // swiss
                         tbodyid = 'tbody-matches-swiss-' + (index + 1);
@@ -220,6 +219,56 @@ function displayMatches(id) {
                         }
                         // prepare row
                         if (match.eliminationGame) {
+                            // build elimination tree
+                            if (doubleElimination.teams.length < data.cutToTop / 2) {
+                                // very first bracket
+                                doubleElimination.teams.push([getPlayerName(player1), getPlayerName(player2)]);
+                                if (match.player1.winner) {
+                                    doubleElimination.results[0][doubleElimination.results[0].length-1].push([1, 0]);
+                                    eliminationLosers.push(getPlayerName(player2));
+                                } else {
+                                    doubleElimination.results[0][doubleElimination.results[0].length-1].push([0, 1]);
+                                    eliminationLosers.push(getPlayerName(player1));
+                                }
+                                eliminationPlayers.push(getPlayerName(player1), getPlayerName(player2));
+                            } else {
+                                if (eliminationLosers.indexOf(getPlayerName(player1)) == -1 &&
+                                    eliminationLosers.indexOf(getPlayerName(player2)) == -1) {
+                                        // winner's bracket
+                                        if (match.player1.winner) {
+                                            doubleElimination.results[0][doubleElimination.results[0].length-1].push([1, 0]);
+                                            eliminationLosers.push(getPlayerName(player2));
+                                        } else {
+                                            doubleElimination.results[0][doubleElimination.results[0].length-1].push([0, 1]);
+                                            eliminationLosers.push(getPlayerName(player1));
+                                        }
+                                } else {
+                                    if (eliminationLosers.indexOf(getPlayerName(player1)) > -1 &&
+                                        eliminationLosers.indexOf(getPlayerName(player2)) > -1 &&
+                                        eliminationLosers.length < data.cutToTop) {
+                                        // loser's bracket
+                                        if (match.player1.winner) {
+                                            doubleElimination.results[1][doubleElimination.results[1].length-1].push([1, 0]);
+                                            if (eliminationLosers.indexOf(getPlayerName(player2)) == -1) {
+                                                eliminationLosers.push(getPlayerName(player2));
+                                            }
+                                        } else {
+                                            doubleElimination.results[1][doubleElimination.results[1].length-1].push([0, 1]);
+                                            if (eliminationLosers.indexOf(getPlayerName(player1)) == -1) {
+                                                eliminationLosers.push(getPlayerName(player1));
+                                            }
+                                        }
+                                    } else {
+                                        // finals
+                                        if (match.player1.winner) {
+                                            doubleElimination.results[2][doubleElimination.results[2].length-1].push([1, 0]);
+                                        } else {
+                                            doubleElimination.results[2][doubleElimination.results[2].length-1].push([0, 1]);
+                                        }
+                                    }
+
+                                }
+                            }
                             pepareMatchRow(tbodyid, true, rowcClass, matchId);
                         } else {
                             pepareMatchRow(tbodyid, false, rowcClass, matchId);
@@ -228,6 +277,23 @@ function displayMatches(id) {
                         // fill row
                         fillMatchRow(player1, player2, matchId, match);
                     }
+
+                    for (u = 0; u < 3; u++) {
+                        if (match.eliminationGame && doubleElimination.results[u][doubleElimination.results[u].length - 1].length == 0) {
+                            doubleElimination.results[u].splice(doubleElimination.results[u].length - 1, 1);
+                        }
+                    }
+                }
+                // enable top-cut
+                if (data.cutToTop) {
+                    $('#iframe-tree').contents().find('#target').bracket({
+                        skipConsolationRound: true,
+                        init: doubleElimination,
+                        roundMargin: 20
+                    });
+                    matchIframeHeight();
+                    $('#header-top').removeClass('hidden-xs-up');
+                    $('#table-matches-top').removeClass('hidden-xs-up');
                 }
             }
             // hide loader animation
@@ -235,4 +301,12 @@ function displayMatches(id) {
             $('#content-matches').removeClass('p-b-3').removeClass('hidden-xs-up');
         }
     });
+}
+
+function getPlayerName(player) {
+    return player.user_id > 0 ? player.user_name : player.user_import_name;
+}
+
+function matchIframeHeight() {
+    $('#iframe-tree').height($('#iframe-tree').contents().height());
 }

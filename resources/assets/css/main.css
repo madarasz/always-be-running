@@ -87,13 +87,13 @@ table.abr-table tr td {
     padding: 0.5em 0;
 }
 
-/*bracket style*/
-.bracket{
+/*bracket style, collision with JQBracket*/
+:not(.jQBracket) > .bracket{
     position: relative;
     padding: 0.5em 1em 1em 1em;
     margin: 1em 0em;
 }
-.bracket:before, .bracket:after{
+:not(.jQBracket) > .bracket:before, :not(.jQBracket) > .bracket:after{
     content: '';
     display: block;
     height: 100%;
@@ -102,8 +102,8 @@ table.abr-table tr td {
     position: absolute;
     top: -5px;
 }
-.bracket:before{ left: 0; border-right: 0; pointer-events: none; }
-.bracket:after{ right: 0; border-left: 0; pointer-events: none; }
+:not(.jQBracket) > .bracket:before{ left: 0; border-right: 0; pointer-events: none; }
+:not(.jQBracket) > .bracket:after{ right: 0; border-left: 0; pointer-events: none; }
 
 .bracket-mini{
     display: inline-block;
@@ -643,7 +643,7 @@ a.anchor {
     visibility: hidden;
 }
 
-/* row-stripe */
+/* match table */
 .row-colored {
     background-color: rgba(0, 0, 0, 0.05);
 }
@@ -658,4 +658,10 @@ a.anchor {
 }
 #table-matches-top td {
     width: 50%;
+}
+/* double elimination iframe */
+#iframe-tree {
+    width: 100%;
+    height: 0;
+    border: 0;
 }

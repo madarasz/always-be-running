@@ -12,5 +12,8 @@
     "laravel-elixir": "^5.0.0",
     "nightwatch": "^0.9.8",
     "tether": "^1.3.2"
+  },
+  "dependencies": {
+    "jquery-bracket": "^0.11.0"
   }
 }

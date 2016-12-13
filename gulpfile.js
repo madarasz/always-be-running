@@ -16,13 +16,17 @@ var shell = require("gulp-shell");
 
 elixir(function(mix) {
     var bootstrapPath = 'node_modules/bootstrap-sass/assets',
-        bootstrap4Path = 'node_modules/bootstrap/dist';
+        bootstrap4Path = 'node_modules/bootstrap/dist',
+        bracketPath = 'node_modules/jquery-bracket/dist',
+        tetherPath = 'node_modules/tether/dist/js';
     mix.copy('resources/assets/fonts', 'public/fonts')
         .copy('resources/assets/img', 'public/img')
         .copy('resources/assets/favicons', 'public')
         .copy(bootstrapPath + '/fonts', 'public/fonts')
         .copy(bootstrap4Path + '/js/bootstrap.min.js', 'resources/assets/js')
-        .copy('node_modules/tether/dist/js/tether.js', 'resources/assets/js')
+        .copy(tetherPath + '/tether.js', 'resources/assets/js')
+        .copy(bracketPath + '/jquery.bracket.min.js', 'resources/assets/js')
+        .copy(bracketPath + '/jquery.bracket.min.css', 'public/css')
         .sass('app.scss')
         .scripts([
             "jquery-2.2.3.min.js",      // TODO: jquery from npm?
@@ -36,6 +40,7 @@ elixir(function(mix) {
             "bootstrap.min.js",
             "jquery.calendario.js",
             "bootstrap-datepicker.js",
+            "jquery.bracket.min.js"
         ])
         .styles([
             'font-awesome.css',

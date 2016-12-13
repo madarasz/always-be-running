@@ -32,3 +32,5 @@ resources/assets/js/bootstrap.min.js
 resources/assets/js/tether.js
 phantomjsdriver.log
 app/Http/Controllers/ASController.php
+jquery.bracket.min.js
+jquery.bracket.min.css
