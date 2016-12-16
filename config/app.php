@@ -157,7 +157,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         'Webpatser\Countries\CountriesServiceProvider',
-        Illuminate\Html\HtmlServiceProvider::class,
+        Collective\Html\HtmlServiceProvider::class,
         Artdarek\OAuth\OAuthServiceProvider::class,
         Haleks\Markdown\MarkdownServiceProvider::class
     ],
@@ -206,8 +206,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Countries' => 'Webpatser\Countries\CountriesFacade',
-        'Form' => Illuminate\Html\FormFacade::class,
-        'Html' => Illuminate\Html\HtmlFacade::class,
+        'Form' => Collective\Html\FormFacade::class,
+        'Html' => Collective\Html\HtmlFacade::class,
         'OAuth2' => Artdarek\OAuth\Facade\OAuth::class,
         'Markdown' => Haleks\Markdown\Facades\Markdown::class
     ],
