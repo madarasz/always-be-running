@@ -1,7 +1,7 @@
 // contains JS for displaying match results, total mindf*ck
 
 // prepares row in matches table
-function pepareMatchRow(tbodyid, topcut, rowcClass, matchId) {
+function prepareMatchRow(tbodyid, topcut, rowcClass, matchId) {
     if (topcut) {
         // top-cut
         $('#' + tbodyid).append($('<tr>', {
@@ -234,46 +234,24 @@ function displayMatches(id) {
                         // prepare row
                         if (match.eliminationGame) {
 
-                            // switch players if needed
+                            // switch players if needed to get right player order
                             if (checkPlayerOrder(player1, player2, eliminationWinners, eliminationLosers, data.cutToTop)) {
                                 var playerm = match.player1; match.player1 = match.player2; match.player2 = playerm;
                                 player1 = chartData[data['players'][idToIndex[match.player1.id]].entry_id];
                                 player2 = chartData[data['players'][idToIndex[match.player2.id]].entry_id];
                             }
 
-                            // build elimination tree
-
-                            // very first bracket, build teams
-                            if (doubleElimination.teams.length < data.cutToTop / 2) {
-                                doubleElimination.teams.push([getPlayerName(player1), getPlayerName(player2)]);
-                            }
-
-                            if (eliminationLosers.indexOf(getPlayerName(player1)) == -1 &&
-                                eliminationLosers.indexOf(getPlayerName(player2)) == -1) {
-
-                                // winners bracket
-                                addDeckInfo(match, player1, player2, eliminationDecks, 0);
-                                addResultInfo(match, doubleElimination.results, 0);
-
-                            } else if  (eliminationLosers.indexOf(getPlayerName(player1)) > -1 &&
-                                eliminationLosers.indexOf(getPlayerName(player2)) > -1 &&
-                                eliminationLosers.length < data.cutToTop) {
-
-                                // losers bracket
-                                addDeckInfo(match, player1, player2, eliminationDecks, 1);
-                                addResultInfo(match, doubleElimination.results, 1);
-
-                            } else {
-                                // finals bracket
-                                addDeckInfo(match, player1, player2, eliminationDecks, 2);
-                                addResultInfo(match, doubleElimination.results, 2);
-                            }
+                            // get elimination data
+                            prepareEliminationData(player1, player2, match, doubleElimination.teams,
+                                doubleElimination.results, eliminationLosers, eliminationDecks, data.cutToTop);
 
                             // build top-cut results table
-                            pepareMatchRow(tbodyid, true, rowcClass, matchId);
+                            prepareMatchRow(tbodyid, true, rowcClass, matchId);
+
                         } else {
+
                             // build swiss results table
-                            pepareMatchRow(tbodyid, false, rowcClass, matchId);
+                            prepareMatchRow(tbodyid, false, rowcClass, matchId);
                         }
 
                         // fill row
@@ -322,14 +300,55 @@ function displayMatches(id) {
                     addIdsToTree(tree, eliminationDecks);
                     matchIframeHeight();
                     $('#header-top').removeClass('hidden-xs-up');
-                    $('#table-matches-top').removeClass('hidden-xs-up');    // TODO: keep this hidden
+                    //$('#table-matches-top').removeClass('hidden-xs-up');    // keep top-cut table hidden, tree is better
                 }
             }
+            // display missing messages if needed
+            if (data.cutToTop && !doubleElimination.results[0].length) {
+                $('#warning-matches-top').removeClass('hidden-xs-up');
+            }
+            if (!$('#table-matches-swiss > tbody').length) {
+                $('#warning-matches-swiss').removeClass('hidden-xs-up');
+            }
+
             // hide loader animation
             $('#loader-content').addClass('hidden-xs-up');
             $('#content-matches').removeClass('p-b-3').removeClass('hidden-xs-up');
         }
     });
+}
+
+// calculate elimination data
+function prepareEliminationData(player1, player2, match, teams, results, eliminationLosers, eliminationDecks, topNumber) {
+
+    // build elimination tree
+
+    // very first bracket, build teams
+    if (teams.length < topNumber / 2) {
+        teams.push([getPlayerName(player1), getPlayerName(player2)]);
+    }
+
+    if (eliminationLosers.indexOf(getPlayerName(player1)) == -1 &&
+        eliminationLosers.indexOf(getPlayerName(player2)) == -1) {
+
+        // winners bracket
+        addDeckInfo(match, player1, player2, eliminationDecks, 0);
+        addResultInfo(match, results, 0);
+
+    } else if  (eliminationLosers.indexOf(getPlayerName(player1)) > -1 &&
+        eliminationLosers.indexOf(getPlayerName(player2)) > -1 &&
+        eliminationLosers.length < topNumber) {
+
+        // losers bracket
+        addDeckInfo(match, player1, player2, eliminationDecks, 1);
+        addResultInfo(match, results, 1);
+
+    } else {
+
+        // finals bracket
+        addDeckInfo(match, player1, player2, eliminationDecks, 2);
+        addResultInfo(match, results, 2);
+    }
 }
 
 function getPlayerName(player) {
