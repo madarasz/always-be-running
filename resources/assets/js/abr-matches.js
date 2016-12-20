@@ -322,7 +322,7 @@ function displayMatches(id) {
                     addIdsToTree(tree, eliminationDecks);
                     matchIframeHeight();
                     $('#header-top').removeClass('hidden-xs-up');
-                    $('#table-matches-top').removeClass('hidden-xs-up');
+                    $('#table-matches-top').removeClass('hidden-xs-up');    // TODO: keep this hidden
                 }
             }
             // hide loader animation
@@ -369,13 +369,17 @@ function checkPlayerOrder(player1, player2, winners, losers, topCutSize) {
 
     // player1 has loss, but player 2 has none
     if (losers.indexOf(getPlayerName(player1)) > -1 && losers.indexOf(getPlayerName(player2)) == -1) {
-        return true;
+        return true;    // switch players
     }
 
     // both player1 and player2 have loss
     if (losers.indexOf(getPlayerName(player1)) > -1 && losers.indexOf(getPlayerName(player2)) > -1) {
-        if (winners.lastIndexOf(getPlayerName(player2)) > winners.lastIndexOf(getPlayerName(player1))) {
-            return topCutSize > losers.length; // finals have different ruleset
+        if (topCutSize > losers.length) {
+            // losers bracket, switch if player2 won more recent
+            return (winners.lastIndexOf(getPlayerName(player2)) > winners.lastIndexOf(getPlayerName(player1)));
+        } else {
+            // finals, switch players if player1 lost earlier (coming from loser's bracket)
+            return (losers.indexOf(getPlayerName(player2)) > losers.indexOf(getPlayerName(player1)));
         }
     }
 
@@ -424,7 +428,7 @@ function render_fn(container, data, score, state) {
     }
 }
 
-// custom edit function for jQuery Bracket, left empty because not needed
+// custom edit function for jQuery Bracket, stub, left empty because not needed
 function edit_fn() {
 
 }
