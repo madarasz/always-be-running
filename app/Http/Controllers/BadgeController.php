@@ -221,7 +221,7 @@ class BadgeController extends Controller
         foreach ($tournaments as $tournament) {
             if (strlen($tournament->description) > 600 &&
                 preg_match('/[^!]\[([^\]]+)\]\(([^)]+)\)/', $tournament->description) && //link
-                preg_match('/!\[([^\]]+)\]\(([^)]+)\)/', $tournament->description)) { //image
+                preg_match('/!\[([^\]]*)\]\(([^)]+)\)/', $tournament->description)) { //image
                     $badges[20] = true; // Fancy T.O.
                     break;
             }
