@@ -161,7 +161,12 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 }).append($('<i>', {
                     'class': 'fa fa-list-ol',
                     'aria-hidden': true
-                }), ' claim'));
+                }), ' claim'), $('<br>'), $('<span>', {
+                    class: 'small-text'
+                }).append('or&nbsp;', $('<a>', {
+                    text: 'unregister',
+                    href: '/tournaments/' + element.id + '/unregister'
+                })));
             } else {
                 cell.append($('<span>', {
                     text: 'registered',
