@@ -21,7 +21,7 @@ class KTMProxy extends Controller
     }
 
     public function getCardpoolStat($side, $pack) {
-        $data = json_decode(file_get_contents('http://www.knowthemeta.com/JSON/Tournament/'.$side.'/'.$pack));
+        $data = json_decode(file_get_contents('http://www.knowthemeta.com/JSON/Tournament/'.$side.'/'.rawurlencode($pack)));
         return response()->json($data);
     }
 }
