@@ -190,7 +190,7 @@ class BadgeController extends Controller
      */
     public function addNDBBadges($userid) {
         $user = User::where('id', $userid)->first();
-        $badges = [21 => false, 25 => false, 31 => false, 32 => false, 33 => false];
+        $badges = [21 => false, 25 => false, 39 => false, 31 => false, 32 => false, 33 => false];
 
         if ($user->published_decks >= 20) {
             $badges[21] = true; // Hard-working publisher
@@ -198,7 +198,9 @@ class BadgeController extends Controller
         if ($user->private_decks >= 150) {
             $badges[25] = true;   // Keeper of many secrets
         }
-        if ($user->reputation >= 1000) {
+        if ($user->reputation >= 5000) {
+            $badges[39] = true;   // NetrunnerDB Superstar
+        } elseif ($user->reputation >= 1000) {
             $badges[31] = true;   // NetrunnerDB VIP
         } elseif ($user->reputation >= 500) {
             $badges[32] = true;  // NetrunnerDB Celeb
