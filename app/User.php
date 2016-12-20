@@ -38,7 +38,7 @@ class User extends Authenticatable
     }
 
     public function badges() {
-        return $this->belongsToMany('App\Badge', 'badge_user', 'user_id', 'badge_id')->withPivot('seen');
+        return $this->belongsToMany('App\Badge', 'badge_user', 'user_id', 'badge_id')->withPivot('seen')->orderBy('order');
     }
 
     public function country() {

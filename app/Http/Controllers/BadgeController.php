@@ -190,23 +190,23 @@ class BadgeController extends Controller
      */
     public function addNDBBadges($userid) {
         $user = User::where('id', $userid)->first();
-        $badges = [];
+        $badges = [21 => false, 25 => false, 31 => false, 32 => false, 33 => false];
 
         if ($user->published_decks >= 20) {
-            array_push($badges, 21); // Hard-working publisher
+            $badges[21] = true; // Hard-working publisher
         }
         if ($user->private_decks >= 150) {
-            array_push($badges, 25);   // Keeper of many secrets
+            $badges[25] = true;   // Keeper of many secrets
         }
         if ($user->reputation >= 1000) {
-            array_push($badges, 31);   // NetrunnerDB VIP
+            $badges[31] = true;   // NetrunnerDB VIP
         } elseif ($user->reputation >= 500) {
-            array_push($badges, 32);   // NetrunnerDB Celeb
+            $badges[32] = true;  // NetrunnerDB Celeb
         } elseif ($user->reputation >= 100) {
-            array_push($badges, 33);   // NetrunnerDB Known
+            $badges[33] = true;   // NetrunnerDB Known
         }
 
-        $user->badges()->sync($badges, false);
+        $this->refreshUserBadges($userid, $badges);
     }
 
     private function addNRTMBadge($userid, &$badges) {
