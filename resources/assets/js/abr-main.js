@@ -173,6 +173,33 @@ function toggleEntriesEdit(value) {
     }
 }
 
+// toggle adding videos on tournament view page
+function toggleVideoAdd(value) {
+    if (value) {
+        $('#section-add-videos').removeClass('hidden-xs-up');
+        $('#button-done-videos').removeClass('hidden-xs-up');
+        $('#button-add-videos').addClass('hidden-xs-up');
+    } else {
+        $('#section-add-videos').addClass('hidden-xs-up');
+        $('#button-done-videos').addClass('hidden-xs-up');
+        $('#button-add-videos').removeClass('hidden-xs-up');
+    }
+}
+
+// toggle video player
+function watchVideo(videoId) {
+    if(videoId) {
+        $('#section-watch-video').removeClass('hidden-xs-up')
+        $('#section-video-player').html('<iframe width="480" height="270" src="//www.youtube.com/embed/' + videoId + '" frameborder="0" allowfullscreen></iframe>')
+        $('html, body').animate({
+            scrollTop: $("#section-watch-video").offset().top - 60
+        }, 500);
+    } else {
+        $('#section-watch-video').addClass('hidden-xs-up')
+        $('#section-video-player').empty()
+    }
+}
+
 // recalculating deck names from IDs while adding manually entries
 function recalculateDeckNames() {
     var corp = document.getElementById('corp_deck_identity'),

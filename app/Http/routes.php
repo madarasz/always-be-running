@@ -38,6 +38,9 @@ Route::post('tournaments/{id}/conclude/manual', 'TournamentsController@concludeM
 Route::post('tournaments/{id}/conclude/nrtm', 'TournamentsController@concludeNRTM');
 Route::get('tournaments/{id}/{slug}', 'TournamentsController@show')->name('tournaments.show.slug');
 
+Route::post('videos', 'VideosController@store');
+Route::delete('videos/{id}', 'VideosController@destroy');
+
 Route::get('/oauth2/redirect', 'NetrunnerDBController@login');
 Route::get('/logout', 'NetrunnerDBController@logout');
 
