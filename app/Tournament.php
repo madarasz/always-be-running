@@ -27,6 +27,10 @@ class Tournament extends Model
         return $this->hasMany(Entry::class, 'tournament_id', 'id');
     }
 
+    public function videos() {
+        return $this->hasMany(Video::class, 'tournament_id', 'id');
+    }
+
     public function cardpool() {
         return $this->hasOne(CardPack::class, 'id', 'cardpool_id');
     }
