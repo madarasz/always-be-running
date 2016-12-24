@@ -21,6 +21,8 @@ class VideosController extends Controller
 
         $data = Video::youtubeLookup($request->get('video_id'));
 
+        $message = ''; $errors = [];
+
         if($data) {
             $exists = Video::where(['video_id' => $data['video_id'], 'tournament_id' => $tournament->id])->count();
 
@@ -30,15 +32,15 @@ class VideosController extends Controller
                 $video = Video::create($data);
                 $message = 'Video added.';
             } else {
-                $message = 'This video has already been added to this tournament!';
+                $errors = ['This video has already been added to this tournament!'];
             }
         } else {
-            $message = 'Error loading video data from Youtube.';
+            $errors = ['Error loading video data from Youtube. Probably invalid ID or URL.'];
         }
 
         // redirecting to tournament
         return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
-            ->with('message', $message);
+            ->with('message', $message)->withErrors($errors);
     }
 
     public function destroy(Request $request, $id)
