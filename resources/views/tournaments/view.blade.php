@@ -264,6 +264,7 @@
                     Videos
                 </h5>
                 {{--Add video--}}
+                @if ($user)
                 <button class="btn btn-primary btn-xs" id="button-add-videos"
                         onclick="toggleVideoAdd(true)">
                     <i class="fa fa-video-camera" aria-hidden="true"></i> Add videos
@@ -289,6 +290,7 @@
                     {!! Form::close() !!}
                 </div>
                 <hr/>
+                @endif
                 {{--List of videos--}}
                 @if (count($tournament->videos) > 0)
                   @include('tournaments.partials.videos',

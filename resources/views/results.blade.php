@@ -16,7 +16,9 @@
                 <i title="charity" class="fa fa-heart text-danger"></i>
                 charity |
                 <i class="fa fa-handshake-o" aria-hidden="true"></i>
-                match data available
+                match data available |
+                <i class="fa fa-video-camera" aria-hidden="true"></i>
+                has video
             </div>
         </div>
         <div class="col-md-4 pull-md-8 col-lg-3 pull-lg-9 col-col-sm-12">
