@@ -257,8 +257,8 @@
                 </div>
             @endif
             {{--Videos--}}
-            <div class="bracket">
             @if ($tournament->concluded)
+            <div class="bracket">
                 <h5>
                     <i class="fa fa-video-camera" aria-hidden="true"></i>
                     Videos
@@ -272,7 +272,7 @@
                         onclick="toggleVideoAdd(false)">
                     <i class="fa fa-check" aria-hidden="true"></i> Done
                 </button>
-                <div id="section-add-videos" class="hidden-xs-up small-text">
+                <div id="section-add-videos" class="hidden-xs-up">
                     <hr/>
                     <div class="p-b-1">
                         Add a Youtube video
@@ -281,7 +281,7 @@
                         'class' => 'form-inline']) !!}
                         {!! Form::hidden('tournament_id', $tournament->id) !!}
                         <div class="form-group">
-                            {!! Form::label('video_id', 'Youtube Video ID') !!}
+                            {!! Form::label('video_id', 'Youtube Video ID or URL', ['class' => 'small-text']) !!}
                             {!! Form::text('video_id', '', ['class' => 'form-control']) !!}
                         </div><br/>
                         {!! Form::button('Add video', array('type' => 'submit',
@@ -305,8 +305,8 @@
                     </p>
                     <div id="section-video-player"></div>
                 </div>
-            @endif
             </div>
+            @endif
             {{--Results--}}
             <div class="bracket">
             @if ($tournament->concluded)

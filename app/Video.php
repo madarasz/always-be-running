@@ -15,12 +15,29 @@ class Video extends Model
         return $this->belongsTo(Tournament::class, 'tournament_id', 'id');
     }
 
-    public function populateFromYoutube() {
-        $data = Youtube::getVideoInfo($this->video_id);
-        return $this->update([
-            'video_title' => $data->snippet->title,
-            'thumbnail_url' => $data->snippet->thumbnails->default->url,
-            'channel_name' => $data->snippet->channelTitle
-        ]);
+    public static function youtubeLookup($input) {
+        if(strlen($input) == 11) {
+            // video ID
+            $video_id = $input;
+        } else {
+            // video URL
+            try {
+                $video_id = Youtube::parseVidFromURL($input);
+            } catch(Exception $e) {
+                return false;
+            }
+        }
+        $data = Youtube::getVideoInfo($video_id);
+
+        if($data) {
+            return [
+                'video_id' => $video_id,
+                'video_title' => $data->snippet->title,
+                'thumbnail_url' => $data->snippet->thumbnails->default->url,
+                'channel_name' => $data->snippet->channelTitle
+            ];
+        } else {
+            return false;
+        }
     }
 }

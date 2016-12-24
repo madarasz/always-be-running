@@ -19,21 +19,31 @@ class VideosController extends Controller
         $tournament = Tournament::withTrashed()->findOrFail($request->get('tournament_id'));
         $this->authorize('logged_in', Tournament::class, $request->user());
 
-        $video = Video::create([
-            'tournament_id' => $tournament->id,
-            'user_id' => $request->user()->id,
-            'video_id' => $request->get('video_id')
-        ]);
-        $video->populateFromYoutube();
+        $data = Video::youtubeLookup($request->get('video_id'));
+
+        if($data) {
+            $exists = Video::where(['video_id' => $data['video_id'], 'tournament_id' => $tournament->id])->count();
+
+            if($exists < 1) {
+                $data['tournament_id'] = $tournament->id;
+                $data['user_id'] = $request->user()->id;
+                $video = Video::create($data);
+                $message = 'Video added.';
+            } else {
+                $message = 'This video has already been added to this tournament!';
+            }
+        } else {
+            $message = 'Error loading video data from Youtube.';
+        }
 
         // redirecting to tournament
         return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
-            ->with('message', 'Video added.');
+            ->with('message', $message);
     }
 
     public function destroy(Request $request, $id)
     {
-        $video = Video::where('id', $id)->first();
+        $video = Video::findOrFail($id);
         $this->authorize('delete', $video, $request->user());
 
         $tournament = $video->tournament;
