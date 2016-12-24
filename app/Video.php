@@ -23,7 +23,7 @@ class Video extends Model
             // video URL
             try {
                 $video_id = Youtube::parseVidFromURL($input);
-            } catch(Exception $e) {
+            } catch(\Exception $e) {
                 return false;
             }
         }

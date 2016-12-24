@@ -164,8 +164,8 @@
         </div>
         {{--Standings and claims--}}
         <div class="col-md-8 col-xs-12">
-            @include('errors.list')
             {{--Tournament description--}}
+            @include('errors.list')
             @unless($tournament->description === '')
                 <div class="bracket">
                     {{--<h5>Description with markdown</h5>--}}
@@ -527,7 +527,6 @@
                 </div>
                 {{--Conclude modal, button--}}
                 @if ($user && ($user->admin || $user->id == $tournament->creator))
-                    @include('errors.list')
                     <div class="text-xs-center">
                         <button class="btn btn-conclude" data-toggle="modal" data-target="#concludeModal"
                                 data-tournament-id="{{$tournament->id}}"

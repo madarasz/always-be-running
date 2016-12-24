@@ -340,6 +340,7 @@ class TournamentsController extends Controller
                 'recurring_day' => $tournament->recur_weekly ? $tournament->recurDay() : null,
                 'charity' => $tournament->charity == 1,
                 'matchdata' => $tournament->import == 1,
+                'videos' => $tournament->videos()->count(),
                 'url' => $appUrl.$tournament->seoUrl()
             ]);
 
