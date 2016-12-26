@@ -1,8 +1,9 @@
-{{--table of entries for tournament details page--}}
+{{--table of videos for tournament details page--}}
+<p><b>{{ count($videos) }}</b> video{{ count($videos) != 1 ? 's' : '' }} for this tournament.</p>
 <table class="table table-sm table-striped abr-table" id="{{ $id }}">
     <tbody>
     @for ($i = 0; $i < count($videos); $i++)
-        <tr>
+        <tr class="{{ $i >= 4 ? 'hide-video hidden-xs-up' : ''}}">
             <td>
                 <a href="#" onClick="watchVideo('{{ $videos[$i]->video_id }}')">
                     <img src="{{ $videos[$i]->thumbnail_url }}"/>
@@ -30,3 +31,13 @@
     @endfor
     </tbody>
 </table>
+@if (count($videos) > 4)
+    <div>
+        <button class="btn btn-primary btn-xs" onClick="showVideoList(true)" id="showVideoList">
+            <i class="fa fa-eye" aria-hidden="true"></i> Show All Videos
+        </button>
+        <button class="btn btn-primary btn-xs hidden-xs-up" onClick="showVideoList(false)" id="hideVideoList">
+            <i class="fa fa-eye-slash" aria-hidden="true"></i> Hide Videos
+        </button>
+    </div>
+@endif
