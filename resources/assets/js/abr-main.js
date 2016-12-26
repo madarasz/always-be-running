@@ -200,6 +200,18 @@ function watchVideo(videoId) {
     }
 }
 
+function showVideoList(show) {
+    if(show) {
+        $('#showVideoList').addClass('hidden-xs-up');
+        $('#hideVideoList').removeClass('hidden-xs-up');
+        $('.hide-video').removeClass('hidden-xs-up');
+    } else {
+        $('#showVideoList').removeClass('hidden-xs-up');
+        $('#hideVideoList').addClass('hidden-xs-up');
+        $('.hide-video').addClass('hidden-xs-up');
+    }
+}
+
 // recalculating deck names from IDs while adding manually entries
 function recalculateDeckNames() {
     var corp = document.getElementById('corp_deck_identity'),
