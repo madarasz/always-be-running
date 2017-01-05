@@ -303,8 +303,12 @@ function transformForAdminCharts(data) {
     getStatRange(data.newTournamentsByWeek, weeks);
     getStatRange(data.newUsersByWeek, weeks);
     for (var i = weeks.firstweek; i <= weeks.lastweek; i++) {
-        result.push([formatWeekNumber(i), getStatData(data.newEntriesByWeek, i), getStatData(data.newTournamentsByWeek, i),
-            getStatData(data.newUsersByWeek, i)]);
+        var newEntries = getStatData(data.newEntriesByWeek, i),
+            newTournaments = getStatData(data.newTournamentsByWeek, i),
+            newUsers = getStatData(data.newUsersByWeek, i);
+        if (newEntries && newTournaments && newUsers) {
+            result.push([formatWeekNumber(i), newEntries, newTournaments, newUsers]);
+        }
     }
     return result;
 }
