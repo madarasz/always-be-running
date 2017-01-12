@@ -309,6 +309,10 @@
         </div>
     </div>
     {!! Form::close() !!}
+
+    {{--Flaticon legal--}}
+    @include('partials.legal-icons')
+
     <script type="text/javascript">
         function profileSwitchEdit() {
             $('.profile-text').addClass('hidden-xs-up');
