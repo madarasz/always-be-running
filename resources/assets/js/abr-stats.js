@@ -252,6 +252,9 @@ function filterResults(filter, packlist, default_country) {
     getTournamentData(filter, function(data) {
         $('.loader').addClass('hidden-xs-up');
         updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', data);
+        updateResultsURL(cardpoolName, typeName, country, videos);
+
+        // switch ID statistics
         if (currentPack !== cardpoolName) {
             currentPack = cardpoolName;
             // no filter is statistics for latest pack
@@ -260,7 +263,6 @@ function filterResults(filter, packlist, default_country) {
             }
             updateIdStats(cardpoolName);
         }
-        updateResultsURL(cardpoolName, typeName, country, videos);
     });
 }
 
