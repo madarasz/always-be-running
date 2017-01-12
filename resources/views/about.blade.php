@@ -53,6 +53,16 @@
                     </ul>
                 </p>
             </div>
+            <div class="bracket">
+                <h5 class="p-b-1">
+                    <i class="fa fa-laptop" aria-hidden="true"></i>
+                    Developers
+                </h5>
+                <ul>
+                    <li><a href="http://alwaysberunning.net/profile/1276">Necro</a> - site owner, main developer</li>
+                    <li><a href="http://alwaysberunning.net/profile/1221">johno</a> - tournament videos</li>
+                </ul>
+            </div>
         </div>
     </div>
 @stop
