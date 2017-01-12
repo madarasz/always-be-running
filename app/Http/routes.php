@@ -2,7 +2,7 @@
 
 Route::get('/', 'PagesController@upcoming');
 Route::get('upcoming', 'PagesController@upcoming'); //some redundancy
-Route::get('results/{cardpool?}/{type?}/{country?}', 'PagesController@results');
+Route::get('results/{cardpool?}/{type?}/{country?}/{videos?}', 'PagesController@results');
 Route::get('organize', 'PagesController@organize')->name('organize');
 Route::get('personal', 'PagesController@personal');
 Route::get('profile/{id}', 'PagesController@profile')->name('profile.show');

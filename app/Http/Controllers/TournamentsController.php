@@ -8,6 +8,7 @@ use App\User;
 use App\Tournament;
 use App\TournamentType;
 use App\CardIdentity;
+use App\Video;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 
@@ -289,6 +290,10 @@ class TournamentsController extends Controller
         }
         if (!is_null($request->input('conflict'))) {
             $tournaments = $tournaments->where('conflict', $request->input('conflict'));
+        }
+        if (!is_null($request->input('videos'))) {  // just =1, =0 not supported
+            $videoIDs = Video::pluck('tournament_id')->all();
+            $tournaments = $tournaments->whereIn('id', $videoIDs);
         }
         if ($request->input('deleted')) {
             $tournaments = $tournaments->onlyTrashed();

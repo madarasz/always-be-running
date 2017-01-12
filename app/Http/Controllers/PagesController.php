@@ -49,7 +49,7 @@ class PagesController extends Controller
             'default_country', 'default_country_id'));
     }
 
-    public function results(Request $request, $cardpool = "", $type = "", $country = "")
+    public function results(Request $request, $cardpool = "", $type = "", $country = "", $videos = "")
     {
         $nowdate = date('Y.m.d.', time() + 86400); // actually tomorrow, to be on the safe side
         $tournaments = Tournament::where('date', '<=', $nowdate)->where('approved', 1)->where('concluded',1);
@@ -73,7 +73,8 @@ class PagesController extends Controller
         }
 
         return view('results', compact('registered', 'message', 'nowdate', 'tournament_types', 'countries',
-            'tournament_cardpools', 'page_section', 'default_country', 'default_country_id', 'cardpool', 'type', 'country'));
+            'tournament_cardpools', 'page_section', 'default_country', 'default_country_id',
+            'cardpool', 'type', 'country', 'videos'));
     }
 
     /**

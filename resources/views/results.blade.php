@@ -47,6 +47,11 @@
                             using user's default filter
                         </div>
                     </div>
+                    <div class="form-group" id="filter-video">
+                        {!! Form::checkbox('videos', null, null, ['id' => 'videos',
+                            'onchange' => "filterResults(defaultFilter, packlist, '".@$default_country_id."')"]) !!}
+                        {!! Html::decode(Form::label('videos', 'has video <i class="fa fa-video-camera" aria-hidden="true"></i>')) !!}
+                    </div>
                 {!! Form::close() !!}
             </div>
             {{--Stats--}}
@@ -86,6 +91,7 @@
             if (requestedCardpool in availableCardpools) {
                 document.getElementById('cardpool').value = availableCardpools[requestedCardpool];
                 newFilter = newFilter + '&cardpool=' + availableCardpools[requestedCardpool];
+                $('#filter-cardpool').addClass('active-filter');
             }
         @endif
 
@@ -96,7 +102,15 @@
             if (requestedType in availableTypes) {
                 document.getElementById('tournament_type_id').value = availableTypes[requestedType];
                 newFilter = newFilter + '&type=' + availableTypes[requestedType];
+                $('#filter-type').addClass('active-filter');
             }
+        @endif
+
+        @if ($videos !== '' && $videos !== '-')
+            // just tournaments with videos
+            newFilter = newFilter + '&videos=1';
+            document.getElementById('videos').checked = true;
+            $('#filter-video').addClass('active-filter');
         @endif
 
         @if ($country !== '' && $country !== '-')
@@ -106,6 +120,7 @@
             if (requestedCountry in availableCountries) {
                 document.getElementById('location_country').value = availableCountries[requestedCountry];
                 newFilter = newFilter + '&country=' + convertFromURLString(requestedCountry);
+                $('#filter-country').addClass('active-filter');
             }
         @elseif (@$default_country)
             // user's default country

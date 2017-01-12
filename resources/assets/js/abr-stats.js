@@ -210,7 +210,8 @@ function filterResults(filter, packlist, default_country) {
         typeName = $("#tournament_type_id option:selected").text(),
         cardpool = document.getElementById('cardpool').value,
         cardpoolName = $("#cardpool option:selected").text(),
-        country = $("#location_country option:selected").text();
+        country = $("#location_country option:selected").text(),
+        videos = document.getElementById('videos').checked;
     // type filtering
     if (type > 0) {
         filter = filter + '&type=' + type;
@@ -232,6 +233,13 @@ function filterResults(filter, packlist, default_country) {
     } else {
         $('#filter-cardpool').removeClass('active-filter');
     }
+    // filter for vides
+    if (videos) {
+        filter = filter + '&videos=1';
+        $('#filter-video').addClass('active-filter');
+    } else {
+        $('#filter-video').removeClass('active-filter');
+    }
     // user's default country
     if (country === default_country) {
         $('#label-default-country').removeClass('hidden-xs-up');
@@ -252,15 +260,16 @@ function filterResults(filter, packlist, default_country) {
             }
             updateIdStats(cardpoolName);
         }
-        updateResultsURL(cardpoolName, typeName, country);
+        updateResultsURL(cardpoolName, typeName, country, videos);
     });
 }
 
 // updates
-function updateResultsURL(cardpool, type, country) {
-    var newUrl = '/results' + '/' + convertToURLString(cardpool)
+function updateResultsURL(cardpool, type, country, videos) {
+    var vidURL = videos ? 'videos' : '-',
+        newUrl = '/results' + '/' + convertToURLString(cardpool)
         + '/' + convertToURLString(type)
-        + '/' + convertToURLString(country);
+        + '/' + convertToURLString(country) + '/' + vidURL;
     window.history.pushState("Results", "Results - " + cardpool + " - " + type + " - " + country, newUrl);
 }
 
