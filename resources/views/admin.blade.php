@@ -19,6 +19,9 @@
             <a class="nav-link" data-toggle="tab" href="#tab-badges" role="tab">Badges</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#tab-videos" role="tab">Videos</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#tab-stats" role="tab">Stats</a>
         </li>
     </ul>
@@ -137,6 +140,31 @@
                         Badges: {{ $badge_count }}<br/>
                         Unseen badges: {{ $unseen_badge_count }}<br/>
                         <a href="/admin/badges/refresh" class="btn btn-primary">Refresh badges</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{--Videos--}}
+        <div class="tab-pane" id="tab-videos" role="tabpanel">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="bracket">
+                        <table class="table table-sm table-striped abr-table" id="videos">
+                            <thead>
+                                <tr>
+                                    <th>channel name</th>
+                                    <th>number of videos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($video_channels as $name => $count)
+                                <tr>
+                                    <td>{{ $name }}</td>
+                                    <td>{{ $count }}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

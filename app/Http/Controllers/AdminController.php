@@ -8,6 +8,7 @@ use App\CardPack;
 use App\Badge;
 use App\User;
 use App\Entry;
+use App\Video;
 use App\Tournament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +33,10 @@ class AdminController extends Controller
         $count_cycles = count($cycles);
         $last_cycle = $count_cycles > 1 ? $cycles[1]->name : '';
         $count_packs = CardPack::count();
+        $approved_tournaments = Tournament::where('approved', 1)->pluck('id')->all();
+        $video_channels = Video::whereIn('tournament_id', $approved_tournaments)
+            ->select('channel_name', DB::raw('count(*) as total'))
+            ->groupBy('channel_name')->orderBy('total', 'desc')->pluck('total', 'channel_name');
         // determine last pack name, $pack[0] is 'draft'
         if ($count_packs > 1 && $count_cycles > 1) {
             if (count($packs[1])) {
@@ -49,7 +54,8 @@ class AdminController extends Controller
 
         $page_section = 'admin';
         return view('admin', compact('user', 'message', 'nowdate', 'badge_type_count', 'badge_count', 'unseen_badge_count',
-            'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles', 'page_section'));
+            'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles',
+            'page_section', 'video_channels'));
     }
 
     public function approveTournament($id, Request $request)
