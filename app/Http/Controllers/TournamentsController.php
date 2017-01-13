@@ -469,8 +469,6 @@ class TournamentsController extends Controller
                 array_push($errors, 'There was a problem with uploading the file.');
         }
 
-        $tournament->update(['concluded' => true]);
-
         if ($id == -1) {    // new tournament via import
             // there was a failure, do not accept
             if (count($errors)) {
@@ -522,10 +520,20 @@ class TournamentsController extends Controller
         if (array_key_exists('players', $json)) {
 
             // error checking
-            if (!array_key_exists('corpIdentity', $json['players'][0]) ||
+            if (!array_key_exists('corpIdentity', $json['players'][0]) &&
                 (!array_key_exists('runnerIdentity', $json['players'][0]))) {
-                    array_push($errors, 'JSON is missing identities. Please update your NRTM app.');
+                    array_push($errors, 'JSON is missing identities. NRTM app needs updating or identities are not set.');
                     return false;
+            }
+            foreach ($json['players'] as $swiss) {
+                if (!array_key_exists('corpIdentity', $swiss)) {
+                    array_push($errors, "Player '" . $swiss['name'] . "' has no corp identity.");
+                    return false;
+                }
+                if (!array_key_exists('runnerIdentity', $swiss)) {
+                    array_push($errors, "Player '" . $swiss['name'] . "' has no runner identity.");
+                    return false;
+                }
             }
 
             $tournament->concluded = true;
