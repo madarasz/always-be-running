@@ -15,9 +15,9 @@
             <div class="text-xs-center small-text">
                 <i title="charity" class="fa fa-heart text-danger"></i>
                 charity |
-                <i class="fa fa-handshake-o" aria-hidden="true"></i>
+                <i title="match data" class="fa fa-handshake-o"></i>
                 match data available |
-                <i class="fa fa-video-camera" aria-hidden="true"></i>
+                <i title="video" class="fa fa-video-camera"></i>
                 has video
             </div>
         </div>

@@ -55,7 +55,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
             // match data
             if (element.matchdata) {
                 cell.append(' ', $('<i>', {
-                    'title': 'charity',
+                    'title': 'match data',
                     'class': 'fa fa-handshake-o'
                 }));
             }
