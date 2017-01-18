@@ -24,7 +24,8 @@ You will need the following in order to run ABR locally:
 
         gulp
 
-5. Configure the settings of your local environment. Rename the **.example.env** file to **.env**. Edit the DB settings to connect to your locally running DB. *Ask the main dev (madarasz / Necro) for NetrunnerDB and Google API keys*. Everything else should be fine.
+5. Configure the settings of your local environment. Rename the **.example.env** file to **.env**. Edit the DB settings to connect to your locally running DB. *Ask the main dev (madarasz / Necro) for NetrunnerDB keys*.
+Google API keys, you can create yourself.
 6. Prepare ID icons by running this script (downloads from NetrunnerDB, run it regularly)
 
         ./get_id_images.sh
@@ -46,6 +47,7 @@ You will need the following in order to run ABR locally:
 
 ### Automated tests
 
+*Nightwatch tests are not working currently.*
 There are Nightwatch automated integration tests in the *tests/nightwatch* directory.
 
 #### Prerequisites
