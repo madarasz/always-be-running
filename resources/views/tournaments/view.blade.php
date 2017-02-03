@@ -18,6 +18,8 @@
             @if ($tournament->concluded)
                 @include('tournaments.viewer.statchart')
             @endif
+            {{--QR code--}}
+            @include('tournaments.viewer.qr')
         </div>
         {{--Standings and claims--}}
         <div class="col-md-8 col-xs-12">
