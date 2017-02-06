@@ -36,7 +36,8 @@
                                 <div class="deck-loader">loading</div>
                                 <div class="form-group">
                                     {!! Form::label('corp_deck', 'corporation deck') !!}
-                                    {!! Form::select('corp_deck', [], null, ['class' => 'form-control', 'id' => 'corp_deck']) !!}
+                                    {!! Form::select('corp_deck', [], null, ['class' => 'form-control',
+                                        'id' => 'corp_deck', 'onchange' => 'setCheckBoxes()']) !!}
                                     <div class="alert alert-danger hidden-xs-up" id="no-corp-deck">
                                         <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                                         You don't have any decklist available on NetrunnerDB.
@@ -47,7 +48,8 @@
                                 <div class="deck-loader">loading</div>
                                 <div class="form-group">
                                     {!! Form::label('runner_deck', 'runner deck') !!}
-                                    {!! Form::select('runner_deck', [], null, ['class' => 'form-control', 'id' => 'runner_deck']) !!}
+                                    {!! Form::select('runner_deck', [], null, ['class' => 'form-control',
+                                        'id' => 'runner_deck', 'onchange' => 'setCheckBoxes()']) !!}
                                     <div class="alert alert-danger hidden-xs-up" id="no-runner-deck">
                                         <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                                         You don't have any decklist available on NetrunnerDB.
@@ -66,33 +68,63 @@
                         </div>
                         {{--claim with other--}}
                         <div class="row">
-                            <div class="col-xs-12 text-xs-right">
+                            <div class="col-xs-12 text-xs-right p-b-1">
                                 <a data-toggle="collapse" href="#collapse-other-decks" aria-expanded="false" aria-controls="collapse-other-decks">
-                                    <em>claim with other</em>
+                                    <i class="fa fa-caret-right" aria-hidden="true" id="caret-more"></i>
+                                    <em id="text-more">more options</em>
                                 </a>
-                                @include('partials.popover', ['direction' => 'top', 'content' =>
-                            'Use this option if you want to claim with a <strong>published</strong> deck
-                            of another user. You can find the deck ID in the URL:<br/>
-                            <em>e.g.: netrunnerdb.com/en/decklist/<strong>38734</strong></em>'])
                             </div>
                         </div>
-                        {{--Dropdown selectors for decks--}}
-                        <div class="row collapse" id="collapse-other-decks">
-                            <div class="col-xs-12 col-md-6">
-                                <div class="form-group">
-                                    {!! Form::label('other_corp_deck', 'corporation deck ID') !!}
-                                    {!! Form::text('other_corp_deck', null, ['class' => 'form-control',
-                                        'oninput' => "switchDeck('corp_deck', 'other_corp_deck')",
-                                        'placeholder' => 'published deck ID']) !!}
+                        <div class="collapse" id="collapse-other-decks">
+                            <div class="card card-darker">
+                                <div class="card-block row">
+                                    {{--Claim with someone else's decks--}}
+                                    <div class="col-xs-12">
+                                        <div class="text-xs-center p-b-1">
+                                            claim with someone else's deck
+                                            @include('partials.popover', ['direction' => 'top', 'content' =>
+                                                'Use this option if you want to claim with a <strong>published</strong> deck
+                                                of another user. You can find the deck ID in the URL:<br/>
+                                                <em>e.g.: netrunnerdb.com/en/decklist/<strong>38734</strong></em>'])
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-md-6">
+                                        <div class="form-group">
+                                            {!! Form::label('other_corp_deck', 'corporation deck ID') !!}
+                                            {!! Form::text('other_corp_deck', null, ['class' => 'form-control',
+                                                'oninput' => "switchDeck('corp_deck', 'other_corp_deck')",
+                                                'placeholder' => 'published deck ID']) !!}
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-md-6">
+                                        <div class="form-group">
+                                            {!! Form::label('other_runner_deck', 'runner deck ID') !!}
+                                            {!! Form::text('other_runner_deck', null, ['class' => 'form-control',
+                                                'oninput' => "switchDeck('runner_deck', 'other_runner_deck')",
+                                                'placeholder' => 'published deck ID']) !!}
+                                        </div>
+                                    </div>
+                                    {{--NetrunnerDB claim checkboxes--}}
+                                    <div class="col-xs-12 text-xs-center">
+                                        <hr/>
+                                        <div class="p-t-1">
+                                            {!! Form::checkbox('netrunnerdb_link', null, true, ['id' => 'netrunnerdb_link']) !!}
+                                            {!! Form::label('netrunnerdb_link', 'add claim to decklist on NetrunnerDB') !!}
+                                            @include('partials.popover', ['direction' => 'bottom', 'content' =>
+                                                'Selecting this option will also add your claim to the decklist page of NetrunnerDB.
+                                                This is only available for published deckslists.'])
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-xs-12 col-md-6">
-                                <div class="form-group">
-                                    {!! Form::label('other_runner_deck', 'runner deck ID') !!}
-                                    {!! Form::text('other_runner_deck', null, ['class' => 'form-control',
-                                        'oninput' => "switchDeck('runner_deck', 'other_runner_deck')",
-                                        'placeholder' => 'published deck ID']) !!}
-                                </div>
+                        </div>
+                        <div class="form-group text-xs-center">
+                            <div>
+                                {!! Form::checkbox('auto_publish', null, true, ['id' => 'auto_publish']) !!}
+                                {!! Form::label('auto_publish', 'publish selected private decks') !!}
+                                @include('partials.popover', ['direction' => 'top', 'content' =>
+                                    'Selecting this option will create a published copy of the private decks you
+                                    used.'])
                             </div>
                         </div>
                         {{--Sumbit claim--}}
@@ -101,7 +133,20 @@
                                 Claim spot
                             </button>
                         </div>
+                        <div class="text-xs-center legal-bullshit p-t-1">
+                            Confused about "private" and "published" decks? Read the <a href="/faq#ndb-private">F.A.Q.</a>
+                        </div>
                     {!! Form::close() !!}
+                    {{--Reminder for users not sharing private decks and not having published decks--}}
+                    @if ($user && !$user->sharing && !$user->published_decks)
+                        <div class="alert alert-warning view-indicator text-xs-center" id="warning-not-sharing">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                            You are not sharing your <em>private decks</em>. This is fine.<br/>
+                            If you want to claim with a <em>private deck</em>, go to
+                            <a href="https://netrunnerdb.com/en/user/profile"><strong>NetrunnerDB&nbsp;account&nbsp;settings</strong></a>,
+                            enable <strong>Share&nbsp;your&nbsp;decks</strong> and <strong>relogin</strong> to AlwaysBeRunning.net.
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -217,6 +262,8 @@
                 if (data.privateNetrunnerDB) {
                     displayDecksForClaims(data.privateNetrunnerDB[side], privateRoot, 2);
                 }
+
+                setCheckBoxes();
             }
         }
 
@@ -234,15 +281,21 @@
         }
     });
 
-    // other decks collapse display fix
+    // more options collapse display fix
     $('#collapse-other-decks').on('shown.bs.collapse', function () {
         $('#collapse-other-decks').css({
             'display': 'flex'
         });
+        $('#caret-more').removeClass('fa-caret-right').addClass('fa-caret-down');
+        $('#text-more').text('less options');
+        $('.popover').popover('hide');
     }).on('hidden.bs.collapse', function () {
         $('#collapse-other-decks').css({
             'display': 'none'
         });
+        $('#caret-more').removeClass('fa-caret-down').addClass('fa-caret-right');
+        $('#text-more').text('more options');
+        $('.popover').popover('hide');
     });
 
     // claim modal: disable own decks if other deck ID is provided
@@ -251,6 +304,30 @@
             document.getElementById(idOwn).setAttribute('disabled','');
         } else {
             document.getElementById(idOwn).removeAttribute('disabled');
+        }
+
+        setCheckBoxes();
+    }
+
+    // sets publishing checkbox visibility and NetrunnerDB claim eligibility
+    function setCheckBoxes() {
+        var runnerPublic = $('#runner_deck :selected').parent().prop("id") === 'runner_public',
+                corpPublic = $('#corp_deck :selected').parent().prop("id") === 'corp_public',
+                otherCorpUsed = document.getElementById('other_corp_deck').value.length > 0,
+                otherRunnerUsed = document.getElementById('other_runner_deck').value.length > 0;
+
+        // auto-publish
+        if ((!runnerPublic && !otherRunnerUsed) || (!corpPublic && !otherCorpUsed)) {
+            $('#auto_publish').prop("disabled", false);
+        } else {
+            $('#auto_publish').prop("disabled", true);
+        }
+
+        // Netrunner claim
+        if (runnerPublic || corpPublic || otherCorpUsed || otherRunnerUsed) {
+            $('#netrunnerdb_link').prop("disabled", false);
+        } else {
+            $('#netrunnerdb_link').prop("disabled", true);
         }
     }
 

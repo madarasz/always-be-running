@@ -25,82 +25,7 @@
             @endif
         </div>
         {{--User claim--}}
-        @if ($user)
-            <hr/>
-            <h6>Your claim</h6>
-            {{--Existing claim--}}
-            @if ($user_entry && $user_entry->runner_deck_id)
-                <ul id="player-claim">
-                    @if ($tournament->top_number)
-                        <li>Top cut rank:
-                            @if ($user_entry->rank_top)
-                                <strong>#{{ $user_entry->rank_top}}</strong>
-                            @else
-                                <em>none</em>
-                            @endif
-                        </li>
-                    @endif
-                    <li>Swiss rounds rank: <strong>#{{ $user_entry->rank }}</strong></li>
-                    <li>
-                        Corporation deck:
-                        <img src="/img/ids/{{ $user_entry->corp_deck_identity }}.png">&nbsp;
-                        {{--public deck--}}
-                        @if ($user_entry->corp_deck_type == 1)
-                            <a href="{{ "https://netrunnerdb.com/en/decklist/".$user_entry->corp_deck_id }}">
-                                {{ $user_entry->corp_deck_title }}
-                            </a>
-                            {{--private deck--}}
-                        @elseif ($user_entry->corp_deck_type == 2)
-                            <a href="{{ "https://netrunnerdb.com/en/deck/view/".$user_entry->corp_deck_id }}">
-                                {{ $user_entry->corp_deck_title }}
-                            </a>
-                        @else
-                            data error
-                        @endif
-                    </li>
-                    <li>
-                        Runner deck:
-                        <img src="/img/ids/{{ $user_entry->runner_deck_identity }}.png">&nbsp;
-                        {{--public deck--}}
-                        @if ($user_entry->runner_deck_type == 1)
-                            <a href="{{ "https://netrunnerdb.com/en/decklist/".$user_entry->runner_deck_id }}">
-                                {{ $user_entry->runner_deck_title }}
-                            </a>
-                            {{--private deck--}}
-                        @elseif ($user_entry->runner_deck_type == 2)
-                            <a href="{{ "https://netrunnerdb.com/en/deck/view/".$user_entry->runner_deck_id }}">
-                                {{ $user_entry->runner_deck_title }}
-                            </a>
-                        @else
-                            data error
-                        @endif
-                    </li>
-                </ul>
-                <div class="text-xs-center">
-                    {!! Form::open(['method' => 'DELETE', 'url' => "/entries/$user_entry->id"]) !!}
-                    {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove my claim',
-                    array('type' => 'submit', 'class' => 'btn btn-danger', 'id' => 'remove-claim')) !!}
-                    {!! Form::close() !!}
-                </div>
-                {{--Creating new claim--}}
-            @else
-                @include('tournaments.modals.claim')
-                <div class="text-xs-center">
-                    <button class="btn btn-claim" data-toggle="modal"
-                            data-players-number="{{$tournament->players_number}}"
-                            data-top-number="{{$tournament->top_number}}"
-                            data-target="#claimModal" data-tournament-id="{{$tournament->id}}"
-                            data-subtitle="{{$tournament->title.' - '.$tournament->date}}" id="button-claim">
-                        <i class="fa fa-list-ol" aria-hidden="true"></i> Claim your spot
-                    </button>
-                </div>
-            @endif
-        @else
-            <hr/>
-            <div class="text-xs-center" id="suggest-login">
-                <a href="/oauth2/redirect">Login via NetrunnerDB</a> to claim spot.
-            </div>
-        @endif
+        @include('tournaments.viewer.claim')
         <hr/>
         {{--Import NRTM, Clear anonym claims--}}
         @if ($user && ($user->admin || $user->id == $tournament->creator))
@@ -228,41 +153,6 @@
         @endif
         <hr/>
     @endif
-    {{--List of registered players--}}
-    <h6>Registered players {{ $regcount > 0 ? '('.$regcount.')' : '' }}</h6>
-    @if (count($entries) > 0)
-        <ul id="registered-players">
-            @foreach ($entries as $entry)
-                @if ($entry->player)
-                    <li><a href="/profile/{{ $entry->player->id }}">{{ $entry->player->displayUsername() }}</a></li>
-                @endif
-            @endforeach
-        </ul>
-    @else
-        <p><em id="no-registered-players">no players yet</em></p>
-    @endif
-    @if (!$tournament->concluded)
-        <div class="text-xs-center">
-            @if ($user)
-                @if ($user_entry)
-                    @if ($user_entry->rank)
-                        <span class="btn btn-danger disabled" id="unregister-disabled"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</span><br/>
-                        <small><em>remove your claim first</em></small>
-                    @else
-                        <a href="{{"/tournaments/$tournament->id/unregister"}}" class="btn btn-danger" id="unregister"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</a>
-                    @endif
-                @else
-                    <a href="{{"/tournaments/$tournament->id/register"}}" class="btn btn-primary" id="register"><i class="fa fa-plus-circle" aria-hidden="true"></i> Register</a>
-                @endif
-            @else
-                <div class="text-xs-center p-b-1" id="suggest-login2">
-                    <a href="/oauth2/redirect">Login via NetrunnerDB</a> to register for this tournament.
-                </div>
-            @endif
-        </div>
-    @elseif ($user_entry && !$user_entry->rank)
-        <div class="text-xs-center">
-            <a href="{{"/tournaments/$tournament->id/unregister"}}" class="btn btn-danger" id="unregister"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</a>
-        </div>
-    @endif
+    {{--Register--}}
+    @include('tournaments.viewer.register')
 </div>
