@@ -7,12 +7,14 @@
             <div class="bracket">
                 <p>
                     <a href="#why-ndb">Why do I have to login with my NetrunnerDB user?</a><br>
+                    <a href="#ndb-private">What is the difference between "private" and "public" decks/decklists?</a><br>
                     <a href="#ndb-sharing">I cannot see my decks when I am claiming my spot at a tournament.</a><br>
                     <a href="#other-deckbuilders">Do you plan to integrate with other deckbuilders?</a><br>
                     <a href="#import">How do I import the tournament results?</a><br>
                     <a href="#more-questions">I have more questions or ideas.</a><br>
                 </p>
                 <hr/>
+
                 <p>
                     <a name="why-ndb" class="anchor"></a><strong>Why do I have to login with my NetrunnerDB user?</strong>
                 </p>
@@ -26,7 +28,60 @@
                     seen sites with the <em>"login with Facebook / Gmail"</em> option, this is the same thing. You are
                     being logged in on NetrunnerDB and then redirected back.
                 </p>
-                <p class="p-t-2">
+                <hr/>
+
+                <p>
+                    <a name="ndb-private" class="anchor"></a><strong>What is the difference between "private" and "public" decks/decklists?</strong>
+                </p>
+                <p>
+                    <div class="bracket-mini m-t-0">
+                        <img src="img/faq-private1.png"/>
+                    </div>
+                    <br/>
+                    When you create a deck in NetrunnerDB, it is added to your list of
+                    <a href="https://netrunnerdb.com/en/decks"><strong>private</strong> decks<a/>.<br/>
+                    <div class="bracket-mini">
+                        <img src="img/faq-private2.png"/>
+                    </div>
+                    <br/>
+                    In order to create a published copy of your private deck, click the <strong>Publish</strong> button.<br/>
+                    <div class="bracket-mini">
+                        <img src="img/faq-public.png"/>
+                    </div>
+                    <br/>
+                    The deck is added to your <a href="https://netrunnerdb.com/en/decklists/mine"><strong>published</strong>
+                    decklists</a>.
+                </p>
+                <p>
+                    Private decks
+                    <ul>
+                        <li>mainly for private use</li>
+                        <li>cards can be changed</li>
+                        <li>
+                            can be shared (or claimed with) if you enable the option in your
+                            <a href="https://netrunnerdb.com/en/user/profile">NetrunnerDB settings</a>
+                        </li>
+                        <li>you can have a limited number of private decks</li>
+                    </ul>
+                </p>
+                <p>
+                    Published decks
+                    <ul>
+                        <li>for the public, ideal for sharing</li>
+                        <li>cards cannot be changed, it's snapshot</li>
+                        <li>another users can like or favorite it, you will get <em>reputation points</em> on NetrunnerDB</li>
+                        <li>unlimited number of published decks</li>
+                        <li>description can be provided</li>
+                    </ul>
+                </p>
+                <p>
+                    For these reasons, I suggest you make claims with your <strong>published</strong> decklists. To make things
+                    easier, there is a <strong>publish selected private decks</strong> option when you create a claim. If you
+                    select it, AlwaysBeRunning.net will create a published version of the private decks you selected.
+                </p>
+                <hr/>
+
+                <p>
                     <a name="ndb-sharing" class="anchor"></a><strong>I cannot see my decks when I am claiming my spot at a tournament.</strong>
                 </p>
                 <p>
@@ -35,16 +90,20 @@
                 <p>
                     If you want to use your <em>private</em> decks here, please enable the <strong>Share your decks</strong>
                     option in your NetrunnerDB <a href="https://netrunnerdb.com/en/user/profile">account settings</a>.
-                    After this is done, <strong>relogin into Always be Running.net</strong>, so changes take effect.
+                    After this is done, <strong>relogin into Always be Running.net</strong>, so changes can take effect.
                 </p>
-                <p class="p-t-2">
+                <hr/>
+
+                <p>
                     <a name="other-deckbuilders" class="anchor"></a><strong>Do you plan to integrate with other deckbuilders?</strong>
                 </p>
                 <p>
                     This is not planned. Though the possibility is there if the deckbuilder site has the needed API
                     endpoints and has a wide userbase.
                 </p>
-                <p class="p-t-2">
+                <hr/>
+
+                <p>
                     <a name="import" class="anchor"></a><strong>How do I import the tournament results?</strong>
                 </p>
                 <p>
@@ -127,7 +186,9 @@
                         entries with the red trashcan icon next to them.
                     </li>
                 </ul>
-                <p class="p-t-2">
+                <hr/>
+
+                <p>
                     <a name="more-questions" class="anchor"></a><strong>I have more questions or ideas.</strong>
                 </p>
                 <p>
