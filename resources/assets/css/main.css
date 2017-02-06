@@ -665,3 +665,16 @@ a.anchor {
     height: 0;
     border: 0;
 }
+/*darker cards*/
+.card-darker {
+    background-color: #eeeeee;
+}
+.card-darker hr {
+    border-top: 1px solid rgba(0,0,0,0.3);
+}
+/* points cell */
+.cell-points {
+    line-height: 1em;
+    text-align: right;
+    padding: 0.1rem;
+}

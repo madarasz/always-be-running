@@ -125,7 +125,17 @@
                 'creator' => $tournament->creator, 'id' => 'entries-top'])
             <hr/>
         @endif
-        <h6>Swiss rounds</h6>
+        <h6>
+            Swiss rounds
+            @if (file_exists('tjsons/'.$tournament->id.'.json'))
+            <div class="pull-right">
+                <button class="btn btn-primary btn-xs" id="button-showpoints" onclick="displayScores({{ $tournament->id }})">
+                    <i class="fa fa-eye" aria-hidden="true"></i>
+                    points
+                </button>
+            </div>
+            @endif
+        </h6>
         @include('tournaments.partials.entries',
             ['entries' => $entries_swiss, 'user_entry' => $user_entry, 'rank' => 'rank',
             'creator' => $tournament->creator, 'id' => 'entries-swiss'])

@@ -451,3 +451,33 @@ function render_fn(container, data, score, state) {
 function edit_fn() {
 
 }
+
+// display scores in swiss table
+function displayScores(id) {
+    $('#button-showpoints').addClass('hidden-xs-up');
+
+    $.ajax({
+        url: '/tjsons/' + id + '.json',
+        dataType: "json",
+        async: true,
+        success: function (data) {
+            data.players.sort(orderByRank);
+            $('#entries-swiss thead tr').append($('<th>', {text: 'score'}));
+
+            for (var i = 0; i < data.players.length; i++) {
+                $('#entries-swiss tbody tr:eq(' + i + ')').append(
+                    '<td class="cell-points"><span class="legal-bullshit">points: </span><strong>'
+                    + data.players[i].matchPoints + '</strong><br/>' +
+                    '<span class="legal-bullshit">SoS: ' + data.players[i].strengthOfSchedule.toFixed(3) + '<br/>' +
+                    'eSoS: ' + data.players[i].extendedStrengthOfSchedule.toFixed(3) + '</span></td>');
+            }
+        }
+    });
+}
+
+function orderByRank(a, b) {
+    if (a.rank < b.rank) {
+        return -1;
+    }
+    return 1;
+}
