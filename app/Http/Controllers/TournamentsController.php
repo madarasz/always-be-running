@@ -573,6 +573,7 @@ class TournamentsController extends Controller
                     // saving new claim
                     Entry::create([
                         'approved' => 1,
+                        'type' => 11,
                         'tournament_id' => $tournament->id,
                         'rank' => $swiss['rank'],
                         'rank_top' => $ranktop,
@@ -640,6 +641,7 @@ class TournamentsController extends Controller
                 // saving new claim
                 Entry::create([
                     'approved' => 1,
+                    'type' => 12,
                     'tournament_id' => $tournament->id,
                     'rank' => $row[1],
                     'rank_top' => $row[2],

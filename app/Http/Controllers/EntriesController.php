@@ -22,6 +22,7 @@ class EntriesController extends Controller
             Entry::create([
                 'user' => $request->user()->id,
                 'approved' => 1,
+                'type' => 0,
                 'tournament_id' => $id
             ]);
         }
@@ -55,30 +56,24 @@ class EntriesController extends Controller
     {
         $this->authorize('logged_in', Tournament::class, $request->user());
         $user_id = $request->user()->id;
+        $tournament = Tournament::withTrashed()->findOrFail($id);
+        $rank = $request->rank_top ? $request->rank_top : $request->rank;
 
-        // claim by own decks / decks by IDs
-        if ($request->other_corp_deck) {
-            $corp_deck = app('App\Http\Controllers\NetrunnerDBController')->getDeckInfo($request->other_corp_deck);
-            if ($corp_deck['side'] !== 'corp') {
-                return redirect()->back()->withErrors(['Corp deck ID must point to a corp deck.']);
-            }
-        } else {
-            $corp_deck = json_decode(stripslashes($request->corp_deck), true);
-        }
-        if ($request->other_runner_deck) {
-            $runner_deck = app('App\Http\Controllers\NetrunnerDBController')->getDeckInfo($request->other_runner_deck);
-            if ($runner_deck['side'] !== 'runner') {
-                return redirect()->back()->withErrors(['Runner deck ID must point to a runner deck.']);
-            }
-        } else {
-            $runner_deck = json_decode(stripslashes($request->runner_deck), true);
+        // claim by own decks / decks by IDs, publish if needed
+        try {
+            $corp_deck = $this->getDeckInfo($request->corp_deck, $request->other_corp_deck, $request->auto_publish,
+                $request->netrunnerdb_link, $rank, $tournament, "corp", $user_id);
+            $runner_deck = $this->getDeckInfo($request->runner_deck, $request->other_runner_deck, $request->auto_publish,
+                $request->netrunnerdb_link, $rank, $tournament, "runner", $user_id);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors([$e->getMessage()]);
         }
 
         // getting registration for tournament or imported entry
         $reg_entry = Entry::where('user', $user_id)->where('tournament_id', $id)->first();
-        $tournament = Tournament::withTrashed()->findOrFail($id);
+
         // with top
-        if ($tournament->top_number) {
+        if ($tournament->top_number && $request->rank_top) {
             $import_entry = Entry::where('tournament_id', $id)->where('user', 0)->where(function ($q) use ($request) {
                 $q->where('rank', $request->rank)->orWhere('rank_top', $request->rank_top);
             })->first();
@@ -114,8 +109,17 @@ class EntriesController extends Controller
             'runner_deck_title' => $runner_deck['title'],
             'runner_deck_identity' => $runner_deck['identity'],
             'runner_deck_type' => $runner_deck['type'],
-            'import_username' => $merge_name
+            'import_username' => $merge_name,
+            'type' => 3
         ];
+
+        // NetrunnerDB claims
+        if (array_key_exists('netrunnerdb_claim', $corp_deck)) {
+            $entry['netrunnerdb_claim_corp'] = $corp_deck['netrunnerdb_claim'];
+        }
+        if (array_key_exists('netrunnerdb_claim', $runner_deck)) {
+            $entry['netrunnerdb_claim_runner'] = $runner_deck['netrunnerdb_claim'];
+        }
 
         if (is_null($reg_entry)) {   // new claim
             Entry::create([         // additional fields
@@ -136,19 +140,89 @@ class EntriesController extends Controller
         return redirect()->back()->with('message', 'You have claimed a spot on the tournament.');
     }
 
+    /**
+     * Gets deck info. Uses other player's decklist if needed.
+     * Publishes deck if needed. Adds claim to NetrunnerDB if needed.
+     * @param $request_deck Object deck field value from claim form
+     * @param $other_deck int claim with other field value from claim form
+     * @param $publish boolean auto-publishing
+     * @param $side string corp/runner
+     * @throws \Exception error message
+     * @return mixed deck object
+     */
+    private function getDeckInfo($request_deck, $other_deck, $publish, $claimNRDB, $rank, $tournament, $side, $userID) {
+        $result = null;
+
+        if ($other_deck) {     // claiming with someone else's deck
+            $result = app('App\Http\Controllers\NetrunnerDBController')->getDeckInfo($other_deck);
+            if ($result['side'] !== $side) {
+                throw new \Exception($side.' deck ID must point to a corp deck');
+            }
+        } else {    // claiming with own deck
+            $result = json_decode(stripslashes($request_deck), true);
+
+            // do publishing if needed
+            if (intval($result['type']) == 2 && $publish) {
+                try {
+                    $response = app('App\Http\Controllers\NetrunnerDBController')->publishDeck($result['id']);
+                } catch (\Exception $e) {
+                    throw new \Exception('NetrunnerDB publishing error: "'.$result['title'].'" - '.$e->getMessage());
+                }
+
+                // store ID of newly published deck
+                $result['type'] = 1;
+                $result['id'] = intval($response);
+            }
+        }
+
+        // add claim to NetrunnerDB
+        if ($claimNRDB && $result['type'] == 1) {
+            try {
+                $response = app('App\Http\Controllers\NetrunnerDBController')->addClaimToNRDB(
+                    $result['id'], $tournament->title, 'https://alwaysberunning.net'.$tournament->seoUrl(), $rank,
+                    $tournament->players_number, $userID);
+            } catch (\Exception $e) {
+                throw new \Exception('NetrunnerDB claim error: "'.$result['title'].'" - '.$e->getMessage());
+            }
+
+            // store NetrunnerDB claim ID
+            $result['netrunnerdb_claim'] = $response;
+        } else {
+            $result['netrunnerdb_claim'] = 0; // record that claim should not be added
+        }
+
+        return $result;
+    }
+
     public function unclaim(Request $request, $id)
     {
         $entry = Entry::where('id', $id)->first();
         $this->authorize('unclaim', $entry, $request->user());
         if (!is_null($entry)) {     // claim is removed, registration for the tournament stays
+
+            // removing claims from NetrunnerDB
+            if ($entry->netrunnerdb_claim_runner) {
+                app('App\Http\Controllers\NetrunnerDBController')->deleteClaimFromNRDB(
+                    $entry->netrunnerdb_claim_runner, $entry->runner_deck_id);
+            }
+            if ($entry->netrunnerdb_claim_corp) {
+                app('App\Http\Controllers\NetrunnerDBController')->deleteClaimFromNRDB(
+                    $entry->netrunnerdb_claim_corp, $entry->corp_deck_id);
+            }
+
             $entry->rank = null;
             $entry->rank_top = null;
             $entry->corp_deck_id = null;
             $entry->runner_deck_id = null;
+            $entry->netrunnerdb_claim_runner = null;
+            $entry->netrunnerdb_claim_corp = null;
             $entry->corp_deck_title = '';
             $entry->runner_deck_title = '';
             $entry->runner_deck_identity = '';
             $entry->corp_deck_identity = '';
+            $entry->runner_deck_type = null;
+            $entry->corp_deck_type = null;
+            $entry->type = 0;
             $entry->save();
         }
 
@@ -157,7 +231,9 @@ class EntriesController extends Controller
         $tournament->updateConflict();
 
         // remove badges if needed
-        App('App\Http\Controllers\BadgeController')->addClaimBadges($request->user()->id);
+        if ($request->user()) {
+            App('App\Http\Controllers\BadgeController')->addClaimBadges($request->user()->id);
+        }
 
         return redirect()->back()->with('message', 'You removed your claim from the tournament.');
     }
@@ -281,7 +357,7 @@ class EntriesController extends Controller
         $this->authorize('own', $tournament, $request->user());
 
         // add anonym entry
-        Entry::create($request->all());
+        Entry::create($request->all() + ['type' => 13]);
 
         if (!$tournament->import) {
             $tournament->update(['import' => 3]);

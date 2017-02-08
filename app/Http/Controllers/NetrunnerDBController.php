@@ -249,6 +249,70 @@ class NetrunnerDBController extends Controller
         return redirect()->action('AdminController@lister')->with('message', "$added new card packs added.");
     }
 
+    /**
+     * Adds claim to NetrunnerDB.
+     * @param $decklistID int published decklist ID
+     * @param $tournamentName string tournament name
+     * @param $url string tournament URL
+     * @param $rank int claim rank
+     * @return mixed claim ID on NetrunnerDB
+     * @throws \Exception
+     */
+    public function addClaimToNRDB($decklistID, $tournamentName, $url, $rank, $playerNumber, $userID) {
+        $response = json_decode($this->oauth->requestWrapper(
+            'https://netrunnerdb.com/api/2.1/private/decklists/'.$decklistID.'/claims',
+            'POST', '{"name":"'.addslashes($tournamentName).'", "url":"'.$url.'", "rank": '.$rank.
+            ', "participants": '.$playerNumber.', "user_id": '.$userID.'}'), true);
+
+        if (array_key_exists('status', $response) && $response['status'] === 'success') {
+            return $response['data']['claim']['id'];
+        } else {
+            \Log::alert("Coudn't add claim to NetrunnerDB: ".$response['error']);
+            throw new \Exception($response['error']);
+        }
+    }
+
+    /**
+     * Deletes claim from NetrunnerDB.
+     * @param $claimID int ID of NetrunnerDB claim
+     * @param $decklistID int ID of decklist
+     * @return mixed response from NetrunnerDB
+     */
+    public function deleteClaimFromNRDB($claimID, $decklistID) {
+        $response = json_decode($this->oauth->requestWrapper(
+            'https://netrunnerdb.com/api/2.1/private/decklists/'.$decklistID.'/claims/'.$claimID, 'DELETE'), true);
+
+        // error logging
+        if (array_key_exists('error', $response)) {
+            \Log::alert("Coudn't delete claim from NetrunnerDB: ".$response['error']);
+        }
+
+       return $response;
+    }
+
+    /**
+     * Publishes private deck on NetrunnerDB.
+     * @param $deckID int ID of private deck to be published
+     * @return mixed ID of newly published decklist
+     * @throws \Exception NetrunnerDB error message
+     */
+    public function publishDeck($deckID) {
+        $response = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/private/deck/publish',
+            'POST', '{"deck_id":"'.$deckID.'", "description": "*published by AlwaysBeRunning.net*"}'), true);
+
+        if (array_key_exists('success', $response) && $response['success']) {
+            return $response['data'][0]['id'];  // return ID of newly published decklist
+        } else {
+            if (array_key_exists('msg', $response)) {
+                \Log::alert("Coudn't publish to  NetrunnerDB: ".$response['msg']);
+                throw new \Exception($response['msg']);
+            } else {
+                \Log::alert("Coudn't publish to  NetrunnerDB: ".$response['error']);
+                throw new \Exception($response['error']);
+            }
+        }
+    }
+
     // not to be called from routes, no auth check, used directly by DB seeding
     private function updateIdentities()
     {

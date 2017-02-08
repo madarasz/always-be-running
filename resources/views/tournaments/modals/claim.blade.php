@@ -68,7 +68,7 @@
                         </div>
                         {{--claim with other--}}
                         <div class="row">
-                            <div class="col-xs-12 text-xs-right p-b-1">
+                            <div class="col-xs-12 text-xs-right">
                                 <a data-toggle="collapse" href="#collapse-other-decks" aria-expanded="false" aria-controls="collapse-other-decks">
                                     <i class="fa fa-caret-right" aria-hidden="true" id="caret-more"></i>
                                     <em id="text-more">more options</em>
@@ -108,24 +108,23 @@
                                     <div class="col-xs-12 text-xs-center">
                                         <hr/>
                                         <div class="p-t-1">
-                                            {!! Form::checkbox('netrunnerdb_link', null, true, ['id' => 'netrunnerdb_link']) !!}
-                                            {!! Form::label('netrunnerdb_link', 'add claim to decklist on NetrunnerDB') !!}
+                                            {!! Form::checkbox('netrunnerdb_link', null, env('DEFAULT_NETRUNNERDB_CLAIM'), ['id' => 'netrunnerdb_link']) !!}
+                                            {!! Form::label('netrunnerdb_link', 'add claim to decklists on NetrunnerDB', ['class' => 'm-b-0']) !!}
                                             @include('partials.popover', ['direction' => 'bottom', 'content' =>
                                                 'Selecting this option will also add your claim to the decklist page of NetrunnerDB.
                                                 This is only available for published deckslists.'])
+                                            <div class="legal-bullshit">might take couple of minutes to appear</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group text-xs-center">
-                            <div>
-                                {!! Form::checkbox('auto_publish', null, true, ['id' => 'auto_publish']) !!}
-                                {!! Form::label('auto_publish', 'publish selected private decks') !!}
-                                @include('partials.popover', ['direction' => 'top', 'content' =>
-                                    'Selecting this option will create a published copy of the private decks you
-                                    used.'])
-                            </div>
+                        <div class="form-group text-xs-center p-t-1">
+                            {!! Form::checkbox('auto_publish', null, true, ['id' => 'auto_publish']) !!}
+                            {!! Form::label('auto_publish', 'publish selected private decks') !!}
+                            @include('partials.popover', ['direction' => 'top', 'content' =>
+                                'Selecting this option will create a published copy of the private decks you
+                                used.'])
                         </div>
                         {{--Sumbit claim--}}
                         <div class="text-xs-center">
@@ -314,7 +313,8 @@
         var runnerPublic = $('#runner_deck :selected').parent().prop("id") === 'runner_public',
                 corpPublic = $('#corp_deck :selected').parent().prop("id") === 'corp_public',
                 otherCorpUsed = document.getElementById('other_corp_deck').value.length > 0,
-                otherRunnerUsed = document.getElementById('other_runner_deck').value.length > 0;
+                otherRunnerUsed = document.getElementById('other_runner_deck').value.length > 0,
+                autoPublish = document.getElementById('auto_publish').checked;
 
         // auto-publish
         if ((!runnerPublic && !otherRunnerUsed) || (!corpPublic && !otherCorpUsed)) {
@@ -324,7 +324,7 @@
         }
 
         // Netrunner claim
-        if (runnerPublic || corpPublic || otherCorpUsed || otherRunnerUsed) {
+        if (runnerPublic || corpPublic || otherCorpUsed || otherRunnerUsed || autoPublish) {
             $('#netrunnerdb_link').prop("disabled", false);
         } else {
             $('#netrunnerdb_link').prop("disabled", true);

@@ -13,6 +13,9 @@
             <a class="nav-link active" data-toggle="tab" href="#tab-tournaments" role="tab">Tournaments</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#tab-entries" role="tab">Entries</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#tab-packs" role="tab">Packs</a>
         </li>
         <li class="nav-item">
@@ -92,6 +95,59 @@
                                 'created_at', 'action_edit', 'action_purge' ],
                             'title' => 'Incomplete imports',
                             'id' => 'incomplete', 'icon' => 'fa-exclamation-triangle', 'loader' => true])
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{--Entries--}}
+        <div class="tab-pane" id="tab-entries" role="tabpanel">
+            <div class="row">
+                <div class="col-xs-12">
+                    {{--Entry types--}}
+                    <div class="bracket">
+                        <h5>
+                            <i class="fa fa-list-ol" aria-hidden="true"></i>
+                            Entry types
+                        </h5>
+                        <table class="table table-sm table-striped abr-table">
+                            <thead>
+                                <tr>
+                                    <th>type</th>
+                                    <th>number of entries</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($entry_types as $type => $count)
+                                <tr>
+                                    <td>{{ $type }}</td>
+                                    <td>{{ $count }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <a href="/admin/entries/refresh" class="btn btn-primary">Refresh entry types</a>
+                    </div>
+                    {{--Decks--}}
+                    <div class="bracket">
+                        <h5>
+                            <i class="fa fa-id-card-o" aria-hidden="true"></i>
+                            Decks
+                        </h5>
+                        <p>
+                            Total number of decks: {{ $published_count + $private_count }}
+                        </p>
+                        <p>
+                            Published decks: {{ $published_count }}<br/>
+                            Private decks: {{ $private_count }}<br/>
+                            Broken deck links:???<br/>
+                            <a href="/admin/decks/broken" class="btn btn-primary disabled">Detect broken</a>
+                        </p>
+                        <p>
+                            With backlink to NetrunnerDB: {{ $backlink_count }}<br/>
+                            Without backlink to NetrunnerDB: {{ $no_backlink_count }}<br/>
+                            Unexported: {{ $unexported_count }}<br/>
+                            <a href="/admin/decks/export" class="btn btn-primary">Export backlinks</a>
+                        </p>
                     </div>
                 </div>
             </div>
