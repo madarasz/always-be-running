@@ -279,8 +279,8 @@ class NetrunnerDBController extends Controller
     public function addClaimToNRDB($decklistID, $tournamentName, $url, $rank, $playerNumber, $userID) {
         $response = json_decode($this->oauth->requestWrapper(
             'https://netrunnerdb.com/api/2.1/private/decklists/'.$decklistID.'/claims',
-            'POST', '{"name":"'.addslashes($tournamentName).'", "url":"'.$url.'", "rank": '.$rank.
-            ', "participants": '.$playerNumber.', "user_id": '.$userID.'}'), true);
+            'POST', json_encode(['name' => $tournamentName, 'url' => $url, 'rank' => $rank,
+            'participants' => $playerNumber, 'user_id' => $userID])), true);
 
         if (array_key_exists('status', $response) && $response['status'] === 'success') {
             return $response['data']['claim']['id'];

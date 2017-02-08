@@ -3,6 +3,7 @@
 @section('content')
     <h4 class="page-header">Administration</h4>
     @include('partials.message')
+    @include('errors.list')
 
     {{--Conclude modal--}}
     @include('tournaments.modals.conclude')
