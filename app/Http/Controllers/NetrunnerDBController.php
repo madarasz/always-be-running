@@ -142,6 +142,24 @@ class NetrunnerDBController extends Controller
             'title' => $response['data'][0]['name'], 'type' => 1];
     }
 
+    /**
+     * Checks if deck is broken (404).
+     * @param $published
+     * @param $deckid
+     * @return bool
+     */
+    public function isDeckLinkBroken($published, $deckid) {
+        if ($published) {
+            $URL = 'https://netrunnerdb.com/api/2.0/public/decklist/';
+        } else {
+            $URL = 'https://netrunnerdb.com/api/2.0/public/deck/';
+        }
+
+        $response_code = $this->get_http_response_code($URL.$deckid);
+
+        return ($response_code != "200");
+    }
+
     private function sortDecks(&$deckSource, &$target, &$runner_ids, &$corp_ids)
     {
         foreach ($deckSource as $deck)

@@ -139,8 +139,8 @@
                         <p>
                             Published decks: {{ $published_count }}<br/>
                             Private decks: {{ $private_count }}<br/>
-                            Broken deck links:???<br/>
-                            <a href="/admin/decks/broken" class="btn btn-primary disabled">Detect broken</a>
+                            Broken deck links: {{ $broken_count }}<br/>
+                            <a href="/admin/decks/broken" class="btn btn-primary">Detect broken</a>
                         </p>
                         <p>
                             With backlink to NetrunnerDB: {{ $backlink_count }}<br/>

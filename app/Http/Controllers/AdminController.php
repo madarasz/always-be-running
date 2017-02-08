@@ -49,6 +49,7 @@ class AdminController extends Controller
             Entry::where('netrunnerdb_claim_corp', '=', 0)->count();
         $unexported_count = Entry::where('runner_deck_id', '>', 0)->whereNull('netrunnerdb_claim_runner')->count() +
             Entry::where('corp_deck_id', '>', 0)->whereNull('netrunnerdb_claim_corp')->count();
+        $broken_count = Entry::where('broken_runner', '>', 0)->count() + Entry::where('broken_corp', '>', 0)->count();
 
         // determine last pack name, $pack[0] is 'draft'
         if ($count_packs > 1 && $count_cycles > 1) {
@@ -69,7 +70,7 @@ class AdminController extends Controller
         return view('admin', compact('user', 'message', 'nowdate', 'badge_type_count', 'badge_count', 'unseen_badge_count',
             'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles',
             'page_section', 'video_channels', 'entry_types', 'published_count', 'private_count',
-            'backlink_count', 'no_backlink_count', 'unexported_count'));
+            'backlink_count', 'no_backlink_count', 'unexported_count', 'broken_count'));
     }
 
     public function approveTournament($id, Request $request)
@@ -160,7 +161,7 @@ class AdminController extends Controller
         foreach($claims as $claim) {
             $tournament = Tournament::findOrFail($claim->tournament_id);
             // runner deck
-            if ($claim->runner_deck_type == 1) {
+            if ($claim->runner_deck_type == 1 && !$claim->broken_runner) {
                 try {
                     $claim->netrunnerdb_claim_runner = app('App\Http\Controllers\NetrunnerDBController')->addClaimToNRDB(
                         $claim->runner_deck_id, $tournament->title, 'https://alwaysberunning.net' . $tournament->seoUrl(), $claim->rank(),
@@ -170,9 +171,12 @@ class AdminController extends Controller
                 } catch (\Exception $e) {
                     return redirect()->back()->withErrors([$e->getMessage()]);
                 }
+            } else {
+                $claim->netrunnerdb_claim_runner = 0;
+                $claim->save();
             }
             // corp deck
-            if ($claim->corp_deck_type == 1) {
+            if ($claim->corp_deck_type == 1 && !$claim->broken_corp) {
                 try {
                     $claim->netrunnerdb_claim_corp = app('App\Http\Controllers\NetrunnerDBController')->addClaimToNRDB(
                         $claim->corp_deck_id, $tournament->title, 'https://alwaysberunning.net' . $tournament->seoUrl(), $claim->rank(),
@@ -182,10 +186,49 @@ class AdminController extends Controller
                 } catch (\Exception $e) {
                     return redirect()->back()->withErrors([$e->getMessage()]);
                 }
+            } else {
+                $claim->netrunnerdb_claim_corp = 0;
+                $claim->save();
             }
         }
 
         return back()->with('message', 'Backlinks added: '.$count);
+    }
+
+    /**
+     * Flags broken decks
+     * @param Request $request
+     * @return mixed
+     */
+    public function detectBrokenDecks(Request $request) {
+        $this->authorize('admin', Tournament::class, $request->user());
+
+        $deletedOrRejected = Tournament::withTrashed()->where(function($q) {
+            $q->where('approved', '=', 0)->orWhere('deleted_at', '>', 0);
+        })->pluck('id')->all();
+
+        // find claims to export
+        $claims = Entry::where('user', '>', 0)->where('rank', '>', 0)
+            ->where('runner_deck_id', '>', 0)->where('corp_deck_id', '>', 0)
+            ->whereNotIn('tournament_id', $deletedOrRejected)->get();
+
+        $count = 0;
+        foreach($claims as $claim) {
+            if (app('App\Http\Controllers\NetrunnerDBController')
+                ->isDeckLinkBroken($claim->runner_deck_type == 1, $claim->runner_deck_id)) {
+                $claim->broken_runner = true;
+                $claim->save();
+                $count++;
+            }
+            if (app('App\Http\Controllers\NetrunnerDBController')
+                ->isDeckLinkBroken($claim->corp_deck_type == 1, $claim->corp_deck_id)) {
+                $claim->broken_corp = true;
+                $claim->save();
+                $count++;
+            }
+        }
+
+        return back()->with('message', 'Broken decks flagged: '.$count);
     }
 
     public function adminStats(Request $request) {
