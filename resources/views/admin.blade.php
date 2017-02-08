@@ -140,13 +140,13 @@
                             Published decks: {{ $published_count }}<br/>
                             Private decks: {{ $private_count }}<br/>
                             Broken deck links: {{ $broken_count }}<br/>
-                            <a href="/admin/decks/broken" class="btn btn-primary">Detect broken</a>
+                            <a href="/admin/decks/broken" class="btn btn-primary disabled">Detect broken</a>
                         </p>
                         <p>
                             With backlink to NetrunnerDB: {{ $backlink_count }}<br/>
                             Without backlink to NetrunnerDB: {{ $no_backlink_count }}<br/>
                             Unexported: {{ $unexported_count }}<br/>
-                            <a href="/admin/decks/export" class="btn btn-primary">Export backlinks</a>
+                            <a href="/admin/decks/export" class="btn btn-primary disabled">Export backlinks</a>
                         </p>
                     </div>
                 </div>
