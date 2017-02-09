@@ -157,12 +157,21 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 'class': 'text-xs-center'
             }).appendTo(newrow);
 
-            if (element.user_claim) {
-                cell.append($('<span>', {
-                    text: 'claimed',
-                    'class': 'label label-success'
-                }));
-            } else if (element.concluded) {
+            if (element.user_claim) {   // claimed
+                if (element.user_claim_broken) {    // broken claim
+                    cell.append($('<span>', {
+                        'class': 'label label-danger'
+                    }).append($('<i>', {
+                        class: 'fa fa-chain-broken',
+                        title: 'broken link'
+                    }), '&nbsp;broken claim'));
+                } else {    // claim ok
+                    cell.append($('<span>', {
+                        text: 'claimed',
+                        'class': 'label label-success'
+                    }));
+                }
+            } else if (element.concluded) { // concluded, should claim
                 cell.append($('<button>', {
                     'class': 'btn btn-claim btn-xs',
                     'data-toggle': 'modal',
@@ -180,7 +189,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                     text: 'unregister',
                     href: '/tournaments/' + element.id + '/unregister'
                 })));
-            } else {
+            } else {    // registered
                 cell.append($('<span>', {
                     text: 'registered',
                     'class': 'label label-info'

@@ -355,6 +355,10 @@ class TournamentsController extends Controller
                 $entry = Entry::where('tournament_id', $tournament->id)->where('user', $userId)
                     ->whereNotNull('rank')->first();
                 $result[count($result)-1]['user_claim'] = !is_null($entry);
+                // check for broken claims
+                if (!is_null($entry)) {
+                    $result[count($result) - 1]['user_claim_broken'] = $entry->broken_runner || $entry->broken_corp;
+                }
             }
 
             // winner IDs

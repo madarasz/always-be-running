@@ -6,9 +6,14 @@
     @include('errors.list')
 
     {{--Notification for claim--}}
-    <div class="alert alert-warning view-indicator notif-red notif-badge-page hidden-xs-up" id="notif-personal" data-badge="">
+    <div class="alert alert-warning view-indicator notif-red notif-badge-page hidden-xs-up" id="notif-toclaim" data-badge="">
         <i class="fa fa-clock-o" aria-hidden="true"></i>
         You have tournament spots waiting to be claimed.
+    </div>
+    {{--Notification for broken laim--}}
+    <div class="alert alert-warning view-indicator notif-red notif-badge-page hidden-xs-up" id="notif-brokenclaim" data-badge="">
+        <i class="fa fa-chain-broken" aria-hidden="true"></i>
+        You have broken claims. Probably you deleted the decks you claimed with. Please remove claim and add new one.
     </div>
 
     @include('tournaments.modals.claim')

@@ -184,9 +184,16 @@ class PagesController extends Controller
         $tocomplete = Tournament::where('creator', $userid)->where('incomplete', 1)->count();
         $tocardpool = Tournament::where('creator', $userid)->whereNotNull('date')->where('cardpool_id', 'unknown')
             ->where('date', '<', $weeklaterdate)->count();
+        $toclaimalert = Entry::where('user', $userid)->whereIn('tournament_id', $toclaim)->whereNull('rank')->count();
+        $brokenclaim = Entry::where('user', $userid)->where('rank', '>', 0)->where(function($q){
+                $q->where('broken_runner', '=', 1)->orWhere('broken_corp', '=', 1);
+            })->count();
         $result = [
-            'personalAlerts' => Entry::where('user', $userid)->whereIn('tournament_id', $toclaim)
-                ->whereNull('rank')->count(),
+            'personalAlerts' => [
+                'total' => $toclaimalert + $brokenclaim,
+                'toClaimAlert' => $toclaimalert,
+                'brokenClaimAlert' => $brokenclaim
+            ],
             'organizeAlert' => [
                 'total' => $tocomplete + $toconclude + $tocardpool,
                 'concludeAlert' => $toconclude,

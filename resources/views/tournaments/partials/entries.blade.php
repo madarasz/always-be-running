@@ -35,6 +35,9 @@
                     <img src="/img/ids/{{ $entry->corp_deck_identity }}.png">&nbsp;
                 @endif
                 @if ($entry->corp_deck_id)
+                    @if ($entry->broken_corp)
+                        <i class="fa fa-chain-broken text-danger" title="broken link"></i>
+                    @endif
                     {{--public deck--}}
                     @if ($entry->corp_deck_type == 1)
                         <a href="{{ "https://netrunnerdb.com/en/decklist/".$entry->corp_deck_id }}">
@@ -58,6 +61,9 @@
                     <img src="/img/ids/{{ $entry->runner_deck_identity }}.png">&nbsp;
                 @endif
                 @if ($entry->runner_deck_id)
+                        @if ($entry->broken_runner)
+                            <i class="fa fa-chain-broken text-danger" title="broken link"></i>
+                        @endif
                     {{--public deck--}}
                     @if ($entry->runner_deck_type == 1)
                         <a href="{{ "https://netrunnerdb.com/en/decklist/".$entry->runner_deck_id }}">

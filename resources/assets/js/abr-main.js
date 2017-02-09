@@ -347,11 +347,17 @@ function updateNavBadges() {
                 }
             }
             // personal page alerts
-            if (data.personalAlerts) {
-                document.getElementById('nav-personal').setAttribute("data-badge", data.personalAlerts);
-                if ($('#notif-personal').length) {
-                    $('#notif-personal').removeClass('hidden-xs-up');
-                    document.getElementById('notif-personal').setAttribute("data-badge", data.personalAlerts);
+            if (data.personalAlerts.total) {
+                document.getElementById('nav-personal').setAttribute("data-badge", data.personalAlerts.total);
+                if ($('#notif-toclaim').length) {
+                    if (data.personalAlerts.toClaimAlert) {
+                        $('#notif-toclaim').removeClass('hidden-xs-up');
+                        document.getElementById('notif-toclaim').setAttribute("data-badge", data.personalAlerts.toClaimAlert);
+                    }
+                    if (data.personalAlerts.brokenClaimAlert) {
+                        $('#notif-brokenclaim').removeClass('hidden-xs-up');
+                        document.getElementById('notif-brokenclaim').setAttribute("data-badge", data.personalAlerts.brokenClaimAlert);
+                    }
                 }
             }
             // profile page alerts
