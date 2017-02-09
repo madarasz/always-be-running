@@ -81,7 +81,8 @@ function filterDiscover(default_filter, default_country, map, infowindow) {
         countrySelector = document.getElementById('location_country'),
         stateSelector = document.getElementById('location_state'),
         country = countrySelector.options[parseInt(countrySelector.value)+1].innerHTML,
-        state = stateSelector.options[parseInt(stateSelector.value)+1].innerHTML;
+        state = stateSelector.options[parseInt(stateSelector.value)+1].innerHTML,
+        includeOnline = document.getElementById('include-online').checked;
     // type filtering
     if (type > 0) {
         filter = filter + '&type=' + type;
@@ -94,6 +95,7 @@ function filterDiscover(default_filter, default_country, map, infowindow) {
         filter = filter + '&country=' + country;
         recur_filter = recur_filter + '&country=' + country;
         $('#filter-country').addClass('active-filter');
+        $('#filter-online').removeClass('hidden-xs-up');
         if (country === 'United States') {
             $('#filter-state').removeClass('hidden-xs-up');
             $('#filter-spacer').addClass('hidden-xs-up');
@@ -106,8 +108,12 @@ function filterDiscover(default_filter, default_country, map, infowindow) {
                 $('#filter-state').removeClass('active-filter');
             }
         }
+        if (includeOnline) {
+            filter = filter + '&include_online=1';
+        }
     } else {
         $('#filter-country').removeClass('active-filter');
+        $('#filter-online').addClass('hidden-xs-up');
     }
     // state filter only visible for US
     if (country !== 'United States') {

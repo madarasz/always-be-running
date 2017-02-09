@@ -277,7 +277,15 @@ class TournamentsController extends Controller
             }
         }
         if ($request->input('country')) {
-            $tournaments = $tournaments->where('location_country', $request->input('country'));
+            if ($request->include_online) { // include online
+                $tournaments = $tournaments->where(function ($q) use ($request) {
+                    $q->where('location_country', $request->input('country'))->orWhere('tournament_type_id', 7);
+                });
+            } else { // just country filter
+                $tournaments = $tournaments->where('location_country', $request->input('country'));
+            }
+
+
         }
         if ($request->input('cardpool')) {
             $tournaments = $tournaments->where('cardpool_id', $request->input('cardpool'));

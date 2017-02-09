@@ -26,8 +26,15 @@
                                 ['class' => 'form-control filter',
                                 'onchange' => "filterDiscover(default_filter, '".@$default_country_id."', map, infowindow)", 'disabled' => '']) !!}
                         </div>
-                        <div class="legal-bullshit text-xs-center hidden-xs-up" id="label-default-country">
-                            using user's default filter
+                        <div class="legal-bullshit text-xs-center">
+                            <span class="hidden-xs-up" id="label-default-country">
+                                using user's default filter -
+                            </span>
+                            <span class="hidden-xs-up" id="filter-online">
+                                {!! Form::checkbox('videos', null, true, ['id' => 'include-online',
+                                'onchange' => "filterDiscover(default_filter, '".@$default_country_id."', map, infowindow)"]) !!}
+                                {!! Html::decode(Form::label('include-online', 'include online')) !!}
+                            </span>
                         </div>
                     </div>
                     <div class="col-md-3 col-xs-12 hidden-xs-up" id="filter-state">
@@ -115,11 +122,12 @@
 
         @if (@$default_country)
             // user's default country
-            new_filter = default_filter + '&country=' + '{{ $default_country }}';
+            new_filter = default_filter + '&country=' + '{{ $default_country }}' + '&include_online=1';
             new_recur_filter = recur_filter + '&country=' + '{{ $default_country }}';
             $('#label-default-country').removeClass('hidden-xs-up');
             document.getElementById('location_country').value = '{{ $default_country_id }}';
             $('#filter-country').addClass('active-filter');
+            $('#filter-online').removeClass('hidden-xs-up');
         @endif
 
         function initializeMap() {
