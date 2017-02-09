@@ -50,6 +50,8 @@ class AdminController extends Controller
         $unexported_count = Entry::where('runner_deck_id', '>', 0)->whereNull('netrunnerdb_claim_runner')->count() +
             Entry::where('corp_deck_id', '>', 0)->whereNull('netrunnerdb_claim_corp')->count();
         $broken_count = Entry::where('broken_runner', '>', 0)->count() + Entry::where('broken_corp', '>', 0)->count();
+        $broken_user_ids = Entry::where('broken_runner', true)->orWhere('broken_corp', true)->pluck('user')->all();
+        $broken_users = User::whereIn('id', $broken_user_ids)->get();
 
         // determine last pack name, $pack[0] is 'draft'
         if ($count_packs > 1 && $count_cycles > 1) {
@@ -70,7 +72,7 @@ class AdminController extends Controller
         return view('admin', compact('user', 'message', 'nowdate', 'badge_type_count', 'badge_count', 'unseen_badge_count',
             'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles',
             'page_section', 'video_channels', 'entry_types', 'published_count', 'private_count',
-            'backlink_count', 'no_backlink_count', 'unexported_count', 'broken_count'));
+            'backlink_count', 'no_backlink_count', 'unexported_count', 'broken_count', 'broken_users'));
     }
 
     public function approveTournament($id, Request $request)

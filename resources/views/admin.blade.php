@@ -126,7 +126,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <a href="/admin/entries/refresh" class="btn btn-primary">Refresh entry types</a>
+                        <a href="/admin/entries/refresh" class="btn btn-primary disabled">Refresh entry types</a>
                     </div>
                     {{--Decks--}}
                     <div class="bracket">
@@ -140,7 +140,11 @@
                         <p>
                             Published decks: {{ $published_count }}<br/>
                             Private decks: {{ $private_count }}<br/>
-                            Broken deck links: {{ $broken_count }}<br/>
+                            Broken deck links: {{ $broken_count }} - users:
+                            @foreach($broken_users as $buser)
+                                <a href="/profile/{{ $buser->id }}">{{ $buser->displayUsername() }}</a>,
+                            @endforeach
+                            <br/>
                             <a href="/admin/decks/broken" class="btn btn-primary disabled">Detect broken</a>
                         </p>
                         <p>
