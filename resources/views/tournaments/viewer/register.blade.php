@@ -1,6 +1,6 @@
 {{--List of registered players--}}
 <h6>Registered players {{ $regcount > 0 ? '('.$regcount.')' : '' }}</h6>
-@if ($entries->where('user', '>', 0)->count() > 0)
+@if ($regcount)
     <ul id="registered-players">
         @foreach ($entries as $entry)
             @if ($entry->player)
