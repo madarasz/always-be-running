@@ -334,6 +334,7 @@ class TournamentsController extends Controller
                 'date' => $tournament->date,
                 'creator_id' => $tournament->creator,
                 'creator_name' => $tournament->user()->first()->name,
+                'creator_supporter' => $tournament->user->supporter,
                 'created_at' => $tournament->created_at->format('Y.m.d. H:i:s'),
                 'cardpool' => $tournament->cardpool['name'],
                 'location' => $location,

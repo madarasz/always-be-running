@@ -22,7 +22,7 @@
             @endif
 
             @if ($entry->player)
-                <td><a href="/profile/{{ $entry->player->id }}">{{ $entry->player->displayUsername() }}</a></td>
+                <td><a href="/profile/{{ $entry->player->id }}" {{ $entry->player->supporter ? 'class=supporter' : '' }}>{{ $entry->player->displayUsername() }}</a></td>
             @elseif ($entry->import_username)
                 <td class="import-user">{{ $entry->import_username }}</td>
             @else

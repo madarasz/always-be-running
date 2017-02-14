@@ -2,6 +2,7 @@
 <footer>
     <p>
         &copy; Necro 2016 - [<a href="/faq">F.A.Q.</a>] - [<a href="/about">About</a>] - [<a href="/badges">Badges</a>] -
+        [<a href="/support-me" class="supporter">Support Me</a>]
         <a href="https://twitter.com/alwaysberunnin"><img src="/img/social-twitter.png"/></a> -
         <a href="https://www.facebook.com/alwaysberunning"><img src="/img/social-fb.png"/></a>
     </p>

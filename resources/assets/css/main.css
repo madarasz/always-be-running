@@ -678,3 +678,19 @@ a.anchor {
     text-align: right;
     padding: 0.1rem;
 }
+/* patron icon */
+.img-patron {
+    content: url(/img/logo_patreon.png);
+    height: 1em;
+}
+.img-patron-o {
+    content: url(/img/logo_patreon_o.png);
+    height: 1em;
+}
+/* supporter username */
+.supporter {
+    color: #d89602 !important;
+}
+a.supporter:hover {
+    color: #8e6101 !important;
+}

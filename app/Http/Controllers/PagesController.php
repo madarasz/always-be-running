@@ -215,4 +215,15 @@ class PagesController extends Controller
 
         return response()->json($result);
     }
+
+    public function supportMe()
+    {
+        $badges = Badge::where('order', '>', 9000)->orderBy('order')->get();
+        return view('supportme', compact('badges'));
+    }
+
+    public function thankYou()
+    {
+        return view('thankyou');
+    }
 }

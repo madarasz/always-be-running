@@ -24,6 +24,17 @@
                     @endif
                 @endforeach
             </div>
+            <div class="bracket">
+                <p>
+                    <strong>For supporters:</strong><br/>
+                    <span class="legal-bullshit">visit <a href="/support-me">Support me</a> for more info</span>
+                </p>
+                @foreach($badges as $badge)
+                    @if ($badge->order > 9000)
+                        @include('partials.badgelist')
+                    @endif
+                @endforeach
+            </div>
         </div>
         <div class="col-md-6 col-xs-12">
             <div class="bracket">
@@ -42,7 +53,7 @@
                     <span class="small-text">needs relogin to refresh</span>
                 </p>
                 @foreach($badges as $badge)
-                    @if ($badge->order > 4000)
+                    @if ($badge->order > 4000 && $badge->order < 5000)
                         @include('partials.badgelist')
                     @endif
                 @endforeach

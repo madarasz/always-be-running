@@ -11,6 +11,8 @@ Route::get('about', 'PagesController@about');
 Route::get('faq', 'PagesController@faq');
 Route::get('markdown', 'PagesController@markdown');
 Route::get('badges', 'BadgeController@badges');
+Route::get('support-me', 'PagesController@supportMe');
+Route::get('thank-you', 'PagesController@thankYou');
 
 Route::get('admin', 'AdminController@lister')->name('admin');
 Route::get('admin/identities/update', 'NetrunnerDBController@requestIdentities');

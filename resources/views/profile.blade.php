@@ -18,12 +18,19 @@
                 </a>
             </div>
         @endif
-        Profile - {{ $user->displayUsername() }}
+        Profile - <span {{ $user->supporter ? 'class=supporter' : '' }}>{{ $user->displayUsername() }}</span>
     </h4>
     @include('partials.message')
     @include('errors.list')
     <div class="row">
         <div class="col-md-4 col-xs-12">
+            {{--Supporter strip--}}
+            @if ($user->supporter)
+                <div class="alert alert-warning">
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                    This user <a href="/support-me" class="supporter">supports</a> this site.
+                </div>
+            @endif
             {{--Badge notification--}}
             <div class="alert alert-success view-indicator notif-green notif-badge-page hidden-xs-up" id="notif-profile" data-badge="">
                 You have new badges.
@@ -35,7 +42,7 @@
                     User
                 </h5>
                 <div class="text-xs-center p-b-1">
-                    <h6>{{ $user->displayUsername() }}</h6>
+                    <h6 {{ $user->supporter ? 'class=supporter' : '' }}>{{ $user->displayUsername() }}</h6>
                     <div class="user-counts">
                         {{ $created_count }} tournament{{ $created_count > 1 ? 's' : '' }} created<br/>
                         {{ $claim_count }} tournament claim{{ $claim_count > 1 ? 's' : '' }}<br/>

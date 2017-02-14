@@ -38,7 +38,7 @@
         drawEntryStats(chartData, 'corp', 'stat-chart-corp', playernum);
     });
 
-    @if (session('editmode'))
+    @if (session()->has('editmode'))
         // manual importing
         toggleEntriesEdit(true);
         window.location.hash = '#importing';

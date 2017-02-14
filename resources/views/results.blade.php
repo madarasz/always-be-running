@@ -15,8 +15,10 @@
             <div class="text-xs-center small-text">
                 <i title="charity" class="fa fa-heart text-danger"></i>
                 charity |
+                <img class="img-patron-o">
+                patreon T.O. |
                 <i title="match data" class="fa fa-handshake-o"></i>
-                match data available |
+                match data, points available |
                 <i title="video" class="fa fa-video-camera"></i>
                 has video
             </div>
