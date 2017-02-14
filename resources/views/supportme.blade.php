@@ -79,7 +79,7 @@
                 </h5>
                 You can support me on Patreon on a monthly basis. Check out the different reward levels here:
                 {{--Patreon code--}}
-                <div class="text-xs-center p-t-3 pb-1">
+                <div class="text-xs-center p-t-2 p-b-1">
                     <a href="https://www.patreon.com/bePatron?u=5036283" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script async src="https://cdn6.patreon.com/becomePatronButton.bundle.js"></script>
                 </div>
             </div>
