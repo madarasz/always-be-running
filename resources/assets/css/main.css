@@ -25,6 +25,9 @@ table.abr-table tr td {
 .navbar-toggler {
     color: #fff;
 }
+.white-text {
+    color: #fff !important;
+}
 .bg-inverse {
     background-color: #222 !important;
 }

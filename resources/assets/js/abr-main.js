@@ -423,3 +423,9 @@ function collectOptions(id) {
     }
     return resultOptions;
 }
+
+// shows collapsed users on badge page
+function showBadgeUsers(id) {
+    $('#button-show-' + id).addClass('hidden-xs-up');
+    $('#users-badge-' + id).removeClass('hidden-xs-up');
+}
