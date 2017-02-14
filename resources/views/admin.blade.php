@@ -141,8 +141,9 @@
                             Published decks: {{ $published_count }}<br/>
                             Private decks: {{ $private_count }}<br/>
                             Broken deck links: {{ $broken_count }} - users:
-                            @foreach($broken_users as $buser)
-                                <a href="/profile/{{ $buser->id }}">{{ $buser->displayUsername() }}</a>,
+                            <?php $bcount = count($broken_users) ?>
+                            @foreach($broken_users as $key=>$buser)
+                                <a href="/profile/{{ $buser->id }}">{{ $buser->displayUsername() }}</a>{{ $key != $bcount-1 ? ',' : ''}}
                             @endforeach
                             <br/>
                             <a href="/admin/decks/broken" class="btn btn-primary disabled">Detect broken</a>
@@ -152,6 +153,22 @@
                             Without backlink to NetrunnerDB: {{ $no_backlink_count }}<br/>
                             Unexported: {{ $unexported_count }}<br/>
                             <a href="/admin/decks/export" class="btn btn-primary disabled">Export backlinks</a>
+                        </p>
+                    </div>
+                    {{--KTM update--}}
+                    <div class="bracket">
+                        <h5>
+                            <i class="fa fa-hourglass-half" aria-hidden="true"></i>
+                            Know the Meta update
+                        </h5>
+                        <p>
+                            Last update: {{ $ktm_update }}<br/>
+                            New entries since:
+                            <ul>
+                                @foreach($ktm_packs as $key=>$pack)
+                                    <li>{{$key}}: {{$pack}}</li>
+                                @endforeach
+                            </ul>
                         </p>
                     </div>
                 </div>

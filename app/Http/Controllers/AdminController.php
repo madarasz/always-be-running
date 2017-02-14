@@ -53,6 +53,20 @@ class AdminController extends Controller
         $broken_user_ids = Entry::where('broken_runner', true)->orWhere('broken_corp', true)->pluck('user')->all();
         $broken_users = User::whereIn('id', $broken_user_ids)->get();
 
+        // Know the Meta update calculation
+        $ktm_update = preg_replace('/\./i', '-', file_get_contents('http://www.knowthemeta.com/LastUpdate/'));
+        $ktm_packs = [];
+        foreach($packs as $pack) {
+            $pack_tournaments = Tournament::where('cardpool_id', $pack->toArray()[0]['id'])->pluck('id')->all();
+            if (count($pack_tournaments)) {
+                $pack_entries = Entry::whereIn('type', [1, 11, 12, 13, 3])->where('updated_at', '>', $ktm_update)
+                    ->whereIn('tournament_id', $pack_tournaments)->count();
+                if ($pack_entries) {
+                    $ktm_packs[$pack->toArray()[0]['name']] = $pack_entries;
+                }
+            }
+        }
+
         // determine last pack name, $pack[0] is 'draft'
         if ($count_packs > 1 && $count_cycles > 1) {
             if (count($packs[1])) {
@@ -72,7 +86,8 @@ class AdminController extends Controller
         return view('admin', compact('user', 'message', 'nowdate', 'badge_type_count', 'badge_count', 'unseen_badge_count',
             'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles',
             'page_section', 'video_channels', 'entry_types', 'published_count', 'private_count',
-            'backlink_count', 'no_backlink_count', 'unexported_count', 'broken_count', 'broken_users'));
+            'backlink_count', 'no_backlink_count', 'unexported_count', 'broken_count', 'broken_users',
+            'ktm_update', 'ktm_packs'));
     }
 
     public function approveTournament($id, Request $request)
