@@ -53,7 +53,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
             })).appendTo(newrow);
 
             // patreon Sysop goal
-            if (element.creator_supporter > 2) {
+            if (parseInt(element.creator_supporter) > 2) {
                 cell.append(' ', $('<img>', {
                     'class': 'img-patron-o'
                 }))
@@ -122,7 +122,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
             newrow.append($('<td>').append($('<a>', {
                 text: element.creator_name,
                 href: '/profile/' + element.creator_id,
-                class: element.creator_supporter ? 'supporter' : ''
+                class: parseInt(element.creator_supporter) > 0 ? 'supporter' : ''
             })));
         }
         // type

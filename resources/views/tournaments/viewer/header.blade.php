@@ -34,19 +34,19 @@
         <span id="tournament-type">{{ $type }}</span> -
         <em>
             created by
-                <span id="tournament-creator">
-                    <a href="/profile/{{ $tournament->user->id }}" {{ $tournament->user->supporter ? 'class=supporter' : '' }}>{{ $tournament->user->displayUsername() }}</a>
-                </span>
+            {{--Patreon sysop goal--}}
+            @if ($tournament->user->supporter > 2)
+                <img class="img-patron-o" title="Patreon Sysop/Executive supporter"/>
+            @endif
+            <span id="tournament-creator">
+                <a href="/profile/{{ $tournament->user->id }}" {{ $tournament->user->supporter ? 'class=supporter' : '' }}>{{ $tournament->user->displayUsername() }}</a>
+            </span>
         </em>
         {{--Charity--}}
         @if ($tournament->charity)
             -
             <i title="charity" class="fa fa-heart text-danger"></i>
             charity event
-        @endif
-        {{--Patreon sysop goal--}}
-        @if ($tournament->user->supporter > 2)
-            <img class="img-patron-o" title="Patreon Sysop/Executive supporter"/>
         @endif
         @if ($tournament->incomplete)
             <div class="alert alert-danger view-indicator" id="viewing-as-admin">
