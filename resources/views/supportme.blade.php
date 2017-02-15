@@ -49,7 +49,7 @@
                 <ul>
                     @include('partials.wanted-alt')
                 </ul>
-                <strong>Unofficial</strong> alternate art is also welcomed. Email me via <strong>info (at) alwaysberunning.net</strong>
+                <strong>Unofficial</strong> alternate art is also welcomed. Email me via <strong>alwaysberunning (at) gmail.com</strong>
                 for my postal address.
             </div>
         </div>
@@ -122,7 +122,8 @@
                         improvements. Anybody can add feature requests on GitHub (as new
                         "<a href="https://github.com/madarasz/always-be-running/issues">issue</a>") or by dropping me
                         an email. I will add them to this huge list and prioritize according to
-                        <strong>user-happiness-impact</strong> and <strong>coding effort.</strong>
+                        <strong>user-happiness-impact</strong> and <strong>coding effort</strong>. As you can see there's
+                        always another feature to code, which requires <strong>my time spent developing</strong>.
                     </div>
                     <div class="col-xs-12 col-md-4">
                         <div class="bracket-mini m-t-0">
@@ -130,6 +131,19 @@
                                 <img src="/img/abr-trello.png" class="img-fluid"/>
                             </a>
                         </div>
+                    </div>
+                </div>
+                <div class="row p-t-2">
+                    <div class="col-xs-12 col-md-8 text-justify">
+                        <h5>Developer's reports</h5>
+                        I'm posting summaries of newly developed featues to
+                        <a href="https://www.patreon.com/alwaysberunning/posts">my Patreon page</a>.
+                        <ul>
+                            <li><a href="https://www.patreon.com/posts/8116446">Developer's report - mid February 2017</a></li>
+                            <li><a href="https://www.patreon.com/posts/developers-mid-8116380">Developer's report - mid January 2017</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-xs-12 col-md-4">
                     </div>
                 </div>
             </div>

@@ -192,7 +192,7 @@
                     <a name="more-questions" class="anchor"></a><strong>I have more questions or ideas.</strong>
                 </p>
                 <p>
-                    You can contact me via: info (at) alwaysberunning.net
+                    You can contact me via: alwaysberunning (at) gmail.com
                 </p>
             </div>
         </div>
