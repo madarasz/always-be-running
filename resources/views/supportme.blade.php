@@ -4,7 +4,7 @@
     <h4 class="page-header">Support me</h4>
     <div class="row">
         <div class="col-xs-2 text-xs-center" style="margin: auto">
-            <img src="/favicon-96x96.png"/>
+            <img src="/favicon-96x96.png" class="img-fluid"/>
         </div>
         <div class="col-xs-8">
             <div class="bracket text-justify">
@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="col-xs-2 text-xs-center" style="margin: auto">
-            <img src="http://www.knowthemeta.com/favicon-96x96.png"/>
+            <img src="http://www.knowthemeta.com/favicon-96x96.png" class="img-fluid"/>
         </div>
     </div>
     <div class="row">
@@ -81,6 +81,56 @@
                 {{--Patreon code--}}
                 <div class="text-xs-center p-t-2 p-b-1">
                     <a href="https://www.patreon.com/bePatron?u=5036283" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script async src="https://cdn6.patreon.com/becomePatronButton.bundle.js"></script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="bracket">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <a name="why" class="anchor"></a>
+                        <h4>
+                            Why do I need your support?
+                        </h4>
+                    </div>
+                </div>
+                <div class="row p-t-2">
+                    <div class="col-xs-12 col-md-8 text-justify">
+                        <h5>My git commits</h5>
+                        This is me getting busy with <strong>AlwaysBeRunning.net</strong>. I know, "number of commits" is a bit obscure
+                        for measuring effort. The main takeaway here is that developing a site takes <strong>time, which is a
+                        valuable asset</strong>. I have to pay for hosting, but the main cost is my effort I put into developing
+                        newer and newer features for the site. In the end I hope it is useful for you and I can help
+                        Netrunner communities grow.
+                    </div>
+                    <div class="col-xs-12 col-md-4">
+                        <div class="bracket-mini m-t-0">
+                        <a href="/img/abr-commits.png">
+                            <img src="/img/abr-commits.png" class="img-fluid"/>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row p-t-2">
+                    <div class="col-xs-12 col-md-8 text-justify">
+                        <h5>AlwaysBeRunning.net features</h5>
+                        This is my Trello board for <strong>AlwaysBeRunning.net</strong> development. Usually I
+                        announce new features on <a href="https://twitter.com/alwaysberunnin">my Twitter</a>, but there
+                        are lot of things going on under a hood. There are also bug-fixes, minor tweeks, usability
+                        improvements. Anybody can add feature requests on GitHub (as new
+                        "<a href="https://github.com/madarasz/always-be-running/issues">issue</a>") or by dropping me
+                        an email. I will add them to this huge list and prioritize according to
+                        <strong>user-happiness-impact</strong> and <strong>coding effort.</strong>
+                    </div>
+                    <div class="col-xs-12 col-md-4">
+                        <div class="bracket-mini m-t-0">
+                            <a href="/img/abr-trello.png">
+                                <img src="/img/abr-trello.png" class="img-fluid"/>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

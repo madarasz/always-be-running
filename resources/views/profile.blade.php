@@ -28,7 +28,7 @@
             @if ($user->supporter)
                 <div class="alert alert-warning">
                     <i class="fa fa-star" aria-hidden="true"></i>
-                    This user <a href="/support-me" class="supporter">supports</a> this site.
+                    This user <a href="/support-me" class="supporter">supports</a> AlwaysBeRunning.net
                 </div>
             @endif
             {{--Badge notification--}}
