@@ -61,8 +61,10 @@ class AdminController extends Controller
             if (count($pack_tournaments)) {
                 $pack_entries = Entry::whereIn('type', [1, 11, 12, 13, 3])->where('updated_at', '>', $ktm_update)
                     ->whereIn('tournament_id', $pack_tournaments)->count();
+                $pack_decks= Entry::where('type', 3)->where('updated_at', '>', $ktm_update)
+                    ->whereIn('tournament_id', $pack_tournaments)->count();
                 if ($pack_entries) {
-                    $ktm_packs[$pack->toArray()[0]['name']] = $pack_entries;
+                    $ktm_packs[$pack->toArray()[0]['name']] = [$pack_entries, $pack_decks];
                 }
             }
         }
