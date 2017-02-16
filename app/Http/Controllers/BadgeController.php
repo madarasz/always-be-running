@@ -99,8 +99,14 @@ class BadgeController extends Controller
                 ->where('date', '>', $year)->where('date', '<', ($year + 1))->where('approved', 1)->pluck('id');
         }
 
-        // worlds winner
+        // winner
         $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('rank_top', 1)->first();
+        // maybe there was no top-cut
+        if (!$found) {
+            $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->whereNull('rank_top')
+                ->where('rank',1)->first();
+        }
+
         if ($found) {
             if (is_null($year)) {
                 $badgeid = Badge::where('tournament_type_id', $type)->where('winlevel', 1)->first()->id;
@@ -110,7 +116,7 @@ class BadgeController extends Controller
             $badges[$badgeid] = true;
         } elseif ($type > 2) {
 
-            // worlds top 16
+            // top 16
             $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('rank_top', '>', 0)->first();
 
             if ($found) {
