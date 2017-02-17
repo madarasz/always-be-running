@@ -166,7 +166,7 @@
                             New entries since:
                             <ul>
                                 @foreach($ktm_packs as $key=>$pack)
-                                    <li>{{$key}}: {{$pack[0]}} entries ({{$pack[1]}} decks)</li>
+                                    <li>{{$key}}: {{$pack[0]}} entries ({{$pack[1]}} claims)</li>
                                 @endforeach
                             </ul>
                         </p>

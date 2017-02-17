@@ -3,17 +3,14 @@
 @section('content')
     <h4 class="page-header">Support me</h4>
     <div class="row">
-        <div class="col-xs-2 text-xs-center" style="margin: auto">
-            <img src="/favicon-96x96.png" class="img-fluid"/>
-        </div>
         <div class="col-xs-8">
             <div class="bracket text-justify">
                 <img src="/img/portrait.jpg" class="pull-left" style="height: 3.5em; border-radius: 50%; margin: 0.5em 0.5em 0.5em 0;"/>
                 Hi,
                 I'm <strong>Necro</strong> and I'm the creator of
-                <a href="https://alwaysberunning.net">AlwaysBeRunning.net</a> and
-                <a href="http://www.knowthemeta.com"/>KnowTheMeta.com</a>. I provide these websites and services
-                <strong>free of charge</strong> for lovers of Netrunner all around the globe.
+                <img src="/favicon-96x96.png" class="img-inline"/><a href="https://alwaysberunning.net">AlwaysBeRunning.net</a> and
+                <img src="http://www.knowthemeta.com/favicon-96x96.png" class="img-inline"/><a href="http://www.knowthemeta.com"/>KnowTheMeta.com</a>.
+                I provide these websites and services <strong>free of charge</strong> for lovers of Netrunner all around the globe.
                 I'm doing this in my spare time. I would appreciate your support and get a warm, fuzzy feeling that
                 my work matters.
                 <div class="text-xs-center p-t-1">
@@ -34,10 +31,21 @@
 
             </div>
         </div>
-        <div class="col-xs-2 text-xs-center" style="margin: auto">
-            <img src="http://www.knowthemeta.com/favicon-96x96.png" class="img-fluid"/>
+        <div class="col-xs-4">
+            <div class="bracket">
+                <img src="/img/placeholder-youtube.png" class="img-fluid"/>
+                <div class="legal-bullshit text-xs-center">support me video coming soon</div>
+                <hr/>
+                <div class="text-xs-center">
+                    <strong>Thank you to all of my supporters!</strong><br/>
+                    @foreach($supporters as $key=>$supporter)
+                        <a href="/profile/{{$supporter->id}}" class="supporter">{{$supporter->displayUsername()}}</a>{{$key < $scount -1 ? ', ' : ''}}
+                    @endforeach
+                </div>
+            </div>
         </div>
     </div>
+    <hr/>
     <div class="row">
         <div class="col-md-4 col-xs-12">
             <div class="bracket">
@@ -85,6 +93,7 @@
             </div>
         </div>
     </div>
+    <hr/>
     <div class="row">
         <div class="col-xs-12">
             <div class="bracket">

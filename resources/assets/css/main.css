@@ -690,6 +690,11 @@ a.anchor {
     content: url(/img/logo_patreon_o.png);
     height: 1em;
 }
+.img-inline {
+    height: 1em;
+    margin-top: -0.2em;
+    margin-right: 0.2em;
+}
 /* supporter username */
 .supporter {
     color: #d89602 !important;

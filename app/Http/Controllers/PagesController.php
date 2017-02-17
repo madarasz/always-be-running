@@ -219,7 +219,9 @@ class PagesController extends Controller
     public function supportMe()
     {
         $badges = Badge::where('order', '>', 9000)->orderBy('order')->get();
-        return view('supportme', compact('badges'));
+        $supporters = User::where('supporter', '>', 0)->orderBy('supporter', 'desc')->get();
+        $scount = count($supporters);
+        return view('supportme', compact('badges', 'supporters', 'scount'));
     }
 
     public function thankYou()
