@@ -4,10 +4,13 @@
         {{--General--}}
         <div class="bracket">
             {{--Title--}}
-            <div class="form-group">
-                {!! Html::decode(Form::label('title', 'Tournament title<sup class="text-danger">*</sup>')) !!}
+            <div class="form-group hide-nonrequired">
+                {!! Form::label('title', 'Tournament title') !!}
+                @include('partials.popover', ['direction' => 'right', 'content' =>
+                            'You can leave this field empty. If you do, it will be constructed as
+                            "<em>store name OR city</em> - <em>tournament type</em>".'])
                 {!! Form::text('title', old('title', $tournament->title),
-                     ['class' => 'form-control', 'required' => '', 'placeholder' => 'Title']) !!}
+                     ['class' => 'form-control', 'placeholder' => 'Title']) !!}
             </div>
             <div class="row">
                 {{--Tournament type--}}

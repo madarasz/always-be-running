@@ -161,6 +161,7 @@ function hideNonRequired() {
     } else {
         $('.hide-nonrequired').removeClass('hidden-xs-up');
     }
+    $('.popover').popover('hide');
 }
 
 // toggle manually adding entries on tournament view page

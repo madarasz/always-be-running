@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Http\Requests\Request;
+use App\TournamentType;
 
 class TournamentRequest extends Request
 {
@@ -26,7 +27,6 @@ class TournamentRequest extends Request
         $player_rules = is_null(Request::get('concluded')) ? '' : '|required'; // if concluded, players number is required
 
         $rules = [
-            'title' => 'required',
             'date' => 'date_format:Y.m.d.',
             'players_number' => 'integer|between:1,1000'.$player_rules,
             'top_number' => 'integer|between:0,1000|players_top:'.Request::get('players_number').','.Request::get('top_number'),
@@ -55,6 +55,17 @@ class TournamentRequest extends Request
     public function sanitize_data($user_id = null)
     {
         $input = array_map('trim', $this->all());
+
+        // if tournament title missing, construct it
+        if (!strlen($input['title'])) {
+            if (strlen($input['location_store'])) {
+                $input['title'] = $input['location_store'];
+            } else {
+                $input['title'] = $input['location_city'];
+            }
+            $input['title'] = $input['title'].' - '.
+                ucwords(TournamentType::findOrFail($input['tournament_type_id'])->type_name);
+        }
 
         // concluded tournaments
         if (array_key_exists('concluded', $input))
