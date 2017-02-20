@@ -9,7 +9,8 @@ class Entry extends Model
     public $timestamps = true;
     protected $fillable = ['rank', 'rank_top', 'runner_deck_title', 'runner_deck_id', 'runner_deck_identity',
         'corp_deck_title', 'corp_deck_id', 'corp_deck_identity', 'approved', 'user', 'tournament_id', 'import_username',
-        'runner_deck_type', 'corp_deck_type', 'netrunnerdb_claim_corp', 'netrunnerdb_claim_runner', 'type'];
+        'runner_deck_type', 'corp_deck_type', 'netrunnerdb_claim_corp', 'netrunnerdb_claim_runner', 'type',
+        'broken_runner', 'broken_corp'];
     protected $dates = ['created_at', 'updated_at'];
 
     public function tournament() {

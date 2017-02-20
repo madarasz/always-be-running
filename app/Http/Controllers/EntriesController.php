@@ -110,6 +110,8 @@ class EntriesController extends Controller
             'runner_deck_identity' => $runner_deck['identity'],
             'runner_deck_type' => $runner_deck['type'],
             'import_username' => $merge_name,
+            'broken_runner' => 0,
+            'broken_corp' => 0,
             'type' => 3
         ];
 
