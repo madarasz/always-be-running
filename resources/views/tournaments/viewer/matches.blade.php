@@ -4,9 +4,13 @@
         <i class="fa fa-handshake-o" aria-hidden="true"></i>
         Matches
         <div class="pull-right">
-            <button class="btn btn-primary btn-xs disabled" id="button-showmatches" disabled onclick="displayMatches({{ $tournament->id }})">
+            <button class="btn btn-primary btn-xs disabled" id="button-showmatches" disabled onclick="displayMatches({{ $tournament->id }}, true)">
                 <i class="fa fa-eye" aria-hidden="true"></i>
                 show
+            </button>
+            <button class="btn btn-primary btn-xs hidden-xs-up" id="button-hidematches" onclick="displayMatches({{ $tournament->id }}, false)">
+                <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                hide
             </button>
         </div>
     </h5>

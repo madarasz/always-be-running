@@ -156,8 +156,26 @@ function fillMatchRow(player1, player2, matchId, match) {
     }
 }
 
-function displayMatches(id) {
+function displayMatches(id, show) {
+    // hide
+    if (!show) {
+        $('#button-showmatches').removeClass('hidden-xs-up');
+        $('#button-hidematches').addClass('hidden-xs-up');
+        $('#content-matches').addClass('hidden-xs-up');
+        return 0;
+    }
+
+    // show
     $('#button-showmatches').addClass('hidden-xs-up');
+    $('#button-hidematches').removeClass('hidden-xs-up');
+
+    // end running if data is already loaded
+    if ($('#table-matches-swiss tbody').length) {
+        $('#content-matches').removeClass('hidden-xs-up');
+        return 0;
+    }
+
+    // show loader
     $('#loader-content').removeClass('hidden-xs-up');
     $('#content-matches').addClass('p-b-3');
 
