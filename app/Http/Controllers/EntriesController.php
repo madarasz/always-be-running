@@ -182,7 +182,7 @@ class EntriesController extends Controller
             try {
                 $response = app('App\Http\Controllers\NetrunnerDBController')->addClaimToNRDB(
                     $result['id'], $tournament->title, 'https://alwaysberunning.net'.$tournament->seoUrl(), $rank,
-                    $tournament->players_number, $userID);
+                    $tournament->players_number);
             } catch (\Exception $e) {
                 throw new \Exception('NetrunnerDB claim error: "'.$result['title'].'" - '.$e->getMessage());
             }

@@ -276,11 +276,11 @@ class NetrunnerDBController extends Controller
      * @return mixed claim ID on NetrunnerDB
      * @throws \Exception
      */
-    public function addClaimToNRDB($decklistID, $tournamentName, $url, $rank, $playerNumber, $userID) {
+    public function addClaimToNRDB($decklistID, $tournamentName, $url, $rank, $playerNumber) {
         $response = json_decode($this->oauth->requestWrapper(
             'https://netrunnerdb.com/api/2.1/private/decklists/'.$decklistID.'/claims',
             'POST', json_encode(['name' => $tournamentName, 'url' => $url, 'rank' => $rank,
-            'participants' => $playerNumber, 'user_id' => $userID])), true);
+            'participants' => $playerNumber])), true);
 
         if (array_key_exists('status', $response) && $response['status'] === 'success') {
             return $response['data']['claim']['id'];

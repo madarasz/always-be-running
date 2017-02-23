@@ -159,62 +159,6 @@ class AdminController extends Controller
     }
 
     /**
-     * Exports claims to NetrunnerDB.
-     * @param Request $request
-     * @return mixed
-     */
-    public function exportNetrunnerDBBacklinks(Request $request) {
-        $this->authorize('admin', Tournament::class, $request->user());
-
-        $deletedOrRejected = Tournament::withTrashed()->where(function($q) {
-                $q->where('approved', '=', 0)->orWhere('deleted_at', '>', 0);
-            })->pluck('id')->all();
-
-        // find claims to export
-        $claims = Entry::where('user', '>', 0)->where('rank', '>', 0)
-            ->where('runner_deck_id', '>', 0)->where('corp_deck_id', '>', 0)
-            ->whereNull('netrunnerdb_claim_corp')->whereNull('netrunnerdb_claim_runner')
-            ->whereNotIn('tournament_id', $deletedOrRejected)->get();
-
-        $count = 0;
-        foreach($claims as $claim) {
-            $tournament = Tournament::findOrFail($claim->tournament_id);
-            // runner deck
-            if ($claim->runner_deck_type == 1 && !$claim->broken_runner) {
-                try {
-                    $claim->netrunnerdb_claim_runner = app('App\Http\Controllers\NetrunnerDBController')->addClaimToNRDB(
-                        $claim->runner_deck_id, $tournament->title, 'https://alwaysberunning.net' . $tournament->seoUrl(), $claim->rank(),
-                        $tournament->players_number, $claim->user);
-                    $claim->save();
-                    $count++;
-                } catch (\Exception $e) {
-                    return redirect()->back()->withErrors([$e->getMessage()]);
-                }
-            } else {
-                $claim->netrunnerdb_claim_runner = 0;
-                $claim->save();
-            }
-            // corp deck
-            if ($claim->corp_deck_type == 1 && !$claim->broken_corp) {
-                try {
-                    $claim->netrunnerdb_claim_corp = app('App\Http\Controllers\NetrunnerDBController')->addClaimToNRDB(
-                        $claim->corp_deck_id, $tournament->title, 'https://alwaysberunning.net' . $tournament->seoUrl(), $claim->rank(),
-                        $tournament->players_number, $claim->user);
-                    $claim->save();
-                    $count++;
-                } catch (\Exception $e) {
-                    return redirect()->back()->withErrors([$e->getMessage()]);
-                }
-            } else {
-                $claim->netrunnerdb_claim_corp = 0;
-                $claim->save();
-            }
-        }
-
-        return back()->with('message', 'Backlinks added: '.$count);
-    }
-
-    /**
      * Flags broken decks
      * @param Request $request
      * @return mixed
@@ -233,17 +177,27 @@ class AdminController extends Controller
 
         $count = 0;
         foreach($claims as $claim) {
+            // runner
             if (app('App\Http\Controllers\NetrunnerDBController')
                 ->isDeckLinkBroken($claim->runner_deck_type == 1, $claim->runner_deck_id)) {
                 $claim->broken_runner = true;
                 $claim->save();
                 $count++;
+            } elseif ($claim->broken_runner) {
+                $claim->broken_runner = false;
+                $claim->save();
+                $count--;
             }
+            // corp
             if (app('App\Http\Controllers\NetrunnerDBController')
                 ->isDeckLinkBroken($claim->corp_deck_type == 1, $claim->corp_deck_id)) {
                 $claim->broken_corp = true;
                 $claim->save();
                 $count++;
+            } elseif ($claim->broken_corp) {
+                $claim->broken_corp = false;
+                $claim->save();
+                $count--;
             }
         }
 

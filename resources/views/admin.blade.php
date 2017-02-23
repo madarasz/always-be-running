@@ -151,8 +151,7 @@
                         <p>
                             With backlink to NetrunnerDB: {{ $backlink_count }}<br/>
                             Without backlink to NetrunnerDB: {{ $no_backlink_count }}<br/>
-                            Unexported: {{ $unexported_count }}<br/>
-                            <a href="/admin/decks/export" class="btn btn-primary disabled">Export backlinks</a>
+                            Unexported: {{ $unexported_count }}
                         </p>
                     </div>
                     {{--KTM update--}}
