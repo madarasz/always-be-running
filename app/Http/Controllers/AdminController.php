@@ -59,15 +59,17 @@ class AdminController extends Controller
         // Know the Meta update calculation
         $ktm_update = preg_replace('/\./i', '-', file_get_contents('http://www.knowthemeta.com/LastUpdate/'));
         $ktm_packs = [];
-        foreach($packs as $pack) {
-            $pack_tournaments = Tournament::where('cardpool_id', $pack->toArray()[0]['id'])->pluck('id')->all();
-            if (count($pack_tournaments)) {
-                $pack_entries = Entry::whereIn('type', [1, 11, 12, 13, 3])->where('updated_at', '>', $ktm_update)
-                    ->whereIn('tournament_id', $pack_tournaments)->count();
-                $pack_decks= Entry::where('type', 3)->where('updated_at', '>', $ktm_update)
-                    ->whereIn('tournament_id', $pack_tournaments)->count();
-                if ($pack_entries) {
-                    $ktm_packs[$pack->toArray()[0]['name']] = [$pack_entries, $pack_decks];
+        foreach($packs as $cycle) {
+            foreach($cycle as $pack) {
+                $pack_tournaments = Tournament::where('cardpool_id', $pack->toArray()['id'])->pluck('id')->all();
+                if (count($pack_tournaments)) {
+                    $pack_entries = Entry::whereIn('type', [1, 11, 12, 13, 3, 4])->where('updated_at', '>', $ktm_update)
+                        ->whereIn('tournament_id', $pack_tournaments)->count();
+                    $pack_decks = Entry::where('type', 3)->where('updated_at', '>', $ktm_update)
+                        ->whereIn('tournament_id', $pack_tournaments)->count();
+                    if ($pack_entries) {
+                        $ktm_packs[$pack->toArray()['name']] = [$pack_entries, $pack_decks];
+                    }
                 }
             }
         }
