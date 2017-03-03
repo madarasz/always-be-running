@@ -127,12 +127,12 @@ class TournamentsController extends Controller
         // all usernames for transferring, IDs for adding entries
         if ($request->user() && ($request->user()->admin || $request->user()->id == $tournament->creator)) {
             $all_users = User::orderBy('name')->pluck('name', 'id');
-            $runnerIDs = $this->categorizeIDs(CardIdentity::where('runner', 1)
-                ->orderBy('faction_code')->orderBy('title')->get());
-            $corpIDs = $this->categorizeIDs(CardIdentity::where('runner', 0)
-                ->orderBy('faction_code')->orderBy('title')->get());
         }
 
+        $runnerIDs = $this->categorizeIDs(CardIdentity::where('runner', 1)
+            ->orderBy('faction_code')->orderBy('title')->get());
+        $corpIDs = $this->categorizeIDs(CardIdentity::where('runner', 0)
+            ->orderBy('faction_code')->orderBy('title')->get());
         $type = $tournament->tournament_type->type_name;
         $message = session()->has('message') ? session('message') : '';
         $nowdate = date('Y.m.d.');
@@ -687,7 +687,7 @@ class TournamentsController extends Controller
      * @param $identities
      * @return array
      */
-    private function categorizeIDs($identities) {
+    public function categorizeIDs($identities) {
 
         // preprocessing: mini-factions, draft
         foreach($identities as $id) {
