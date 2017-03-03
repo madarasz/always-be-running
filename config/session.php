@@ -29,7 +29,7 @@ return [
     |
     */
 
-    'lifetime' => 120,
+    'lifetime' => 20160,
 
     'expire_on_close' => false,
 
@@ -70,7 +70,7 @@ return [
     |
     */
 
-    'connection' => null,
+    'connection' => 'mysql',
 
     /*
     |--------------------------------------------------------------------------
