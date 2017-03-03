@@ -33,6 +33,7 @@ Route::patch('tournaments/{id}/transfer', 'TournamentsController@transfer');
 Route::get('tournaments/{id}/register', 'EntriesController@register');
 Route::get('tournaments/{id}/unregister', 'EntriesController@unregister');
 Route::post('tournaments/{id}/claim', 'EntriesController@claim');
+Route::post('tournaments/{id}/claim-no-deck', 'EntriesController@claimWithoutDecks');
 Route::delete('tournaments/{id}/purge', 'TournamentsController@purge');
 Route::delete('entries/{id}', 'EntriesController@unclaim');
 Route::delete('entries/anonym/{id}', 'EntriesController@deleteAnonym');

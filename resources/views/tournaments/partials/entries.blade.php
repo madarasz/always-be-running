@@ -34,7 +34,7 @@
                 @if ($entry->corp_deck_identity)
                     <img src="/img/ids/{{ $entry->corp_deck_identity }}.png">&nbsp;
                 @endif
-                @if ($entry->corp_deck_id)
+                @if ($entry->type == 3)
                     @if ($entry->broken_corp)
                         <i class="fa fa-chain-broken text-danger" title="broken link"></i>
                     @endif
@@ -49,7 +49,7 @@
                             {{ $entry->corp_deck_title }}
                         </a>
                     @else
-                        data error
+                        {{ $entry->corp_deck_title }}
                     @endif
                 @else
                     {{ $entry->corp_deck_title }}
@@ -60,7 +60,7 @@
                 @if ($entry->runner_deck_identity)
                     <img src="/img/ids/{{ $entry->runner_deck_identity }}.png">&nbsp;
                 @endif
-                @if ($entry->runner_deck_id)
+                @if ($entry->type == 3)
                         @if ($entry->broken_runner)
                             <i class="fa fa-chain-broken text-danger" title="broken link"></i>
                         @endif
@@ -75,13 +75,14 @@
                             {{ $entry->runner_deck_title }}
                         </a>
                     @else
-                        data error
+                        {{ $entry->runner_deck_title }}
                     @endif
                 @else
                     {{ $entry->runner_deck_title }}
                 @endif
             </td>
-            @if ($entry->runner_deck_id && (($user && ($user->admin || $user->id == $creator))
+            {{--Remove button--}}
+            @if (($entry->type == 3 || $entry->type == 4) && (($user && ($user->admin || $user->id == $creator))
                 || ($user_entry && count($entry) && $entry->user == $user_entry->user)))
                 <td class="text-right">
                     {!! Form::open(['method' => 'DELETE', 'url' => "/entries/$entry->id"]) !!}

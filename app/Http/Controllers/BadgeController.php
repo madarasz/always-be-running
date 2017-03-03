@@ -100,11 +100,11 @@ class BadgeController extends Controller
         }
 
         // winner
-        $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('rank_top', 1)->first();
+        $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('rank_top', 1)->where('type', 3)->first();
         // maybe there was no top-cut
         if (!$found) {
             $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->whereNull('rank_top')
-                ->where('rank',1)->first();
+                ->where('rank',1)->where('type', 3)->first();
         }
 
         if ($found) {
@@ -117,14 +117,14 @@ class BadgeController extends Controller
         } elseif ($type > 2) {
 
             // top 16
-            $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('rank_top', '>', 0)->first();
+            $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('rank_top', '>', 0)->where('type', 3)->first();
 
             if ($found) {
                 $badgeid = Badge::where('tournament_type_id', $type)->where('year', $year)->where('winlevel', 2)->first()->id;
                 $badges[$badgeid] = true;
             } elseif ($type == 5) {
                 // participation
-                $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('runner_deck_id', '>', 0)->first();
+                $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('runner_deck_id', '>', 0)->where('type', 3)->first();
                 if ($found) {
                     $badgeid = Badge::where('tournament_type_id', $type)->where('year', $year)->where('winlevel', 5)->first()->id;
                     $badges[$badgeid] = true;
@@ -145,7 +145,7 @@ class BadgeController extends Controller
     }
 
     private function addPlayerLevelBadges($userid, &$badges) {
-        $count = Entry::where('user', $userid)->where('runner_deck_id', '>', 0)->count();
+        $count = Entry::where('user', $userid)->where('type', 3)->where('type', 3)->count();
         if ($count >= 20) {
             $badges[15] = true;   // GOLD player
         } elseif ($count >= 8) {
@@ -156,7 +156,7 @@ class BadgeController extends Controller
     }
 
     private function addFactionBadges($userid, &$badges) {
-        $mini = Entry::where('user', $userid)->whereIn('runner_deck_identity', ['09029', '09045', '09037'])->first();
+        $mini = Entry::where('user', $userid)->where('type', 3)->whereIn('runner_deck_identity', ['09029', '09045', '09037'])->where('type', 3)->first();
         if ($mini) {
             $badges[27] = true; // minority report
         }
@@ -165,9 +165,9 @@ class BadgeController extends Controller
         $crims = CardIdentity::where('faction_code','criminal')->pluck('id');
         $anarchs = CardIdentity::where('faction_code','anarch')->pluck('id');
 
-        if (Entry::where('user', $userid)->whereIn('runner_deck_identity', $shapers)->first() &&
-            Entry::where('user', $userid)->whereIn('runner_deck_identity', $crims)->first() &&
-            Entry::where('user', $userid)->whereIn('runner_deck_identity', $anarchs)->first()) {
+        if (Entry::where('user', $userid)->whereIn('runner_deck_identity', $shapers)->where('type', 3)->first() &&
+            Entry::where('user', $userid)->whereIn('runner_deck_identity', $crims)->where('type', 3)->first() &&
+            Entry::where('user', $userid)->whereIn('runner_deck_identity', $anarchs)->where('type', 3)->first()) {
             $badges[28] = true; // self-modifying personality
         }
 
@@ -176,10 +176,10 @@ class BadgeController extends Controller
         $weyland = CardIdentity::where('faction_code','weyland-cons')->pluck('id');
         $jinteki = CardIdentity::where('faction_code','jinteki')->pluck('id');
 
-        if (Entry::where('user', $userid)->whereIn('corp_deck_identity', $nbn)->first() &&
-            Entry::where('user', $userid)->whereIn('corp_deck_identity', $hb)->first() &&
-            Entry::where('user', $userid)->whereIn('corp_deck_identity', $weyland)->first() &&
-            Entry::where('user', $userid)->whereIn('corp_deck_identity', $jinteki)->first()) {
+        if (Entry::where('user', $userid)->whereIn('corp_deck_identity', $nbn)->where('type', 3)->first() &&
+            Entry::where('user', $userid)->whereIn('corp_deck_identity', $hb)->where('type', 3)->first() &&
+            Entry::where('user', $userid)->whereIn('corp_deck_identity', $weyland)->where('type', 3)->first() &&
+            Entry::where('user', $userid)->whereIn('corp_deck_identity', $jinteki)->where('type', 3)->first()) {
             $badges[29] = true; // diversified portfolio
         }
     }
@@ -189,9 +189,9 @@ class BadgeController extends Controller
         $regionals = Tournament::where('tournament_type_id', 3)->where('approved', 1)->pluck('id');
         $nationals = Tournament::where('tournament_type_id', 4)->where('approved', 1)->pluck('id');
 
-        if (Entry::where('user', $userid)->whereIn('tournament_id', $stores)->where('rank', '>', 0)->first() &&
-            Entry::where('user', $userid)->whereIn('tournament_id', $regionals)->where('rank', '>', 0)->first() &&
-            Entry::where('user', $userid)->whereIn('tournament_id', $nationals)->where('rank', '>', 0)->first()) {
+        if (Entry::where('user', $userid)->whereIn('tournament_id', $stores)->where('rank', '>', 0)->where('type', 3)->first() &&
+            Entry::where('user', $userid)->whereIn('tournament_id', $regionals)->where('rank', '>', 0)->where('type', 3)->first() &&
+            Entry::where('user', $userid)->whereIn('tournament_id', $nationals)->where('rank', '>', 0)->where('type', 3)->first()) {
             $badges[34] = true; // road to worlds
         }
 
@@ -253,7 +253,7 @@ class BadgeController extends Controller
 
     private function addCOS($userid, &$badges) {
         $tournaments = Tournament::whereIn('tournament_type_id', [1, 6, 7])->where('players_number', '>', 7)->where('approved', 1)->pluck('id');
-        $entries = Entry::where('user', $userid)->whereIn('tournament_id', $tournaments)->get();
+        $entries = Entry::where('user', $userid)->whereIn('tournament_id', $tournaments)->where('type', 3)->get();
         foreach ($entries as $entry) {
             if ($entry->rank() == 1) {
                 $badges[35] = true; // champion of sorts
@@ -285,8 +285,9 @@ class BadgeController extends Controller
 
     private function addCharity($userid, &$badges) {
         $charities = Tournament::where('charity', 1)->where('approved', 1)->pluck('id');
-        if (Entry::where('user', $userid)->whereIn('tournament_id', $charities)->where('rank', '>', 0)->first()) {
-            $badges[38] = true; // charity
+        if (Entry::where('user', $userid)->whereIn('tournament_id', $charities)->where('rank', '>', 0)
+            ->where('type', 3)->first()) {
+                $badges[38] = true; // charity
         }
     }
 

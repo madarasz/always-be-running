@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\EntryRequest;
+use App\Http\Requests\EntryNoDeckRequest;
 use App\Tournament;
 use App\Entry;
 use App\User;
@@ -138,6 +139,76 @@ class EntriesController extends Controller
 
         // add badges
         App('App\Http\Controllers\BadgeController')->addClaimBadges($request->user()->id);
+
+        return redirect()->back()->with('message', 'You have claimed a spot on the tournament.');
+    }
+
+    public function claimWithoutDecks(EntryNoDeckRequest $request, $id)
+    {
+        $this->authorize('logged_in', Tournament::class, $request->user());
+        $user_id = $request->user()->id;
+        $tournament = Tournament::withTrashed()->findOrFail($id);
+
+        // getting registration for tournament or imported entry
+        $reg_entry = Entry::where('user', $user_id)->where('tournament_id', $id)->first();
+
+        // with top
+        if ($tournament->top_number && $request->rank_top_nodeck) {
+            $import_entry = Entry::where('tournament_id', $id)->where('user', 0)->where(function ($q) use ($request) {
+                $q->where('rank', $request->rank_nodeck)->orWhere('rank_top', $request->rank_top_nodeck);
+            })->first();
+        } else { // without top
+            $import_entry = Entry::where('tournament_id', $id)->where('user', 0)->where('rank', $request->rank_nodeck)->first();
+        }
+
+        // top rank null adjust
+        if (!is_null($import_entry) && is_null($import_entry->rank_top)) {
+            $import_entry->rank_top = 0;
+        }
+
+        // merging with import entry
+        if (!is_null($import_entry) &&     // if there is an import entry
+            ($import_entry->runner_deck_identity == $request['runner_deck_identity'] || strlen($import_entry->runner_deck_identity) < 1) &&   // and IDs match
+            ($import_entry->corp_deck_identity == $request['corp_deck_identity'] || strlen($import_entry->corp_deck_identity) < 1) &&
+            $import_entry->rank == $request->rank_nodeck && (!$tournament->top_number || $import_entry->rank_top == $request->rank_top_nodeck)) // and rank, top_rank match
+        {
+            Entry::destroy($import_entry->id);    // delete import entry
+            $merge_name = $import_entry->import_username;
+        } else {
+            $merge_name = null;
+        }
+
+        $entry = [
+            'rank' => $request->rank_nodeck,
+            'rank_top' => $request->rank_top_nodeck,
+            'corp_deck_id' => null,
+            'corp_deck_title' => $request['corp_deck_title'],
+            'corp_deck_identity' => $request['corp_deck_identity'],
+            'corp_deck_type' => null,
+            'runner_deck_id' => null,
+            'runner_deck_title' => $request['runner_deck_title'],
+            'runner_deck_identity' => $request['runner_deck_identity'],
+            'runner_deck_type' => null,
+            'import_username' => $merge_name,
+            'broken_runner' => 0,
+            'broken_corp' => 0,
+            'netrunnerdb_claim_runner' => 0,
+            'netrunnerdb_claim_corp' => 0,
+            'type' => 4
+        ];
+
+        if (is_null($reg_entry)) {   // new claim
+            Entry::create([         // additional fields
+                    'user' => $request->user()->id,
+                    'approved' => 1,
+                    'tournament_id' => $id
+                ] + $entry);
+        } else {    // merging with registration
+            $reg_entry->update($entry);
+        }
+
+        // add conflict if needed
+        $tournament->updateConflict();
 
         return redirect()->back()->with('message', 'You have claimed a spot on the tournament.');
     }

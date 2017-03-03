@@ -675,6 +675,10 @@ a.anchor {
 .card-darker hr {
     border-top: 1px solid rgba(0,0,0,0.3);
 }
+/*dashed hr*/
+hr.dashed {
+    border-top: 1px dashed rgba(0,0,0,0.3) !important;
+}
 /* points cell */
 .cell-points {
     line-height: 1em;
@@ -701,4 +705,14 @@ a.anchor {
 }
 a.supporter:hover {
     color: #8e6101 !important;
+}
+/*modal tabs*/
+.modal-tabs > ul.nav-tabs {
+    background-color: #eee;
+}
+.modal-tabs > ul.nav-tabs > li > a:not(.active){
+    color: #777 !important;
+}
+.modal-tabs > ul.nav-tabs > li > a:not(.active):hover {
+    color: #55595c !important;
 }

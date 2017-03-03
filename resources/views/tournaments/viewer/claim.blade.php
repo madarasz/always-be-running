@@ -3,7 +3,7 @@
     <hr/>
     <h6>Your claim</h6>
     {{--Existing claim--}}
-    @if ($user_entry && $user_entry->runner_deck_id)
+    @if ($user_entry && $user_entry->type >= 3)
         <ul id="player-claim">
             @if ($tournament->top_number)
                 <li>Top cut rank:
@@ -16,7 +16,7 @@
             @endif
             <li>Swiss rounds rank: <strong>#{{ $user_entry->rank }}</strong></li>
             <li>
-                Corporation deck:
+                Corporation {{ $user_entry->type == 3 ? 'deck' : 'ID'}}:
                 <img src="/img/ids/{{ $user_entry->corp_deck_identity }}.png">&nbsp;
                 {{--public deck--}}
                 @if ($user_entry->corp_deck_type == 1)
@@ -29,11 +29,11 @@
                         {{ $user_entry->corp_deck_title }}
                     </a>
                 @else
-                    data error
+                    {{ $user_entry->corp_deck_title }}
                 @endif
             </li>
             <li>
-                Runner deck:
+                Runner {{ $user_entry->type == 3 ? 'deck' : 'ID'}}:
                 <img src="/img/ids/{{ $user_entry->runner_deck_identity }}.png">&nbsp;
                 {{--public deck--}}
                 @if ($user_entry->runner_deck_type == 1)
@@ -46,7 +46,7 @@
                         {{ $user_entry->runner_deck_title }}
                     </a>
                 @else
-                    data error
+                    {{ $user_entry->runner_deck_title }}
                 @endif
             </li>
         </ul>

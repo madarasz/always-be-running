@@ -105,7 +105,11 @@
                         @foreach($claims as $claim)
                             <li>
                                 #{{ $claim->rank() }} / {{ $claim->tournament()->first()->players_number }}
-                                <a href="{{ $claim->runner_deck_url() }}"><img src="/img/ids/{{ $claim->runner_deck_identity }}.png"></a>&nbsp;<a href="{{ $claim->corp_deck_url() }}"><img src="/img/ids/{{ $claim->corp_deck_identity }}.png"></a>
+                                @if ($claim->type == 3)
+                                    <a href="{{ $claim->runner_deck_url() }}"><img src="/img/ids/{{ $claim->runner_deck_identity }}.png"></a>&nbsp;<a href="{{ $claim->corp_deck_url() }}"><img src="/img/ids/{{ $claim->corp_deck_identity }}.png"></a>
+                                @else
+                                    <img src="/img/ids/{{ $claim->runner_deck_identity }}.png">&nbsp;<img src="/img/ids/{{ $claim->corp_deck_identity }}.png">
+                                @endif
                                 <a href="{{ $claim->tournament()->first()->seoUrl() }}">
                                     {{ $claim->tournament()->first()->title }}
                                 </a>

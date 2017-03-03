@@ -105,7 +105,12 @@ class PagesController extends Controller
         $claim_count = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')->count();
         $username = $request->user()->name;
         $page_section = 'personal';
-        return view('personal', compact('message', 'user', 'username', 'page_section', 'created_count', 'claim_count'));
+        $runnerIDs = app('App\Http\Controllers\TournamentsController')->categorizeIDs(CardIdentity::where('runner', 1)
+            ->orderBy('faction_code')->orderBy('title')->get());
+        $corpIDs = app('App\Http\Controllers\TournamentsController')->categorizeIDs(CardIdentity::where('runner', 0)
+            ->orderBy('faction_code')->orderBy('title')->get());
+        return view('personal', compact('message', 'user', 'username', 'page_section', 'created_count', 'claim_count',
+            'runnerIDs', 'corpIDs'));
     }
 
     public function about()
@@ -141,8 +146,8 @@ class PagesController extends Controller
         $deleted_tournaments = Tournament::withTrashed()->whereNotNull('deleted_at')->pluck('id')->all();
         $message = session()->has('message') ? session('message') : '';
         $created_count = Tournament::where('creator', $user->id)->where('approved', 1)->count();
-        $claim_count = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')->count();
-        $claims = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')
+        $claim_count = Entry::where('user', $user->id)->whereIn('type', [3, 4])->count();
+        $claims = Entry::where('user', $user->id)->whereIn('type', [3, 4])
             ->whereNotIn('tournament_id', $deleted_tournaments)->get();
         $created = Tournament::where('creator', $user->id)->where('approved', 1)->get();
         $username = $user->name;

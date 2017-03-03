@@ -11,8 +11,24 @@
                     <div class="modal-subtitle" id="modal-subtitle"></div>
                 </h4>
             </div>
-            <div class="modal-body">
-                <div class="container-fluid bd-example-row">
+            <div class="modal-tabs">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#tab-with-decks" role="tab">
+                            <i class="fa fa-id-card-o" aria-hidden="true"></i>
+                            With decks
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#tab-without-decks" role="tab">
+                            <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+                            Without decks
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-body tab-content">
+                <div class="container-fluid bd-example-row tab-pane active" id="tab-with-decks" role="tabpanel">
                     {!! Form::open(['url' => "", 'id' => 'create-claim']) !!}
                         <input name="top_number" type="hidden" value="" id="hidden-top-value" />
                         {{--Rank selectors--}}
@@ -66,7 +82,15 @@
                             </div>
                             <a href="/oauth2/redirect">Login via NetrunnerDB</a> to claim spot.
                         </div>
-                        {{--claim with other--}}
+                        {{--Publish private decks--}}
+                        <div class="form-group text-xs-center m-b-0">
+                            {!! Form::checkbox('auto_publish', null, true, ['id' => 'auto_publish']) !!}
+                            {!! Form::label('auto_publish', 'publish selected private decks') !!}
+                            @include('partials.popover', ['direction' => 'top', 'content' =>
+                                'Selecting this option will create a published copy of the private decks you
+                                used.'])
+                        </div>
+                        {{--more options--}}
                         <div class="row">
                             <div class="col-xs-12 text-xs-right">
                                 <a data-toggle="collapse" href="#collapse-other-decks" aria-expanded="false" aria-controls="collapse-other-decks">
@@ -77,8 +101,9 @@
                         </div>
                         <div class="collapse" id="collapse-other-decks">
                             <div class="card card-darker">
-                                <div class="card-block row">
-                                    {{--Claim with someone else's decks--}}
+                                <div class="card-block">
+                                {{--Claim with someone else's decks--}}
+                                <div class="row">
                                     <div class="col-xs-12">
                                         <div class="text-xs-center p-b-1">
                                             claim with someone else's deck
@@ -104,27 +129,21 @@
                                                 'placeholder' => 'published deck ID']) !!}
                                         </div>
                                     </div>
-                                    {{--NetrunnerDB claim checkboxes--}}
+                                </div>
+                                {{--NetrunnerDB claim checkbox--}}
+                                <hr/>
+                                <div class="row">
                                     <div class="col-xs-12 text-xs-center">
-                                        <hr/>
-                                        <div class="p-t-1">
-                                            {!! Form::checkbox('netrunnerdb_link', null, env('DEFAULT_NETRUNNERDB_CLAIM'), ['id' => 'netrunnerdb_link']) !!}
-                                            {!! Form::label('netrunnerdb_link', 'add claim to decklists on NetrunnerDB', ['class' => 'm-b-0']) !!}
-                                            @include('partials.popover', ['direction' => 'bottom', 'content' =>
-                                                'Selecting this option will also add your claim to the decklist page of NetrunnerDB.
-                                                This is only available for published deckslists.'])
-                                            <div class="legal-bullshit">might take couple of minutes to appear</div>
-                                        </div>
+                                        {!! Form::checkbox('netrunnerdb_link', null, env('DEFAULT_NETRUNNERDB_CLAIM'), ['id' => 'netrunnerdb_link']) !!}
+                                        {!! Form::label('netrunnerdb_link', 'add claim to decklists on NetrunnerDB', ['class' => 'm-b-0']) !!}
+                                        @include('partials.popover', ['direction' => 'bottom', 'content' =>
+                                            'Selecting this option will also add your claim to the decklist page of NetrunnerDB.
+                                            This is only available for published deckslists. It might take couple of
+                                            minutes to appear.'])
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group text-xs-center p-t-1">
-                            {!! Form::checkbox('auto_publish', null, true, ['id' => 'auto_publish']) !!}
-                            {!! Form::label('auto_publish', 'publish selected private decks') !!}
-                            @include('partials.popover', ['direction' => 'top', 'content' =>
-                                'Selecting this option will create a published copy of the private decks you
-                                used.'])
+                            </div>
                         </div>
                         {{--Sumbit claim--}}
                         <div class="text-xs-center">
@@ -147,13 +166,80 @@
                         </div>
                     @endif
                 </div>
+                <div class="container-fluid bd-example-row tab-pane" id="tab-without-decks" role="tabpanel">
+                    {{--Claim without decks--}}
+                    {!! Form::open(['url' => "", 'id' => 'create-claim-nodeck']) !!}
+                        {!! Form::hidden('corp_deck_title', '', ['id' => 'corp_deck_title']) !!}
+                        {!! Form::hidden('runner_deck_title', '', ['id' => 'runner_deck_title']) !!}
+                        <input name="top_number" type="hidden" value="" id="hidden-top-value-nodeck" />
+                        {{--Rank selectors--}}
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="form-group">
+                                    {!! Form::label('rank_nodeck', 'rank after swiss rounds') !!}
+                                    {!! Form::select('rank_nodeck', [], null, ['class' => 'form-control']) !!}
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6" id="claim-top-section-nodeck">
+                                <div class="form-group">
+                                    {!! Form::label('rank_top_nodeck', 'rank after top cut') !!}
+                                    {!! Form::select('rank_top_nodeck', [], null, ['class' => 'form-control']) !!}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="form-group">
+                                    {!! Form::label('corp_deck_identity', 'corporation identity') !!}
+                                    <select name="corp_deck_identity" class="form-control" id="corp_deck_identity" onchange="recalculateDeckNames()">
+                                        @foreach($corpIDs as $key => $faction)
+                                            <optgroup label="{{ $key }}">
+                                                @foreach($faction as $code => $id)
+                                                    <option value="{{ $code }}">{{ $id }}</option>
+                                                @endforeach
+                                            </optgroup>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <div class="form-group">
+                                    {!! Form::label('runner_deck_identity', 'runner identity') !!}
+                                    <select name="runner_deck_identity" class="form-control" id="runner_deck_identity" onchange="recalculateDeckNames()">
+                                        @foreach($runnerIDs as $key => $faction)
+                                            <optgroup label="{{ $key }}">
+                                                @foreach($faction as $code => $id)
+                                                    <option value="{{ $code }}">{{ $id }}</option>
+                                                @endforeach
+                                            </optgroup>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        {{--Sumbit claim without decklists--}}
+                        <div class="text-xs-center p-t-1">
+                            <button type="submit" class="btn btn-danger" id="submit-claim">
+                                Claim spot without decks
+                            </button>
+                            <div class="legal-bullshit p-t-1">
+                                Please consider sharing your decks. The data gods would be pleased.<br/>
+                                You get no <a href="/badges">badges</a> for claiming without decks.
+                            </div>
+                        </div>
+                    {!! Form::close() !!}
+                </div>
             </div>
         </div>
     </div>
 </div>
 {{--Script to fill tournament claim modal--}}
 <script type="text/javascript">
-    var deckData = null, loading = false;
+    var deckData = null, loading = false, swissEntriesRunner = [], swissEntriesCorp = [];
+    @if (@$entries_swiss)
+        swissEntriesRunner = [@foreach($entries_swiss as $entry) '{{count($entry) ? $entry[0]->runner_deck_identity : ''}}', @endforeach];
+        swissEntriesCorp = [@foreach($entries_swiss as $entry) '{{count($entry) ? $entry[0]->corp_deck_identity : ''}}', @endforeach];
+    @endif
 
     $('#claimModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget); // Button that triggered the modal
@@ -164,25 +250,35 @@
         var modal = $(this);
         modal.find('.modal-subtitle').text(subtitle);
         modal.find('#create-claim').attr("action", "/tournaments/" + id + "/claim");
+        modal.find('#create-claim-nodeck').attr("action", "/tournaments/" + id + "/claim-no-deck");
         modal.find('#hidden-top-value').val(top_number);
+        modal.find('#hidden-top-value-nodeck').val(top_number);
 
         // ranks
         modal.find('#rank').empty();
+        modal.find('#rank_nodeck').empty();
         for (var count = 1; count <= players_number; count++) {
             modal.find('#rank').append($('<option>', {value: count, text: count}));
+            modal.find('#rank_nodeck').append($('<option>', {value: count, text: count}));
         }
 
         // top rank
         if (top_number) {
             modal.find('#claim-top-section').removeClass('hidden-xs-up');
-            modal.find('#rank_top').empty();
-            modal.find('#rank_top').append($('<option>', {value: '0', text: 'below top cut'}));
+            modal.find('#claim-top-section-nodeck').removeClass('hidden-xs-up');
+            modal.find('#rank_top').empty().append($('<option>', {value: '0', text: 'below top cut'}));
+            modal.find('#rank_top_nodeck').empty().append($('<option>', {value: '0', text: 'below top cut'}));
             for (count = 1; count <= top_number; count++) {
                 modal.find('#rank_top').append($('<option>', {value: count, text: count}));
+                modal.find('#rank_top_nodeck').append($('<option>', {value: count, text: count}));
             }
         } else {
             modal.find('#claim-top-section').addClass('hidden-xs-up');
+            modal.find('#claim-top-section-nodeck').addClass('hidden-xs-up');
         }
+
+        // update identities according to rank
+        setIdentities();
 
         // load deck via API
         if (!deckData) {
@@ -283,7 +379,7 @@
     // more options collapse display fix
     $('#collapse-other-decks').on('shown.bs.collapse', function () {
         $('#collapse-other-decks').css({
-            'display': 'flex'
+            'display': 'block'
         });
         $('#caret-more').removeClass('fa-caret-right').addClass('fa-caret-down');
         $('#text-more').text('less options');
@@ -297,15 +393,31 @@
         $('.popover').popover('hide');
     });
 
-    // claim modal: disable own decks if other deck ID is provided
+    // copy rank values between tabs
+    $('#rank').on('change', function () {
+        $('#rank_nodeck').val(this.value);
+        setIdentities();
+    });
+    $('#rank_nodeck').on('change', function () {
+        $('#rank').val(this.value);
+        setIdentities();
+    });
+    $('#rank_top').on('change', function () {
+        $('#rank_top_nodeck').val(this.value);
+    });
+    $('#rank_top_nodeck').on('change', function () {
+        $('#rank_top').val(this.value);
+    });
+
     function switchDeck(idOwn, idOther) {
+        setCheckBoxes();
+
+        // claim modal: disable own decks if other deck ID is provided
         if (document.getElementById(idOther).value.length > 0) {
             document.getElementById(idOwn).setAttribute('disabled','');
         } else {
             document.getElementById(idOwn).removeAttribute('disabled');
         }
-
-        setCheckBoxes();
     }
 
     // sets publishing checkbox visibility and NetrunnerDB claim eligibility
@@ -329,6 +441,20 @@
         } else {
             $('#netrunnerdb_link').prop("disabled", true);
         }
+    }
+
+    // set deck identities for claiming without decks
+    function setIdentities() {
+        if (swissEntriesCorp.length) {
+            var rank_swiss = document.getElementById('rank').value - 1;
+            if (swissEntriesCorp[rank_swiss].length) {
+                document.getElementById('corp_deck_identity').value = swissEntriesCorp[rank_swiss];
+            }
+            if (swissEntriesRunner[rank_swiss].length) {
+                document.getElementById('runner_deck_identity').value = swissEntriesRunner[rank_swiss];
+            }
+        }
+        recalculateDeckNames();
     }
 
 </script>

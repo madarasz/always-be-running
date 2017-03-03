@@ -15,12 +15,12 @@ class AddTypeToEntriesTable extends Migration
         Schema::table('entries', function (Blueprint $table) {
             $table->tinyInteger('type')->unsigned()->nullable();
             // 0 - user registered for tournament
+            // 2 - user registered with decklist - TO BE ADDED LATER
+            // 3 - claim with decklists
+            // 4 - claim without decklists
             // 11 - imported entry by NRTM
             // 12 - imported entry by CSV
             // 13 - imported entry by manual
-            // 2 - user registered with decklist - TO BE ADDED LATER
-            // 3 - claim with decklists
-            // 4 - claim without decklists - TO BE ADDED LATER
         });
     }
 
