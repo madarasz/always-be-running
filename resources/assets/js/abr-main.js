@@ -171,7 +171,7 @@ function toggleEntriesEdit(value) {
         $('.delete-anonym').removeClass('hidden-xs-up');
         $('#button-done-entries').removeClass('hidden-xs-up');
         $('#button-edit-entries').addClass('hidden-xs-up');
-        recalculateDeckNames();
+        recalculateDeckNames('_manual');
     } else {
         $('#section-edit-entries').addClass('hidden-xs-up');
         $('.delete-anonym').addClass('hidden-xs-up');
@@ -220,11 +220,11 @@ function showVideoList(show) {
 }
 
 // recalculating deck names from IDs while adding manually entries
-function recalculateDeckNames() {
-    var corp = document.getElementById('corp_deck_identity'),
-        runner = document.getElementById('runner_deck_identity');
-    document.getElementById('corp_deck_title').value = shortenID(corp.options[corp.selectedIndex].text);
-    document.getElementById('runner_deck_title').value = shortenID(runner.options[runner.selectedIndex].text);
+function recalculateDeckNames(postfix) {
+    var corp = document.getElementById('corp_deck_identity' + postfix),
+        runner = document.getElementById('runner_deck_identity' + postfix);
+    document.getElementById('corp_deck_title' + postfix).value = shortenID(corp.options[corp.selectedIndex].text);
+    document.getElementById('runner_deck_title' + postfix).value = shortenID(runner.options[runner.selectedIndex].text);
 }
 
 function percentageToString(fraction) {

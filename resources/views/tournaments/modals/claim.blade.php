@@ -191,7 +191,7 @@
                             <div class="col-xs-12 col-md-6">
                                 <div class="form-group">
                                     {!! Form::label('corp_deck_identity', 'corporation identity') !!}
-                                    <select name="corp_deck_identity" class="form-control" id="corp_deck_identity" onchange="recalculateDeckNames()">
+                                    <select name="corp_deck_identity" class="form-control" id="corp_deck_identity" onchange="recalculateDeckNames('')">
                                         @foreach($corpIDs as $key => $faction)
                                             <optgroup label="{{ $key }}">
                                                 @foreach($faction as $code => $id)
@@ -205,7 +205,7 @@
                             <div class="col-xs-12 col-md-6">
                                 <div class="form-group">
                                     {!! Form::label('runner_deck_identity', 'runner identity') !!}
-                                    <select name="runner_deck_identity" class="form-control" id="runner_deck_identity" onchange="recalculateDeckNames()">
+                                    <select name="runner_deck_identity" class="form-control" id="runner_deck_identity" onchange="recalculateDeckNames('')">
                                         @foreach($runnerIDs as $key => $faction)
                                             <optgroup label="{{ $key }}">
                                                 @foreach($faction as $code => $id)
@@ -454,7 +454,7 @@
                 document.getElementById('runner_deck_identity').value = swissEntriesRunner[rank_swiss];
             }
         }
-        recalculateDeckNames();
+        recalculateDeckNames('');
     }
 
 </script>
