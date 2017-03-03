@@ -277,7 +277,18 @@ function updateResultsURL(cardpool, type, country, videos) {
 
 
 // draws admin chart
-function drawAdminChart() {
+function drawAdminChart(entryTypes) {
+    // draw entry type chart
+    var entryData = google.visualization.arrayToDataTable(entryTypes),
+        entryChart = new google.visualization.PieChart(document.getElementById('chart-entry-types')),
+        entryOptions = {
+            width: 500,
+            height: 200,
+            chartArea: { top: 10, width:'100%', height:'90%' }
+        };
+    entryChart.draw(entryData, entryOptions);
+
+    // draw weekly and geo charts
     $.ajax({
         url: '/api/adminstats',
         dataType: "json",
@@ -287,22 +298,23 @@ function drawAdminChart() {
             document.getElementById("stat-total-tournaments").innerHTML = data.totalTournaments;
             document.getElementById("stat-total-entries").innerHTML = data.totalEntries;
             var chartData = google.visualization.arrayToDataTable(transformForAdminCharts(data)),
-                geoData = google.visualization.arrayToDataTable(transformForAdminGeoCharts(data.countries));
-            var options = {
-                curveType: 'function',
-                legend: { position: 'right' },
-                width: 900,
-                height: 500,
-                vAxis: { viewWindowMode:'explicit', viewWindow: {min: 0}},
-                hAxis: { title: 'weeks'}
-            }, geoOptions = {
-                height: 500,
-                width: 900
-            };
-            var chart = new google.visualization.LineChart(document.getElementById('chart1')),
-                chart2 = new google.visualization.GeoChart(document.getElementById('chart2'));
-            chart.draw(chartData, options);
-            chart2.draw(geoData, geoOptions);
+                geoData = google.visualization.arrayToDataTable(transformForAdminGeoCharts(data.countries)),
+                options = {
+                    curveType: 'function',
+                    legend: { position: 'right' },
+                    width: 900,
+                    height: 500,
+                    vAxis: { viewWindowMode:'explicit', viewWindow: {min: 0}},
+                    hAxis: { title: 'weeks'}
+                }, geoOptions = {
+                    height: 500,
+                    width: 900
+                },
+                weekChart = new google.visualization.LineChart(document.getElementById('chart1')),
+                geoChart = new google.visualization.GeoChart(document.getElementById('chart2'));
+
+            weekChart.draw(chartData, options);
+            geoChart.draw(geoData, geoOptions);
         }
     });
 }

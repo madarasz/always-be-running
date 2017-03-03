@@ -1,7 +1,7 @@
 @extends('layout.general')
 
 @section('content')
-    <h4 class="page-header">Administration</h4>
+    <h4 class="page-header m-b-0">Administration</h4>
     @include('partials.message')
     @include('errors.list')
 
@@ -9,26 +9,46 @@
     @include('tournaments.modals.conclude')
 
     {{--Tabs--}}
-    <ul id="admin-tabs" class="nav nav-tabs" role="tablist">
-        <li class="nav-item notif-red notif-badge" id="tabf-tournament">
-            <a class="nav-link active" data-toggle="tab" href="#tab-tournaments" role="tab">Tournaments</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#tab-entries" role="tab">Entries</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#tab-packs" role="tab">Packs</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#tab-badges" role="tab">Badges</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#tab-videos" role="tab">Videos</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#tab-stats" role="tab">Stats</a>
-        </li>
-    </ul>
+    <div class="modal-tabs">
+        <ul id="admin-tabs" class="nav nav-tabs" role="tablist">
+            <li class="nav-item notif-red notif-badge" id="tabf-tournament">
+                <a class="nav-link active" data-toggle="tab" href="#tab-tournaments" role="tab">
+                    <i class="fa fa-list-alt" aria-hidden="true"></i>
+                    Tournaments
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#tab-entries" role="tab">
+                    <i class="fa fa-list-ol" aria-hidden="true"></i>
+                    Entries
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#tab-packs" role="tab">
+                    <i class="fa fa-cubes" aria-hidden="true"></i>
+                    Packs
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#tab-badges" role="tab">
+                    <i class="fa fa-child" aria-hidden="true"></i>
+                    Badges
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#tab-videos" role="tab">
+                    <i class="fa fa-video-camera" aria-hidden="true"></i>
+                    Videos
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#tab-stats" role="tab">
+                    <i class="fa fa-line-chart" aria-hidden="true"></i>
+                    Stats
+                </a>
+            </li>
+        </ul>
+    </div>
 
     {{--Tab panes--}}
     <div class="tab-content">
@@ -110,7 +130,9 @@
                             <i class="fa fa-list-ol" aria-hidden="true"></i>
                             Entry types
                         </h5>
-                        <table class="table table-sm table-striped abr-table">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <table class="table table-sm table-striped abr-table">
                             <thead>
                                 <tr>
                                     <th>type</th>
@@ -126,7 +148,10 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <a href="/admin/entries/refresh" class="btn btn-primary disabled">Refresh entry types</a>
+                            </div>
+                            <div class="col-xs-12 col-md-6" id="chart-entry-types">
+                            </div>
+                        </div>
                     </div>
                     {{--Decks--}}
                     <div class="bracket">
@@ -137,22 +162,26 @@
                         <p>
                             Total number of decks: {{ $published_count + $private_count }}
                         </p>
-                        <p>
-                            Published decks: {{ $published_count }}<br/>
-                            Private decks: {{ $private_count }}<br/>
-                            Broken deck links: {{ $broken_count }} - users:
-                            <?php $bcount = count($broken_users) ?>
-                            @foreach($broken_users as $key=>$buser)
-                                <a href="/profile/{{ $buser->id }}">{{ $buser->displayUsername() }}</a>{{ $key != $bcount-1 ? ',' : ''}}
-                            @endforeach
-                            <br/>
-                            <a href="/admin/decks/broken" class="btn btn-primary disabled">Detect broken</a>
-                        </p>
-                        <p>
-                            With backlink to NetrunnerDB: {{ $backlink_count }}<br/>
-                            Without backlink to NetrunnerDB: {{ $no_backlink_count }}<br/>
-                            Unexported: {{ $unexported_count }}
-                        </p>
+                        <div class="row">
+                            <div class="col-md-6 col-xs-12">
+                                Published decks: {{ $published_count }}<br/>
+                                Private decks: {{ $private_count }}<br/>
+                                Broken deck links: {{ $broken_count }} - users:
+                                <?php $bcount = count($broken_users) ?>
+                                @foreach($broken_users as $key=>$buser)
+                                    <a href="/profile/{{ $buser->id }}">{{ $buser->displayUsername() }}</a>{{ $key != $bcount-1 ? ',' : ''}}
+                                @endforeach
+                                <br/>
+                                @if (Auth::user() && Auth::user()->id == 1276)
+                                    <a href="/admin/decks/broken" class="btn btn-primary">Detect broken</a>
+                                @endif
+                            </div>
+                            <div class="col-md-6 col-xs-12">
+                                With backlink to NetrunnerDB: {{ $backlink_count }}<br/>
+                                Without backlink to NetrunnerDB: {{ $no_backlink_count }}<br/>
+                                Unexported: {{ $unexported_count }}
+                            </div>
+                        </div>
                     </div>
                     {{--KTM update--}}
                     <div class="bracket">
@@ -178,14 +207,6 @@
             <div class="row">
                 <div class="col-md-6 col-xs-12">
                     <div class="bracket">
-                        <h5>Card data</h5>
-                        <a href="/admin/cycles/update" class="btn-primary btn btn-sm">Update Card cycles</a> Card cycle count: {{ $count_cycles }} (last: <em>{{ $last_cycle }}</em>)<br/>
-                        <a href="/admin/packs/update" class="btn-primary btn btn-sm">Update Card packs</a> Card pack count: {{ $count_packs }} (last: <em>{{ $last_pack }}</em>)<br/>
-                        <a href="/admin/identities/update" class="btn-primary btn btn-sm">Update Identities</a> Identity count: {{ $count_ids }} (last: <em>{{ $last_id }}</em>)
-                    </div>
-                </div>
-                <div class="col-md-6 col-xs-12">
-                    <div class="bracket">
                         <h5>Cardpool usage</h5>
                         <ul>
                             @for($i = 0; $i < count ($cycles); $i++)
@@ -204,6 +225,14 @@
                                 </ul>
                             @endfor
                         </ul>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <div class="bracket">
+                        <h5>Card data</h5>
+                        <a href="/admin/cycles/update" class="btn-primary btn btn-sm">Update Card cycles</a> Card cycle count: {{ $count_cycles }} (last: <em>{{ $last_cycle }}</em>)<br/>
+                        <a href="/admin/packs/update" class="btn-primary btn btn-sm">Update Card packs</a> Card pack count: {{ $count_packs }} (last: <em>{{ $last_pack }}</em>)<br/>
+                        <a href="/admin/identities/update" class="btn-primary btn btn-sm">Update Identities</a> Identity count: {{ $count_ids }} (last: <em>{{ $last_id }}</em>)
                     </div>
                 </div>
             </div>
@@ -226,22 +255,51 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div class="bracket">
-                        <table class="table table-sm table-striped abr-table" id="videos">
-                            <thead>
-                                <tr>
-                                    <th>channel name</th>
-                                    <th>number of videos</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($video_channels as $name => $count)
-                                <tr>
-                                    <td>{{ $name }}</td>
-                                    <td>{{ $count }}</td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+                        <div class="row">
+                            {{--videos by channel--}}
+                            <div class="col-xs-12 col-md-6">
+                                <table class="table table-sm table-striped abr-table" id="videos">
+                                    <thead>
+                                        <tr>
+                                            <th>channel name</th>
+                                            <th>number of videos</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($video_channels as $name => $count)
+                                        <tr>
+                                            <td>{{ $name }}</td>
+                                            <td>{{ $count }}</td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            {{--videos by user--}}
+                            <div class="col-xs-12 col-md-6">
+                                <table class="table table-sm table-striped abr-table" id="videos">
+                                    <thead>
+                                    <tr>
+                                        <th>user</th>
+                                        <th>number of videos</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($video_users as $userid => $count)
+                                        <?php $vuser = App\User::findOrFail($userid); ?>
+                                        <tr>
+                                            <td>
+                                                <a href="/profile/{{ $vuser->id }}" {{ $vuser->supporter ? 'class=supporter' : '' }}>
+                                                    {{ $vuser->name }}
+                                                </a>
+                                            </td>
+                                            <td>{{ $count }}</td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -259,6 +317,7 @@
         </div>
     </div>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
         // activate tabs
         $('#admin-tabs a').click(function (e) {
@@ -267,8 +326,15 @@
         });
 
         // charts
-        google.charts.load('upcoming', {'packages':['corechart', 'geochart']});
-        google.charts.setOnLoadCallback(drawAdminChart);
+        var entryTypes = [['type', 'count'],
+            @foreach($entry_types as $type => $count)
+                ['{{$type}}', {{$count}}],
+            @endforeach
+        ];
+        google.charts.load('current', {
+            'packages':['corechart', 'geochart'],
+            'mapsApiKey': '{{ env('GOOGLE_MAPS_API') }}'
+        });
 
         // get tournament data
         getTournamentData("approved=null", function(data) {
@@ -289,6 +355,7 @@
                             getTournamentData("incomplete=1", function(data) {
                                 updateTournamentTable('#incomplete', ['title', 'date', 'location', 'cardpool', 'creator', 'players',
                                     'created_at', 'action_edit', 'action_purge'], 'no incomplete items', '{{ csrf_token() }}', data);
+                                drawAdminChart(entryTypes);
                             });
                         });
                     });

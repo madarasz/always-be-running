@@ -39,6 +39,9 @@ class AdminController extends Controller
         $video_channels = Video::whereIn('tournament_id', $approved_tournaments)
             ->select('channel_name', DB::raw('count(*) as total'))
             ->groupBy('channel_name')->orderBy('total', 'desc')->pluck('total', 'channel_name');
+        $video_users = Video::whereIn('tournament_id', $approved_tournaments)
+            ->select('user_id', DB::raw('count(*) as total'))
+            ->groupBy('user_id')->orderBy('total', 'desc')->pluck('total', 'user_id');
         $entry_types = $this->addEntryTypeNames(Entry::select('type', DB::raw('count(*) as total'))
             ->whereIn('tournament_id', $approved_tournaments)->groupBy('type')->pluck('total', 'type')->toArray());
         $published_count = Entry::where('runner_deck_type', 1)->count() + Entry::where('corp_deck_type', 1)->count();
@@ -87,7 +90,7 @@ class AdminController extends Controller
         $page_section = 'admin';
         return view('admin', compact('user', 'message', 'nowdate', 'badge_type_count', 'badge_count', 'unseen_badge_count',
             'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles',
-            'page_section', 'video_channels', 'entry_types', 'published_count', 'private_count',
+            'page_section', 'video_channels', 'video_users', 'entry_types', 'published_count', 'private_count',
             'backlink_count', 'no_backlink_count', 'unexported_count', 'broken_count', 'broken_users',
             'ktm_update', 'ktm_packs'));
     }
