@@ -57,6 +57,7 @@ Route::get('/api/useralert', 'PagesController@getAlertCount');
 Route::get('/api/as/{id}', 'ASController@index');
 Route::post('/api/badgesseen/{id}', 'BadgeController@changeBadgesToSeen');
 Route::get('/api/adminstats', 'AdminController@adminStats');
+Route::get('/api/getdeckdata', 'NetrunnerDBController@getDeckData');
 // iframe for double elimination
 Route::get('/elimination', function () { return view('layout.bracket'); });
 // https proxies for loading KnowTheMeta data
