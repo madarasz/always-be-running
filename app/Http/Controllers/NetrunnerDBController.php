@@ -37,14 +37,13 @@ class NetrunnerDBController extends Controller
             {
                 $auth_user = $this->findOrCreateUser($user);
                 Auth::login($auth_user, true);
-                $this->getDeckData();   // update deck counts
 
                 // redirect back to the original page
                 $login_url = $request->cookie('login_url');
                 if (is_null($login_url)) {
                     return redirect()->action('PagesController@upcoming');
                 } else {
-                    return redirect($login_url);
+                    return redirect($login_url)->with('getdeckdata', 1);
                 }
             }
         } else

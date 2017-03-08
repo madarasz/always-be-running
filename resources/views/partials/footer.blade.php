@@ -21,3 +21,15 @@
         {{--</strong>--}}
     {{--</p>--}}
 </footer>
+
+{{--deck data update call--}}
+@if (session()->has('getdeckdata'))
+    <script type="text/javascript">
+        // updating deck data for user
+        $.ajax({
+            url: '/api/getdeckdata',
+            dataType: "json",
+            async: true
+        });
+    </script>
+@endif
