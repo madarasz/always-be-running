@@ -32,6 +32,7 @@ class BadgeController extends Controller
     public function refreshBadges(Request $request) {
         $this->authorize('admin', Tournament::class, $request->user());
 
+        $startTime = microtime(true);
         $badgesBefore = DB::table('badge_user')->count();
         $users = User::all();
 
@@ -40,10 +41,13 @@ class BadgeController extends Controller
             $this->addTOBadges($user->id);
             $this->addNDBBadges($user->id);
             $this->addVideoBadge($user->id);
+            $this->addCommunityBuilder($user->id);
         }
 
         $badgesAfter = DB::table('badge_user')->count();
-        return redirect()->route('admin')->with('message', 'Badges added: '.($badgesAfter-$badgesBefore));
+        $endTime = microtime(true);
+        return redirect()->route('admin')->with('message', 'Badges added: '.($badgesAfter-$badgesBefore).
+            ' - time taken: '.date("i:s",$endTime-$startTime));
     }
 
     /**
@@ -53,7 +57,7 @@ class BadgeController extends Controller
     public function addClaimBadges($userid) {
         // prepare badges array
         $badges = Badge::where('year', 2016)->pluck('id')->all();
-        $badges = array_merge([13, 14, 15, 27, 28, 29, 30, 34, 35, 36], $badges);
+        $badges = array_merge([13, 14, 15, 27, 28, 29, 30, 34, 35, 36, 49, 50, 51, 52, 53, 54, 55], $badges);
         $badges = array_combine($badges, array_fill(1, count($badges), false));
 
         $this->addChampionshipBadges($userid, 2016, 5, $badges);
@@ -166,10 +170,11 @@ class BadgeController extends Controller
         $shapers = CardIdentity::where('faction_code','shaper')->pluck('id');
         $crims = CardIdentity::where('faction_code','criminal')->pluck('id');
         $anarchs = CardIdentity::where('faction_code','anarch')->pluck('id');
+        $shaperCount = Entry::where('user', $userid)->whereIn('runner_deck_identity', $shapers)->where('type', 3)->count();
+        $crimCount = Entry::where('user', $userid)->whereIn('runner_deck_identity', $crims)->where('type', 3)->count();
+        $anarchCount = Entry::where('user', $userid)->whereIn('runner_deck_identity', $anarchs)->where('type', 3)->count();
 
-        if (Entry::where('user', $userid)->whereIn('runner_deck_identity', $shapers)->where('type', 3)->first() &&
-            Entry::where('user', $userid)->whereIn('runner_deck_identity', $crims)->where('type', 3)->first() &&
-            Entry::where('user', $userid)->whereIn('runner_deck_identity', $anarchs)->where('type', 3)->first()) {
+        if ($shaperCount && $crimCount && $anarchCount) {
             $badges[28] = true; // self-modifying personality
         }
 
@@ -177,12 +182,71 @@ class BadgeController extends Controller
         $hb = CardIdentity::where('faction_code','haas-bioroid')->pluck('id');
         $weyland = CardIdentity::where('faction_code','weyland-cons')->pluck('id');
         $jinteki = CardIdentity::where('faction_code','jinteki')->pluck('id');
+        $nbnCount = Entry::where('user', $userid)->whereIn('corp_deck_identity', $nbn)->where('type', 3)->count();
+        $hbCount = Entry::where('user', $userid)->whereIn('corp_deck_identity', $hb)->where('type', 3)->count();
+        $weylandCount = Entry::where('user', $userid)->whereIn('corp_deck_identity', $weyland)->where('type', 3)->count();
+        $jintekiCount = Entry::where('user', $userid)->whereIn('corp_deck_identity', $jinteki)->where('type', 3)->count();
 
-        if (Entry::where('user', $userid)->whereIn('corp_deck_identity', $nbn)->where('type', 3)->first() &&
-            Entry::where('user', $userid)->whereIn('corp_deck_identity', $hb)->where('type', 3)->first() &&
-            Entry::where('user', $userid)->whereIn('corp_deck_identity', $weyland)->where('type', 3)->first() &&
-            Entry::where('user', $userid)->whereIn('corp_deck_identity', $jinteki)->where('type', 3)->first()) {
+        if ($nbnCount && $hbCount && $weylandCount && $jintekiCount) {
             $badges[29] = true; // diversified portfolio
+        }
+
+        // mastery badges
+        $tournamentIDsTop = Tournament::where('approved', 1)->where('players_number', '>', 7)
+            ->where('top_number', '>', 0)->where('concluded', 1)->pluck('id');
+        $tournamentIDsNoTop = Tournament::where('approved', 1)->where('players_number', '>', 7)
+            ->where('top_number', 0)->where('concluded', 1)->pluck('id');
+
+        if ($shaperCount > 4 &&
+            (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
+                    ->where('rank_top', 1)->whereIn('runner_deck_identity', $shapers)->first() ||
+                Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsNoTop)
+                    ->where('rank', 1)->whereIn('runner_deck_identity', $shapers)->first())) {
+            $badges[53] = true;
+        }
+        if ($crimCount > 4 &&
+            (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
+                    ->where('rank_top', 1)->whereIn('runner_deck_identity', $crims)->first() ||
+                Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsNoTop)
+                    ->where('rank', 1)->whereIn('runner_deck_identity', $crims)->first())) {
+            $badges[54] = true;
+        }
+        if ($anarchCount > 4 &&
+            (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
+                    ->where('rank_top', 1)->whereIn('runner_deck_identity', $anarchs)->first() ||
+                Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsNoTop)
+                    ->where('rank', 1)->whereIn('runner_deck_identity', $anarchs)->first())) {
+            $badges[55] = true;
+        }
+
+
+        if ($nbnCount > 4 &&
+                (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
+                    ->where('rank_top', 1)->whereIn('corp_deck_identity', $nbn)->first() ||
+                Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsNoTop)
+                        ->where('rank', 1)->whereIn('corp_deck_identity', $nbn)->first())) {
+            $badges[49] = true;
+        }
+        if ($hbCount > 4 &&
+            (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
+                    ->where('rank_top', 1)->whereIn('corp_deck_identity', $hb)->first() ||
+                Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsNoTop)
+                    ->where('rank', 1)->whereIn('corp_deck_identity', $hb)->first())) {
+            $badges[50] = true;
+        }
+        if ($weylandCount > 4 &&
+            (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
+                    ->where('rank_top', 1)->whereIn('corp_deck_identity', $weyland)->first() ||
+                Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsNoTop)
+                    ->where('rank', 1)->whereIn('corp_deck_identity', $weyland)->first())) {
+            $badges[51] = true;
+        }
+        if ($jintekiCount > 4 &&
+            (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
+                    ->where('rank_top', 1)->whereIn('corp_deck_identity', $jinteki)->first() ||
+                Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsNoTop)
+                    ->where('rank', 1)->whereIn('corp_deck_identity', $jinteki)->first())) {
+            $badges[52] = true;
         }
     }
 
@@ -299,6 +363,17 @@ class BadgeController extends Controller
             ->where('type', 3)->first()) {
                 $badges[38] = true; // charity
         }
+    }
+
+    public function addCommunityBuilder($userid) {
+        $badges = [48 => false, 666 => false]; // array has to have at least two elements
+        $tounamentIDs = Tournament::where('creator', $userid)->where('approved', 1)->pluck('id');
+
+        if (Entry::whereIn('tournament_id', $tounamentIDs)->whereIn('type', [3,4])->where('user', '!=', $userid)->distinct()->count('user') > 9) {
+            $badges[48] = true;
+        }
+
+        $this->refreshUserBadges($userid, $badges);
     }
 
     /**

@@ -139,6 +139,7 @@ class EntriesController extends Controller
 
         // add badges
         App('App\Http\Controllers\BadgeController')->addClaimBadges($request->user()->id);
+        App('App\Http\Controllers\BadgeController')->addCommunityBuilder($tournament->creator);
 
         return redirect()->back()->with('message', 'You have claimed a spot on the tournament.');
     }
@@ -209,6 +210,9 @@ class EntriesController extends Controller
 
         // add conflict if needed
         $tournament->updateConflict();
+
+        // badge for TO
+        App('App\Http\Controllers\BadgeController')->addCommunityBuilder($tournament->creator);
 
         return redirect()->back()->with('message', 'You have claimed a spot on the tournament.');
     }
@@ -307,6 +311,7 @@ class EntriesController extends Controller
         if ($request->user()) {
             App('App\Http\Controllers\BadgeController')->addClaimBadges($request->user()->id);
         }
+        App('App\Http\Controllers\BadgeController')->addCommunityBuilder($tournament->creator);
 
         return redirect()->back()->with('message', 'You removed your claim from the tournament.');
     }

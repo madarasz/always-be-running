@@ -49,6 +49,16 @@
             </div>
             <div class="bracket">
                 <p>
+                    <strong>Faction mastery:</strong><br/>
+                </p>
+                @foreach($badges as $badge)
+                    @if ($badge->order > 5000 && $badge->order < 6000)
+                        @include('partials.badgelist')
+                    @endif
+                @endforeach
+            </div>
+            <div class="bracket">
+                <p>
                     <strong>For heavy NetrunnerDB users:</strong><br/>
                     <span class="small-text">needs relogin to refresh</span>
                 </p>
