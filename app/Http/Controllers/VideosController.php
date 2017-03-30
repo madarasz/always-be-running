@@ -38,6 +38,9 @@ class VideosController extends Controller
             $errors = ['Error loading video data from Youtube. Probably invalid ID or URL.'];
         }
 
+        // add badges
+        App('App\Http\Controllers\BadgeController')->addVideoBadge($request->user()->id);
+
         // redirecting to tournament
         return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
             ->with('message', $message)->withErrors($errors);
@@ -50,6 +53,9 @@ class VideosController extends Controller
 
         $tournament = $video->tournament;
         Video::destroy($id);
+
+        // remove badges
+        App('App\Http\Controllers\BadgeController')->addVideoBadge($request->user()->id);
 
         // redirecting to tournament
         return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])

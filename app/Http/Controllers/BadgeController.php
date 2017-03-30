@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Video;
 use App\Badge;
 use App\Http\Requests;
 use App\Entry;
@@ -38,6 +39,7 @@ class BadgeController extends Controller
             $this->addClaimBadges($user->id);
             $this->addTOBadges($user->id);
             $this->addNDBBadges($user->id);
+            $this->addVideoBadge($user->id);
         }
 
         $badgesAfter = DB::table('badge_user')->count();
@@ -222,6 +224,14 @@ class BadgeController extends Controller
             $badges[33] = true;   // NetrunnerDB Known
         }
 
+        $this->refreshUserBadges($userid, $badges);
+    }
+
+    public function addVideoBadge($userid) {
+        $badges = [47 => false, 666 => false]; // array has to have at least two elements
+        if (Video::where('user_id', $userid)->count() >= 5) {
+            $badges[47] = true;
+        }
         $this->refreshUserBadges($userid, $badges);
     }
 
