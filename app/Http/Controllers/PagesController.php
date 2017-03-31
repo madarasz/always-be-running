@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Tournament;
 use App\TournamentType;
 use App\CardPack;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Requests;
 
@@ -147,8 +148,9 @@ class PagesController extends Controller
         $message = session()->has('message') ? session('message') : '';
         $created_count = Tournament::where('creator', $user->id)->where('approved', 1)->count();
         $claim_count = Entry::where('user', $user->id)->whereIn('type', [3, 4])->count();
-        $claims = Entry::where('user', $user->id)->whereIn('type', [3, 4])
-            ->whereNotIn('tournament_id', $deleted_tournaments)->get();
+        $claims = Entry::select(DB::raw('entries.*'))->join('tournaments', 'entries.tournament_id', '=', 'tournaments.id')
+            ->where('user', $user->id)->whereIn('type', [3, 4])->whereNotIn('tournament_id', $deleted_tournaments)
+            ->orderBy('tournaments.date', 'desc')->get();
         $created = Tournament::where('creator', $user->id)->where('approved', 1)->get();
         $username = $user->name;
         return view('profile', compact('user', 'claims', 'created', 'created_count', 'claim_count',

@@ -716,3 +716,27 @@ a.supporter:hover {
 .modal-tabs > ul.nav-tabs > li > a:not(.active):hover {
     color: #55595c !important;
 }
+
+/* tournament type indicator on profile */
+.tournament-type {
+    display: inline-block;
+    margin-left: -1.6em;
+    padding: .25em .4em;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    border-radius: .25rem;
+    z-index: 10;
+}
+.type-store {
+    background-color: #3a8922;
+}
+.type-regional {
+    background-color: #722086;
+}
+.type-national {
+    background-color: #24598a;
+}
+.type-world {
+    background-color: #892222;
+}

@@ -103,16 +103,29 @@
                     </h5>
                     <ul>
                         @foreach($claims as $claim)
+                            @if ($claim->tournament->tournament_type_id > 1 && $claim->tournament->tournament_type_id < 6)
+                            <li style="list-style: none">
+                            @else
                             <li>
-                                #{{ $claim->rank() }} / {{ $claim->tournament()->first()->players_number }}
+                            @endif
+                                <?php
+                                    switch($claim->tournament->tournament_type_id) {
+                                        case 2: echo '<span class="tournament-type type-store" title="store championship">S</span>'; break;
+                                        case 3: echo '<span class="tournament-type type-regional" title="regional championship">R</span>'; break;
+                                        case 4: echo '<span class="tournament-type type-national" title="national championship">N</span>'; break;
+                                        case 5: echo '<span class="tournament-type type-world" title="world championship">W</span>'; break;
+                                    }
+                                ?>
+                                <strong>#{{ $claim->rank() }} / {{ $claim->tournament->players_number }}</strong>
                                 @if ($claim->type == 3)
                                     <a href="{{ $claim->runner_deck_url() }}"><img src="/img/ids/{{ $claim->runner_deck_identity }}.png"></a>&nbsp;<a href="{{ $claim->corp_deck_url() }}"><img src="/img/ids/{{ $claim->corp_deck_identity }}.png"></a>
                                 @else
                                     <img src="/img/ids/{{ $claim->runner_deck_identity }}.png">&nbsp;<img src="/img/ids/{{ $claim->corp_deck_identity }}.png">
                                 @endif
-                                <a href="{{ $claim->tournament()->first()->seoUrl() }}">
-                                    {{ $claim->tournament()->first()->title }}
+                                <a href="{{ $claim->tournament->seoUrl() }}">
+                                    {{ $claim->tournament->title }}
                                 </a>
+                                <span class="legal-bullshit">({{ $claim->tournament->date }})</span>
                             </li>
                         @endforeach
                     </ul>
