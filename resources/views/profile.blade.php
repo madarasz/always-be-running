@@ -104,16 +104,16 @@
                     <ul>
                         @foreach($claims as $claim)
                             @if ($claim->tournament->tournament_type_id > 1 && $claim->tournament->tournament_type_id < 6)
-                            <li style="list-style: none">
+                                <li style="list-style: none">
                             @else
-                            <li>
+                                <li>
                             @endif
                                 <?php
                                     switch($claim->tournament->tournament_type_id) {
-                                        case 2: echo '<span class="tournament-type type-store" title="store championship">S</span>'; break;
-                                        case 3: echo '<span class="tournament-type type-regional" title="regional championship">R</span>'; break;
-                                        case 4: echo '<span class="tournament-type type-national" title="national championship">N</span>'; break;
-                                        case 5: echo '<span class="tournament-type type-world" title="world championship">W</span>'; break;
+                                        case 2: echo '<span class="no-li tournament-type type-store" title="store championship">S</span>'; break;
+                                        case 3: echo '<span class="no-li tournament-type type-regional" title="regional championship">R</span>'; break;
+                                        case 4: echo '<span class="no-li tournament-type type-national" title="national championship">N</span>'; break;
+                                        case 5: echo '<span class="no-li tournament-type type-world" title="world championship">W</span>'; break;
                                     }
                                 ?>
                                 <strong>#{{ $claim->rank() }} / {{ $claim->tournament->players_number }}</strong>

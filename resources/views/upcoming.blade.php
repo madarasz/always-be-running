@@ -57,6 +57,16 @@
                 ['columns' => ['title', 'location', 'date', 'regs', 'cardpool', 'type'],
                 'title' => 'Upcoming tournaments', 'id' => 'discover-table', 'icon' => 'fa-list-alt',
                 'loader' => true, 'maxrows' => 10])
+                <div class="text-xs-center small-text m-t-1">
+                    <i title="charity" class="fa fa-heart text-danger"></i>
+                    charity |
+                    <img class="img-patron-o">
+                    patreon T.O.<br/>
+                    <span class="tournament-type type-store" title="store championship">S</span> store championship |
+                    <span class="tournament-type type-regional" title="regional championship">R</span> regional championship |
+                    <span class="tournament-type type-national" title="national championship">N</span> national championship |
+                    <span class="tournament-type type-world" title="worlds championship">W</span> worlds championship
+                </div>
             </div>
         </div>
     </div>

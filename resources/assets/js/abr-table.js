@@ -47,6 +47,21 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 }), ' ');
             }
 
+            switch (element.type) {
+                case 'store championship':
+                    cell.append('<span class="tournament-type type-store" title="store championship">S</span> ');
+                    break;
+                case 'regional championship':
+                    cell.append('<span class="tournament-type type-regional" title="regional championship">R</span> ');
+                    break;
+                case 'national championship':
+                    cell.append('<span class="tournament-type type-national" title="national championship">N</span> ');
+                    break;
+                case 'worlds championship':
+                    cell.append('<span class="tournament-type type-world" title="worlds championship">W</span> ');
+                    break;
+            }
+
             cell.append($('<a>', {
                 text: element.title,
                 href: element.url

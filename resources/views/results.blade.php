@@ -20,7 +20,11 @@
                 <i title="match data" class="fa fa-handshake-o"></i>
                 match data, points available |
                 <i title="video" class="fa fa-video-camera"></i>
-                has video
+                has video<br/>
+                <span class="tournament-type type-store" title="store championship">S</span> store championship |
+                <span class="tournament-type type-regional" title="regional championship">R</span> regional championship |
+                <span class="tournament-type type-national" title="national championship">N</span> national championship |
+                <span class="tournament-type type-world" title="worlds championship">W</span> worlds championship
             </div>
         </div>
         <div class="col-md-4 pull-md-8 col-lg-3 pull-lg-9 col-col-sm-12">
