@@ -61,7 +61,7 @@
                     <i title="charity" class="fa fa-heart text-danger"></i>
                     charity |
                     <img class="img-patron-o">
-                    patreon T.O.<br/>
+                    patreon T.O. |
                     <span class="tournament-type type-store" title="store championship">S</span> store championship |
                     <span class="tournament-type type-regional" title="regional championship">R</span> regional championship |
                     <span class="tournament-type type-national" title="national championship">N</span> national championship |
