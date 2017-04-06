@@ -195,7 +195,9 @@ class BadgeController extends Controller
         $tournamentIDsTop = Tournament::where('approved', 1)->where('players_number', '>', 7)
             ->where('top_number', '>', 0)->where('concluded', 1)->pluck('id');
         $tournamentIDsNoTop = Tournament::where('approved', 1)->where('players_number', '>', 7)
-            ->where('top_number', 0)->where('concluded', 1)->pluck('id');
+            ->where(function($q){
+                $q->whereNull('top_number')->orWhere('top_number', 0);
+            })->where('concluded', 1)->pluck('id');
 
         if ($shaperCount > 4 &&
             (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
