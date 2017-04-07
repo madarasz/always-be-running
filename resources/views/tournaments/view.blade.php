@@ -37,6 +37,12 @@
                 <div class="bracket">
                     @include('tournaments.viewer.photos')
                     @include('tournaments.viewer.videos')
+                    @if (!$user)
+                        <hr/>
+                        <div class="text-xs-center" id="suggest-login-media">
+                            <a href="/oauth2/redirect">Login via NetrunnerDB</a> to add photos or videos.
+                        </div>
+                    @endif
                 </div>
             @endif
             {{--Results--}}
