@@ -62,10 +62,11 @@
                     charity |
                     <img class="img-patron-o">
                     patreon T.O. |
-                    <span class="tournament-type type-store" title="store championship">S</span> store championship |
-                    <span class="tournament-type type-regional" title="regional championship">R</span> regional championship |
-                    <span class="tournament-type type-national" title="national championship">N</span> national championship |
-                    <span class="tournament-type type-world" title="worlds championship">W</span> worlds championship
+                    <span class="tournament-type type-store" title="store championship">S</span>&nbsp;store championship |
+                    <span class="tournament-type type-regional" title="regional championship">R</span>&nbsp;regional championship |
+                    <span class="tournament-type type-national" title="national championship">N</span>&nbsp;national championship |
+                    <span class="tournament-type type-continental" title="continental championship">C</span>&nbsp;continental championship |
+                    <span class="tournament-type type-world" title="worlds championship">W</span>&nbsp;worlds championship
                 </div>
             </div>
         </div>

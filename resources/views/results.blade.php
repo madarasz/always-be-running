@@ -26,6 +26,7 @@
                 <span class="tournament-type type-store" title="store championship">S</span> store championship |
                 <span class="tournament-type type-regional" title="regional championship">R</span> regional championship |
                 <span class="tournament-type type-national" title="national championship">N</span> national championship |
+                <span class="tournament-type type-continental" title="continental championship">C</span> continental championship |
                 <span class="tournament-type type-world" title="worlds championship">W</span> worlds championship
             </div>
         </div>

@@ -38,7 +38,7 @@ class TournamentsController extends Controller
     public function create(Request $request)
     {
         $this->authorize('logged_in', Tournament::class, $request->user());
-        $tournament_types = TournamentType::pluck('type_name', 'id')->all();
+        $tournament_types = TournamentType::orderBy('order')->pluck('type_name', 'id')->all();
         $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $tournament = new Tournament();
 
@@ -59,7 +59,7 @@ class TournamentsController extends Controller
     {
         $tournament = Tournament::withTrashed()->findOrFail($id);
         $this->authorize('own', $tournament, $request->user());
-        $tournament_types = TournamentType::pluck('type_name', 'id')->all();
+        $tournament_types = TournamentType::orderBy('order')->pluck('type_name', 'id')->all();
         $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $page_section = 'organize';
         return view('tournaments.edit', compact('tournament', 'id', 'tournament_types', 'cardpools', 'page_section'));

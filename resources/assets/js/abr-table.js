@@ -23,7 +23,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
     $.each(data, function (index, element) {
         // row class: highlight worlds, hide paged
         var rowclass = '';
-        if (element.type === 'worlds championship') {
+        if (element.type === 'worlds championship' || element.type === 'continental championship') {
             rowclass = 'row-worlds';
         }
         if (paging.maxrows && index >= paging.maxrows) {
@@ -56,6 +56,9 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                     break;
                 case 'national championship':
                     cell.append('<span class="tournament-type type-national" title="national championship">N</span> ');
+                    break;
+                case 'continental championship':
+                    cell.append('<span class="tournament-type type-continental" title="continental championship">C</span> ');
                     break;
                 case 'worlds championship':
                     cell.append('<span class="tournament-type type-world" title="worlds championship">W</span> ');

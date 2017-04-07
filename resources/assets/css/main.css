@@ -740,6 +740,9 @@ a.supporter:hover {
 .type-national {
     background-color: #24598a;
 }
+.type-continental {
+    background-color: #8a5e25;
+}
 .type-world {
     background-color: #892222;
 }
