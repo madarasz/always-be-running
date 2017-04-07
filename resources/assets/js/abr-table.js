@@ -81,6 +81,19 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                     'class': 'fa fa-handshake-o'
                 }));
             }
+            // photos
+            if (element.photos) {
+                cell.append(' ');
+                if (element.photos > 1) {
+                    cell.append(element.photos);
+                } else {
+
+                }
+                cell.append($('<i>', {
+                    'title': 'photo',
+                    'class': 'fa fa-camera'
+                }));
+            }
             // videos
             if (element.videos) {
                 cell.append(' ');
