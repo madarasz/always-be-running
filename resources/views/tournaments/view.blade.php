@@ -33,18 +33,16 @@
                 @include('tournaments.viewer.matches')
             @endif
             {{--Photos and Videos--}}
-            @if ($tournament->concluded)
-                <div class="bracket">
-                    @include('tournaments.viewer.photos')
-                    @include('tournaments.viewer.videos')
-                    @if (!$user)
-                        <hr/>
-                        <div class="text-xs-center" id="suggest-login-media">
-                            <a href="/oauth2/redirect">Login via NetrunnerDB</a> to add photos or videos.
-                        </div>
-                    @endif
-                </div>
-            @endif
+            <div class="bracket">
+                @include('tournaments.viewer.photos')
+                @include('tournaments.viewer.videos')
+                @if (!$user)
+                    <hr/>
+                    <div class="text-xs-center" id="suggest-login-media">
+                        <a href="/oauth2/redirect">Login via NetrunnerDB</a> to add photos or videos.
+                    </div>
+                @endif
+            </div>
             {{--Results--}}
             @include('tournaments.viewer.results')
         </div>
