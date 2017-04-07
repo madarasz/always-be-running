@@ -743,3 +743,30 @@ a.supporter:hover {
 .type-world {
     background-color: #892222;
 }
+
+/* gallery */
+.gallery-item {
+    display: inline-block;
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+    margin-bottom: 0.5em;
+}
+.abs-top-left {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+.fade-in {
+    opacity: 0.5;
+}
+.fade-in:hover {
+    opacity: 1;
+}
+.ekko-lightbox .modal-footer {
+    text-align: right !important;
+    font-style: italic;
+}
+.ekko-lightbox .modal-title {
+    display: inline !important;
+}

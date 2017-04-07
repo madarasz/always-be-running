@@ -46,6 +46,10 @@ Route::get('tournaments/{id}/{slug}', 'TournamentsController@show')->name('tourn
 Route::post('videos', 'VideosController@store');
 Route::delete('videos/{id}', 'VideosController@destroy');
 
+Route::post('photos', 'PhotosController@store');
+Route::get('photos/{id}/approve', 'PhotosController@approve');
+Route::delete('photos/{id}', 'PhotosController@destroy');
+
 Route::get('/oauth2/redirect', 'NetrunnerDBController@login');
 Route::get('/logout', 'NetrunnerDBController@logout');
 

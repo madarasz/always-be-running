@@ -31,6 +31,12 @@ class Tournament extends Model
         return $this->hasMany(Video::class, 'tournament_id', 'id');
     }
 
+    public function photos() {
+        return $this->hasMany(Photo::class, 'tournament_id', 'id')->where(function($q) {
+            $q->where('approved', true)->orWhereNull('approved');
+        });
+    }
+
     public function cardpool() {
         return $this->hasOne(CardPack::class, 'id', 'cardpool_id');
     }

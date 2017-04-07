@@ -160,7 +160,8 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         Artdarek\OAuth\OAuthServiceProvider::class,
         Haleks\Markdown\MarkdownServiceProvider::class,
-        Alaouy\Youtube\YoutubeServiceProvider::class
+        Alaouy\Youtube\YoutubeServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class
     ],
 
     /*
@@ -211,7 +212,8 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
         'OAuth2' => Artdarek\OAuth\Facade\OAuth::class,
         'Markdown' => Haleks\Markdown\Facades\Markdown::class,
-        'Youtube'=> Alaouy\Youtube\Facades\Youtube::class
+        'Youtube'=> Alaouy\Youtube\Facades\Youtube::class,
+        'Image' => Intervention\Image\Facades\Image::class
     ],
 
 ];

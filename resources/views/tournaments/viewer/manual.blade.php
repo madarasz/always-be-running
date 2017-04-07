@@ -26,7 +26,7 @@
             <i class="fa fa-check" aria-hidden="true"></i> Done
         </button>
         {{--Edit entries form--}}
-        <div id="section-edit-entries" class="hidden-xs-up small-text">
+        <div id="section-edit-entries" class="hidden-xs-up small-text card-darker m-t-1 p-b-1">
             <hr/>
             <div class="p-b-1">
                 <i class="fa fa-user-circle" aria-hidden="true"></i>

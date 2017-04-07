@@ -1,5 +1,4 @@
 {{--table of videos for tournament details page--}}
-<p><b>{{ count($videos) }}</b> video{{ count($videos) != 1 ? 's' : '' }} for this tournament.</p>
 <table class="table table-sm table-striped abr-table" id="{{ $id }}">
     <tbody>
     @for ($i = 0; $i < count($videos); $i++)
@@ -32,7 +31,7 @@
     </tbody>
 </table>
 @if (count($videos) > 4)
-    <div>
+    <div class="text-xs-center">
         <button class="btn btn-primary btn-xs" onClick="showVideoList(true)" id="showVideoList">
             <i class="fa fa-eye" aria-hidden="true"></i> Show All Videos
         </button>

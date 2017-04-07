@@ -32,9 +32,12 @@
             @if (file_exists('tjsons/'.$tournament->id.'.json'))
                 @include('tournaments.viewer.matches')
             @endif
-            {{--Videos--}}
+            {{--Photos and Videos--}}
             @if ($tournament->concluded)
-                @include('tournaments.viewer.videos')
+                <div class="bracket">
+                    @include('tournaments.viewer.photos')
+                    @include('tournaments.viewer.videos')
+                </div>
             @endif
             {{--Results--}}
             @include('tournaments.viewer.results')

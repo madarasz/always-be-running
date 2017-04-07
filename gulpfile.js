@@ -40,7 +40,8 @@ elixir(function(mix) {
             "bootstrap.min.js",
             "jquery.calendario.js",
             "bootstrap-datepicker.js",
-            "jquery.bracket.min.js"
+            "jquery.bracket.min.js",
+            "ekko-lightbox.min.js"
         ])
         .styles([
             'font-awesome.css',
@@ -49,7 +50,8 @@ elixir(function(mix) {
             '../../../public/css/app.css',
             'bootstrap-datepicker.css',
             'netrunner.css',
-            'main.css'
+            'main.css',
+            'ekko-lightbox.min.css'
         ])
         .version(['css/all.css', 'js/all.js']);
 

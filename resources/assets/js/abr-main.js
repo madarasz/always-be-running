@@ -180,7 +180,7 @@ function toggleEntriesEdit(value) {
     }
 }
 
-// toggle adding videos on tournament view page
+// toggle adding photos/videos on tournament view page
 function toggleVideoAdd(value) {
     if (value) {
         $('#section-add-videos').removeClass('hidden-xs-up');
@@ -190,6 +190,18 @@ function toggleVideoAdd(value) {
         $('#section-add-videos').addClass('hidden-xs-up');
         $('#button-done-videos').addClass('hidden-xs-up');
         $('#button-add-videos').removeClass('hidden-xs-up');
+    }
+}
+// toggle adding photos on tournament view page
+function togglePhotoAdd(value) {
+    if (value) {
+        $('#section-add-photos').removeClass('hidden-xs-up');
+        $('#button-done-photos').removeClass('hidden-xs-up');
+        $('#button-add-photos').addClass('hidden-xs-up');
+    } else {
+        $('#section-add-photos').addClass('hidden-xs-up');
+        $('#button-done-photos').addClass('hidden-xs-up');
+        $('#button-add-photos').removeClass('hidden-xs-up');
     }
 }
 
