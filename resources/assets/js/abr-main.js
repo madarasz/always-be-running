@@ -355,14 +355,24 @@ function updateNavBadges() {
             if (data.adminAlerts && data.adminAlerts.total) {
                 document.getElementById('nav-admin').setAttribute("data-badge", data.adminAlerts.total);
                 if ($('#notif-tournament').length) {
-                    $('#notif-tournament').removeClass('hidden-xs-up');
-                    if (data.adminAlerts.pendingAlerts) {
-                        $('#pending-title').addClass('notif-red notif-badge-page').attr('data-badge', data.adminAlerts.pendingAlerts);
+                    // tournament alerts
+                    if (data.adminAlerts.pendingTournament + data.adminAlerts.conflictTournament > 0) {
+                        $('#notif-tournament').removeClass('hidden-xs-up');
+                        if (data.adminAlerts.pendingTournament) {
+                            $('#pending-title').addClass('notif-red notif-badge-page').attr('data-badge', data.adminAlerts.pendingTournament);
+                        }
+                        if (data.adminAlerts.conflictTournament) {
+                            $('#conflict-title').addClass('notif-red notif-badge-page').attr('data-badge', data.adminAlerts.conflictTournament);
+                        }
+                        document.getElementById('tabf-tournament').setAttribute("data-badge", data.adminAlerts.pendingTournament + data.adminAlerts.conflictTournament);
                     }
-                    if (data.adminAlerts.conflictAlerts) {
-                        $('#conflict-title').addClass('notif-red notif-badge-page').attr('data-badge', data.adminAlerts.conflictAlerts);
+                    // photos alerts
+                    if (data.adminAlerts.pendingPhoto > 0) {
+                        $('#notif-photo').removeClass('hidden-xs-up');
+                        $('#pending-photo-title').addClass('notif-red notif-badge-page').attr('data-badge', data.adminAlerts.pendingPhoto);
+                        document.getElementById('tabf-photo').setAttribute("data-badge", data.adminAlerts.pendingPhoto);
+                        $('#no-approve-photo').addClass('hidden-xs-up');
                     }
-                    document.getElementById('tabf-tournament').setAttribute("data-badge", data.adminAlerts.total);
                 }
             }
             // personal page alerts

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Entry;
+use App\Photo;
 use App\User;
 use App\Badge;
 use App\CardIdentity;
@@ -213,10 +214,12 @@ class PagesController extends Controller
         if (Auth::user()->admin) {
             $pending = Tournament::whereNull('approved')->where('incomplete', 0)->count();
             $conflict = Tournament::where('conflict', 1)->count();
+            $photo = Photo::whereNull('approved')->count();
             $result['adminAlerts'] = [
-                'total' => $pending + $conflict,
-                'pendingAlerts' => $pending,
-                'conflictAlerts' => $conflict
+                'total' => $pending + $conflict + $photo,
+                'pendingTournament' => $pending,
+                'conflictTournament' => $conflict,
+                'pendingPhoto' => $photo
             ];
         }
 
