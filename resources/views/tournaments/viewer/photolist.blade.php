@@ -13,7 +13,7 @@
                         </a>
                     @endif
                     @if ($user && ($user->admin || $user->id == $photo->user_id || $user->id == $photo->tournament->creator))
-                        {!! Form::open(['method' => 'DELETE', 'url' => "/photos/{$photo->id}"]) !!}
+                        {!! Form::open(['method' => 'DELETE', 'url' => "/photos/{$photo->id}", 'style' => 'display:inline;']) !!}
                             {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i>',
                             array('type' => 'submit', 'class' => 'btn btn-danger btn-sm fade-in', 'onclick' => 'return confirm("Delete photo?")')) !!}
                         {!! Form::close() !!}

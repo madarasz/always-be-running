@@ -78,8 +78,7 @@ class PhotosController extends Controller
         // TODO: add badge
 
         // redirecting to tournament
-        return redirect()->route('tournaments.show.slug', [$photo->tournament->id, $photo->tournament->seoTitle()])
-            ->with('message', 'Photo approved');
+        return redirect()->back()->with('message', 'Photo approved');
     }
 
     public function destroy(Request $request, $id) {
@@ -93,8 +92,7 @@ class PhotosController extends Controller
         // TODO: remove badge
 
         // redirecting to tournament
-        return redirect()->route('tournaments.show.slug', [$photo->tournament->id, $photo->tournament->seoTitle()])
-            ->with('message', 'Photo deleted');
+        return redirect()->back()->with('message', 'Photo deleted');
     }
 
 }

@@ -6,6 +6,7 @@ use App\CardCycle;
 use App\CardIdentity;
 use App\CardPack;
 use App\Badge;
+use App\Photo;
 use App\User;
 use App\Entry;
 use App\Video;
@@ -55,6 +56,13 @@ class AdminController extends Controller
         $broken_count = Entry::where('broken_runner', '>', 0)->count() + Entry::where('broken_corp', '>', 0)->count();
         $broken_user_ids = Entry::where('broken_runner', true)->orWhere('broken_corp', true)->pluck('user')->all();
         $broken_users = User::whereIn('id', $broken_user_ids)->get();
+        $photos = Photo::get();
+        $photo_tournaments = Photo::whereIn('tournament_id', $approved_tournaments)
+            ->select('tournament_id', DB::raw('count(*) as total'))
+            ->groupBy('tournament_id')->orderBy('total', 'desc')->pluck('total', 'tournament_id');
+        $photo_users = Photo::whereIn('tournament_id', $approved_tournaments)
+            ->select('user_id', DB::raw('count(*) as total'))
+            ->groupBy('user_id')->orderBy('total', 'desc')->pluck('total', 'user_id');
 
         // Know the Meta update calculation
         $ktm_update = preg_replace('/\./i', '-', file_get_contents('http://www.knowthemeta.com/LastUpdate/'));
@@ -94,7 +102,7 @@ class AdminController extends Controller
             'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles',
             'page_section', 'video_channels', 'video_users', 'entry_types', 'published_count', 'private_count',
             'backlink_count', 'no_backlink_count', 'unexported_count', 'broken_count', 'broken_users',
-            'ktm_update', 'ktm_packs'));
+            'ktm_update', 'ktm_packs', 'photos', 'photo_tournaments', 'photo_users'));
     }
 
     public function approveTournament($id, Request $request)

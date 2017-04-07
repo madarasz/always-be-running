@@ -36,6 +36,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#tab-photos" role="tab">
+                    <i class="fa fa-camera" aria-hidden="true"></i>
+                    Photos
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#tab-videos" role="tab">
                     <i class="fa fa-video-camera" aria-hidden="true"></i>
                     Videos
@@ -250,6 +256,89 @@
                 </div>
             </div>
         </div>
+        {{--Photos--}}
+        <div class="tab-pane" id="tab-photos" role="tabpanel">
+            <div class="row">
+                {{--Pending photos--}}
+                <div class="col-xs-12">
+                    <div class="bracket">
+                        <h5>
+                            <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+                            Pending photos
+                        </h5>
+                        @include('admin.gallery', ['photos' => $photos, 'approval' => null])
+{{--                        @if(count($photos->whereNull('approved')))--}}
+                        {{--@elseif--}}
+                            {{--<span class="user-counts">no photos to approve</span>--}}
+                        {{--@endif--}}
+                    </div>
+                </div>
+                <div class="col-xs-12">
+                    <div class="bracket">
+                        <div class="row">
+                            {{--photos by channel--}}
+                            <div class="col-xs-12 col-md-6">
+                                <table class="table table-sm table-striped abr-table" id="videos">
+                                    <thead>
+                                    <tr>
+                                        <th>tournament name</th>
+                                        <th>number of photos</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($photo_tournaments as $tournament_id => $count)
+                                        <?php $vtournament = App\Tournament::findOrFail($tournament_id); ?>
+                                        <tr>
+                                            <td>
+                                                <a href="{{ $vtournament->seoUrl() }}">
+                                                    {{ $vtournament->title }}
+                                                </a>
+                                            </td>
+                                            <td>{{ $count }}</td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            {{--photos by user--}}
+                            <div class="col-xs-12 col-md-6">
+                                <table class="table table-sm table-striped abr-table" id="videos">
+                                    <thead>
+                                    <tr>
+                                        <th>user</th>
+                                        <th>number of photos</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($photo_users as $userid => $count)
+                                        <?php $vuser = App\User::findOrFail($userid); ?>
+                                        <tr>
+                                            <td>
+                                                <a href="/profile/{{ $vuser->id }}" {{ $vuser->supporter ? 'class=supporter' : '' }}>
+                                                    {{ $vuser->name }}
+                                                </a>
+                                            </td>
+                                            <td>{{ $count }}</td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{--Approved photos--}}
+                <div class="col-xs-12">
+                    <div class="bracket">
+                        <h5>
+                            <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                            Approved photos
+                        </h5>
+                        @include('admin.gallery', ['photos' => $photos, 'approval' => true])
+                    </div>
+                </div>
+            </div>
+        </div>
         {{--Videos--}}
         <div class="tab-pane" id="tab-videos" role="tabpanel">
             <div class="row">
@@ -361,6 +450,12 @@
                     });
                 });
             });
+        });
+
+        // enable gallery
+        $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+            event.preventDefault();
+            $(this).ekkoLightbox({alwaysShowClose: true});
         });
     </script>
 @stop
