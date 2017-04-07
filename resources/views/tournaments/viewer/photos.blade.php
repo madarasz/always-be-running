@@ -4,6 +4,8 @@
     Photos
     @if (count($tournament->photos))
         <span class="user-counts">({{ count($tournament->photos) }})</span>
+    @else
+        <span class="user-counts">- no photos yet</span>
     @endif
     @if ($user)
         <button class="btn btn-primary btn-xs pull-right" id="button-add-photos"
@@ -42,6 +44,4 @@
 {{--List of photos--}}
 @if (count($tournament->photos))
     @include('tournaments.viewer.photolist')
-@else
-    <p><em id="no-photos">no photos yet</em></p>
 @endif

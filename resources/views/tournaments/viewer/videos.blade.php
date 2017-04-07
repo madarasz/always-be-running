@@ -4,6 +4,8 @@
     Videos
     @if (count($tournament->videos))
         <span class="user-counts">({{ count($tournament->videos) }})</span>
+    @else
+        <span class="user-counts">- no videos yet</span>
     @endif
     @if ($user)
         <button class="btn btn-primary btn-xs pull-right" id="button-add-videos"
@@ -40,8 +42,6 @@
 @if (count($tournament->videos) > 0)
     @include('tournaments.viewer.videolist',
         ['videos' => $tournament->videos, 'creator' => $tournament->creator, 'id' => 'videos'])
-@else
-    <p><em id="no-videos">no videos yet</em></p>
 @endif
 <div id="section-watch-video" class="hidden-xs-up">
     <hr/>
