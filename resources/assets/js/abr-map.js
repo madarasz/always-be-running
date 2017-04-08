@@ -26,7 +26,6 @@ function markerIconUrl(color) {
 
 function codeAddress(data, map, bounds, infowindow, callback) {
 
-
     // putting down markers
     for (i = 0; i < data.length; i++) {
         if (data[i].location !== 'online' && data[i].location_lat && data[i].location_lng) {
@@ -62,6 +61,14 @@ function codeAddress(data, map, bounds, infowindow, callback) {
             })(infotext, infowindow, map, marker));
         }
     }
+    setZoom(map, bounds);
+
+    // make callback if exists
+    typeof callback === 'function' && callback.apply(this, arguments);
+}
+
+// setting optimal map zoom
+function setZoom(map, bounds) {
     // avoiding to much zoom
     var zoombounds = 0.002;
     if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
@@ -71,9 +78,6 @@ function codeAddress(data, map, bounds, infowindow, callback) {
         bounds.extend(extendPoint2);
     }
     map.fitBounds(bounds);
-
-    // make callback if exists
-    typeof callback === 'function' && callback.apply(this, arguments);
 }
 
 function renderInfoText(data) {
@@ -196,4 +200,24 @@ function refreshAddressInfo(place) {
     //coordinates
     document.getElementById('location_lat').value = place.geometry.location.lat();
     document.getElementById('location_long').value = place.geometry.location.lng();
+}
+
+// hides recurring events from map if needed
+function hideRecurringMap(map) {
+    var bounds = new google.maps.LatLngBounds();
+    if (document.getElementById('hide-recurring-map').checked) {
+        for (var i = 0; i < map.markers.length; i++) {
+            if (map.markers[i].icon === markerIconUrl('blue')) {
+                map.markers[i].setVisible(false);
+            } else {
+                bounds.extend(map.markers[i].getPosition());
+            }
+        }
+    } else {
+        for (var i = 0; i < map.markers.length; i++) {
+            map.markers[i].setVisible(true);
+            bounds.extend(map.markers[i].getPosition());
+        }
+    }
+    setZoom(map, bounds);
 }

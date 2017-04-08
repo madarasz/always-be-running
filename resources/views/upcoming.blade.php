@@ -103,6 +103,10 @@
                         <img src="" id="marker-both" class="map-legend-icon"/> both
                     </em>
                 </div>
+                <div class="text-xs-center">
+                    <input type="checkbox" id="hide-recurring-map" checked onchange="hideRecurringMap(map)"/>
+                    <label for="hide-recurring-map">hide weekly events</label>
+                </div>
             </div>
         </div>
     </div>
@@ -157,6 +161,7 @@
                         updateDiscover('#recur-table', ['title', 'location', 'recurday'], new_recur_filter, map, bounds, infowindow, function() {
                             drawCalendar(calendardata);
                             hideRecurring();
+                            hideRecurringMap(map);
                         });
                     });
         }

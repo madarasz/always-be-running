@@ -137,6 +137,7 @@ function filterDiscover(default_filter, default_country, map, infowindow) {
             updateDiscover('#recur-table', ['title', 'location', 'recurday'], recur_filter, map, bounds, infowindow, function() {
                 drawCalendar(calendardata);
                 hideRecurring();
+                hideRecurringMap(map);
                 updatePaging('discover-table');
                 updatePaging('recur-table');
             });
