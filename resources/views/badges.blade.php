@@ -39,7 +39,7 @@
         <div class="col-md-6 col-xs-12">
             <div class="bracket">
                 <p>
-                    <strong>For competative players:</strong>
+                    <strong>For competitive players:</strong>
                 </p>
                 @foreach($badges as $badge)
                     @if ($badge->order > 100 && $badge->order < 1000)
@@ -86,4 +86,3 @@
     {{--Flaticon legal--}}
     @include('partials.legal-icons')
 @stop
-
