@@ -152,7 +152,7 @@ class PagesController extends Controller
         $claims = Entry::select(DB::raw('entries.*'))->join('tournaments', 'entries.tournament_id', '=', 'tournaments.id')
             ->where('user', $user->id)->whereIn('type', [3, 4])->whereNotIn('tournament_id', $deleted_tournaments)
             ->orderBy('tournaments.date', 'desc')->get();
-        $created = Tournament::where('creator', $user->id)->where('approved', 1)->get();
+        $created = Tournament::where('creator', $user->id)->where('approved', 1)->orderBy('tournaments.date', 'desc')->get();
         $username = $user->name;
         return view('profile', compact('user', 'claims', 'created', 'created_count', 'claim_count',
             'username', 'page_section', 'message', 'countries', 'factions'));

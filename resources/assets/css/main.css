@@ -746,6 +746,10 @@ a.supporter:hover {
 .type-world {
     background-color: #892222;
 }
+.type-recurring {
+    background-color: #fff;
+    color: #575a5c;
+}
 
 /* gallery */
 .gallery-item {

@@ -108,15 +108,7 @@
                             @else
                                 <li>
                             @endif
-                                <?php
-                                    switch($claim->tournament->tournament_type_id) {
-                                        case 2: echo '<span class="no-li tournament-type type-store" title="store championship">S</span>'; break;
-                                        case 3: echo '<span class="no-li tournament-type type-regional" title="regional championship">R</span>'; break;
-                                        case 4: echo '<span class="no-li tournament-type type-national" title="national championship">N</span>'; break;
-                                        case 5: echo '<span class="no-li tournament-type type-world" title="world championship">W</span>'; break;
-                                        case 9: echo '<span class="no-li tournament-type type-continental" title="continental championship">C</span>'; break;
-                                    }
-                                ?>
+                                @include('tournaments.partials.list-type', ['tournament' => $claim->tournament])
                                 <strong>#{{ $claim->rank() }} / {{ $claim->tournament->players_number }}</strong>
                                 @if ($claim->type == 3)
                                     <a href="{{ $claim->runner_deck_url() }}"><img src="/img/ids/{{ $claim->runner_deck_identity }}.png"></a>&nbsp;<a href="{{ $claim->corp_deck_url() }}"><img src="/img/ids/{{ $claim->corp_deck_identity }}.png"></a>
@@ -142,6 +134,7 @@
                     <ul>
                         @foreach($created as $tournament)
                             <li>
+                                @include('tournaments.partials.list-type', ['tournament' => $tournament])
                                 <a href="{{ $tournament->seoUrl() }}">
                                     {{ $tournament->title }}
                                 </a><br/>
@@ -151,6 +144,9 @@
                                         {{ $tournament->location_country }}, {{$tournament->location_country === 'United States' ? $tournament->location_state.', ' : ''}}{{ $tournament->location_city }}
                                     @else
                                         online
+                                    @endif
+                                    @if ($tournament->date)
+                                        ({{ $tournament->date }})
                                     @endif
                                 </div>
                             </li>
