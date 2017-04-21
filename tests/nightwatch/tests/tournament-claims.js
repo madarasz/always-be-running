@@ -191,7 +191,7 @@ module.exports = {
                 dueWarning: false,
                 registeredPlayers: true,
                 noRegisteredPlayers: false,
-                unregisterButton: true,
+                unregisterButton: false,
                 registerButton: false
             })
             //claim with validation errors (top swiss+no top cut, below top swiss+top cut), verify errors
@@ -269,31 +269,8 @@ module.exports = {
                 dueWarning: false,
                 registeredPlayers: true,
                 noRegisteredPlayers: false,
-                unregisterButton: true,
-                registerButton: false
-            })
-            .click('@unregisterButton')
-            // verify on tournament detail page
-            .assertView({
-                conflictWarning: false,
-                playerNumbers: true,
-                topPlayerNumbers: true,
-                buttonNRTMimport: true,
-                buttonNRTMclear: false,
-                buttonConclude: false,
-                playerClaim: false,
-                buttonClaim: true,
-                removeClaim: false,
-                claimError: false,
-                topEntriesTable: true,
-                swissEntriesTable: true,
-                ownClaimInTable: false,
-                conflictInTable: false,
-                dueWarning: false,
-                registeredPlayers: false,
-                noRegisteredPlayers: true,
                 unregisterButton: false,
-                registerButton: true
+                registerButton: false
             })
             // delete tournament
             .click('@deleteButton');

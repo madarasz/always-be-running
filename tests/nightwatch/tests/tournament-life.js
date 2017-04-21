@@ -1,6 +1,6 @@
 var tournamentA = {
     title: 'Test A - ' + formatDate(new Date()),
-    type: 'casual',
+    type: 'non-FFG tournament',
     type_id: '6',
     cardpool: 'Business First',
     cardpool_id: 'bf',
@@ -41,7 +41,7 @@ var tournamentC = {
     type: 'online event',
     type_id: '7',
     date: '2001.01.01.',
-    cardpool: '--- not yet known ---',
+    cardpool: '- not yet known -',
     cardpool_id: 'unknown',
     players: '6',
     top: '- no elimination rounds -'
@@ -190,7 +190,7 @@ module.exports = {
                 registeredPlayers: false,
                 noRegisteredPlayers: true,
                 unregisterButton: false,
-                registerButton: true
+                registerButton: false
             });
 
         // verify on Organize page table
@@ -375,7 +375,7 @@ module.exports = {
                 registeredPlayers: false,
                 noRegisteredPlayers: true,
                 unregisterButton: false,
-                registerButton: true,
+                registerButton: false,
                 storeInfo: false,
                 addressInfo: false
             });
@@ -524,7 +524,7 @@ module.exports = {
                 registeredPlayers: false,
                 noRegisteredPlayers: true,
                 unregisterButton: false,
-                registerButton: true
+                registerButton: false
             })
             .click('@editButton');
 
