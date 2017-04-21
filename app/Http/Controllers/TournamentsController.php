@@ -342,6 +342,8 @@ class TournamentsController extends Controller
                 'location' => $location,
                 'location_lat' => $tournament->location_lat,
                 'location_lng' => $tournament->location_long,
+                'location_country' => $tournament->location_country,
+                'location_state' => $tournament->location_state,
                 'address' => $tournament->location_address,
                 'store' => $tournament->location_store,
                 'contact' => $tournament->contact,

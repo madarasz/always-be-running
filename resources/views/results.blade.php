@@ -63,6 +63,105 @@
                     </div>
                 {!! Form::close() !!}
             </div>
+            {{--Featured--}}
+            <div class="bracket">
+                <h5>
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                    Featured
+                </h5>
+                <div class="featured-box">
+                    <div class="featured-header">
+                        <div class="featured-bg" style="background-image: url(http://i.imgur.com/dVCr8uT.png);"></div>
+                        <div class="stuff">
+                            {{--<div class="pull-right">--}}
+                                {{--<img src="/img/ids/08025.png"><br/><img src="/img/ids/03001.png">--}}
+                            {{--</div>--}}
+                            <div class="text-xs-left">
+                                <span class="tournament-type type-national" title="national championship">N</span>
+                                <a href="/tournaments/6/new-zealand-nationals-2016">
+                                    <strong>New Zealand Nationals 2016</strong>
+                                </a>
+                                <span class="small-text">(2016.09.03.) - Blood Money</span>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-striped small-text" style="margin-bottom: 0.5em">
+                        <tr>
+                            <td>#1</td>
+                            <td>cyberewok</td>
+                            <td class="text-xs-right"><img src="/img/ids/08025.png">&nbsp;<img src="/img/ids/03001.png"></td>
+                        </tr>
+                    </table>
+                    <div class="featured-images">
+                        <img src="https://alwaysberunning.net/photo/thumb_6.jpeg" class="img-fluid">
+                        <img src="https://alwaysberunning.net/photo/thumb_7.jpeg" class="img-fluid">
+                        <img src="https://alwaysberunning.net/photo/thumb_8.jpeg" class="img-fluid">
+                        <img src="https://alwaysberunning.net/photo/thumb_9.jpeg" class="img-fluid">
+                    </div>
+                    <div class="small-text text-xs-center featured-footer">
+                        21 <i class="fa fa-user" title="players"></i>
+                        8 <i class="fa fa-address-card" title="claims"></i>
+                        19 <i title="photo" class="fa fa-camera"></i>
+                        7 <i title="video" class="fa fa-video-camera"></i>
+                        New Zealand
+                    </div>
+                </div>
+                <div class="featured-box">
+                    <div class="featured-header">
+                        <div class="featured-bg"></div>
+                        <div class="stuff">
+                            <div class="text-xs-left">
+                                <a href="/tournaments/6/new-zealand-nationals-2016">
+                                    <strong>SoCal Team Unified</strong>
+                                </a>
+                                <span class="small-text">(2017.04.08.) - Station One</span>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-striped small-text">
+                        <tr>
+                            <td>#1</td>
+                            <td>Donald Bowden</td>
+                            <td class="text-xs-right"><img src="/img/ids/03001.png">&nbsp;<img src="/img/ids/07029.png"></td>
+                        </tr>
+                    </table>
+                    {{--<div class="featured-images">--}}
+                        {{--<img src="https://alwaysberunning.net/photo/thumb_26.jpeg" class="img-fluid">--}}
+                    {{--</div>--}}
+                    <div class="small-text text-xs-center featured-footer">
+                        21 <i class="fa fa-user" aria-hidden="true"></i>
+                        8 <i class="fa fa-address-card" aria-hidden="true"></i>
+                        United States, CA
+                    </div>
+                </div>
+                <div class="featured-box">
+                    <div class="featured-header">
+                        <div class="featured-bg" style="background-image: url(http://i.imgur.com/jlr6Bsy.jpg);"></div>
+                        <div class="stuff">
+                            <div class="text-xs-left">
+                                <a href="/tournaments/6/new-zealand-nationals-2016">
+                                    <strong>Preston BABW</strong>
+                                </a>
+                                <span class="small-text">(2017.04.16.) - Blood Money</span>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-striped small-text" style="margin-bottom: 0.5em">
+                        <tr>
+                            <td>#1</td>
+                            <td>Donald Bowden</td>
+                            <td class="text-xs-right"><img src="/img/ids/03001.png">&nbsp;<img src="/img/ids/07029.png"></td>
+                        </tr>
+                    </table>
+                    <div class="featured-images">
+                        <img src="https://alwaysberunning.net/photo/thumb_26.jpeg" class="img-fluid">
+                    </div>
+                    <div class="small-text text-xs-center featured-footer">
+                        1 <i title="photo" class="fa fa-camera"></i>
+                        United Kingdom, Preston
+                    </div>
+                </div>
+            </div>
             {{--Stats--}}
             <div class="bracket">
                 <h5>

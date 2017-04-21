@@ -88,4 +88,11 @@ class Tournament extends Model
     public function seoUrl() {
         return '/tournaments/'.$this->id.'/'.$this->seoTitle();
     }
+
+    public function coverImage() {
+        if (preg_match('/!\[([^\]]*)\]\(\K([^)]+)(?=\))/', $this->description, $match)) {
+            return $match[0];
+        }
+        return null;
+    }
 }
