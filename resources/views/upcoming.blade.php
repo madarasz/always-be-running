@@ -16,7 +16,7 @@
                             {!! Form::label('tournament_type_id', 'Type:') !!}
                             {!! Form::select('tournament_type_id', $tournament_types,
                                 null, ['class' => 'form-control filter',
-                                'onchange' => "filterDiscover(default_filter, '".@$default_country_id."', map, infowindow)", 'disabled' => '']) !!}
+                                'onchange' => "filterUpcomingPage(allUpcomingTournaments, allRecurringTournaments, '".@$default_country_id."')", 'disabled' => '']) !!}
                         </div>
                     </div>
                     <div class="col-md-3 col-xs-12" id="filter-country">
@@ -134,6 +134,7 @@
             recur_filter = 'approved=1&recur=1',
             new_filter = default_filter,    // changed with user's default filter
             new_recur_filter = recur_filter;
+        var allUpcomingTournaments, allRecurringTournaments, upcomingFilter, recurringFilter;
 
         @if (@$default_country)
             // user's default country
@@ -155,15 +156,135 @@
             $('.filter').prop("disabled", false);
             clearMapMarkers(map);
             // get tournaments
-            updateDiscover('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'],
-                    new_filter, map, bounds, infowindow, function() {
-                        // get weekly events
-                        updateDiscover('#recur-table', ['title', 'location', 'recurday'], new_recur_filter, map, bounds, infowindow, function() {
-                            drawCalendar(calendardata);
-                            hideRecurring();
-                            hideRecurringMap(map);
-                        });
-                    });
+//            updateDiscover('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'],
+//                    new_filter, map, bounds, infowindow, function() {
+//                        // get weekly events
+//                        updateDiscover('#recur-table', ['title', 'location', 'recurday'], new_recur_filter, map, bounds, infowindow, function() {
+//                            drawCalendar(calendardata);
+//                            hideRecurring();
+//                            hideRecurringMap(map);
+//                        });
+//                    });
+
+            getTournamentData(default_filter, function(data) {
+                allUpcomingTournaments = data;
+                updateUpcomingTournaments(allUpcomingTournaments);
+            });
+            getTournamentData(recur_filter, function(data) {
+                allRecurringTournaments = data;
+                updateRecurringTournaments(allRecurringTournaments);
+            })
+        }
+
+        function filterTournaments(filters, data) {
+            var result = data.slice();
+            for (var filter in filters) {
+                if (filters.hasOwnProperty(filter)) {
+                    var subresult = [];
+                    for (var i = 0; i < result.length; i++) {
+                        // country filtering
+                        if (filter == 'country') {
+                            if (result[i].location_country == filters[filter]) {
+                                subresult.push(result[i]);
+                            } else if (filters.hasOwnProperty('online') && filters.online && result[i].location_country == 'online') {
+                                subresult.push(result[i]); // inluce online
+                            }
+                        // type filtering
+                        } else if (filter == 'type') {
+                            if (result[i].type == filters[filter]) {
+                                subresult.push(result[i]);
+                            }
+                        // state filtering
+                        } else if (filter == 'state') {
+                            if (result[i].location_state == filters[filter]) {
+                                subresult.push(result[i]);
+                            }
+                        }
+                    }
+                    result = subresult;
+                }
+            }
+            return result;
+        }
+
+        function filterUpcomingPage(allUpcomingTournaments, allRecurringTournaments, default_country) {
+            var typeSelector = document.getElementById('tournament_type_id'),
+                countrySelector = document.getElementById('location_country'),
+                stateSelector = document.getElementById('location_state'),
+                type = typeSelector.options[parseInt(typeSelector.value)+1].innerHtml,
+                country = countrySelector.options[parseInt(countrySelector.value)+1].innerHTML,
+                state = stateSelector.options[parseInt(stateSelector.value)+1].innerHTML,
+                includeOnline = document.getElementById('include-online').checked,
+                    upcomingFilter={}, recurringFilter={};
+
+            // type filtering
+            if (typeSelector.value > 0) {
+                upcomingFilter.type = type;
+                $('#filter-type').addClass('active-filter');
+            } else {
+                $('#filter-type').removeClass('active-filter');
+            }
+            // country filtering
+            if (country !== '---') {
+                upcomingFilter.country = country;
+                recurringFilter.country = country;
+                $('#filter-country').addClass('active-filter');
+                $('#filter-online').removeClass('hidden-xs-up');
+                if (country === 'United States') {
+                    $('#filter-state').removeClass('hidden-xs-up');
+                    $('#filter-spacer').addClass('hidden-xs-up');
+                    // state filtering
+                    if (state !== '---') {
+                        upcomingFilter.state = state;
+                        recurringFilter.state = state;
+                        $('#filter-state').addClass('active-filter');
+                    } else {
+                        $('#filter-state').removeClass('active-filter');
+                    }
+                }
+                if (includeOnline) {
+                    upcomingFilter.online = true;
+                }
+            } else {
+                $('#filter-country').removeClass('active-filter');
+                $('#filter-online').addClass('hidden-xs-up');
+            }
+            // state filter only visible for US
+            if (country !== 'United States') {
+                $('#filter-state').addClass('hidden-xs-up');
+                $('#filter-spacer').removeClass('hidden-xs-up');
+            }
+            // user's default country
+            if (countrySelector.value == default_country) {
+                $('#label-default-country').removeClass('hidden-xs-up');
+            } else {
+                $('#label-default-country').addClass('hidden-xs-up');
+            }
+
+            clearMapMarkers(map);
+            bounds = new google.maps.LatLngBounds();
+            calendardata = {};
+            updateUpcomingTournaments(filterTournaments(upcomingFilter, allUpcomingTournaments));
+            updateRecurringTournaments(filterTournaments(recurringFilter, allRecurringTournaments));
+        }
+
+        function updateUpcomingTournaments(data) {
+            $('#discover-table').removeClass('hidden-xs-up').find('tbody').empty();
+            updateTournamentTable('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'], 'no tournaments to show', '', data);
+            updateTournamentCalendar(data);
+            codeAddress(data, map, bounds, infowindow);
+        }
+        function updateRecurringTournaments(data) {
+            $('#recur-table').removeClass('hidden-xs-up').find('tbody').empty();
+            updateTournamentTable('#recur-table', ['title', 'location', 'recurday'], 'no tournaments to show', '', data);
+            updateTournamentCalendar(data);
+            codeAddress(data, map, bounds, infowindow, function() {
+                drawCalendar(calendardata);
+                hideRecurring();
+                hideRecurringMap(map);
+                updatePaging('discover-table');
+                updatePaging('recur-table');
+            });
         }
 
     </script>
