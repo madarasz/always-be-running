@@ -1,10 +1,10 @@
 <div class="text-xs-center small-text">
-    <button id="show-exp-icons" class="btn btn-primary btn-xs pull-right"
+    <button id="show-exp-icons" class="btn btn-primary btn-xs pull-right m-b-1"
        onclick="$('#exp-icons').removeClass('hidden-xs-up'); $('#show-exp-icons').addClass('hidden-xs-up')">
         <i class="fa fa-eye" aria-hidden="true"></i>
         explain icons
     </button>
-    <br/>
+    <br/>&nbsp;
     <div id="exp-icons" class="hidden-xs-up">
         <i title="charity" class="fa fa-heart text-danger"></i>
         charity |
