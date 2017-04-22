@@ -817,3 +817,7 @@ a.supporter:hover {
     width: auto;
     display: inline-block;
 }
+.featured-title {
+    height: 1.5em;
+    overflow: hidden;
+}

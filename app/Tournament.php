@@ -95,4 +95,12 @@ class Tournament extends Model
         }
         return null;
     }
+
+    public function winner() {
+        if ($this->top_number) {
+            return $this->entries()->where('rank_top', 1)->first();
+        } else {
+            return $this->entries()->where('rank', 1)->first();
+        }
+    }
 }

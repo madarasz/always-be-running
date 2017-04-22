@@ -108,7 +108,7 @@
                             @else
                                 <li>
                             @endif
-                                @include('tournaments.partials.list-type', ['tournament' => $claim->tournament])
+                                @include('tournaments.partials.list-type', ['tournament' => $claim->tournament, 'class' => 'no-li'])
                                 <strong>#{{ $claim->rank() }} / {{ $claim->tournament->players_number }}</strong>
                                 @if ($claim->type == 3)
                                     <a href="{{ $claim->runner_deck_url() }}" title="{{ $claim->runner_deck_title }}"><img src="/img/ids/{{ $claim->runner_deck_identity }}.png"></a>&nbsp;<a href="{{ $claim->corp_deck_url() }}" title="{{ $claim->corp_deck_title }}"><img src="/img/ids/{{ $claim->corp_deck_identity }}.png"></a>
@@ -134,7 +134,7 @@
                     <ul>
                         @foreach($created as $tournament)
                             <li>
-                                @include('tournaments.partials.list-type', ['tournament' => $tournament])
+                                @include('tournaments.partials.list-type', ['tournament' => $tournament, 'class' => 'no-li'])
                                 <a href="{{ $tournament->seoUrl() }}">
                                     {{ $tournament->title }}
                                 </a><br/>
