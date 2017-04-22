@@ -60,7 +60,7 @@ class PagesController extends Controller
             ->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $countries = $tournaments->where('location_country', '!=', '')->orderBy('location_country')
             ->pluck('location_country')->unique()->all();
-        $featured = Tournament::where('featured', '!=', '0')->where('concluded', 1)->where('approved', 1)
+        $featured = Tournament::where('featured', '>', '0')->where('concluded', 1)->where('approved', 1)
             ->orderBy('featured', 'desc')->get();
 
         // adding empty filters
