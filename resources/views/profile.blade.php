@@ -111,7 +111,7 @@
                                 @include('tournaments.partials.list-type', ['tournament' => $claim->tournament])
                                 <strong>#{{ $claim->rank() }} / {{ $claim->tournament->players_number }}</strong>
                                 @if ($claim->type == 3)
-                                    <a href="{{ $claim->runner_deck_url() }}"><img src="/img/ids/{{ $claim->runner_deck_identity }}.png"></a>&nbsp;<a href="{{ $claim->corp_deck_url() }}"><img src="/img/ids/{{ $claim->corp_deck_identity }}.png"></a>
+                                    <a href="{{ $claim->runner_deck_url() }}" title="{{ $claim->runner_deck_title }}"><img src="/img/ids/{{ $claim->runner_deck_identity }}.png"></a>&nbsp;<a href="{{ $claim->corp_deck_url() }}" title="{{ $claim->corp_deck_title }}"><img src="/img/ids/{{ $claim->corp_deck_identity }}.png"></a>
                                 @else
                                     <img src="/img/ids/{{ $claim->runner_deck_identity }}.png">&nbsp;<img src="/img/ids/{{ $claim->corp_deck_identity }}.png">
                                 @endif
