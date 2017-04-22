@@ -11,23 +11,7 @@
                     ['columns' => ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims' ],
                     'title' => 'Tournament results from the past', 'id' => 'results', 'icon' => 'fa-list-alt',
                     'subtitle' => 'only concluded tournaments', 'doublerow' => true, 'loader' => true, 'maxrows' => 50])
-            </div>
-            <div class="text-xs-center small-text">
-                <i title="charity" class="fa fa-heart text-danger"></i>
-                charity |
-                <img class="img-patron-o">
-                patreon T.O. |
-                <i title="match data" class="fa fa-handshake-o"></i>
-                match data, points available |
-                <i title="video" class="fa fa-camera"></i>
-                has photo |
-                <i title="video" class="fa fa-video-camera"></i>
-                has video<br/>
-                <span class="tournament-type type-store" title="store championship">S</span> store championship |
-                <span class="tournament-type type-regional" title="regional championship">R</span> regional championship |
-                <span class="tournament-type type-national" title="national championship">N</span> national championship |
-                <span class="tournament-type type-continental" title="continental championship">C</span> continental championship |
-                <span class="tournament-type type-world" title="worlds championship">W</span> worlds championship
+                @include('tournaments.partials.icons')
             </div>
         </div>
         <div class="col-md-4 pull-md-8 col-lg-3 pull-lg-9 col-col-sm-12">
