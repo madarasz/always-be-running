@@ -28,6 +28,8 @@ class PagesController extends Controller
         $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->unique()->all())->pluck('type_name', 'id')->all();
         $countries = $tournaments->where('location_country', '!=', '')->orderBy('location_country')->pluck('location_country')->unique()->all();
         $states = $tournaments->orderBy('location_state')->pluck('location_state')->unique()->all();
+        $featured = Tournament::where('featured', '<', '0')->where('concluded', 0)->where('approved', 1)
+            ->where('date', '>=', $nowdate)->orderBy('featured', 'asc')->get();
         if(($states_key = array_search('', $states)) !== false) {
             unset($states[$states_key]);
         }
@@ -48,7 +50,7 @@ class PagesController extends Controller
         }
 
         return view('upcoming', compact('message', 'nowdate', 'tournament_types', 'countries', 'states', 'page_section',
-            'default_country', 'default_country_id'));
+            'default_country', 'default_country_id', 'featured'));
     }
 
     public function results(Request $request, $cardpool = "", $type = "", $country = "", $videos = "")

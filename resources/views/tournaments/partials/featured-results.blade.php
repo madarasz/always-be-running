@@ -19,6 +19,9 @@
                 <div class="featured-bg" style="background-image: url({{ $ft->coverImage() }});"></div>
                 <div class="stuff">
                     <div class="featured-title">
+                        @if ($ft->charity)
+                            <i title="charity" class="fa fa-heart text-danger"></i>
+                        @endif
                         @include('tournaments.partials.list-type', ['tournament' => $ft])
                         <a href="{{ $ft->seoUrl() }}">
                             <strong>{{ $ft->title }}</strong>
@@ -78,7 +81,7 @@
                 @if (count($ft->videos))
                     {{ count($ft->videos) }} <i title="video" class="fa fa-video-camera"></i>
                 @endif
-                {{ $ft->location_country }}
+                {{ $ft->tournament_type_id == 7 ? 'online' : $ft->location_country }}
             </div>
         </div>
     @endforeach

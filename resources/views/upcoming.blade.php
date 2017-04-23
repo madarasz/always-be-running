@@ -2,6 +2,7 @@
 
 @section('content')
     <h4 class="page-header">Upcoming Netrunner Tournaments</h4>
+    {{--Filters--}}
     <div class="row">
         <div class="col-xs-12">
             <div class="bracket">
@@ -50,6 +51,7 @@
             </div>
         </div>
     </div>
+    {{--Upcoming table--}}
     <div class="row">
         <div class="col-xs-12">
             <div class="bracket">
@@ -61,6 +63,11 @@
             </div>
         </div>
     </div>
+    {{--Featured--}}
+    @if (count($featured))
+        @include('tournaments.partials.featured-upcoming')
+    @endif
+    {{--Calendar and map--}}
     <div class="row">
         <div class="col-md-6 col-xs-12">
             <div class="bracket">
@@ -100,6 +107,7 @@
             </div>
         </div>
     </div>
+    {{--Recurring--}}
     <div class="row">
         <div class="col-xs-12">
             <div class="bracket">
