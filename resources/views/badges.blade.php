@@ -41,8 +41,26 @@
                 <p>
                     <strong>For competitive players:</strong>
                 </p>
+                {{--Worlds--}}
+                @include('partials.badgelist-year',
+                    ['badge_list' => $badges->where('tournament_type_id', 5)->where('winlevel', 1)->reverse()])
+                @include('partials.badgelist-year',
+                    ['badge_list' => $badges->where('tournament_type_id', 5)->where('winlevel', 2)->reverse()])
+                @include('partials.badgelist-year',
+                    ['badge_list' => $badges->where('tournament_type_id', 5)->where('winlevel', 5)->reverse()])
+                {{--Nationals--}}
+                @include('partials.badgelist-year',
+                    ['badge_list' => $badges->where('tournament_type_id', 4)->where('winlevel', 1)->reverse()])
+                @include('partials.badgelist-year',
+                    ['badge_list' => $badges->where('tournament_type_id', 4)->where('winlevel', 2)->reverse()])
+                {{--Regionals--}}
+                @include('partials.badgelist-year',
+                    ['badge_list' => $badges->where('tournament_type_id', 3)->where('winlevel', 1)->reverse()])
+                @include('partials.badgelist-year',
+                    ['badge_list' => $badges->where('tournament_type_id', 3)->where('winlevel', 2)->reverse()])
+                {{--Other--}}
                 @foreach($badges as $badge)
-                    @if ($badge->order > 100 && $badge->order < 1000)
+                    @if ($badge->order > 400 && $badge->order < 1000)
                         @include('partials.badgelist')
                     @endif
                 @endforeach

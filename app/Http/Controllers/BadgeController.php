@@ -56,13 +56,16 @@ class BadgeController extends Controller
      */
     public function addClaimBadges($userid) {
         // prepare badges array
-        $badges = Badge::where('year', 2016)->pluck('id')->all();
+        $fromYear = 2016; $toYear = 2017;
+        $badges = Badge::where('year', '>=', $fromYear)->where('year', '<=', $toYear)->pluck('id')->all();
         $badges = array_merge([13, 14, 15, 27, 28, 29, 30, 34, 35, 36, 49, 50, 51, 52, 53, 54, 55], $badges);
         $badges = array_combine($badges, array_fill(1, count($badges), false));
 
-        $this->addChampionshipBadges($userid, 2016, 5, $badges);
-        $this->addChampionshipBadges($userid, 2016, 4, $badges);
-        $this->addChampionshipBadges($userid, 2016, 3, $badges);
+        for ($year = $fromYear; $year <= $toYear; $year++) {
+            $this->addChampionshipBadges($userid, $year, 5, $badges);
+            $this->addChampionshipBadges($userid, $year, 4, $badges);
+            $this->addChampionshipBadges($userid, $year, 3, $badges);
+        }
         $this->addChampionshipBadges($userid, null, 2, $badges);
         $this->addPlayerLevelBadges($userid, $badges);
         $this->addFactionBadges($userid, $badges);
