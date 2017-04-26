@@ -1,4 +1,5 @@
 {{--for badges for certain competative year--}}
+@if (@$badge_list && $badge_list->first())
 <div class="row p-b-1">
     <div class="col-xs-2 text-xs-right">
         <img src="/img/badges/{{ $badge_list->first()->filename }}"/>
@@ -30,3 +31,4 @@
         </div>
     </div>
 </div>
+@endif
