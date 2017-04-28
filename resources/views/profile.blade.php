@@ -327,12 +327,35 @@
                     <i class="fa fa-pencil" aria-hidden="true"></i> Save
                 </a>
             </div>
+            {{--Tournament progress chart--}}
+            <div class="bracket">
+                <h5>
+                    <i class="fa fa-line-chart" aria-hidden="true"></i>
+                    Tournament claims
+                    @include('partials.popover', ['direction' => 'top', 'content' =>
+                            'This chart shows your tournament rankings compared to the average.
+                            Bar height refers to number of players on
+                            the tournament. The vertical line in the middle is the average. The red line represents
+                            your rankings, top of the bar being first place.'])
+                </h5>
+                @if ($claim_count > 2)
+                    <div id="chart-claim"></div>
+                @else
+                    <div class="text-xs-center small-text m-t-1 m-b-1">
+                        Claim in at least 3 tournaments to make the chart appear.
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
     {!! Form::close() !!}
 
     {{--Flaticon legal--}}
     @include('partials.legal-icons')
+
+    @if ($claim_count > 2)
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    @endif
 
     <script type="text/javascript">
         function profileSwitchEdit() {
@@ -360,8 +383,76 @@
                 }
             });
         @endif
+
         document.getElementById('faction_text').textContent = factionCodeToFactionTitle('{{ $user->favorite_faction }}');
         $('#faction_logo').addClass('icon-' + '{{ $user->favorite_faction }}');
+
+        @if ($claim_count > 2)
+            // tournament claims chart
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawClaimChart);
+            var chart, chartOptions, chartDataTable;
+
+            function drawClaimChart() {
+
+                chartDataTable = new google.visualization.DataTable();
+
+                chartDataTable.addColumn('string', 'tournament');
+                chartDataTable.addColumn('number', 'bottom');
+                chartDataTable.addColumn({ type: 'string', role: 'style' });
+                chartDataTable.addColumn({ type: 'string', role: 'tooltip', 'p': {'html': true} });
+                chartDataTable.addColumn('number', 'top');
+                chartDataTable.addColumn({ type: 'string', role: 'style' });
+                chartDataTable.addColumn({ type: 'string', role: 'tooltip', 'p': {'html': true} });
+                chartDataTable.addColumn('number', 'claim');
+                chartDataTable.addColumn({ type: 'string', role: 'tooltip', 'p': {'html': true} });
+
+                <?php $biggest = 0; ?>
+                @foreach($claims->reverse() as $claim)
+                    <?php
+                        if ($claim->tournament->players_number > $biggest) {
+                            $biggest = $claim->tournament->players_number;
+                        }
+                        $half = $claim->tournament->players_number / 2;
+                        $tooltip = '<div style="padding: 0.5em"><strong>'.addslashes($claim->tournament->title).
+                            '</strong><br/>claim: #'.$claim->rank().'/'.$claim->tournament->players_number.
+                            '&nbsp;<img src="/img/ids/'.$claim->runner_deck_identity.'.png">&nbsp;<img src="/img/ids/'.$claim->corp_deck_identity.'.png"></div>';
+                    ?>
+                    var color = 'color: ' + tournamentTypeToColor({{$claim->tournament->tournament_type_id}});
+
+                    chartDataTable.addRow(['{{  $claim->tournament->title }}',
+                            {{ - $half }}, color, '{!! $tooltip !!}', {{ $half }}, color, '{!! $tooltip !!}',
+                            {{ $claim->tournament->players_number / 2 - $claim->rank() + 1 }}, '{!! $tooltip !!}']);
+
+                @endforeach
+
+                chartOptions = {
+                    legend: 'none',
+                    tooltip: { isHtml: true },
+                    isStacked: true,
+                    seriesType: 'bars',
+                    series: { 2: {type: 'line', color: 'red'} },
+                    vAxis: { textPosition: 'none', viewWindow: { min: {{ -$biggest / 2 }}, max: {{ $biggest / 2 }} }, baselineColor: '#2A8A78', logScale: false },
+                    hAxis: { slantedTextAngle: 20 }
+                };
+
+
+                chart = new google.visualization.ComboChart(document.getElementById('chart-claim'));
+                chart.draw(chartDataTable, chartOptions);
+            }
+
+            function tournamentTypeToColor(type) {
+                switch (type) {
+                    case 2: return '#3a8922'; // store
+                    case 3: return '#722086'; // regional
+                    case 4: return '#24598a'; // national
+                    case 5: return '#892222'; // worlds
+                    case 9: return '#8a5e25'; // continental
+                    default: return 'grey';
+                }
+            }
+
+        @endif
     </script>
 @stop
 
