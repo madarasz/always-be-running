@@ -333,10 +333,9 @@
                     <i class="fa fa-line-chart" aria-hidden="true"></i>
                     Tournament claims
                     @include('partials.popover', ['direction' => 'top', 'content' =>
-                            'This chart shows your tournament rankings compared to the average.
-                            Bar height refers to number of players on
-                            the tournament. The vertical line in the middle is the average. The red line represents
-                            your rankings, top of the bar being first place.'])
+                            'This chart shows your tournament rankings over time.
+                            The higher the bubble is the closer you were to the first place.
+                            Bubble size reflects number of players on the tournament.'])
                 </h5>
                 @if ($claim_count > 2)
                     <div id="chart-claim"></div>
@@ -388,6 +387,7 @@
         $('#faction_logo').addClass('icon-' + '{{ $user->favorite_faction }}');
 
         @if ($claim_count > 2)
+
             // tournament claims chart
             google.charts.load('current', {'packages':['corechart']});
             google.charts.setOnLoadCallback(drawClaimChart);
@@ -397,47 +397,45 @@
 
                 chartDataTable = new google.visualization.DataTable();
 
-                chartDataTable.addColumn('string', 'tournament');
-                chartDataTable.addColumn('number', 'bottom');
+                chartDataTable.addColumn('date', 'date');
+                chartDataTable.addColumn('number', 'rank');
                 chartDataTable.addColumn({ type: 'string', role: 'style' });
-                chartDataTable.addColumn({ type: 'string', role: 'tooltip', 'p': {'html': true} });
-                chartDataTable.addColumn('number', 'top');
-                chartDataTable.addColumn({ type: 'string', role: 'style' });
-                chartDataTable.addColumn({ type: 'string', role: 'tooltip', 'p': {'html': true} });
-                chartDataTable.addColumn('number', 'claim');
                 chartDataTable.addColumn({ type: 'string', role: 'tooltip', 'p': {'html': true} });
 
-                <?php $biggest = 0; ?>
+                // polinomial constants for size calculation
+                var poly1 = -0.00084, poly2 = 0.2789, poly3 = 2.8224;
+//                var poly1 = -0.0013, poly2 = 0.4071, poly3 = 1.8287;
+
                 @foreach($claims->reverse() as $claim)
+
                     <?php
-                        if ($claim->tournament->players_number > $biggest) {
-                            $biggest = $claim->tournament->players_number;
-                        }
-                        $half = $claim->tournament->players_number / 2;
                         $tooltip = '<div style="padding: 0.5em"><strong>'.addslashes($claim->tournament->title).
                             '</strong><br/>claim: #'.$claim->rank().'/'.$claim->tournament->players_number.
                             '&nbsp;<img src="/img/ids/'.$claim->runner_deck_identity.'.png">&nbsp;<img src="/img/ids/'.$claim->corp_deck_identity.'.png"></div>';
                     ?>
-                    var color = 'color: ' + tournamentTypeToColor({{$claim->tournament->tournament_type_id}});
 
-                    chartDataTable.addRow(['{{  $claim->tournament->title }}',
-                            {{ - $half }}, color, '{!! $tooltip !!}', {{ $half }}, color, '{!! $tooltip !!}',
-                            {{ $claim->tournament->players_number / 2 - $claim->rank() + 1 }}, '{!! $tooltip !!}']);
+                    chartDataTable.addRow([
+                        new Date('{{ $claim->tournament->date }}'),
+                        {{ ($claim->rank() - $claim->tournament->players_number) / (-$claim->tournament->players_number+1)}},
+                        'point { fill-color: ' + tournamentTypeToColor({{$claim->tournament->tournament_type_id}}) +
+                            '; size: ' + Math.round(poly1 * {{ $claim->tournament->players_number }} * {{ $claim->tournament->players_number }} + poly2 * {{ $claim->tournament->players_number }} + poly3) +
+                            {{--'; size: ' + Math.round(0.1033 * {{ $claim->tournament->players_number }} + 4.1736) +--}}
+                            {{--'; size: ' + Math.round(4.52779 * Math.log(3.01709 * {{ $claim->tournament->players_number }} )) +--}}
+                            '; stroke-color: #fff }',
+                        '{!! $tooltip !!}'
+                    ]);
 
                 @endforeach
 
                 chartOptions = {
                     legend: 'none',
                     tooltip: { isHtml: true },
-                    isStacked: true,
-                    seriesType: 'bars',
-                    series: { 2: {type: 'line', color: 'red'} },
-                    vAxis: { textPosition: 'none', viewWindow: { min: {{ -$biggest / 2 }}, max: {{ $biggest / 2 }} }, baselineColor: '#2A8A78', logScale: false },
-                    hAxis: { slantedTextAngle: 20 }
+                    series: { 0: { lineWidth: 0, pointSize: 5 } },
+                    vAxis: { viewWindow: { min: -0.2, max: 1.2 }, ticks: [{ v: 1, f: 'first'}, {v: 0, f: 'last'}]  }
                 };
 
 
-                chart = new google.visualization.ComboChart(document.getElementById('chart-claim'));
+                chart = new google.visualization.LineChart(document.getElementById('chart-claim'));
                 chart.draw(chartDataTable, chartOptions);
             }
 
