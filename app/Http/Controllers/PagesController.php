@@ -171,6 +171,7 @@ class PagesController extends Controller
         // checkbox fix
         $request->merge(['autofilter_upcoming' => $request->autofilter_upcoming === 'on']);
         $request->merge(['autofilter_results' => $request->autofilter_results === 'on']);
+        $request->merge(['show_chart' => $request->show_chart === 'on']);
 
         $user = User::findorFail($request->id);
         $user->update($request->all());

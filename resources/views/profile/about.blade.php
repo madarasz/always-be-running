@@ -92,4 +92,16 @@
             </div>
         </div>
     </div>
+    {{--Show tournament claims--}}
+    <div class="form-group row profile-field hidden-xs-up">
+        <label for="about" class="col-xs-3 col-form-label profile-field hidden-xs-up">claims chart:</label>
+        <div class="col-xs-9">
+            {!! Form::checkbox('show_chart', null,
+                        in_array($user->show_chart, [1, '1', 'on'], true),
+                        ['id' => 'show_chart', 'class' => 'profile-field hidden-xs-up']) !!}
+            <label for="show_chart" class="small-text profile-field hidden-xs-up">
+                <em>show Claims chart</em>
+            </label>
+        </div>
+    </div>
 </div>

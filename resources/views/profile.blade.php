@@ -58,7 +58,7 @@
     {{--Flaticon legal--}}
     @include('partials.legal-icons')
 
-    @if ($claim_count > 2)
+    @if ($user->show_chart && $claim_count > 2)
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     @endif
 
@@ -92,7 +92,7 @@
         document.getElementById('faction_text').textContent = factionCodeToFactionTitle('{{ $user->favorite_faction }}');
         $('#faction_logo').addClass('icon-' + '{{ $user->favorite_faction }}');
 
-        @if ($claim_count > 2)
+        @if ($user->show_chart && $claim_count > 2)
 
             // tournament claims chart
             google.charts.load('current', {'packages':['corechart']});
@@ -141,6 +141,19 @@
                 chart = new google.visualization.LineChart(document.getElementById('chart-claim'));
                 chart.draw(chartDataTable, chartOptions);
             }
+
+            //create trigger to resizeEnd event
+            $(window).resize(function() {
+                if(this.resizeTO) clearTimeout(this.resizeTO);
+                this.resizeTO = setTimeout(function() {
+                    $(this).trigger('resizeEnd');
+                }, 500);
+            });
+
+            //redraw graph when window resize is completed
+            $(window).on('resizeEnd', function() {
+                chart.draw(chartDataTable, chartOptions);
+            });
 
         @endif
     </script>

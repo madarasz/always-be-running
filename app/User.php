@@ -15,7 +15,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name', 'id', 'sharing', 'email', 'published_decks', 'private_decks', 'reputation', 'country_id', 'favorite_faction',
         'username_real', 'username_preferred', 'username_jinteki', 'username_stimhack', 'username_twitter', 'website',
-        'about', 'autofilter_upcoming', 'autofilter_results'
+        'about', 'autofilter_upcoming', 'autofilter_results', 'username_slack', 'show_chart'
     ];
 
     /**

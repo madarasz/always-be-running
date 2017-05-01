@@ -43,6 +43,16 @@
         </div>
     </div>
     <div class="form-group row">
+        <label for="username_slack" class="col-xs-3 col-form-label">Stimhack.Slack:</label>
+        <div class="col-xs-9">
+            <div class="col-form-label profile-text">
+                {{ $user->username_slack }}
+            </div>
+            <input class="form-control profile-field hidden-xs-up" type="text" id="username_slack"
+                   name="username_slack" value="{{ $user->username_slack }}">
+        </div>
+    </div>
+    <div class="form-group row">
         <label for="username_stimhack" class="col-xs-3 col-form-label">Stimhack forum:</label>
         <div class="col-xs-9">
             <div class="col-form-label profile-text">
