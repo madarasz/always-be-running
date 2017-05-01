@@ -453,3 +453,14 @@ function showBadgeUsers(id) {
     $('#button-show-' + id).addClass('hidden-xs-up');
     $('#users-badge-' + id).removeClass('hidden-xs-up');
 }
+
+function tournamentTypeToColor(type) {
+    switch (type) {
+        case 2: return '#3a8922'; // store
+        case 3: return '#722086'; // regional
+        case 4: return '#24598a'; // national
+        case 5: return '#892222'; // worlds
+        case 9: return '#8a5e25'; // continental
+        default: return 'grey';
+    }
+}
