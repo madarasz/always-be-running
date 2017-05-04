@@ -113,5 +113,7 @@
         } else {
             modal.find('.section-manual').removeClass('hidden-xs-up');
         }
-    })
+    }).on('hide.bs.modal', function (event) {
+        $('.popover').popover('hide');
+    });
 </script>

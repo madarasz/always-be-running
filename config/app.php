@@ -161,7 +161,8 @@ return [
         Artdarek\OAuth\OAuthServiceProvider::class,
         Haleks\Markdown\MarkdownServiceProvider::class,
         Alaouy\Youtube\YoutubeServiceProvider::class,
-        Intervention\Image\ImageServiceProvider::class
+        Intervention\Image\ImageServiceProvider::class,
+        SammyK\LaravelFacebookSdk\LaravelFacebookSdkServiceProvider::class
     ],
 
     /*
@@ -213,7 +214,8 @@ return [
         'OAuth2' => Artdarek\OAuth\Facade\OAuth::class,
         'Markdown' => Haleks\Markdown\Facades\Markdown::class,
         'Youtube'=> Alaouy\Youtube\Facades\Youtube::class,
-        'Image' => Intervention\Image\Facades\Image::class
+        'Image' => Intervention\Image\Facades\Image::class,
+        'Facebook' => SammyK\LaravelFacebookSdk\FacebookFacade::class,
     ],
 
 ];
