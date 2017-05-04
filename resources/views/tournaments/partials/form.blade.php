@@ -203,7 +203,8 @@
     <div class="col-xs-12">
         <p class="text-xs-center">
             <span class="text-danger"><sup>*</sup> required fields</span> -
-            {!! Form::checkbox('hide-non', null, in_array(old('hide-non', $tournament->incomplete), [1, '1', 'on'], true),
+            {!! Form::checkbox('hide-non', null,
+                in_array(old('hide-non', $tournament->incomplete), [1, '1', 'on'], true) && in_array(old('hide-non', $tournament->concluded), [1, '1', 'on'], true),
                 ['id' => 'hide-non', 'onchange' => 'hideNonRequired()']) !!}
             {!! Form::label('hide-non', 'hide non-required fields') !!}
         </p>

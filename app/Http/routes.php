@@ -62,6 +62,9 @@ Route::get('/api/as/{id}', 'ASController@index');
 Route::post('/api/badgesseen/{id}', 'BadgeController@changeBadgesToSeen');
 Route::get('/api/adminstats', 'AdminController@adminStats');
 Route::get('/api/getdeckdata', 'NetrunnerDBController@getDeckData');
+Route::get('/api/fb/event-title', 'FBController@getEventTitle');
+Route::post('/api/fb/import', 'FBController@importViaFB');
+
 // iframe for double elimination
 Route::get('/elimination', function () { return view('layout.bracket'); });
 // https proxies for loading KnowTheMeta data

@@ -5,13 +5,18 @@
     <h4 class="page-header p-b-1">
         <div class="pull-right">
             <a href="/tournaments/create" class="btn btn-primary">Create Tournament</a>
+            <button class="btn btn-info" data-toggle="modal" data-target="#fbImportModal">
+                Create from <img src="https://en.facebookbrand.com/wp-content/uploads/2016/05/FB-fLogo-Blue-broadcast-2.png" style="height: 1em;"/> event
+            </button>
             <button class="btn btn-conclude" data-toggle="modal" data-target="#concludeModal" data-hide-manual="true"
-                    data-tournament-id="-1" data-subtitle="use this for new concluded tournaments">Create via Import</button>
+                    data-tournament-id="-1" data-subtitle="use this for new concluded tournaments">Create from Results</button>
         </div>
         Organize
     </h4>
     {{--Conclude modal--}}
     @include('tournaments.modals.conclude')
+    {{--FB import modal--}}
+    @include('tournaments.modals.fb-import')
 
     @include('partials.message')
     @include('errors.list')
