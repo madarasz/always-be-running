@@ -720,7 +720,7 @@ a.supporter:hover {
 /* tournament type indicator on profile */
 .tournament-type {
     display: inline-block;
-    padding: .25em .4em;
+    padding: .25em .5em;
     font-weight: bold;
     line-height: 1rem;
     color: #fff;
@@ -745,24 +745,44 @@ a.supporter:hover {
 }
 .type-world {
     background-color: #892222;
-    padding: .25em .25em;
+    padding: .25em .3em;
+}
+/* tournament format */
+.tournament-format {
+    display: inline-block;
+    background-color: #fff;
+    font-weight: 800;
+    line-height: 1rem;
+    border-radius: .25rem;
+    z-index: 10;
+    font-style: normal;
+    border: 0.1rem solid;
 }
 .type-onesies {
-    background-color: #46bc7d;
-    padding: .25em .5em;
+    color: #46bc7d;
+    border-color: #46bc7d;
+    padding: .25em .55em .25em .45em;
 }
 .type-cache {
     font-size: 70%;
-    background-color: #5d9ebc;
-    padding: .4em .4em;
+    position: relative;
+    top: -0.2em;
+    color: #5d9ebc;
+    border-color: #5d9ebc;
+    padding: .35em .5em .25em .5em;
  }
 .type-draft {
-    background-color: #bc6657;
+    border-color: #bc6657;
+    color: #bc6657;
+    padding: .25em .5em .25em .45em;
 }
 .type-cube-draft {
     font-size: 70%;
-    background-color: #bc6db1;
-    padding: .4em .4em;
+    position: relative;
+    top: -0.2em;
+    color: #bc6db1;
+    border-color: #bc6db1;
+    padding: .35em .5em .25em .5em;
 }
 .type-recurring {
     background-color: #fff;

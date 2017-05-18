@@ -24,9 +24,9 @@
         <span class="tournament-type type-continental" title="continental championship">C</span> continental championship |
         <span class="tournament-type type-world" title="worlds championship">W</span> worlds championship
         <br/>
-        <span class="tournament-type type-cache" title="cache refresh">CR</span> cache refresh |
-        <span class="tournament-type type-onesies" title="1.1.1.1">1</span> 1.1.1.1 |
-        <span class="tournament-type type-draft" title="draft">D</span> draft |
-        <span class="tournament-type type-cube-draft" title="cube draft">CD</span> cube draft
+        <span class="tournament-format type-cache" title="cache refresh">CR</span> cache refresh |
+        <span class="tournament-format type-onesies" title="1.1.1.1">1</span> 1.1.1.1 |
+        <span class="tournament-format type-draft" title="draft">D</span> draft |
+        <span class="tournament-format type-cube-draft" title="cube draft">CD</span> cube draft
     </div>
 </div>

@@ -69,16 +69,16 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
             // tournament formats
             switch (element.format) {
                 case 'cache refresh':
-                    cell.append('<span class="tournament-type type-cache" title="cache refresh">CR</span> ');
+                    cell.append('<span class="tournament-format type-cache" title="cache refresh">CR</span> ');
                     break;
                 case '1.1.1.1':
-                    cell.append('<span class="tournament-type type-onesies" title="1.1.1.1">1</span> ');
+                    cell.append('<span class="tournament-format type-onesies" title="1.1.1.1">1</span> ');
                     break;
                 case 'draft':
-                    cell.append('<span class="tournament-type type-draft" title="draft">D</span> ');
+                    cell.append('<span class="tournament-format type-draft" title="draft">D</span> ');
                     break;
                 case 'cube draft':
-                    cell.append('<span class="tournament-type type-cube-draft" title="cube draft">CD</span> ');
+                    cell.append('<span class="tournament-format type-cube-draft" title="cube draft">CD</span> ');
                     break;
             }
 
