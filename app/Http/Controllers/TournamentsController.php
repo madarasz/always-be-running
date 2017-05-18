@@ -130,7 +130,7 @@ class TournamentsController extends Controller
         }
 
         // all usernames for transferring, IDs for adding entries
-        if ($request->user() && ($request->user()->admin || $request->user()->id == $tournament->creator)) {
+        if ($request->user()) {
             $all_users = User::orderBy('name')->pluck('name', 'id');
         }
 

@@ -43,12 +43,10 @@
     @include('tournaments.viewer.videolist',
         ['videos' => $tournament->videos, 'creator' => $tournament->creator, 'id' => 'videos'])
 @endif
-<div id="section-watch-video" class="hidden-xs-up">
+<div id="section-watch-video" class="hidden-xs-up text-xs-center">
     <hr/>
-    <p>
-        <button class="btn btn-danger btn-xs" onclick="watchVideo(false)">
-            <i class="fa fa-window-close" aria-hidden="true"></i> Close
-        </button>
-    </p>
     <div id="section-video-player"></div>
+    <button class="btn btn-danger btn-xs" onclick="watchVideo(false)">
+        <i class="fa fa-window-close" aria-hidden="true"></i> Close
+    </button>
 </div>

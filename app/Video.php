@@ -15,6 +15,14 @@ class Video extends Model
         return $this->belongsTo(Tournament::class, 'tournament_id', 'id');
     }
 
+    public function users() {
+        return $this->belongsToMany(User::class, 'video_tags', 'video_id', 'user_id');
+    }
+
+    public function videoTags() {
+        return $this->HasMany(VideoTag::class);
+    }
+
     public static function youtubeLookup($input) {
         if(strlen($input) == 11) {
             // video ID

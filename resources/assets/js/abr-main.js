@@ -209,14 +209,14 @@ function togglePhotoAdd(value) {
 // toggle video player
 function watchVideo(videoId) {
     if(videoId) {
-        $('#section-watch-video').removeClass('hidden-xs-up')
-        $('#section-video-player').html('<iframe width="480" height="270" src="//www.youtube.com/embed/' + videoId + '" frameborder="0" allowfullscreen></iframe>')
+        $('#section-watch-video').removeClass('hidden-xs-up');
+        $('#section-video-player').html('<iframe width="480" height="270" src="//www.youtube.com/embed/' + videoId + '" frameborder="0" allowfullscreen></iframe>');
         $('html, body').animate({
             scrollTop: $("#section-watch-video").offset().top - 60
         }, 500);
     } else {
-        $('#section-watch-video').addClass('hidden-xs-up')
-        $('#section-video-player').empty()
+        $('#section-watch-video').addClass('hidden-xs-up');
+        $('#section-video-player').empty();
     }
 }
 

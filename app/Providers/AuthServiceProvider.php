@@ -19,6 +19,7 @@ class AuthServiceProvider extends ServiceProvider
         Entry::class => EntryPolicy::class,
         'App\Model' => 'App\Policies\ModelPolicy',
         'App\Video' => 'App\Policies\VideoPolicy',
+        'App\VideoTag' => 'App\Policies\VideoTagPolicy',
         'App\Photo' => 'App\Policies\PhotoPolicy'
     ];
 

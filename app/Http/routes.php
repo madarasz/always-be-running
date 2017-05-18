@@ -45,6 +45,8 @@ Route::get('tournaments/{id}/{slug}', 'TournamentsController@show')->name('tourn
 
 Route::post('videos', 'VideosController@store');
 Route::delete('videos/{id}', 'VideosController@destroy');
+Route::post('videos/{id}/tag', 'VideosController@storeTag');
+Route::get('videotags/delete/{id}', 'VideosController@destroyTag');
 
 Route::post('photos', 'PhotosController@store');
 Route::get('photos/{id}/approve', 'PhotosController@approve');

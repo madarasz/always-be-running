@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Policies\VideoTagPolicy;
 use App\Tournament;
 use App\Video;
 use App\Http\Requests;
+use App\VideoTag;
 use Illuminate\Http\Request;
 
 class VideosController extends Controller
@@ -60,5 +62,47 @@ class VideosController extends Controller
         // redirecting to tournament
         return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
             ->with('message', 'Video deleted.');
+    }
+
+    /**
+     * Tags user in video.
+     * @param Request $request
+     * @param $id int Video ID
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function storeTag(Request $request, $id) {
+        $this->authorize('logged_in', Tournament::class, $request->user());
+        $video = Video::findOrFail($id);
+
+        // if already created
+        if (VideoTag::where('video_id', $id)->where('user_id', $request->user_id)->first()) {
+            return redirect()->route('tournaments.show.slug', [$video->tournament_id, $video->tournament->seoTitle()])
+                ->with('message', 'User was already tagged in video.');
+        }
+
+        VideoTag::create([
+            'video_id' => $id,
+            'user_id' => $request->user_id,
+            'tagged_by_user_id' => $request->user()->id
+        ]);
+
+        // redirecting to tournament
+        return redirect()->back()->with('message', 'User tagged in video.');
+    }
+
+    /**
+     * Untags users from video
+     * @param Request $request
+     * @param $id int VideoTag ID
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroyTag(Request $request, $id) {
+        $videotag = VideoTag::findOrFail($id);
+        $this->authorize('delete', $videotag, $request->user());
+
+        VideoTag::destroy($videotag->id);
+
+        // redirecting to tournament
+        return redirect()->back()->with('message', 'User tag deleted.');
     }
 }

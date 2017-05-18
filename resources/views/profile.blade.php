@@ -1,7 +1,6 @@
 @extends('layout.general')
 
 @section('content')
-    {!! Form::open(['url' => '/profile/'.$user->id, 'id' => 'profile-form']) !!}
     <h4 class="page-header p-b-1">
         {{--Edit button--}}
         @if (Auth::check() && Auth::user()->id == $user->id)
@@ -38,6 +37,7 @@
             @endif
         </div>
         <div class="col-md-8 col-xs-12">
+            {!! Form::open(['url' => '/profile/'.$user->id, 'id' => 'profile-form']) !!}
             {{--Usernames--}}
             @include('profile.usernames')
             {{--About--}}
@@ -49,11 +49,13 @@
                     <i class="fa fa-pencil" aria-hidden="true"></i> Save
                 </a>
             </div>
+            {!! Form::close() !!}
             {{--Tournament progress chart--}}
             @include('profile.tournament-chart')
+            {{--Videos--}}
+            @include('profile.videos')
         </div>
     </div>
-    {!! Form::close() !!}
 
     @include('tournaments.partials.icons', ['profile' => true])<br/>
 

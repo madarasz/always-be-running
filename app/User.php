@@ -44,4 +44,8 @@ class User extends Authenticatable
     public function country() {
         return $this->hasOne(Countries::class, 'id', 'country_id');
     }
+
+    public function videos() {
+        return $this->belongsToMany(Video::class, 'video_tags', 'user_id', 'video_id');
+    }
 }
