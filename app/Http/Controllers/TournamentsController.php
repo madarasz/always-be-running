@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\CardPack;
 use App\Entry;
+use App\TournamentFormat;
 use App\User;
 use App\Tournament;
 use App\TournamentType;
@@ -39,6 +40,7 @@ class TournamentsController extends Controller
     {
         $this->authorize('logged_in', Tournament::class, $request->user());
         $tournament_types = TournamentType::orderBy('order')->pluck('type_name', 'id')->all();
+        $tournament_formats = TournamentFormat::orderBy('order')->pluck('format_name', 'id')->all();
         $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $tournament = new Tournament();
 
@@ -46,7 +48,8 @@ class TournamentsController extends Controller
         $tournament->cardpool_id = 'unknown';
 
         $page_section = 'organize';
-        return view('tournaments.create', compact('tournament_types', 'tournament', 'cardpools', 'page_section'));
+        return view('tournaments.create', compact('tournament_types', 'tournament', 'cardpools', 'page_section',
+            'tournament_formats'));
     }
 
     /**
@@ -60,9 +63,11 @@ class TournamentsController extends Controller
         $tournament = Tournament::withTrashed()->findOrFail($id);
         $this->authorize('own', $tournament, $request->user());
         $tournament_types = TournamentType::orderBy('order')->pluck('type_name', 'id')->all();
+        $tournament_formats = TournamentFormat::orderBy('order')->pluck('format_name', 'id')->all();
         $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $page_section = 'organize';
-        return view('tournaments.edit', compact('tournament', 'id', 'tournament_types', 'cardpools', 'page_section'));
+        return view('tournaments.edit', compact('tournament', 'id', 'tournament_types', 'cardpools', 'page_section',
+            'tournament_formats'));
     }
 
     /**
@@ -134,6 +139,7 @@ class TournamentsController extends Controller
         $corpIDs = $this->categorizeIDs(CardIdentity::where('runner', 0)
             ->orderBy('faction_code')->orderBy('title')->get());
         $type = $tournament->tournament_type->type_name;
+        $format = $tournament->tournament_format->format_name;
         $message = session()->has('message') ? session('message') : '';
         $nowdate = date('Y.m.d.');
         $user = $request->user();
@@ -161,7 +167,7 @@ class TournamentsController extends Controller
         }
 
         return view('tournaments.view',
-            compact('tournament', 'message', 'type', 'nowdate', 'user', 'entries', 'runnerIDs', 'corpIDs',
+            compact('tournament', 'message', 'type', 'format', 'nowdate', 'user', 'entries', 'runnerIDs', 'corpIDs',
                 'user_entry', 'entries_swiss', 'entries_top', 'regcount', 'all_users'));
     }
 
@@ -333,6 +339,7 @@ class TournamentsController extends Controller
                 'id' => $tournament->id,
                 'title' => $tournament->title,
                 'type' => $tournament->tournament_type['type_name'],
+                'format' => $tournament->tournament_format['format_name'],
                 'date' => $tournament->date,
                 'creator_id' => $tournament->creator,
                 'creator_name' => $tournament->user()->first()->name,

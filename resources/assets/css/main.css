@@ -722,14 +722,14 @@ a.supporter:hover {
     display: inline-block;
     padding: .25em .4em;
     font-weight: bold;
-    line-height: 1;
+    line-height: 1rem;
     color: #fff;
     border-radius: .25rem;
     z-index: 10;
     font-style: normal;
 }
 .no-li {
-    margin-left: -1.6em;
+    margin-left: -1.6rem;
 }
 .type-store {
     background-color: #3a8922;
@@ -745,6 +745,24 @@ a.supporter:hover {
 }
 .type-world {
     background-color: #892222;
+    padding: .25em .25em;
+}
+.type-onesies {
+    background-color: #46bc7d;
+    padding: .25em .5em;
+}
+.type-cache {
+    font-size: 70%;
+    background-color: #5d9ebc;
+    padding: .4em .4em;
+ }
+.type-draft {
+    background-color: #bc6657;
+}
+.type-cube-draft {
+    font-size: 70%;
+    background-color: #bc6db1;
+    padding: .4em .4em;
 }
 .type-recurring {
     background-color: #fff;

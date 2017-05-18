@@ -39,7 +39,19 @@
                 </a></strong></p>
     @endif
     @if ($tournament->date)
-        <p><strong>Legal cardpool up to:</strong> <span id="cardpool"><em>{{ $tournament->cardpool->name }}</em></span></p>
+        <p>
+            <strong>Legal cardpool up to:</strong> <span id="cardpool"><em>{{ $tournament->cardpool->name }}</em></span><br/>
+            <strong>Format:</strong> <span id="cardpool">{{ $format }}</span>
+            @include('partials.popover', ['direction' => 'right', 'content' =>
+                        '<ul>
+                            <li><strong>Standard:</strong> Most tournaments are like this. <em>Tournament Regulations</em> by FFG, the latest <em>MWL</em> and <em>FAQ</em> are in effect.</li>
+                            <li><strong>Cache Refresh:</strong> 1 Core Set + 1 Deluxe Expansion + 1 Terminal Directive + current Data Cycle + second-most current Data Cycle. Latest MWL plus additional rules apply.</li>
+                            <li><strong>1.1.1.1:</strong> 1 Core Set + 1 Deluxe Expansion + 1 Data Pack + 1 Card.</li>
+                            <li><strong>Draft:</strong> Drafting with the official FFG draft packs.</li>
+                            <li><strong>Cube Draft:</strong> Drafting with a custom draft pool.</li>
+                        </ul>
+                        Additional tournament rules are stated in the tournament description.'])
+        </p>
     @endif
     @if($tournament->decklist == 1)
         <p><strong><u><span id="decklist-mandatory">decklist is mandatory!</span></u></strong></p>

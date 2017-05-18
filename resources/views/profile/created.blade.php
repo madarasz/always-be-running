@@ -7,6 +7,7 @@
         @foreach($created as $tournament)
             <li>
                 @include('tournaments.partials.list-type', ['tournament' => $tournament, 'class' => 'no-li'])
+                @include('tournaments.partials.list-format', ['tournament' => $tournament, 'class' => 'no-li'])
                 <a href="{{ $tournament->seoUrl() }}">
                     {{ $tournament->title }}
                 </a><br/>

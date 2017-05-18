@@ -48,10 +48,32 @@
                     </div>
                 </div>
             </div>
-            {{--Mandatory decklist--}}
-            <div class="form-group hide-nonrequired">
-                {!! Form::checkbox('decklist', null, in_array(old('decklist', $tournament->decklist), [1, '1', 'on'], true), ['id' => 'decklist']) !!}
-                {!! Form::label('decklist', 'decklist is mandatory') !!}
+            <div class="row">
+                {{--Format--}}
+                <div class="col-md-6 col-xs-12">
+                    <div class="form-group hide-nonrequired">
+                    {!! Form::label('tournament_format_id', 'Format') !!}
+                    @include('partials.popover', ['direction' => 'right', 'content' =>
+                        '<ul>
+                            <li><strong>Standard:</strong> Most tournaments are like this. <em>Tournament Regulations</em> by FFG and latest <em>MWL, FAQ</em> are in effect.</li>
+                            <li><strong>Cache Refresh:</strong> 1 Core Set + 1 Deluxe Expansion + 1 Terminal Directive + current Data Cycle + second-most current Data Cycle. Latest MWL plus additional rules apply.</li>
+                            <li><strong>1.1.1.1:</strong> 1 Core Set + 1 Deluxe Expansion + 1 Data Pack + 1 Card. Please state in the description if MWL applies.</li>
+                            <li><strong>Draft:</strong> Drafting with the official FFG draft packs.</li>
+                            <li><strong>Cube Draft:</strong> Drafting with a custom draft pool. Please give more information about the draft pool in the description.</li>
+                        </ul>
+                        If your tournament rules differs from the format you selected, explain the differences in the
+                        description.'])
+                    {!! Form::select('tournament_format_id', $tournament_formats,
+                        old('tournament_format_id', $tournament->tournament_format_id), ['class' => 'form-control']) !!}
+                    </div>
+                </div>
+                {{--Mandatory decklist--}}
+                <div class="col-md-6 col-xs-12">
+                    <div class="form-group hide-nonrequired m-t-2">
+                        {!! Form::checkbox('decklist', null, in_array(old('decklist', $tournament->decklist), [1, '1', 'on'], true), ['id' => 'decklist']) !!}
+                        {!! Form::label('decklist', 'decklist is mandatory') !!}
+                    </div>
+                </div>
             </div>
             {{--Contact--}}
             <div class="form-group hide-nonrequired">

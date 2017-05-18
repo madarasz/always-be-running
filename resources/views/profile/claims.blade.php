@@ -10,8 +10,9 @@
                 <li style="list-style: none">
             @else
                 <li>
-                    @endif
+            @endif
                     @include('tournaments.partials.list-type', ['tournament' => $claim->tournament, 'class' => 'no-li'])
+                    @include('tournaments.partials.list-format', ['tournament' => $claim->tournament, 'class' => 'no-li'])
                     <strong>#{{ $claim->rank() }} / {{ $claim->tournament->players_number }}</strong>
                     @if ($claim->type == 3)
                         <a href="{{ $claim->runner_deck_url() }}" title="{{ $claim->runner_deck_title }}"><img src="/img/ids/{{ $claim->runner_deck_identity }}.png"></a>&nbsp;<a href="{{ $claim->corp_deck_url() }}" title="{{ $claim->corp_deck_title }}"><img src="/img/ids/{{ $claim->corp_deck_identity }}.png"></a>
@@ -23,6 +24,6 @@
                     </a>
                     <span class="legal-bullshit">({{ $claim->tournament->date }})</span>
                 </li>
-                @endforeach
+        @endforeach
     </ul>
 </div>

@@ -47,6 +47,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 }), ' ');
             }
 
+            // tournament types
             switch (element.type) {
                 case 'store championship':
                     cell.append('<span class="tournament-type type-store" title="store championship">S</span> ');
@@ -62,6 +63,22 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                     break;
                 case 'worlds championship':
                     cell.append('<span class="tournament-type type-world" title="worlds championship">W</span> ');
+                    break;
+            }
+
+            // tournament formats
+            switch (element.format) {
+                case 'cache refresh':
+                    cell.append('<span class="tournament-type type-cache" title="cache refresh">CR</span> ');
+                    break;
+                case '1.1.1.1':
+                    cell.append('<span class="tournament-type type-onesies" title="1.1.1.1">1</span> ');
+                    break;
+                case 'draft':
+                    cell.append('<span class="tournament-type type-draft" title="draft">D</span> ');
+                    break;
+                case 'cube draft':
+                    cell.append('<span class="tournament-type type-cube-draft" title="cube draft">CD</span> ');
                     break;
             }
 

@@ -12,11 +12,15 @@ class Tournament extends Model
     protected $fillable = ['title', 'date', 'location_country', 'location_state', 'location_city', 'location_store',
         'location_address', 'location_place_id', 'players_number', 'description', 'concluded', 'decklist', 'top_number', 'creator',
         'tournament_type_id', 'start_time', 'cardpool_id', 'conflict', 'contact', 'import', 'location_lat', 'location_long',
-        'recur_weekly', 'incomplete', 'link_facebook'];
+        'recur_weekly', 'incomplete', 'link_facebook', 'tournament_format_id'];
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
     public function tournament_type() {
         return $this->hasOne(TournamentType::class, 'id', 'tournament_type_id');
+    }
+
+    public function tournament_format() {
+        return $this->hasOne(TournamentFormat::class, 'id', 'tournament_format_id');
     }
 
     public function user() {

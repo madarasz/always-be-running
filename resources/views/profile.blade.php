@@ -55,6 +55,8 @@
     </div>
     {!! Form::close() !!}
 
+    @include('tournaments.partials.icons', ['profile' => true])<br/>
+
     {{--Flaticon legal--}}
     @include('partials.legal-icons')
 
