@@ -13,7 +13,7 @@
                                 <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                             </a>
                         @endif
-                        <a href="{{ '/tournaments/'.$photo->tournament->id }}" class="btn btn-sm btn-info fade-in">
+                        <a href="{{ '/tournaments/'.@$photo->tournament->id }}" class="btn btn-sm btn-info fade-in">
                             <i class="fa fa-list-alt" aria-hidden="true"></i>
                         </a>
                         {!! Form::open(['method' => 'DELETE', 'url' => "/photos/{$photo->id}", 'style' => 'display:inline;']) !!}

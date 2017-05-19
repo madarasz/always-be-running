@@ -11,6 +11,7 @@ use App\User;
 use App\Entry;
 use App\Video;
 use App\Tournament;
+use App\VideoTag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -43,6 +44,8 @@ class AdminController extends Controller
         $video_users = Video::whereIn('tournament_id', $approved_tournaments)
             ->select('user_id', DB::raw('count(*) as total'))
             ->groupBy('user_id')->orderBy('total', 'desc')->pluck('total', 'user_id');
+        $video_users_tagged = VideoTag::select('user_id', DB::raw('count(*) as total'))
+            ->groupBy('user_id')->orderBy('total', 'desc')->pluck('total', 'user_id');
         $entry_types = $this->addEntryTypeNames(Entry::select('type', DB::raw('count(*) as total'))
             ->whereIn('tournament_id', $approved_tournaments)->groupBy('type')->pluck('total', 'type')->toArray());
         $published_count = Entry::where('runner_deck_type', 1)->count() + Entry::where('corp_deck_type', 1)->count();
@@ -56,7 +59,7 @@ class AdminController extends Controller
         $broken_count = Entry::where('broken_runner', '>', 0)->count() + Entry::where('broken_corp', '>', 0)->count();
         $broken_user_ids = Entry::where('broken_runner', true)->orWhere('broken_corp', true)->pluck('user')->all();
         $broken_users = User::whereIn('id', $broken_user_ids)->get();
-        $photos = Photo::get();
+        $photos = Photo::orderBy('id', 'desc')->get();
         $photo_tournaments = Photo::whereIn('tournament_id', $approved_tournaments)
             ->select('tournament_id', DB::raw('count(*) as total'))
             ->groupBy('tournament_id')->orderBy('total', 'desc')->pluck('total', 'tournament_id');
@@ -102,7 +105,7 @@ class AdminController extends Controller
             'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles',
             'page_section', 'video_channels', 'video_users', 'entry_types', 'published_count', 'private_count',
             'backlink_count', 'no_backlink_count', 'unexported_count', 'broken_count', 'broken_users',
-            'ktm_update', 'ktm_packs', 'photos', 'photo_tournaments', 'photo_users'));
+            'ktm_update', 'ktm_packs', 'photos', 'photo_tournaments', 'photo_users', 'video_users_tagged'));
     }
 
     public function approveTournament($id, Request $request)
