@@ -3,7 +3,7 @@
         <div class="gallery-item col-xs-4{{ $key > 2 ? ' hidden-xs-up more-photos' : '' }}">
             <div style="position: relative;">
                 <a href="{{ $photo->url() }}" data-toggle="lightbox" data-gallery="gallery" data-title="{{ $photo->title }}"
-                   data-footer="{{ 'uploaded by <a href="/profile/'.$photo->user->id.'">'.$photo->user->name.'</a>' }}">
+                   data-footer="{{ 'uploaded by <a href="/profile/'.$photo->user->id.'">'.$photo->user->displayUsername().'</a>' }}">
                     <img src="{{ $photo->urlThumb() }}"/>
                 </a>
                 <div class="abs-top-left">

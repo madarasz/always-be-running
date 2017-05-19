@@ -36,7 +36,7 @@
                     <td><i class="fa fa-trophy" aria-hidden="true"></i></td>
                     <td>
                         @if ($ft->winner()->player)
-                            <a href="/profile/{{ $ft->winner()->player->id }}">{{ $ft->winner()->player->name }}</a>
+                            <a href="/profile/{{ $ft->winner()->player->id }}">{{ $ft->winner()->player->displayUsername() }}</a>
                         @else
                             {{  $ft->winner()->import_username }}
                         @endif
@@ -55,7 +55,7 @@
                 <div class="featured-images">
                     @foreach($ft->photos as $index => $photo)
                         <a href="{{ $photo->url() }}" data-toggle="lightbox" data-gallery="gallery" data-title="{{ $photo->title }}"
-                           data-footer="{{ 'uploaded by <a href="/profile/'.$photo->user->id.'">'.$photo->user->name.'</a>' }}">
+                           data-footer="{{ 'uploaded by <a href="/profile/'.$photo->user->id.'">'.$photo->user->displayUsername().'</a>' }}">
                             <img src="{{ $photo->urlThumb() }}"/>
                         </a>
                     @endforeach

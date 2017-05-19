@@ -47,7 +47,7 @@
                     Thank you to these awesome people for their technical help, sending ideas or bug reports:
                     <ul class="p-t-1">
                         @foreach($helpers as $helper)
-                            <li><a href="profile/{{$helper->id}}">{{$helper->name}}</a></li>
+                            <li><a href="profile/{{$helper->id}}">{{$helper->displayUsername()}}</a></li>
                         @endforeach
                     </ul>
                 </p>

@@ -41,7 +41,7 @@
                                 <tr>
                                     <td>
                                         <a href="/profile/{{ $vuser->id }}" {{ $vuser->supporter ? 'class=supporter' : '' }}>
-                                            {{ $vuser->name }}
+                                            {{ $vuser->displayUsername() }}
                                         </a>
                                     </td>
                                     <td>{{ $count }}</td>
@@ -73,7 +73,7 @@
                                 <tr>
                                     <td>
                                         <a href="/profile/{{ $vuser->id }}" {{ $vuser->supporter ? 'class=supporter' : '' }}>
-                                            {{ $vuser->name }}
+                                            {{ $vuser->displayUsername() }}
                                         </a>
                                     </td>
                                     <td>{{ $count }}</td>
