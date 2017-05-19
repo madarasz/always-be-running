@@ -45,14 +45,31 @@
                             @for ($u = 0; $u < count($entries); $u++)
                                 @if($entries[$u]->user == $tag->user_id)
                                     @if ($entries[$u]->type == 3)
-                                        <a href="{{ $entries[$u]->runner_deck_url() }}" title="{{ $entries[$u]->runner_deck_title }}"><img src="/img/ids/{{ $entries[$u]->runner_deck_identity }}.png"></a>&nbsp;<a href="{{ $entries[$u]->corp_deck_url() }}" title="{{ $entries[$u]->corp_deck_title }}"><img src="/img/ids/{{ $entries[$u]->corp_deck_identity }}.png"></a>
+                                        @if ($tag->is_runner == true || is_null($tag->is_runner))
+                                            <a href="{{ $entries[$u]->runner_deck_url() }}" title="{{ $entries[$u]->runner_deck_title }}"><img src="/img/ids/{{ $entries[$u]->runner_deck_identity }}.png"></a>
+                                        @endif
+                                        @if ($tag->is_runner == false || is_null($tag->is_runner))
+                                            <a href="{{ $entries[$u]->corp_deck_url() }}" title="{{ $entries[$u]->corp_deck_title }}"><img src="/img/ids/{{ $entries[$u]->corp_deck_identity }}.png"></a>
+                                        @endif
                                     @else
-                                        <img src="/img/ids/{{ $entries[$u]->runner_deck_identity }}.png">&nbsp;<img src="/img/ids/{{ $entries[$u]->corp_deck_identity }}.png">
+                                        @if ($tag->is_runner == true || is_null($tag->is_runner))
+                                            <img src="/img/ids/{{ $entries[$u]->runner_deck_identity }}.png">
+                                        @endif
+                                        @if ($tag->is_runner == false || is_null($tag->is_runner))
+                                            <img src="/img/ids/{{ $entries[$u]->corp_deck_identity }}.png">
+                                        @endif
                                     @endif
                                 @endif
                             @endfor
                         @endif
-                        <a href="/profile/{{ $tag->user->id }}">{{ $tag->user->displayUsername() }}</a>{{ $key != count($videos[$i]->videoTags)-1 ? ', ' : '' }}
+                        {{--user name--}}
+                        <a href="/profile/{{ $tag->user->id }}">{{ $tag->user->displayUsername() }}</a>
+                        {{--side--}}
+                        @if (!is_null($tag->is_runner))
+                            <span class="small-text">({{ $tag->is_runner ? 'runner' : 'corporation' }})</span>
+                        @endif
+                        {{--separator--}}
+                        {{ $key != count($videos[$i]->videoTags)-1 ? '- ' : '' }}
                     @endforeach
                 @endif
             </td>

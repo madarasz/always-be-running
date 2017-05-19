@@ -37,7 +37,12 @@
                                         </optgroup>
                                     @endif
                                 </select>
-{{--                                {!! Form::select('user', $all_users, null, ['class' => 'form-control']) !!}--}}
+                                {!! Form::label('side', 'side:') !!}
+                                <select name="side" id="side" class="form-control">
+                                    <option value="">---</option>
+                                    <option value="1">runner</option>
+                                    <option value="0">corporation</option>
+                                </select>
                             </div>
                             <button type="submit" class="btn btn-primary" id="submit-tag">
                                 Tag user

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Policies\VideoTagPolicy;
 use App\Tournament;
 use App\Video;
 use App\Http\Requests;
@@ -72,18 +71,24 @@ class VideosController extends Controller
      */
     public function storeTag(Request $request, $id) {
         $this->authorize('logged_in', Tournament::class, $request->user());
-        $video = Video::findOrFail($id);
+        Video::findOrFail($id);
 
         // if already created
         if (VideoTag::where('video_id', $id)->where('user_id', $request->user_id)->first()) {
-            return redirect()->route('tournaments.show.slug', [$video->tournament_id, $video->tournament->seoTitle()])
-                ->with('message', 'User was already tagged in video.');
+            return redirect()->back()->with('message', 'User was already tagged in video.');
+        }
+
+        if ($request->side == "") {
+            $side = null;
+        } else {
+            $side = intval($request->side) == 1;
         }
 
         VideoTag::create([
             'video_id' => $id,
             'user_id' => $request->user_id,
-            'tagged_by_user_id' => $request->user()->id
+            'tagged_by_user_id' => $request->user()->id,
+            'is_runner' => $side
         ]);
 
         // redirecting to tournament
