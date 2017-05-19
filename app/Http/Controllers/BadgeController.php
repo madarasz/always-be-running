@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\VideoTag;
 use Illuminate\Http\Request;
 use App\Video;
 use App\Badge;
@@ -42,6 +43,7 @@ class BadgeController extends Controller
             $this->addNDBBadges($user->id);
             $this->addVideoBadge($user->id);
             $this->addCommunityBuilder($user->id);
+            $this->addSensieActor($user->id);
         }
 
         $badgesAfter = DB::table('badge_user')->count();
@@ -376,6 +378,16 @@ class BadgeController extends Controller
 
         if (Entry::whereIn('tournament_id', $tounamentIDs)->whereIn('type', [3,4])->where('user', '!=', $userid)->distinct()->count('user') > 9) {
             $badges[48] = true;
+        }
+
+        $this->refreshUserBadges($userid, $badges);
+    }
+
+    public function addSensieActor($userid) {
+        $badges = [64 => false, 666 => false]; // array has to have at least two elements
+
+        if (VideoTag::where('user_id', $userid)->count() > 4) {
+            $badges[64] = true;
         }
 
         $this->refreshUserBadges($userid, $badges);

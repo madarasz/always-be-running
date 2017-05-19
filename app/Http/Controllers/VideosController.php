@@ -91,6 +91,9 @@ class VideosController extends Controller
             'is_runner' => $side
         ]);
 
+        // add badges
+        App('App\Http\Controllers\BadgeController')->addSensieActor($request->user_id);
+
         // redirecting to tournament
         return redirect()->back()->with('message', 'User tagged in video.');
     }
@@ -103,9 +106,13 @@ class VideosController extends Controller
      */
     public function destroyTag(Request $request, $id) {
         $videotag = VideoTag::findOrFail($id);
+        $user_id = $videotag->user_id;
         $this->authorize('delete', $videotag, $request->user());
 
         VideoTag::destroy($videotag->id);
+
+        // remove badges
+        App('App\Http\Controllers\BadgeController')->addSensieActor($user_id);
 
         // redirecting to tournament
         return redirect()->back()->with('message', 'User tag deleted.');
