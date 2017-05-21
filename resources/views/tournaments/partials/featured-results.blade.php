@@ -23,6 +23,7 @@
                             <i title="charity" class="fa fa-heart text-danger"></i>
                         @endif
                         @include('tournaments.partials.list-type', ['tournament' => $ft])
+                        @include('tournaments.partials.list-format', ['tournament' => $ft])
                         <a href="{{ $ft->seoUrl() }}">
                             <strong>{{ $ft->title }}</strong>
                         </a>

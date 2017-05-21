@@ -766,7 +766,7 @@ a.supporter:hover {
 .type-cache {
     font-size: 70%;
     position: relative;
-    top: -0.2em;
+    top: -0.1em;
     color: #5d9ebc;
     border-color: #5d9ebc;
     padding: .35em .5em .25em .5em;
@@ -779,7 +779,7 @@ a.supporter:hover {
 .type-cube-draft {
     font-size: 70%;
     position: relative;
-    top: -0.2em;
+    top: -0.1em;
     color: #bc6db1;
     border-color: #bc6db1;
     padding: .35em .5em .25em .5em;
@@ -858,4 +858,15 @@ a.supporter:hover {
 .featured-title {
     height: 1.5em;
     overflow: hidden;
+}
+.t-list-footer {
+    margin: .5em 0 0 0;
+    text-align: center;
+    font-size: 80%;
+    font-style: italic;
+    line-height: 1.2;
+}
+table.hover-row > tbody > tr:hover > td {
+    background-color: #ccc;
+    cursor: pointer;
 }
