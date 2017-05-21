@@ -251,6 +251,11 @@ class AdminController extends Controller
         $tournament->featured = $tournament->featured ? 0 : 1;
         $tournament->save();
 
+        // badge
+        if ($tournament->featured) {
+            App('App\Http\Controllers\BadgeController')->addFeaturedBadge($tournament->creator);
+        }
+
         return back()->with('message', $message);
     }
 

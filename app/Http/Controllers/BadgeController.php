@@ -91,6 +91,7 @@ class BadgeController extends Controller
         $this->addNRTMBadge($userid, $badges);
         $this->addFancyTOBadge($userid, $badges);
         $this->addTOChampion($userid, $badges);
+        $this->addFeaturedBadge($userid);
 
         $this->refreshUserBadges($userid, $badges);
     }
@@ -304,6 +305,14 @@ class BadgeController extends Controller
             $badges[47] = true;
         }
         $this->refreshUserBadges($userid, $badges);
+    }
+
+    public function addFeaturedBadge($userid) {
+        $user = User::findOrFail($userid);
+        if (is_null($user->badges()->where('badge_id', 63)->first()) &&
+            Tournament::where('creator', $userid)->where('featured', 1)->first()) {
+                $user->badges()->attach(63);
+        }
     }
 
     private function addNRTMBadge($userid, &$badges) {
