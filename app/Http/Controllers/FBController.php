@@ -106,7 +106,7 @@ class FBController extends Controller
 
         // extracting data
         //dd($data);
-        $title = $data['name'];
+        $title = substr($data['name'], 0, 55);
         $date = str_replace('-','.',substr($data['start_time'], 0, 10)).'.';
         $start_time = substr($data['start_time'], 11, 5);
         $description = $data['description'];

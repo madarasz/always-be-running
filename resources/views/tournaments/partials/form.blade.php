@@ -10,7 +10,7 @@
                             'You can leave this field empty. If you do, it will be constructed as
                             "<em>store name OR city</em> - <em>tournament type</em>".'])
                 {!! Form::text('title', old('title', $tournament->title),
-                     ['class' => 'form-control', 'placeholder' => 'Title']) !!}
+                     ['class' => 'form-control', 'placeholder' => 'Title', 'maxlength' => 55]) !!}
             </div>
             <div class="row">
                 {{--Tournament type--}}
