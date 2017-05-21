@@ -29,7 +29,7 @@ class PagesController extends Controller
         $countries = $tournaments->where('location_country', '!=', '')->orderBy('location_country')->pluck('location_country')->unique()->all();
         $states = $tournaments->orderBy('location_state')->pluck('location_state')->unique()->all();
         $featured = Tournament::where('featured', '>', 0)->where('concluded', 0)->where('approved', 1)
-            ->where('date', '>=', $nowdate)->orderBy('featured', 'asc')->get();
+            ->where('date', '>=', $nowdate)->orderBy('date', 'asc')->get();
         if(($states_key = array_search('', $states)) !== false) {
             unset($states[$states_key]);
         }
@@ -63,7 +63,7 @@ class PagesController extends Controller
         $countries = $tournaments->where('location_country', '!=', '')->orderBy('location_country')
             ->pluck('location_country')->unique()->all();
         $featured = Tournament::where('featured', '>', 0)->where('concluded', 1)->where('approved', 1)
-            ->orderBy('featured', 'desc')->get();
+            ->orderBy('date', 'desc')->get();
 
         // adding empty filters
         $tournament_types = [-1 => '---'] + $tournament_types;
