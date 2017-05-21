@@ -28,7 +28,7 @@ class PagesController extends Controller
         $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->unique()->all())->pluck('type_name', 'id')->all();
         $countries = $tournaments->where('location_country', '!=', '')->orderBy('location_country')->pluck('location_country')->unique()->all();
         $states = $tournaments->orderBy('location_state')->pluck('location_state')->unique()->all();
-        $featured = Tournament::where('featured', '<', '0')->where('concluded', 0)->where('approved', 1)
+        $featured = Tournament::where('featured', '>', 0)->where('concluded', 0)->where('approved', 1)
             ->where('date', '>=', $nowdate)->orderBy('featured', 'asc')->get();
         if(($states_key = array_search('', $states)) !== false) {
             unset($states[$states_key]);
@@ -62,7 +62,7 @@ class PagesController extends Controller
             ->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $countries = $tournaments->where('location_country', '!=', '')->orderBy('location_country')
             ->pluck('location_country')->unique()->all();
-        $featured = Tournament::where('featured', '>', '0')->where('concluded', 1)->where('approved', 1)
+        $featured = Tournament::where('featured', '>', 0)->where('concluded', 1)->where('approved', 1)
             ->orderBy('featured', 'desc')->get();
 
         // adding empty filters

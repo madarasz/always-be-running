@@ -2,6 +2,12 @@
 <h4 class="page-header">
     @if ($user && ($user->admin || $user->id == $tournament->creator))
         <div class="pull-right" id="control-buttons">
+            {{--Feature - only for Necro --}}
+            @if ($user && ($user->id == 1276))
+            <a href="/tournaments/{{ $tournament->id }}/toggle-featured" class="btn btn-info" id="feature-button">
+                <i class="fa {{ $tournament->featured ? 'fa-star-half-o' :'fa-star' }}" aria-hidden="true"></i>
+            </a>
+            @endif
             {{--Edit--}}
             <a href="{{ "/tournaments/$tournament->id/edit" }}" class="btn btn-primary" id="edit-button"><i class="fa fa-pencil" aria-hidden="true"></i> Update</a>
             {{--Transfer--}}

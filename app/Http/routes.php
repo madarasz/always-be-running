@@ -41,12 +41,14 @@ Route::post('entries/anonym', 'EntriesController@addAnonym');
 Route::delete('tournaments/{id}/clearanonym', 'TournamentsController@clearAnonym');
 Route::post('tournaments/{id}/conclude/manual', 'TournamentsController@concludeManual');
 Route::post('tournaments/{id}/conclude/nrtm', 'TournamentsController@concludeNRTM');
+Route::get('tournaments/{id}/toggle-featured', 'AdminController@toggleFeatured');
 Route::get('tournaments/{id}/{slug}', 'TournamentsController@show')->name('tournaments.show.slug');
 
 Route::post('videos', 'VideosController@store');
 Route::delete('videos/{id}', 'VideosController@destroy');
 Route::post('videos/{id}/tag', 'VideosController@storeTag');
 Route::get('videotags/delete/{id}', 'VideosController@destroyTag');
+Route::get('videos', 'VideosController@page');
 
 Route::post('photos', 'PhotosController@store');
 Route::get('photos/{id}/approve', 'PhotosController@approve');
@@ -66,6 +68,7 @@ Route::get('/api/adminstats', 'AdminController@adminStats');
 Route::get('/api/getdeckdata', 'NetrunnerDBController@getDeckData');
 Route::get('/api/fb/event-title', 'FBController@getEventTitle');
 Route::post('/api/fb/import', 'FBController@importViaFB');
+Route::get('/api/videos', 'VideosController@lister');
 
 // iframe for double elimination
 Route::get('/elimination', function () { return view('layout.bracket'); });

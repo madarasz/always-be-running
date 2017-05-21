@@ -431,7 +431,7 @@ class TournamentsController extends Controller
         $tournament = Tournament::findorFail($id);
         $this->authorize('own', $tournament, $request->user());
 
-        $tournament->update(array_merge($request->all(), ['concluded' => true]));
+        $tournament->update(array_merge($request->all(), ['concluded' => true, 'featured' => 0]));
 
         // redirecting to show newly created tournament
         return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
@@ -563,6 +563,7 @@ class TournamentsController extends Controller
 
             $tournament->concluded = true;
             $tournament->import = 1;
+            $tournament->featured = 0;
             $tournament->top_number = $json['cutToTop']; // number of players in top cut
             $tournament->players_number = count($json['players']); // number of players
 
@@ -637,6 +638,7 @@ class TournamentsController extends Controller
     private function processCSV($csv, &$tournament, $topcut, &$errors) {
         $tournament->concluded = true;
         $tournament->import = 2;
+        $tournament->featured = 0;
         $tournament->top_number = $topcut; // number of players in top cut
         $tournament->players_number = count($csv); // number of players
 

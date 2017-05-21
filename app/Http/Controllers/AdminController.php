@@ -242,6 +242,18 @@ class AdminController extends Controller
         return response()->json($result);
     }
 
+    public function toggleFeatured(Request $request, $id) {
+        if ($request->user()->id != 1276) {
+            about(403);
+        }
+        $tournament = Tournament::findOrFail($id);
+        $message = $tournament->featured ? 'Tournament removed from featured.' : 'Tournament added to featured.';
+        $tournament->featured = $tournament->featured ? 0 : 1;
+        $tournament->save();
+
+        return back()->with('message', $message);
+    }
+
     private function getWeekNumber($array, $datefield) {
         $result = [];
         foreach($array as $element) {
