@@ -24,28 +24,16 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-12 col-md-4 col-lg-3">
-            <div class="bracket">
-                <h5>
-                    <i class="fa fa-list-alt" aria-hidden="true"></i>
-                    Tournaments
-                </h5>
-                <table class="table table-striped hover-row" id="table-tournaments">
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="col-xs-12 col-md-8 col-lg-9">
+        <div class="col-xs-12 col-md-8 col-lg-9 push-md-4 push-lg-3">
             <div class="bracket hidden-xs-up" id="bracket-video-narrow">
                 <div id="content-video">
                     <div id="section-watch-video" class="hidden-xs-up text-xs-center">
                         <div id="section-video-player"></div>
                         <div id="tagged-users"></div>
-                        <button class="btn btn-primary btn-xs" onclick="videoToWide(true)" id="button-wide">
+                        <button class="btn btn-primary btn-xs hidden-sm-down" onclick="videoToWide(true)" id="button-wide">
                             <i class="fa fa-arrows-alt" aria-hidden="true"></i> Wide
                         </button>
-                        <button class="btn btn-primary btn-xs hidden-xs-up" onclick="videoToWide(false)" id="button-narrow">
+                        <button class="btn btn-primary btn-xs hidden-xs-up hidden-sm-down" onclick="videoToWide(false)" id="button-narrow">
                             <i class="fa fa-compress" aria-hidden="true"></i> Normal
                         </button>
                         <button class="btn btn-danger btn-xs" onclick="watchVideo(false)">
@@ -61,6 +49,18 @@
                 </h5>
                 <div id="helper-select" class="m-t-2 m-b-2 text-xs-center small-text">select a tournament</div>
                 <table class="table table-sm table-striped abr-table" id="table-videos">
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-4 col-lg-3 pull-md-8 pull-lg-9">
+            <div class="bracket">
+                <h5>
+                    <i class="fa fa-list-alt" aria-hidden="true"></i>
+                    Tournaments
+                </h5>
+                <table class="table table-striped hover-row" id="table-tournaments">
                     <tbody>
                     </tbody>
                 </table>
@@ -174,7 +174,7 @@
             ), ' ('+selectedTournamentData[rowNum].date+') - '+selectedTournamentData[rowNum].cardpool.name);
             // scroll to video
             $('html, body').animate({
-                scrollTop: $("#page-top").offset().top - 100
+                scrollTop: $("#helper-select").offset().top - 100
             }, 500);
 
             setCookie('selected-tournament', selectedTournamentData[rowNum].id ,14); // remember selected tournament
