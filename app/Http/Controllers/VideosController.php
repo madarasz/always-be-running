@@ -117,4 +117,19 @@ class VideosController extends Controller
         // redirecting to tournament
         return redirect()->back()->with('message', 'User tag deleted.');
     }
+
+    public function lister() {
+        $all = Tournament::where('concluded', 1)->where('approved', 1)->has('videos')->
+            with(['videos', 'videos.videoTags', 'videos.videoTags.user', 'cardpool', 'tournament_type', 'tournament_format'])->
+            select(['id', 'title', 'date', 'location_country', 'players_number', 'charity',
+                'tournament_type_id', 'tournament_format_id', 'cardpool_id'])->
+            orderBy('date', 'desc')->get();
+
+        return response()->json($all);
+    }
+
+    public function page() {
+        $page_section = 'videos';
+        return view('videos', compact('page_section'));
+    }
 }

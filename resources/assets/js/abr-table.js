@@ -47,40 +47,8 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 }), ' ');
             }
 
-            // tournament types
-            switch (element.type) {
-                case 'store championship':
-                    cell.append('<span class="tournament-type type-store" title="store championship">S</span> ');
-                    break;
-                case 'regional championship':
-                    cell.append('<span class="tournament-type type-regional" title="regional championship">R</span> ');
-                    break;
-                case 'national championship':
-                    cell.append('<span class="tournament-type type-national" title="national championship">N</span> ');
-                    break;
-                case 'continental championship':
-                    cell.append('<span class="tournament-type type-continental" title="continental championship">C</span> ');
-                    break;
-                case 'worlds championship':
-                    cell.append('<span class="tournament-type type-world" title="worlds championship">W</span> ');
-                    break;
-            }
-
-            // tournament formats
-            switch (element.format) {
-                case 'cache refresh':
-                    cell.append('<span class="tournament-format type-cache" title="cache refresh">CR</span> ');
-                    break;
-                case '1.1.1.1':
-                    cell.append('<span class="tournament-format type-onesies" title="1.1.1.1">1</span> ');
-                    break;
-                case 'draft':
-                    cell.append('<span class="tournament-format type-draft" title="draft">D</span> ');
-                    break;
-                case 'cube draft':
-                    cell.append('<span class="tournament-format type-cube-draft" title="cube draft">CD</span> ');
-                    break;
-            }
+            // emblems for tournament type and format
+            tournamentEmblem(cell, element.type, element.format);
 
             cell.append($('<a>', {
                 text: element.title,

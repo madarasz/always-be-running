@@ -14,6 +14,8 @@ class Tournament extends Model
         'tournament_type_id', 'start_time', 'cardpool_id', 'conflict', 'contact', 'import', 'location_lat', 'location_long',
         'recur_weekly', 'incomplete', 'link_facebook', 'tournament_format_id'];
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
+    protected $hidden = ['tournament_type_id', 'tournament_format_id', 'cardpool_id'];
+    protected $appends = ['claimNumber', 'seoUrl'];
 
     public function tournament_type() {
         return $this->hasOne(TournamentType::class, 'id', 'tournament_type_id');
@@ -51,6 +53,10 @@ class Tournament extends Model
 
     public function claim_number() {
         return $this->entries()->whereNotNull('runner_deck_id')->count();
+    }
+
+    public function getClaimNumberAttribute() {
+        return $this->claim_number();
     }
 
     /**
@@ -91,6 +97,10 @@ class Tournament extends Model
 
     public function seoUrl() {
         return '/tournaments/'.$this->id.'/'.$this->seoTitle();
+    }
+
+    public function getSeoUrlAttribute() {
+        return $this->seoUrl();
     }
 
     public function coverImage() {

@@ -20,6 +20,9 @@
                 <li class="nav-item{{ @$page_section == 'results' ? ' active' : '' }}">
                     <a class="nav-link" href="/results">Results</a>
                 </li>
+                <li class="nav-item{{ @$page_section == 'videos' ? ' active' : '' }}">
+                    <a class="nav-link" href="/videos">Videos</a>
+                </li>
                 <li class="nav-item notif-red notif-badge{{ @$page_section == 'organize' ? ' active' : '' }}" id="nav-organize">
                     <a class="nav-link" href="/organize">Organize</a>
                 </li>

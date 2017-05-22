@@ -208,15 +208,39 @@ function togglePhotoAdd(value) {
 
 // toggle video player
 function watchVideo(videoId) {
+    $('#table-videos > tbody > tr').removeClass('row-selected');    // clear selected video
+    $('#tagged-users').empty(); // clear tagged user information
+
     if(videoId) {
-        $('#section-watch-video').removeClass('hidden-xs-up');
-        $('#section-video-player').html('<iframe width="480" height="270" src="//www.youtube.com/embed/' + videoId + '" frameborder="0" allowfullscreen></iframe>');
+        $('#section-watch-video').removeClass('hidden-xs-up');  // show video
+        $('#helper-select').addClass('hidden-xs-up');   // hide helper text
+        // add video player iframe
+        $('#section-video-player').html('<iframe id="iframe-video" src="//www.youtube.com/embed/' + videoId + '" frameborder="0" allowfullscreen></iframe>');
+        resizeVideo();
+        $('#video-'+videoId).addClass('row-selected');  // mark video in list
+        // add tagged user information
+        if ($('#tags-'+videoId).length) {
+            $('#tagged-users').text('tagged users: ');
+            $('#tags-'+videoId).clone().appendTo('#tagged-users');
+        }
+        // remember selected video
+        setCookie('selected-video', videoId, 14);
+        // scroll
         $('html, body').animate({
             scrollTop: $("#section-watch-video").offset().top - 60
         }, 500);
-    } else {
+    } else {    // close button
         $('#section-watch-video').addClass('hidden-xs-up');
+        $('#helper-select').removeClass('hidden-xs-up');
         $('#section-video-player').empty();
+        setCookie('selected-video', '', 14);
+    }
+}
+
+function resizeVideo() {
+    if ($('#iframe-video').length) {
+        var videoWidth = $('#section-video-player').width();
+        $('#iframe-video').width(videoWidth).height(videoWidth * 0.5625);
     }
 }
 
@@ -463,4 +487,63 @@ function tournamentTypeToColor(type) {
         case 9: return '#8a5e25'; // continental
         default: return 'grey';
     }
+}
+
+function tournamentEmblem(target, type, format) {
+    // tournament types
+    switch (type) {
+        case 'store championship':
+            target.append('<span class="tournament-type type-store" title="store championship">S</span> ');
+            break;
+        case 'regional championship':
+            target.append('<span class="tournament-type type-regional" title="regional championship">R</span> ');
+            break;
+        case 'national championship':
+            target.append('<span class="tournament-type type-national" title="national championship">N</span> ');
+            break;
+        case 'continental championship':
+            target.append('<span class="tournament-type type-continental" title="continental championship">C</span> ');
+            break;
+        case 'worlds championship':
+            target.append('<span class="tournament-type type-world" title="worlds championship">W</span> ');
+            break;
+    }
+
+    // tournament formats
+    switch (format) {
+        case 'cache refresh':
+            target.append('<span class="tournament-format type-cache" title="cache refresh">CR</span> ');
+            break;
+        case '1.1.1.1':
+            target.append('<span class="tournament-format type-onesies" title="1.1.1.1">1</span> ');
+            break;
+        case 'draft':
+            target.append('<span class="tournament-format type-draft" title="draft">D</span> ');
+            break;
+        case 'cube draft':
+            target.append('<span class="tournament-format type-cube-draft" title="cube draft">CD</span> ');
+            break;
+    }
+}
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
 }

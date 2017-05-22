@@ -24,7 +24,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'remember_token',
+        'remember_token', 'created_at', 'updated_at', 'admin', 'sharing', 'email', 'published_decks', 'private_decks',
+        'username_real', 'username_jinteki', 'username_stimhack', 'username_twitter', 'website', 'about', 'reputation',
+        'country_id', 'favorite_faction', 'autofilter_upcoming', 'autofilter_results', 'username_slack', 'show_chart'
     ];
 
     protected $primaryKey = 'id';

@@ -10,6 +10,7 @@ class Video extends Model
     public $timestamps = true;
     protected $fillable = ['video_title', 'video_id', 'thumbnail_url', 'channel_name', 'tournament_id', 'user_id'];
     protected $dates = ['created_at', 'updated_at'];
+    protected $hidden = ['tournament_id', 'user_id', 'created_at', 'updated_at'];
 
     public function tournament() {
         return $this->belongsTo(Tournament::class, 'tournament_id', 'id');

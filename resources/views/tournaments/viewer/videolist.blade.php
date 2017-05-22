@@ -5,17 +5,17 @@
 <table class="table table-sm table-striped abr-table" id="{{ $id }}">
     <tbody>
     @for ($i = 0; $i < count($videos); $i++)
-        <tr class="{{ $i >= 4 ? 'hide-video hidden-xs-up' : ''}}">
+        <tr class="{{ $i >= 4 ? 'hide-video hidden-xs-up' : ''}}" id="video-{{ $videos[$i]->video_id }}">
             {{--thumbnail--}}
             <td>
-                <a href="#" onClick="watchVideo('{{ $videos[$i]->video_id }}')">
+                <a href="#" onClick="watchVideo('{{ $videos[$i]->video_id }}'); setCookie('selected-tournament', {{ $tournament->id }} ,14);">
                     <img src="{{ $videos[$i]->thumbnail_url }}"/>
                 </a>
             </td>
             {{--video info--}}
             <td>
                 <b>
-                    <a href="#" onClick="watchVideo('{{ $videos[$i]->video_id }}')">
+                    <a href="#" onClick="watchVideo('{{ $videos[$i]->video_id }}'); setCookie('selected-tournament', {{ $tournament->id }} ,14);">
                         {{ $videos[$i]->video_title }}
                     </a>
                 </b>
@@ -31,6 +31,7 @@
                 {{--tagged users--}}
                 @if (count($videos[$i]->videoTags))
                     <br/>
+                    <span id="tags-{{ $videos[$i]->video_id }}">
                     @foreach($videos[$i]->videoTags as $key => $tag)
                         {{--delete tag button--}}
                         @if($user && ($user->admin || $user->id == $tag->tagged_by_user_id ||
@@ -71,6 +72,7 @@
                         {{--separator--}}
                         {{ $key != count($videos[$i]->videoTags)-1 ? '- ' : '' }}
                     @endforeach
+                    </span>
                 @endif
             </td>
             {{--buttons--}}

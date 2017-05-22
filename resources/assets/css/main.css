@@ -187,6 +187,9 @@ table.abr-table tr td {
 .row-worlds {
     background-color: #dad9fa !important;
 }
+.row-selected {
+    background-color: #ccdafa !important;
+}
 
 .form-group.row {
     margin-bottom: 0;

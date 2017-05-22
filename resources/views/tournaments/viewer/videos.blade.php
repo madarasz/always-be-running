@@ -41,11 +41,12 @@
 {{--List of videos--}}
 @if (count($tournament->videos) > 0)
     @include('tournaments.viewer.videolist',
-        ['videos' => $tournament->videos, 'creator' => $tournament->creator, 'id' => 'videos'])
+        ['videos' => $tournament->videos, 'creator' => $tournament->creator, 'id' => 'table-videos'])
 @endif
 <div id="section-watch-video" class="hidden-xs-up text-xs-center">
     <hr/>
     <div id="section-video-player"></div>
+    <div id="tagged-users"></div>
     <button class="btn btn-danger btn-xs" onclick="watchVideo(false)">
         <i class="fa fa-window-close" aria-hidden="true"></i> Close
     </button>
