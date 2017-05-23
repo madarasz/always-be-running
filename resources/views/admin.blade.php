@@ -53,6 +53,14 @@
                     Stats
                 </a>
             </li>
+            @if(\Illuminate\Support\Facades\Auth::user()->id == 1276)
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#tab-vip" role="tab">
+                        <i class="fa fa-star" aria-hidden="true"></i>
+                        VIP
+                    </a>
+                </li>
+            @endif
         </ul>
     </div>
 
@@ -72,6 +80,10 @@
         @include('admin.videos')
         {{--Stats--}}
         @include('admin.stats')
+        {{--VIP--}}
+        @if(\Illuminate\Support\Facades\Auth::user()->id == 1276)
+            @include('admin.vip')
+        @endif
     </div>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>

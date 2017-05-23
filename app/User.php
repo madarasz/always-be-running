@@ -50,4 +50,12 @@ class User extends Authenticatable
     public function videos() {
         return $this->belongsToMany(Video::class, 'video_tags', 'user_id', 'video_id');
     }
+
+    public function claims() {
+        return $this->hasMany(Entry::class, 'user', 'id')->where('type', '>=', 3);
+    }
+
+    public function tournamentsCreated() {
+        return $this->hasMany(Tournament::class, 'creator', 'id');
+    }
 }

@@ -66,6 +66,12 @@ class AdminController extends Controller
         $photo_users = Photo::whereIn('tournament_id', $approved_tournaments)
             ->select('user_id', DB::raw('count(*) as total'))
             ->groupBy('user_id')->orderBy('total', 'desc')->pluck('total', 'user_id');
+        // VIP information
+        $vips = [];
+        if ($request->user()->id == 1276) {
+            $vip_ids = DB::select('SELECT DISTINCT user_id FROM badge_user WHERE badge_id IN (1,2,8,9,10,11,14,15,17,18,31,39,48,56,57,59,60,61,62)');
+            $vips = User::whereIn('id', json_decode(json_encode($vip_ids), true))->with('claims', 'tournamentsCreated')->get();
+        }
 
         // Know the Meta update calculation
         $ktm_update = preg_replace('/\./i', '-', file_get_contents('http://www.knowthemeta.com/LastUpdate/'));
@@ -105,7 +111,7 @@ class AdminController extends Controller
             'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles',
             'page_section', 'video_channels', 'video_users', 'entry_types', 'published_count', 'private_count',
             'backlink_count', 'no_backlink_count', 'unexported_count', 'broken_count', 'broken_users',
-            'ktm_update', 'ktm_packs', 'photos', 'photo_tournaments', 'photo_users', 'video_users_tagged'));
+            'ktm_update', 'ktm_packs', 'photos', 'photo_tournaments', 'photo_users', 'video_users_tagged', 'vips'));
     }
 
     public function approveTournament($id, Request $request)
