@@ -24,7 +24,7 @@ class EntryNoDeckRequest extends Request
     public function rules()
     {
         return [
-            'rank_top_nodeck' => 'tournament_top:'.Request::get('rank_nodeck').','.Request::get('top_number').'|tournament_not_top:'.Request::get('rank_nodeck').','.Request::get('top_number')
+//            'rank_top_nodeck' => 'tournament_top:'.Request::get('rank_nodeck').','.Request::get('top_number').'|tournament_not_top:'.Request::get('rank_nodeck').','.Request::get('top_number')
         ];
     }
 

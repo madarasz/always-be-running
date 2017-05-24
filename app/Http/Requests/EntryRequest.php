@@ -28,7 +28,7 @@ class EntryRequest extends Request
             'runner_deck' => 'required_without:other_runner_deck',
             'other_corp_deck' => 'integer|min:1',
             'other_runner_deck' => 'integer|min:1',
-            'rank_top' => 'tournament_top:'.Request::get('rank').','.Request::get('top_number').'|tournament_not_top:'.Request::get('rank').','.Request::get('top_number')
+//            'rank_top' => 'tournament_top:'.Request::get('rank').','.Request::get('top_number').'|tournament_not_top:'.Request::get('rank').','.Request::get('top_number')
         ];
     }
 
