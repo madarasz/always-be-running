@@ -19,7 +19,7 @@
         {{--Edit entries button--}}
         <button class="btn btn-primary btn-xs" id="button-edit-entries"
                 onclick="toggleEntriesEdit(true)">
-            <i class="fa fa-pencil" aria-hidden="true"></i> Import / remove manually
+            <i class="fa fa-pencil" aria-hidden="true"></i> Import manually
         </button>
         <button class="btn btn-primary btn-xs hidden-xs-up" id="button-done-entries"
                 onclick="toggleEntriesEdit(false)">

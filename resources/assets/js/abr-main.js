@@ -169,13 +169,13 @@ function hideNonRequired() {
 function toggleEntriesEdit(value) {
     if (value) {
         $('#section-edit-entries').removeClass('hidden-xs-up');
-        $('.delete-anonym').removeClass('hidden-xs-up');
+        //$('.delete-anonym').removeClass('hidden-xs-up');
         $('#button-done-entries').removeClass('hidden-xs-up');
         $('#button-edit-entries').addClass('hidden-xs-up');
         recalculateDeckNames('_manual');
     } else {
         $('#section-edit-entries').addClass('hidden-xs-up');
-        $('.delete-anonym').addClass('hidden-xs-up');
+        //$('.delete-anonym').addClass('hidden-xs-up');
         $('#button-done-entries').addClass('hidden-xs-up');
         $('#button-edit-entries').removeClass('hidden-xs-up');
     }
