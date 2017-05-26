@@ -418,7 +418,7 @@ class EntriesController extends Controller
             $tournament->update(['import' => 0]);
         }
 
-        return back()->with('message', 'Entry deleted.')->with('editmode', 1);
+        return back()->with('message', 'Entry deleted.');
     }
 
     /**
