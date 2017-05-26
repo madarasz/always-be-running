@@ -86,7 +86,16 @@
                 || ($user_entry && count($entry) && $entry->user == $user_entry->user)))
                 <td class="text-right">
                     {!! Form::open(['method' => 'DELETE', 'url' => "/entries/$entry->id"]) !!}
-                        {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}
+                        @if ($user_entry && count($entry) && $entry->user == $user_entry->user)
+                            {{--own entry--}}
+                            {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove',
+                                array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}
+                        @else
+                            {{--someone else's entry--}}
+                            {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove',
+                                array('type' => 'submit', 'class' => 'btn btn-danger btn-xs',
+                                'onclick' => "return confirm('Are you sure you want to delete the claim of ".$entry->player->displayUsername()."?')")) !!}
+                        @endif
                     {!! Form::close() !!}
                 </td>
             @elseif ($user && ($user->admin || $user->id == $creator))
