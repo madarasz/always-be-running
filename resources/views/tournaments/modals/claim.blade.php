@@ -75,8 +75,8 @@
                         </div>
                         {{--Login prompt if user is not logged in--}}
                         <div class="text-xs-center hidden-xs-up m-b-1" id="claim-user-login">
-                            <div class="alert alert-danger" id="no-runner-deck">
-                                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                            <div class="alert alert-warning" id="no-runner-deck">
+                                <i class="fa fa-refresh" aria-hidden="true"></i>
                                 There was a problem with reaching NetrunnerDB.<br/>
                                 Please try logging in again.
                             </div>
