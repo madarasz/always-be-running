@@ -41,7 +41,7 @@
                         </div>
                     </div>
                     <div class="form-group" id="filter-video">
-                        {!! Form::checkbox('videos', null, null, ['id' => 'videos',
+                        {!! Form::checkbox('videos', null, null, ['id' => 'videos', 'class' => 'filter', 'disabled' => '',
                             'onchange' => "filterResults(defaultFilter, packlist, '".@$default_country_id."')"]) !!}
                         {!! Html::decode(Form::label('videos', 'has video <i class="fa fa-video-camera" aria-hidden="true"></i>')) !!}
                     </div>
