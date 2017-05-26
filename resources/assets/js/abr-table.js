@@ -30,14 +30,14 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
             rowclass = 'hidden-xs-up ' + rowclass;
         }
 
-        newrow = $('<tr>', {
+        var newrow = $('<tr>', {
             class: rowclass,
             id: elementID.substr(1) + '-row-' + (index+1)
         }).appendTo(elementID + ' > tbody');
 
         // title
         if ($.inArray('title', columns) > -1) {
-            cell = $('<td>');
+            var cell = $('<td>');
 
             // charity
             if (element.charity) {
@@ -55,42 +55,45 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 href: element.url
             })).appendTo(newrow);
 
+            var tInfo = $('<span>', { class: 'text-nowrap' });
+            cell.append(tInfo);
+
             // patreon Sysop goal
             if (parseInt(element.creator_supporter) > 2) {
-                cell.append(' ', $('<img>', {
+                tInfo.append(' ', $('<img>', {
                     'class': 'img-patron-o'
                 }))
             }
 
             // match data
             if (element.matchdata) {
-                cell.append(' ', $('<i>', {
+                tInfo.append(' ', $('<i>', {
                     'title': 'match data',
                     'class': 'fa fa-handshake-o'
                 }));
             }
             // photos
             if (element.photos) {
-                cell.append(' ');
+                tInfo.append(' ');
                 if (element.photos > 1) {
-                    cell.append(element.photos);
+                    tInfo.append(element.photos);
                 } else {
 
                 }
-                cell.append($('<i>', {
+                tInfo.append($('<i>', {
                     'title': 'photo',
                     'class': 'fa fa-camera'
                 }));
             }
             // videos
             if (element.videos) {
-                cell.append(' ');
+                tInfo.append(' ');
                 if (element.videos > 1) {
-                    cell.append(element.videos);
+                    tInfo.append(element.videos);
                 } else {
 
                 }
-                cell.append($('<i>', {
+                tInfo.append($('<i>', {
                     'title': 'video',
                     'class': 'fa fa-video-camera'
                 }));
