@@ -308,9 +308,7 @@ class EntriesController extends Controller
         $tournament->updateConflict();
 
         // remove badges if needed
-        if ($request->user()) {
-            App('App\Http\Controllers\BadgeController')->addClaimBadges($request->user()->id);
-        }
+        App('App\Http\Controllers\BadgeController')->addClaimBadges($entry->player->id);
         App('App\Http\Controllers\BadgeController')->addCommunityBuilder($tournament->creator);
 
         return redirect()->back()->with('message', 'You removed your claim from the tournament.');
