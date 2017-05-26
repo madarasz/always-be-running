@@ -3,7 +3,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('.popover').popover('hide')">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 class="modal-title" id="myModalLabel">
@@ -14,13 +14,13 @@
             <div class="modal-tabs">
                 <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#tab-with-decks" role="tab">
+                        <a class="nav-link active" data-toggle="tab" href="#tab-with-decks" role="tab" onclick="$('.popover').popover('hide')">
                             <i class="fa fa-id-card-o" aria-hidden="true"></i>
                             With decks
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#tab-without-decks" role="tab">
+                        <a class="nav-link" data-toggle="tab" href="#tab-without-decks" role="tab" onclick="$('.popover').popover('hide')">
                             <i class="fa fa-times-circle-o" aria-hidden="true"></i>
                             Without decks
                         </a>
@@ -41,6 +41,13 @@
                             </div>
                             <div class="col-xs-12 col-md-6" id="claim-top-section">
                                 <div class="form-group">
+                                    <span class="pull-right" id="warning-inconsistent">
+                                        <a class="my-popover" data-placement="left" data-toggle="popover"
+                                           data-content="Inconsistent 'swiss' and 'top cut' rank. This may happen if a player dropped from top cut."
+                                           title="" data-original-title="">
+                                            <i class="fa fa-exclamation-triangle text-warning" title="inconsistent swiss and top rank"></i>
+                                        </a>
+                                    </span>
                                     {!! Form::label('rank_top', 'rank after top cut') !!}
                                     {!! Form::select('rank_top', [], null, ['class' => 'form-control']) !!}
                                 </div>
@@ -182,6 +189,13 @@
                             </div>
                             <div class="col-xs-12 col-md-6" id="claim-top-section-nodeck">
                                 <div class="form-group">
+                                    <span class="pull-right" id="warning-inconsistent-nodeck">
+                                        <a class="my-popover" data-placement="left" data-toggle="popover"
+                                           data-content="Inconsistent 'swiss' and 'top cut' rank. This may happen if a player dropped from top cut."
+                                           title="" data-original-title="">
+                                            <i class="fa fa-exclamation-triangle text-warning" title="inconsistent swiss and top rank"></i>
+                                        </a>
+                                    </span>
                                     {!! Form::label('rank_top_nodeck', 'rank after top cut') !!}
                                     {!! Form::select('rank_top_nodeck', [], null, ['class' => 'form-control']) !!}
                                 </div>
@@ -235,7 +249,7 @@
 </div>
 {{--Script to fill tournament claim modal--}}
 <script type="text/javascript">
-    var deckData = null, loading = false, swissEntriesRunner = [], swissEntriesCorp = [];
+    var deckData = null, loading = false, swissEntriesRunner = [], swissEntriesCorp = [], players_number, top_number;
     @if (@$entries_swiss)
         swissEntriesRunner = [@foreach($entries_swiss as $entry) '{{count($entry) ? $entry[0]->runner_deck_identity : ''}}', @endforeach];
         swissEntriesCorp = [@foreach($entries_swiss as $entry) '{{count($entry) ? $entry[0]->corp_deck_identity : ''}}', @endforeach];
@@ -244,10 +258,11 @@
     $('#claimModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget); // Button that triggered the modal
         var subtitle = button.data('subtitle'), // module subtitle
-                id = button.data('tournament-id'),  // tournament ID
-                players_number = button.data('players-number'),
-                top_number = button.data('top-number');
+                id = button.data('tournament-id');  // tournament ID
         var modal = $(this);
+        players_number = button.data('players-number');
+        top_number = button.data('top-number');
+
         modal.find('.modal-subtitle').text(subtitle);
         modal.find('#create-claim').attr("action", "/tournaments/" + id + "/claim");
         modal.find('#create-claim-nodeck').attr("action", "/tournaments/" + id + "/claim-no-deck");
@@ -397,16 +412,20 @@
     $('#rank').on('change', function () {
         $('#rank_nodeck').val(this.value);
         setIdentities();
+        rankCheck();
     });
     $('#rank_nodeck').on('change', function () {
         $('#rank').val(this.value);
         setIdentities();
+        rankCheck();
     });
     $('#rank_top').on('change', function () {
         $('#rank_top_nodeck').val(this.value);
+        rankCheck();
     });
     $('#rank_top_nodeck').on('change', function () {
         $('#rank_top').val(this.value);
+        rankCheck();
     });
 
     function switchDeck(idOwn, idOther) {
@@ -455,6 +474,27 @@
             }
         }
         recalculateDeckNames('');
+    }
+
+    function rankCheck() {
+        var swissRankSelect = document.getElementById("rank"),
+                topRankSelect = document.getElementById("rank_top"),
+                selectedSwissRank = swissRankSelect.options[swissRankSelect.selectedIndex].value,
+                selectedTopRank = topRankSelect.options[topRankSelect.selectedIndex].value;
+
+        // show warning if inconsistent
+        if ((selectedSwissRank <= top_number && selectedTopRank == 0) ||
+                (selectedSwissRank > top_number && selectedTopRank != 0))
+        {
+            $('#warning-inconsistent').removeClass('hidden-xs-up');
+            $('#warning-inconsistent-nodeck').removeClass('hidden-xs-up');
+        } else {
+            $('#warning-inconsistent').addClass('hidden-xs-up');
+            $('#warning-inconsistent-nodeck').addClass('hidden-xs-up');
+            $('.popover').popover('hide');
+        }
+
+
     }
 
 </script>
