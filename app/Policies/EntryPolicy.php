@@ -30,7 +30,7 @@ class EntryPolicy
     }
 
     public function unclaim(User $user, Entry $entry) {
-        $tournament = $entry->tournament();
+        $tournament = $entry->tournament;
         return $user->id == $entry->user || $user->id == $tournament->creator;
     }
 }
