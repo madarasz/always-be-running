@@ -64,11 +64,12 @@ class BadgeController extends Controller
         $badges = array_combine($badges, array_fill(1, count($badges), false));
 
         for ($year = $fromYear; $year <= $toYear; $year++) {
-            $this->addChampionshipBadges($userid, $year, 5, $badges);
-            $this->addChampionshipBadges($userid, $year, 4, $badges);
-            $this->addChampionshipBadges($userid, $year, 3, $badges);
+            $this->addChampionshipBadges($userid, $year, 5, $badges); // worlds
+            $this->addChampionshipBadges($userid, $year, 4, $badges); // nationals
+            $this->addChampionshipBadges($userid, $year, 3, $badges); // regionals
         }
-        $this->addChampionshipBadges($userid, null, 2, $badges);
+        $this->addChampionshipBadges($userid, null, 2, $badges);    // store champion
+        $this->addChampionshipBadges($userid, 2017, 9, $badges, [82]);    // 2017 european championship
         $this->addPlayerLevelBadges($userid, $badges);
         $this->addFactionBadges($userid, $badges);
         $this->addRecurringBadge($userid, $badges);
@@ -102,13 +103,16 @@ class BadgeController extends Controller
      * @year
      * @type
      * @badges badge list
+     * @tounamentIds
      */
-    private function addChampionshipBadges($userid, $year, $type, &$badges) {
-        if (is_null($year)) {
-            $tounamentIds = Tournament::where('tournament_type_id', $type)->where('approved', 1)->pluck('id');
-        } else {
-            $tounamentIds = Tournament::where('tournament_type_id', $type)
-                ->where('date', '>', $year)->where('date', '<', ($year + 1))->where('approved', 1)->pluck('id');
+    private function addChampionshipBadges($userid, $year, $type, &$badges, $tounamentIds = []) {
+        if (count($tounamentIds) == 0) {
+            if (is_null($year)) {
+                $tounamentIds = Tournament::where('tournament_type_id', $type)->where('approved', 1)->pluck('id');
+            } else {
+                $tounamentIds = Tournament::where('tournament_type_id', $type)
+                    ->where('date', '>', $year)->where('date', '<', ($year + 1))->where('approved', 1)->pluck('id');
+            }
         }
 
         // winner
@@ -134,7 +138,7 @@ class BadgeController extends Controller
             if ($found) {
                 $badgeid = Badge::where('tournament_type_id', $type)->where('year', $year)->where('winlevel', 2)->first()->id;
                 $badges[$badgeid] = true;
-            } elseif ($type == 5) {
+            } elseif ($type == 5 || $type == 9) {
                 // participation
                 $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('runner_deck_id', '>', 0)->where('type', 3)->first();
                 if ($found) {
