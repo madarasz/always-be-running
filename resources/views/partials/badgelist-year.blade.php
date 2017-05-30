@@ -1,6 +1,5 @@
 {{--for badges for certain competative year--}}
 @if (@$badge_list && $badge_list->first())
-<?php $badge_list = $badge_list->where('tournament_type_id', $tournament_type_id)->where('winlevel', $winlevel)->reverse(); ?>
 <div class="row p-b-1">
     <div class="col-xs-2 text-xs-right">
         <img src="/img/badges/{{ $badge_list->first()->filename }}"/>
