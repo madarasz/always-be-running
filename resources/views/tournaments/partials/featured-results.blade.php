@@ -32,6 +32,7 @@
                 </div>
             </div>
             {{--winner--}}
+            @if ($ft->winner())
             <table class="table table-striped small-text" style="margin-bottom: 0.5em">
                 <tr>
                     <td><i class="fa fa-trophy" aria-hidden="true"></i></td>
@@ -51,6 +52,7 @@
                     </td>
                 </tr>
             </table>
+            @endif
             {{--photos--}}
             @if (count($ft->photos))
                 <div class="featured-images">
