@@ -91,9 +91,9 @@
                         </div>
                         {{--Publish private decks--}}
                         <div class="form-group text-xs-center m-b-0">
-                            {!! Form::checkbox('auto_publish', null, null, ['id' => 'auto_publish']) !!}
+                            {!! Form::checkbox('auto_publish', null, true, ['id' => 'auto_publish']) !!}
                             {!! Form::label('auto_publish', 'publish selected private decks') !!}
-                            <span class="text-danger legal-bullshit">(currently not working, sorry)</span>
+                            {{-- <span class="text-danger legal-bullshit">(currently not working, sorry)</span> --}}
                             @include('partials.popover', ['direction' => 'top', 'content' =>
                                 'Selecting this option will create a published copy of the private decks you
                                 used.'])
