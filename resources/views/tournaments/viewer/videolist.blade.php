@@ -8,16 +8,19 @@
         <tr class="{{ $i >= 4 ? 'hide-video hidden-xs-up' : ''}}" id="video-{{ $videos[$i]->video_id }}">
             {{--thumbnail--}}
             <td>
-                <a href="#" onClick="watchVideo('{{ $videos[$i]->video_id }}'); setCookie('selected-tournament', '{{ @$tournament->id }}' ,14);">
-                    <img src="{{ $videos[$i]->thumbnail_url }}"/>
+                <a href="#" onClick="watchVideo('{{ $videos[$i]->video_id }}', {{ $videos[$i]->type }}); setCookie('selected-tournament', '{{ @$tournament->id }}' ,14);">
+                    <img src="{{ $videos[$i]->thumbnail_url }}" class="video-thumbnail"/>
                 </a>
             </td>
             {{--video info--}}
             <td>
                 <b>
-                    <a href="#" onClick="watchVideo('{{ $videos[$i]->video_id }}'); setCookie('selected-tournament', '{{ @$tournament->id }}' ,14);">
+                    <a href="#" onClick="watchVideo('{{ $videos[$i]->video_id }}', {{ $videos[$i]->type }}); setCookie('selected-tournament', '{{ @$tournament->id }}' ,14);">
                         {{ $videos[$i]->video_title }}
                     </a>
+                    @if ($videos[$i]->length)
+                        <span class="small-text font-weight-normal">({{ $videos[$i]->length }})</span>
+                    @endif
                 </b>
                 <br/>
                 {{ $videos[$i]->channel_name }}

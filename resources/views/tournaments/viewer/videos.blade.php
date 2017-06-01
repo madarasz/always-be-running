@@ -23,14 +23,26 @@
     <div id="section-add-videos" class="hidden-xs-up text-xs-center card-darker m-t-1 p-b-1">
         <hr/>
         <div class="p-b-1">
-            Add a Youtube video
+            Add a video
         </div>
         {!! Form::open(['method' => 'POST', 'url' => "/videos",
             'class' => 'form-inline']) !!}
         {!! Form::hidden('tournament_id', $tournament->id) !!}
         <div class="form-group">
-            {!! Form::label('video_id', 'Youtube Video ID or URL', ['class' => 'small-text']) !!}
+            {!! Form::label('video_id', 'Video ID or URL', ['class' => 'small-text']) !!}
             {!! Form::text('video_id', '', ['class' => 'form-control']) !!}
+        </div>
+        <div class="form-check m-l-1">
+            <label class="form-check-label small-text">
+                <input class="form-check-input" type="radio" name="type" id="radio-youtube" value="1" checked>
+                Youtube
+            </label>
+        </div>
+        <div class="form-check m-l-1">
+            <label class="form-check-label small-text">
+                <input class="form-check-input" type="radio" name="type" id="radio-twitch" value="2">
+                Twitch
+            </label>
         </div><br/>
         {!! Form::button('Add video', array('type' => 'submit',
             'class' => 'btn btn-success btn-xs', 'id' => 'button-add-video')) !!}

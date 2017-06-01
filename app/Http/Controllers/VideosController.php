@@ -7,6 +7,7 @@ use App\Video;
 use App\Http\Requests;
 use App\VideoTag;
 use Illuminate\Http\Request;
+use Alaouy\Youtube\Facades\Youtube;
 
 class VideosController extends Controller
 {
@@ -20,14 +21,35 @@ class VideosController extends Controller
         $tournament = Tournament::withTrashed()->findOrFail($request->get('tournament_id'));
         $this->authorize('logged_in', Tournament::class, $request->user());
 
-        $data = Video::youtubeLookup($request->get('video_id'));
+        // check if not live twitch
+        if (preg_match('/twitch.tv\/(?!videos)/', $request->video_id)) {
+            return redirect()->back()->withErrors(['Adding LIVE Twitch feed is not possible. URL should be like: https://www.twitch.tv/videos/...']);
+        }
+        // source autodetect
+        if (preg_match('/youtube.com/', $request->video_id)) {
+            $request->type = 1;
+        }
+        if (preg_match('/twitch.tv/', $request->video_id)) {
+            $request->type = 2;
+        }
 
-        $message = ''; $errors = [];
+        // load metadata
+        switch (intval($request->type)) {
+            case 1:
+                $data = $this->youtubeLookup($request->video_id);
+                break;
+            case 2:
+                $data = $this->twitchLookup($request->video_id);
+                break;
+        }
 
-        if($data) {
+        $message = '';
+        $errors = [];
+
+        if ($data) {
             $exists = Video::where(['video_id' => $data['video_id'], 'tournament_id' => $tournament->id])->count();
 
-            if($exists < 1) {
+            if ($exists < 1) {
                 $data['tournament_id'] = $tournament->id;
                 $data['user_id'] = $request->user()->id;
                 $video = Video::create($data);
@@ -36,7 +58,7 @@ class VideosController extends Controller
                 $errors = ['This video has already been added to this tournament!'];
             }
         } else {
-            $errors = ['Error loading video data from Youtube. Probably invalid ID or URL.'];
+            $errors = ['Error loading video data. Probably invalid ID or URL.'];
         }
 
         // add badges
@@ -119,7 +141,7 @@ class VideosController extends Controller
     }
 
     public function lister() {
-        $all = Tournament::where('concluded', 1)->where('approved', 1)->has('videos')->
+        $all = Tournament::where('approved', 1)->has('videos')->
             with(['videos', 'videos.videoTags', 'videos.videoTags.user', 'cardpool', 'tournament_type', 'tournament_format'])->
             select(['id', 'title', 'date', 'location_country', 'players_number', 'charity',
                 'tournament_type_id', 'tournament_format_id', 'cardpool_id'])->
@@ -131,5 +153,110 @@ class VideosController extends Controller
     public function page() {
         $page_section = 'videos';
         return view('videos', compact('page_section'));
+    }
+
+    public function twitchLookup($input)
+    {
+
+        if (is_numeric($input)) {
+            // input is ID
+            $video_id = $input;
+        } else {
+            // input is URL
+            if (preg_match('/(?:twitch.tv\/videos\/)(([0-9])+)/', $input, $matches)) {
+                $video_id = $matches[1];
+            } else {
+                return false;
+            }
+        }
+
+        // Create a stream
+        $opts = array(
+            'http' => array(
+                'method' => "GET",
+                'header' => "Accept: application/vnd.twitchtv.v5+json\r\n" .
+                    "Client-ID:" . env('TWITCH_CLIENT_ID') . "\r\n"
+            )
+        );
+        $context = stream_context_create($opts);
+
+        // Open the file using the HTTP headers set above
+        try {
+            $data = json_decode(file_get_contents('https://api.twitch.tv/kraken/videos/' . $video_id, false, $context), true);
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        if ($data) {
+            return [
+                'video_id' => $video_id,
+                'video_title' => $data['title'],
+                'thumbnail_url' => $data['thumbnails']['medium'][0]['url'],
+                'channel_name' => $data['channel']['display_name'],
+                'length' => $this->secsToLength($data['length']),
+                'type' => 2
+            ];
+        } else {
+            return false;
+        }
+    }
+
+    public function youtubeLookup($input)
+    {
+        if (strlen($input) == 11) {
+            // video ID
+            $video_id = $input;
+        } else {
+            // video URL
+            try {
+                $video_id = Youtube::parseVidFromURL($input);
+            } catch (\Exception $e) {
+                return false;
+            }
+        }
+        $data = Youtube::getVideoInfo($video_id);
+
+        if ($data) {
+            return [
+                'video_id' => $video_id,
+                'video_title' => $data->snippet->title,
+                'thumbnail_url' => $data->snippet->thumbnails->default->url,
+                'channel_name' => $data->snippet->channelTitle,
+                'length' => $this->YTDurationToLength($data->contentDetails->duration),
+                'type' => 1
+            ];
+        } else {
+            return false;
+        }
+    }
+
+    private function secsToLength($seconds)
+    {
+        $hours = floor($seconds / 3600);
+        $mins = floor($seconds / 60 % 60);
+        $secs = floor($seconds % 60);
+
+        return $this->formatLength($hours, $mins, $secs);
+    }
+
+    private function YTDurationToLength($duration)
+    {
+        if (preg_match('/PT(\d+H)?(\d+M)?(\d+S)?/', $duration, $matches)) {
+            $hours = intval($matches[1]);
+            $mins = intval($matches[2]);
+            $secs = intval($matches[3]);
+
+            return $this->formatLength($hours, $mins, $secs);
+        } else {
+            return null;
+        }
+    }
+
+    private function formatLength($hours, $mins, $secs) {
+        if ($hours) {
+            return sprintf('%02d:%02d:%02d', $hours, $mins, $secs);
+        } else {
+            return sprintf('%02d:%02d', $mins, $secs);
+        }
     }
 }

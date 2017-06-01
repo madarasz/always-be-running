@@ -207,7 +207,7 @@ function togglePhotoAdd(value) {
 }
 
 // toggle video player
-function watchVideo(videoId) {
+function watchVideo(videoId, type) {
     $('#table-videos > tbody > tr').removeClass('row-selected');    // clear selected video
     $('#tagged-users').empty(); // clear tagged user information
 
@@ -215,7 +215,14 @@ function watchVideo(videoId) {
         $('#section-watch-video').removeClass('hidden-xs-up');  // show video
         $('#helper-select').addClass('hidden-xs-up');   // hide helper text
         // add video player iframe
-        $('#section-video-player').html('<iframe id="iframe-video" src="//www.youtube.com/embed/' + videoId + '" frameborder="0" allowfullscreen></iframe>');
+        switch (parseInt(type)) {
+            case 2:
+                $('#section-video-player').html('<iframe id="iframe-video" src="//player.twitch.tv/?video=v' + videoId + '&autoplay=false" frameborder="0" allowfullscreen="true" scrolling="no"></iframe>');
+                break;
+            default:
+                $('#section-video-player').html('<iframe id="iframe-video" src="//www.youtube.com/embed/' + videoId + '" frameborder="0" allowfullscreen></iframe>');
+                break;
+        }
         resizeVideo();
         $('#video-'+videoId).addClass('row-selected');  // mark video in list
         // add tagged user information
@@ -225,6 +232,7 @@ function watchVideo(videoId) {
         }
         // remember selected video
         setCookie('selected-video', videoId, 14);
+        setCookie('selected-video-type', type, 14);
         // scroll
         $('html, body').animate({
             scrollTop: $("#section-watch-video").offset().top - 60

@@ -873,3 +873,7 @@ table.hover-row > tbody > tr:hover > td {
     background-color: #ccc;
     cursor: pointer;
 }
+.video-thumbnail {
+    max-width: 120px;
+    height: auto;
+}

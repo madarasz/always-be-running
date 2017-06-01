@@ -105,7 +105,6 @@
 
         function displayVideoTournamentList() {
             var videoCounter = 0;
-            console.log(getCookie('selected-tournament'));
             for (var i = 0; i < selectedTournamentData.length; i++) {
                 videoCounter += selectedTournamentData[i].videos.length;
 
@@ -148,7 +147,7 @@
             }
             // remember last selected video
             if (getCookie('selected-video').length) {
-                watchVideo(getCookie('selected-video'));
+                watchVideo(getCookie('selected-video'), getCookie('selected-video-type'));
             }
             $('#label-all-videos').text(videoCounter);
 
@@ -183,14 +182,18 @@
             for (var i = 0; i < videos.length; i++) {
                 $('#table-videos > tbody').append($('<tr>', { id: 'video-'+videos[i].video_id }).append($('<td>').append($('<a>', {
                     href: '#',
-                    onclick: "watchVideo('"+videos[i].video_id+"')"
+                    onclick: "watchVideo('"+videos[i].video_id+"',"+videos[i].type+")"
                 }).append($('<img>', {
-                    src: 'https://i.ytimg.com/vi/'+videos[i].video_id+'/default.jpg'
+                    src: videos[i].thumbnail_url,
+                    class: 'video-thumbnail'
                 }))), $('<td>', { id: 'desc-' + i})));
 
                 var descr = $('#desc-'+i)
-                    .append('<b><a href="#" onclick="watchVideo(\''+videos[i].video_id+'\')">'+videos[i].video_title+'</a></b>')
-                    .append('<br>'+videos[i].channel_name+'<br>');
+                    .append('<b><a href="#" onclick="watchVideo(\''+videos[i].video_id+'\','+videos[i].type+')">'+videos[i].video_title+'</a></b>');
+                if (videos[i].length) {
+                    descr.append(' <span class="small-text font-weight-normal">(' + videos[i].length + ')</span>');
+                }
+                descr.append('<br>'+videos[i].channel_name+'<br>');
 
                 if (videos[i].video_tags.length) {
                     descr.append($('<span>', { id: 'tags-' + videos[i].video_id }));
