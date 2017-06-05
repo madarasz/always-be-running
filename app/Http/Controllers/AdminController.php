@@ -44,7 +44,7 @@ class AdminController extends Controller
         $video_users = Video::whereIn('tournament_id', $approved_tournaments)
             ->select('user_id', DB::raw('count(*) as total'))
             ->groupBy('user_id')->orderBy('total', 'desc')->pluck('total', 'user_id');
-        $video_users_tagged = VideoTag::select('user_id', DB::raw('count(*) as total'))
+        $video_users_tagged = VideoTag::select('user_id', DB::raw('count(*) as total'))->where('user_id', '>', 0)
             ->groupBy('user_id')->orderBy('total', 'desc')->pluck('total', 'user_id');
         $entry_types = $this->addEntryTypeNames(Entry::select('type', DB::raw('count(*) as total'))
             ->whereIn('tournament_id', $approved_tournaments)->groupBy('type')->pluck('total', 'type')->toArray());
