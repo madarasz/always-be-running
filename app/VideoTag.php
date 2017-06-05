@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class VideoTag extends Model
 {
     public $timestamps = false;
-    protected $fillable = ['video_id', 'user_id', 'tagged_by_user_id', 'is_runner'];
+    protected $fillable = ['video_id', 'user_id', 'tagged_by_user_id', 'is_runner', 'import_player_name'];
     protected $appends = ['entry'];
     protected $hidden = ['video', 'user_id'];
 

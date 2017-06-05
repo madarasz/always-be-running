@@ -209,7 +209,13 @@
                         taginfo.append('<a href="'+tag.entry.corpDeckUrl+'"><img src="/img/ids/' + tag.entry.corp_deck_identity + '.png"/></a> ');
                     }
                     // username
-                    taginfo.append('<a href="/profile/'+tag.user.id+'">'+tag.user.name+'</a>');
+                    if (tag.user) {
+                        taginfo.append('<a href="/profile/' + tag.user.id + '">' + tag.user.name + '</a>');
+                    }
+                    // player name
+                    if (tag.import_player_name) {
+                        taginfo.append('<em>'+tag.import_player_name+'</em>');
+                    }
                     // side
                     if (parseInt(tag.is_runner) == 1) {
                         taginfo.append(' <span class="small-text">(runner)</span>');

@@ -44,7 +44,7 @@
                                onclick="return confirm('Are you sure you want to untag user?')"><i class="fa fa-trash" title="untag"></i></a>
                         @endif
                         {{--display IDs--}}
-                        @if ($videos[$i]->tournament->registration_number())
+                        @if ($videos[$i]->tournament->registration_number() && $tag->user)
                             <?php if (is_null(@$entries)) $entries = $videos[$i]->tournament->entries; ?>
                             @for ($u = 0; $u < count($entries); $u++)
                                 @if($entries[$u]->user == $tag->user_id)
@@ -55,7 +55,7 @@
                                         @if ($tag->is_runner == false || is_null($tag->is_runner))
                                             <a href="{{ $entries[$u]->corp_deck_url() }}" title="{{ $entries[$u]->corp_deck_title }}"><img src="/img/ids/{{ $entries[$u]->corp_deck_identity }}.png"></a>
                                         @endif
-                                    @else
+                                    @elseif ($entries[$u]->type != 0)
                                         @if ($tag->is_runner == true || is_null($tag->is_runner))
                                             <img src="/img/ids/{{ $entries[$u]->runner_deck_identity }}.png">
                                         @endif
@@ -67,7 +67,13 @@
                             @endfor
                         @endif
                         {{--user name--}}
-                        <a href="/profile/{{ $tag->user->id }}">{{ $tag->user->displayUsername() }}</a>
+                        @if ($tag->user)
+                            <a href="/profile/{{ $tag->user->id }}">{{ $tag->user->displayUsername() }}</a>
+                        @endif
+                        {{--player name--}}
+                        @if (strlen($tag->import_player_name))
+                            <em>{{ $tag->import_player_name }}</em>
+                        @endif
                         {{--side--}}
                         @if (!is_null($tag->is_runner))
                             <span class="small-text">({{ $tag->is_runner ? 'runner' : 'corporation' }})</span>

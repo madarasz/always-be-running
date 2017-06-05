@@ -877,3 +877,8 @@ table.hover-row > tbody > tr:hover > td {
     max-width: 120px;
     height: auto;
 }
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

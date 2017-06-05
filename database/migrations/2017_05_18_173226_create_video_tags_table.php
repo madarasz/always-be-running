@@ -15,7 +15,7 @@ class CreateVideoTagsTable extends Migration
         Schema::create('video_tags', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('video_id')->unsigned();
-            $table->integer('user_id')->unsigned();
+            $table->integer('user_id')->unsigned()->nullable();
             $table->integer('tagged_by_user_id')->unsigned();
         });
     }

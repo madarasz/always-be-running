@@ -96,8 +96,9 @@ class VideosController extends Controller
         Video::findOrFail($id);
 
         // if already created
-        if (VideoTag::where('video_id', $id)->where('user_id', $request->user_id)->first()) {
-            return redirect()->back()->with('message', 'User was already tagged in video.');
+        if (strlen($request->import_player_name) == 0 &&
+            VideoTag::where('video_id', $id)->where('user_id', $request->user_id)->first()) {
+                return redirect()->back()->with('message', 'User was already tagged in video.');
         }
 
         if ($request->side == "") {
@@ -105,19 +106,25 @@ class VideosController extends Controller
         } else {
             $side = intval($request->side) == 1;
         }
+        if (strlen($request->import_player_name)) {
+            $request->user_id = null;
+        }
 
         VideoTag::create([
             'video_id' => $id,
             'user_id' => $request->user_id,
             'tagged_by_user_id' => $request->user()->id,
-            'is_runner' => $side
+            'is_runner' => $side,
+            'import_player_name' => $request->import_player_name
         ]);
 
         // add badges
-        App('App\Http\Controllers\BadgeController')->addSensieActor($request->user_id);
+        if ($request->user_id) {
+            App('App\Http\Controllers\BadgeController')->addSensieActor($request->user_id);
+        }
 
         // redirecting to tournament
-        return redirect()->back()->with('message', 'User tagged in video.');
+        return redirect()->back()->with('message', 'Video tag added.');
     }
 
     /**
@@ -134,10 +141,12 @@ class VideosController extends Controller
         VideoTag::destroy($videotag->id);
 
         // remove badges
-        App('App\Http\Controllers\BadgeController')->addSensieActor($user_id);
+        if ($request->user_id) {
+            App('App\Http\Controllers\BadgeController')->addSensieActor($user_id);
+        }
 
         // redirecting to tournament
-        return redirect()->back()->with('message', 'User tag deleted.');
+        return redirect()->back()->with('message', 'Video tag deleted.');
     }
 
     public function lister() {
