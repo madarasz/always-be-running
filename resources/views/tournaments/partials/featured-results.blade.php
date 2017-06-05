@@ -68,9 +68,15 @@
             @if (count($ft->videos))
                 <div class="featured-images">
                     @foreach($ft->videos as $index => $video)
-                        <a href="https://www.youtube.com/watch?v={{ $video->video_id }}">
-                            <img src="{{ $video->thumbnail_url }}"/>
-                        </a>
+                        @if (intval($video->type) == 1)
+                            <a href="https://www.youtube.com/watch?v={{ $video->video_id }}">
+                                <img src="{{ $video->thumbnail_url }}"/>
+                            </a>
+                        @else
+                            <a href="https://www.twitch.tv/videos/{{ $video->video_id }}">
+                                <img src="{{ $video->thumbnail_url }}"/>
+                            </a>
+                        @endif
                     @endforeach
                 </div>
             @endif
