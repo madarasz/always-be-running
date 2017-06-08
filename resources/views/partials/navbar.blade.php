@@ -6,7 +6,7 @@
 <nav class="navbar navbar-dark bg-inverse navbar-fixed-top" role="navigation">
     <div class="container">
         <a class="navbar-brand" href="/#">
-            <img src="/img/logo_small.png" class="navbar-brand-image"/>
+            <img src="/img/logo_small.png" class="navbar-brand-image" height="30" width="30"/>
             Always be Running.net
         </a>
         <button class="navbar-toggler hidden-md-up pull-right" type="button" data-toggle="collapse" data-target="#navbar-collapse-1">

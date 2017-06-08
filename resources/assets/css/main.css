@@ -236,7 +236,7 @@ input[type="checkbox"] {
     min-width: 54px;
 }
 .cell-winner img {
-    padding: 0.2rem 0;
+    margin: 0.2rem 0;
 }
 
 /* viewing as admin/creator */

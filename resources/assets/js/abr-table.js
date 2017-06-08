@@ -266,12 +266,16 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
             }).appendTo(newrow);
             if (element.winner_runner_identity) {
                 cell.append($('<img>', {
-                    src: '/img/ids/'+element.winner_runner_identity+'.png'
+                    src: '/img/ids/'+element.winner_runner_identity+'.png',
+		    width: 20,
+		    height: 20
                 }))
             }
             if (element.winner_corp_identity) {
                 cell.append('&nbsp;').append($('<img>', {
-                    src: '/img/ids/'+element.winner_corp_identity+'.png'
+                    src: '/img/ids/'+element.winner_corp_identity+'.png',
+		    width: 20,
+		    height: 20
                 }))
             }
         }
