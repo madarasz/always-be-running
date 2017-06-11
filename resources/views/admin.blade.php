@@ -85,6 +85,17 @@
             @include('admin.vip')
         @endif
     </div>
+    {{--screen size checker--}}
+    <p>
+        viewing on screensize:
+        <strong>
+        <span class="hidden-sm-up">xs</span>
+        <span class="hidden-xs-down hidden-md-up">sm</span>
+        <span class="hidden-sm-down hidden-lg-up">md</span>
+        <span class="hidden-md-down hidden-xl-up">lg</span>
+        <span class="hidden-lg-down">xl</span>
+        </strong>
+    </p>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
