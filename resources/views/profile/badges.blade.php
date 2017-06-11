@@ -10,7 +10,7 @@
     <div class="text-xs-center">
         @forelse($user->badges as $badge)
             <div class="{{ (@$page_section == 'profile' && !$badge->pivot->seen) ? 'new-badge notif-green' : 'inline-block'}}">
-                <img src="/img/badges/{{ $badge->filename }}" data-html="true"
+                <img src="/img/badges/{{ $badge->filename }}" data-html="true" class="badge"
                      data-toggle="tooltip" data-placement="top"
                      title="<strong>{{ $badge->name }}</strong><br/>{{ $badge->description }}"/>
             </div>

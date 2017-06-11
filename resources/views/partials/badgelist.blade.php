@@ -1,6 +1,6 @@
 <div class="row p-b-1">
     <div class="col-xs-2 text-xs-right">
-        <img src="/img/badges/{{ $badge->filename }}"/>
+        <img src="/img/badges/{{ $badge->filename }}" class="badge"/>
     </div>
     <div class="col-xs-10">
         <strong>{{ $badge->name }}</strong><br/>

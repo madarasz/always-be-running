@@ -237,6 +237,20 @@ input[type="checkbox"] {
 }
 .cell-winner img {
     margin: 0.2rem 0;
+    width: 20px;
+    height: 20px;
+}
+
+/* id images */
+img.id-small {
+    width: 20px;
+    height: 20px;
+}
+
+/* 30x30 images */
+.image-30x30 {
+    width: 30px;
+    height: 30px;
 }
 
 /* viewing as admin/creator */
@@ -881,4 +895,8 @@ table.hover-row > tbody > tr:hover > td {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+img.badge {
+    width: 70px;
+    height: 70px;
 }

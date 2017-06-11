@@ -43,7 +43,7 @@
                             {{  $ft->winner()->import_username }}
                         @endif
                     </td>
-                    <td class="text-xs-right" nowrap="">
+                    <td class="text-xs-right cell-winner" nowrap="">
                         @if ($ft->winner()->type == 3)
                             <a href="{{ $ft->winner()->runner_deck_url() }}" title="{{ $ft->winner()->runner_deck_title }}"><img src="/img/ids/{{ $ft->winner()->runner_deck_identity }}.png"></a>&nbsp;<a href="{{ $ft->winner()->corp_deck_url() }}"><img src="/img/ids/{{ $ft->winner()->corp_deck_identity }}.png"></a>
                         @else

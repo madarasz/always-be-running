@@ -203,10 +203,10 @@
                     var tag = videos[i].video_tags[u];
                     // deck ids
                     if (tag.entry && parseInt(tag.is_runner) != 0) {
-                        taginfo.append('<a href="'+tag.entry.runnerDeckUrl+'"><img src="/img/ids/' + tag.entry.runner_deck_identity + '.png"/></a> ');
+                        taginfo.append('<a href="'+tag.entry.runnerDeckUrl+'"><img src="/img/ids/' + tag.entry.runner_deck_identity + '.png" class="id-small"/></a> ');
                     }
                     if (tag.entry && parseInt(tag.is_runner) != 1) {
-                        taginfo.append('<a href="'+tag.entry.corpDeckUrl+'"><img src="/img/ids/' + tag.entry.corp_deck_identity + '.png"/></a> ');
+                        taginfo.append('<a href="'+tag.entry.corpDeckUrl+'"><img src="/img/ids/' + tag.entry.corp_deck_identity + '.png" class="id-small"/></a> ');
                     }
                     // username
                     if (tag.user) {

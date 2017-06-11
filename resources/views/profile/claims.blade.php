@@ -15,9 +15,9 @@
                     @include('tournaments.partials.list-format', ['tournament' => $claim->tournament, 'class' => 'no-li'])
                     <strong>#{{ $claim->rank() }} / {{ $claim->tournament->players_number }}</strong>
                     @if ($claim->type == 3)
-                        <a href="{{ $claim->runner_deck_url() }}" title="{{ $claim->runner_deck_title }}"><img src="/img/ids/{{ $claim->runner_deck_identity }}.png"></a>&nbsp;<a href="{{ $claim->corp_deck_url() }}" title="{{ $claim->corp_deck_title }}"><img src="/img/ids/{{ $claim->corp_deck_identity }}.png"></a>
+                        <a href="{{ $claim->runner_deck_url() }}" title="{{ $claim->runner_deck_title }}"><img src="/img/ids/{{ $claim->runner_deck_identity }}.png" class="id-small"></a>&nbsp;<a href="{{ $claim->corp_deck_url() }}" title="{{ $claim->corp_deck_title }}"><img src="/img/ids/{{ $claim->corp_deck_identity }}.png" class="id-small"></a>
                     @else
-                        <img src="/img/ids/{{ $claim->runner_deck_identity }}.png">&nbsp;<img src="/img/ids/{{ $claim->corp_deck_identity }}.png">
+                        <img src="/img/ids/{{ $claim->runner_deck_identity }}.png" class="id-small">&nbsp;<img src="/img/ids/{{ $claim->corp_deck_identity }}.png" class="id-small">
                     @endif
                     <a href="{{ $claim->tournament->seoUrl() }}">
                         {{ $claim->tournament->title }}

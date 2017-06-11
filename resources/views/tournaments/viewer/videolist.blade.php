@@ -50,17 +50,17 @@
                                 @if($entries[$u]->user == $tag->user_id)
                                     @if ($entries[$u]->type == 3)
                                         @if ($tag->is_runner == true || is_null($tag->is_runner))
-                                            <a href="{{ $entries[$u]->runner_deck_url() }}" title="{{ $entries[$u]->runner_deck_title }}"><img src="/img/ids/{{ $entries[$u]->runner_deck_identity }}.png"></a>
+                                            <a href="{{ $entries[$u]->runner_deck_url() }}" title="{{ $entries[$u]->runner_deck_title }}"><img src="/img/ids/{{ $entries[$u]->runner_deck_identity }}.png" class="id-small"></a>
                                         @endif
                                         @if ($tag->is_runner == false || is_null($tag->is_runner))
-                                            <a href="{{ $entries[$u]->corp_deck_url() }}" title="{{ $entries[$u]->corp_deck_title }}"><img src="/img/ids/{{ $entries[$u]->corp_deck_identity }}.png"></a>
+                                            <a href="{{ $entries[$u]->corp_deck_url() }}" title="{{ $entries[$u]->corp_deck_title }}"><img src="/img/ids/{{ $entries[$u]->corp_deck_identity }}.png" class="id-small"></a>
                                         @endif
                                     @elseif ($entries[$u]->type != 0)
                                         @if ($tag->is_runner == true || is_null($tag->is_runner))
-                                            <img src="/img/ids/{{ $entries[$u]->runner_deck_identity }}.png">
+                                            <img src="/img/ids/{{ $entries[$u]->runner_deck_identity }}.png" class="id-small">
                                         @endif
                                         @if ($tag->is_runner == false || is_null($tag->is_runner))
-                                            <img src="/img/ids/{{ $entries[$u]->corp_deck_identity }}.png">
+                                            <img src="/img/ids/{{ $entries[$u]->corp_deck_identity }}.png" class="id-small">
                                         @endif
                                     @endif
                                 @endif
