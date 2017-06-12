@@ -900,3 +900,7 @@ img.badge {
     width: 70px;
     height: 70px;
 }
+/* hiding past calendar events */
+.fc-past {
+    cursor: default !important; background: transparent !important;
+}

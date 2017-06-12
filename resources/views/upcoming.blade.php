@@ -75,11 +75,6 @@
                     <i class="fa fa-calendar" aria-hidden="true"></i> Upcoming calendar<br/>
                     <small>past events are hidden</small>
                 </h5>
-                <style type="text/css">
-                    .fc-past {
-                        cursor: default !important; background: transparent !important;
-                    }
-                </style>
                 @include('partials.calendar')
                 <div class="text-xs-center">
                     <input type="checkbox" id="hide-recurring" checked onchange="hideRecurring()"/>
