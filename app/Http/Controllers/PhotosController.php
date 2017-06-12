@@ -95,4 +95,63 @@ class PhotosController extends Controller
         return redirect()->back()->with('message', 'Photo deleted');
     }
 
+    /**
+     * Rotates image 90 degrees clockwise or counter-clockwise.
+     * @param Request $request
+     * @param $id
+     * @param $dir 'cw' or 'ccw' for clockwise or counter-clockwise
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function rotate(Request $request, $id, $dir) {
+        $photo = Photo::findOrFail($id);
+        $this->authorize('delete', $photo, $request->user());
+
+        // new file name: image.jpg > rot1_image.jpg > rot2_image.jpg > rot3_image.jpg > image.jpg
+        if (preg_match('/rot(\d)/', $photo->filename, $matches)) {
+            $rotnum = intval($matches[1]);
+            $filename = substr($photo->filename, 5);
+        } else {
+            $rotnum = 0;
+            $filename = $photo->filename;
+        }
+        // calculate rotation, new rotation number
+        $degrees = 0;
+        if ($dir == 'cw') {
+            $rotnum++;
+            $degrees = -90;
+        } elseif ($dir === 'ccw') {
+            $rotnum--;
+            if ($rotnum < 0) {
+                $rotnum = $rotnum + 4;
+            }
+            $degrees = 90;
+        }
+        $rotnum = $rotnum % 4;
+        // calculate new file name
+        if ($rotnum) {
+            $newFilename = 'rot'.$rotnum.'_'.$filename;
+        } else {
+            $newFilename = $filename;
+        }
+
+        // rotate image
+        $img = Image::make(public_path('photo/') . $photo->filename);
+        $img->rotate($degrees);
+        $img->save();
+        // rotate thumbnail
+        $thumb = Image::make(public_path('photo/thumb_') . $photo->filename);
+        $thumb->rotate($degrees);
+        $thumb->save();
+
+        // rename image
+        rename(public_path('photo/').$photo->filename, public_path('photo/').$newFilename);
+        // rename thumbnail
+        rename(public_path('photo/thumb_').$photo->filename, public_path('photo/thumb_').$newFilename);
+        // update DB
+        $photo->update(['filename' => $newFilename]);
+
+        // redirecting to tournament
+        return redirect()->back()->with('message', 'Photo rotated');
+    }
+
 }

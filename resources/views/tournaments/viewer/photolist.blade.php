@@ -7,12 +7,21 @@
                     <img src="{{ $photo->urlThumb() }}"/>
                 </a>
                 <div class="abs-top-left">
+                    {{--approve button--}}
                     @if (!$photo->approved && $user && $user->admin)
                         <a class="btn btn-sm btn-success fade-in" href="{{ '/photos/'.$photo->id.'/approve' }}">
-                            <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                            <i class="fa fa-thumbs-up" title="approve"></i>
                         </a>
                     @endif
                     @if ($user && ($user->admin || $user->id == $photo->user_id || $user->id == $photo->tournament->creator))
+                        {{--rotate button--}}
+                        <a class="btn btn-sm btn-primary fade-in" href="{{ '/photos/'.$photo->id.'/rotate/ccw' }}">
+                            <i class="fa fa-undo" title="rotate"></i>
+                        </a>
+                        <a class="btn btn-sm btn-primary fade-in" href="{{ '/photos/'.$photo->id.'/rotate/cw' }}">
+                            <i class="fa fa-repeat" title="rotate"></i>
+                        </a>
+                        {{--delete button--}}
                         {!! Form::open(['method' => 'DELETE', 'url' => "/photos/{$photo->id}", 'style' => 'display:inline;']) !!}
                             {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i>',
                             array('type' => 'submit', 'class' => 'btn btn-danger btn-sm fade-in', 'onclick' => 'return confirm("Delete photo?")')) !!}

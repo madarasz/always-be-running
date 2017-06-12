@@ -52,6 +52,7 @@ Route::get('videos', 'VideosController@page');
 
 Route::post('photos', 'PhotosController@store');
 Route::get('photos/{id}/approve', 'PhotosController@approve');
+Route::get('photos/{id}/rotate/{dir}', 'PhotosController@rotate');
 Route::delete('photos/{id}', 'PhotosController@destroy');
 
 Route::get('/oauth2/redirect', 'NetrunnerDBController@login');
