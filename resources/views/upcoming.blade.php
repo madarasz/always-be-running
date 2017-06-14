@@ -84,7 +84,21 @@
         </div>
         <div class="col-md-6 col-xs-12">
             <div class="bracket">
-                <h4><i class="fa fa-globe" aria-hidden="true"></i> Map</h4>
+                <h4>
+                    <i class="fa fa-globe" aria-hidden="true"></i>
+                    Map
+                    <div class="small-text loader hidden-xs-up" id="loader-locater">locating</div>
+                    <div class="pull-right">
+                        <span id="error-location" class="alert alert-danger alert-small hidden-xs-up">
+                            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                            <span id="text-location-error"></span>
+                        </span>
+                        <button id="button-near-me" class="btn btn-primary btn-xs" onclick="getLocation()" disabled>
+                            <i class="fa fa-bullseye" aria-hidden="true"></i>
+                            Zoom to me
+                        </button>
+                    </div>
+                </h4>
                 <div class="map-wrapper">
                     <div id="map"></div>
                 </div>
@@ -112,9 +126,6 @@
             </div>
         </div>
     </div>
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_MAPS_API')}}&callback=initializeMap">
-    </script>
     <script type="text/javascript">
 
         // map legend
@@ -126,7 +137,9 @@
             default_filter = 'start={{ $nowdate }}&recur=0&concluded=0&approved=1',
             recur_filter = 'approved=1&recur=1',
             new_filter = default_filter,    // changed with user's default filter
-            new_recur_filter = recur_filter;
+            new_recur_filter = recur_filter,
+            userLocation = null,
+            shortestDistance = 1000.0; // set possible maximum distance while locating user here
 
         @if (@$default_country)
             // user's default country
@@ -155,10 +168,14 @@
                             drawCalendar(calendardata);
                             hideRecurring();
                             hideRecurringMap(map);
+                            $('#button-near-me').prop("disabled", false);
                         });
                     });
         }
 
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_MAPS_API')}}&callback=initializeMap&libraries=geometry">
     </script>
 @stop
 

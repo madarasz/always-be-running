@@ -221,3 +221,87 @@ function hideRecurringMap(map) {
     }
     setZoom(map, bounds);
 }
+
+// user geolocation
+function getLocation() {
+    if (userLocation == null) {
+        // user not yet located
+        $('#loader-locater').removeClass('hidden-xs-up');
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(getMyLocation, showGeolocationError, { maximumAge: 600000, timeout: 10000 });
+            $('#error-location').addClass('hidden-xs-up');
+        } else {
+            $('#error-location').removeClass('hidden-xs-up');
+            $('#text-location-error').text('Geolocation is not supported by this browser.');
+        }
+    } else {
+        // already found
+        zoomNearMe();
+    }
+}
+
+// error handling for geolocation
+function showGeolocationError(error) {
+    var errorText;
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            errorText = "User denied the request for Geolocation.";
+            break;
+        case error.POSITION_UNAVAILABLE:
+            errorText = "Location information is unavailable.";
+            break;
+        case error.TIMEOUT:
+            errorText = "The request to get user location timed out.";
+            break;
+        case error.UNKNOWN_ERROR:
+            errorText = "An unknown error occurred.";
+            break;
+    }
+    $('#text-location-error').text(errorText);
+    $('#error-location').removeClass('hidden-xs-up');
+    $('#loader-locater').addClass('hidden-xs-up');
+}
+
+
+function getMyLocation(position) {
+    // user's location
+    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    userLocation = new google.maps.Marker({
+        map: map,
+        position: latlng,
+        icon: {
+            path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+            scale: 4
+        }
+    });
+
+    // find closest location
+    var closestMarker,
+        dist;
+    for (var i = 0; i < map.markers.length; i++) {
+        if (map.markers[i].visible) {
+            dist = google.maps.geometry.spherical.computeDistanceBetween(userLocation.position, map.markers[i].position) / 1000;
+            if (dist < shortestDistance) {
+                closestMarker = map.markers[i];
+                shortestDistance = dist;
+            }
+        }
+    }
+    // console.log(dist, closestMarker);
+
+    // display user's location
+    map.markers.push(userLocation);
+    $('#loader-locater').addClass('hidden-xs-up');
+
+    // zoom map
+    if (shortestDistance < 250) {
+        shortestDistance = 250; // minimal distance
+    }
+    zoomNearMe();
+}
+
+// zooms map to user's geolocation
+function zoomNearMe() {
+    var circle = new google.maps.Circle({radius: shortestDistance * 1000, center: userLocation.position});
+    map.fitBounds(circle.getBounds());
+}

@@ -904,3 +904,9 @@ img.badge {
 .fc-past {
     cursor: default !important; background: transparent !important;
 }
+.alert-small {
+    font-style: italic;
+    font-size: 12px;
+    margin: 0 5px;
+    padding:  1px 5px;
+}
