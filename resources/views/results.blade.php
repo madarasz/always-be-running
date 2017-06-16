@@ -134,8 +134,8 @@
         });
 
         // statistics charts
-        google.charts.setOnLoadCallback(initCharts);
         google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(initCharts);
         function initCharts() {
             // KtM get packs
             getKTMDataPacks(function (packs) {
