@@ -60,7 +60,7 @@
                                 <?php $vuser = App\User::findOrFail($userid); ?>
                                 <tr>
                                     <td>
-                                        <a href="/profile/{{ $vuser->id }}" {{ $vuser->supporter ? 'class=supporter' : '' }}>
+                                        <a href="/profile/{{ $vuser->id }}" class="{{ $vuser->linkClass() }}">
                                             {{ $vuser->displayUsername() }}
                                         </a>
                                     </td>

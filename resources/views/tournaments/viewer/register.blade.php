@@ -4,7 +4,7 @@
     <ul id="registered-players">
         @foreach ($entries as $entry)
             @if ($entry->player)
-                <li><a href="/profile/{{ $entry->player->id }}" {{ $entry->player->supporter ? 'class=supporter' : '' }}>{{ $entry->player->displayUsername() }}</a></li>
+                <li><a href="/profile/{{ $entry->player->id }}" class="{{ $entry->player->linkClass() }}">{{ $entry->player->displayUsername() }}</a></li>
             @endif
         @endforeach
     </ul>

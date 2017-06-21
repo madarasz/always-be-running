@@ -235,6 +235,8 @@ class TournamentsController extends Controller
      * @return mixed JSON result
      */
     public function tournamentJSON(Request $request) {
+        $startTime = microtime(true);
+
         // order by
         if ($request->input('concluded')) {
             $ordering = 'desc';
@@ -344,6 +346,7 @@ class TournamentsController extends Controller
                 'creator_id' => $tournament->creator,
                 'creator_name' => $tournament->user()->first()->displayUsername(),
                 'creator_supporter' => $tournament->user->supporter,
+                'creator_class' => $tournament->user->linkClass(),
                 'created_at' => $tournament->created_at->format('Y.m.d. H:i:s'),
                 'cardpool' => $tournament->cardpool['name'],
                 'location' => $location,
@@ -395,6 +398,13 @@ class TournamentsController extends Controller
                 }
             }
         }
+
+        // insert time measurement on last element
+        if (count($result)) {
+            $endTime = microtime(true);
+            $result[count($result) - 1]['rendered_in'] = date("i:s:u", $endTime - $startTime);
+        }
+
         return response()->json($result);
     }
 

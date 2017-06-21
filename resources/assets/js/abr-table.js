@@ -141,7 +141,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
             newrow.append($('<td>').append($('<a>', {
                 text: element.creator_name,
                 href: '/profile/' + element.creator_id,
-                class: parseInt(element.creator_supporter) > 0 ? 'supporter' : ''
+                class: element.creator_class
             })));
         }
         // type

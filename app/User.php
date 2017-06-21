@@ -58,4 +58,17 @@ class User extends Authenticatable
     public function tournamentsCreated() {
         return $this->hasMany(Tournament::class, 'creator', 'id');
     }
+
+    /**
+     * Return CSS class for user's link
+     */
+    public function linkClass() {
+        if ($this->admin) {
+            return "admin";
+        }
+        if ($this->supporter) {
+            return "supporter";
+        }
+        return "";
+    }
 }

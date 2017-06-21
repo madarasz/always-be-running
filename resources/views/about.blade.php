@@ -25,42 +25,42 @@
                     <li>
                         <strong>UK</strong>
                         <ul>
-                            <li><a href="/profile/6966">lpoulter</a></li>
-                            <li><a href="/profile/1221">johno</a></li>
+                            <li><a href="/profile/6966" class="admin">lpoulter</a></li>
+                            <li><a href="/profile/1221" class="admin">johno</a></li>
                         </ul>
                     </li>
                     <li>
                         <strong>US</strong>
                         <ul>
-                            <li><a href="/profile/9571">Murphy</a></li>
-                            <li><a href="/profile/6075">jase2224</a></li>
+                            <li><a href="/profile/9571" class="admin">Murphy</a></li>
+                            <li><a href="/profile/6075" class="admin">jase2224</a></li>
                         </ul>
                     </li>
                     <li>
                         <strong>New Zealand / Australia:</strong>
                         <ul>
-                            <li><a href="/profile/491">Guv_bubbs</a></li>
+                            <li><a href="/profile/491" class="admin">Guv_bubbs</a></li>
                         </ul>
                     </li>
                     <li>
                         <strong>Germany</strong>
                         <ul>
-                            <li><a href="/profile/1149">SpaceHonk</a></li>
-                            <li><a href="/profile/18163">5N00P1</a></li>
+                            <li><a href="/profile/1149" class="admin">SpaceHonk</a></li>
+                            <li><a href="/profile/18163" class="admin">5N00P1</a></li>
                         </ul>
                     </li>
                     <li>
                         <strong>Sweden</strong>
                         <ul>
-                            <li><a href="/profile/7664">Gejben</a></li>
-                            <li><a href="/profile/1361">hnautsch</a></li>
+                            <li><a href="/profile/7664" class="admin">Gejben</a></li>
+                            <li><a href="/profile/1361" class="admin">hnautsch</a></li>
                         </ul>
                     </li>
                     <li>
                         <strong>Central Europe</strong>
                         <ul>
-                            <li><a href="/profile/9871">TwadaCZ</a></li>
-                            <li><a href="/profile/1361">Necro</a></li>
+                            <li><a href="/profile/9871" class="admin">TwadaCZ</a></li>
+                            <li><a href="/profile/1361" class="admin">Necro</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -72,8 +72,8 @@
                     Developers
                 </h5>
                 <ul>
-                    <li><a href="/profile/1276">Necro</a> - site owner, main developer</li>
-                    <li><a href="/profile/1221">johno</a> - youtube tournament videos</li>
+                    <li><a href="/profile/1276" class="admin">Necro</a> - site owner, main developer</li>
+                    <li><a href="/profile/1221" class="admin">johno</a> - youtube tournament videos</li>
                 </ul>
             </div>
         </div>

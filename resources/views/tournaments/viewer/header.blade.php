@@ -45,7 +45,7 @@
                 <img class="img-patron-o" title="Patreon Sysop/Executive supporter"/>
             @endif
             <span id="tournament-creator">
-                <a href="/profile/{{ $tournament->user->id }}" {{ $tournament->user->supporter ? 'class=supporter' : '' }}>{{ $tournament->user->displayUsername() }}</a>
+                <a href="/profile/{{ $tournament->user->id }}" class="{{ $tournament->user->linkClass() }}">{{ $tournament->user->displayUsername() }}</a>
             </span>
         </em>
         {{--Charity--}}

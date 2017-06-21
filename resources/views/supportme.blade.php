@@ -39,7 +39,9 @@
                 <div class="text-xs-center">
                     <strong>Thank you to all of my supporters!</strong><br/>
                     @foreach($supporters as $key=>$supporter)
-                        <a href="/profile/{{$supporter->id}}" class="supporter">{{$supporter->displayUsername()}}</a>{{$key < $scount -1 ? ', ' : ''}}
+                        <a href="/profile/{{$supporter->id}}" class="{{ $supporter->linkClass() }}">
+                            {{$supporter->displayUsername()}}
+                        </a>{{$key < $scount -1 ? ', ' : ''}}
                     @endforeach
                 </div>
             </div>

@@ -1,6 +1,6 @@
 <tr>
     <td>
-        <a href="/profile/{{ $vip->id }}"{{ $vip->supporter ? 'class=supporter' : '' }}>
+        <a href="/profile/{{ $vip->id }}" class="{{ $vip->linkClass() }}">
             {{ $vip->displayUsername() }}
         </a>
     </td>

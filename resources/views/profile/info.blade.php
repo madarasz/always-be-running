@@ -5,6 +5,13 @@
         This user <a href="/support-me" class="supporter">supports</a> AlwaysBeRunning.net
     </div>
 @endif
+{{--Admin strip--}}
+@if ($user->admin)
+    <div class="alert alert-info">
+        <i class="fa fa-certificate" aria-hidden="true"></i>
+        This user is an admin.
+    </div>
+@endif
 {{--Badge notification--}}
 <div class="alert alert-success view-indicator notif-green notif-badge-page hidden-xs-up" id="notif-profile" data-badge="">
     You have new badges.
@@ -16,7 +23,7 @@
         User
     </h5>
     <div class="text-xs-center p-b-1">
-        <h6 {{ $user->supporter ? 'class=supporter' : '' }}>{{ $user->displayUsername() }}</h6>
+        <h6 class="{{ $user->linkClass() }}">{{ $user->displayUsername() }}</h6>
         <div class="user-counts">
             {{ $created_count }} tournament{{ $created_count > 1 ? 's' : '' }} created<br/>
             {{ $claim_count }} tournament claim{{ $claim_count > 1 ? 's' : '' }}<br/>

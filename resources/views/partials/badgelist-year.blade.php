@@ -21,7 +21,7 @@
                             {{--list users--}}
                             <span id="users-badge-{{ $badge->id }}" {{ $bcount > 20 ? 'class=hidden-xs-up' : '' }}>
                             @foreach($badge->users()->get() as $key=>$badgeuser)
-                                <a href="/profile/{{ $badgeuser->id }}" {{ $badgeuser->supporter ? 'class=supporter' : '' }}>{{ $badgeuser->displayUsername() }}</a>{{ $key != $bcount-1 ? ',' : ''}}
+                                <a href="/profile/{{ $badgeuser->id }}" class="{{ $badgeuser->linkClass() }}">{{ $badgeuser->displayUsername() }}</a>{{ $key != $bcount-1 ? ',' : ''}}
                             @endforeach
                             </span>
                         @endif

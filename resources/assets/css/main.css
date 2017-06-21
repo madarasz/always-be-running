@@ -723,6 +723,13 @@ hr.dashed {
 a.supporter:hover {
     color: #8e6101 !important;
 }
+/* admin username */
+.admin {
+    color: #af66d8 !important;
+}
+a.admin:hover {
+    color: #844ea3 !important;
+}
 /*modal tabs*/
 .modal-tabs > ul.nav-tabs {
     background-color: #eee;

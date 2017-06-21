@@ -17,7 +17,7 @@
                 </a>
             </div>
         @endif
-        Profile - <span {{ $user->supporter ? 'class=supporter' : '' }}>{{ $user->displayUsername() }}</span>
+        Profile - <span class="{{ $user->linkClass() }}">{{ $user->displayUsername() }}</span>
     </h4>
     @include('partials.message')
     @include('errors.list')
