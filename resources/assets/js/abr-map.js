@@ -294,8 +294,8 @@ function getMyLocation(position) {
     $('#loader-locater').addClass('hidden-xs-up');
 
     // zoom map
-    if (shortestDistance < 250) {
-        shortestDistance = 250; // minimal distance
+    if (shortestDistance < 150) {
+        shortestDistance = 150; // minimal distance
     }
     zoomNearMe();
 }
