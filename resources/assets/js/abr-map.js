@@ -169,23 +169,26 @@ function refreshAddressInfo(place) {
         document.getElementById('location_country').value = '';
         document.getElementById('location_city').value = '';
         place.address_components.forEach(function (comp) {
+            // country
             if (comp.types[0] === 'country') {
                 document.getElementById('country').innerHTML = comp.long_name;
                 document.getElementById('location_country').value = comp.long_name;
             }
+            // city, can be many address components
             if (comp.types[0] === 'locality') {
                 document.getElementById('city').innerHTML = comp.long_name;
                 document.getElementById('location_city').value = comp.long_name;
             }
+            // state
             if (comp.types[0] === 'administrative_area_level_1') {
                 document.getElementById('state').innerHTML = comp.long_name;
                 document.getElementById('location_state').value = comp.short_name;
             }
         });
-        // US fix for city
+        // US/UK fix for city
         if (document.getElementById('city').innerHTML == '') {
             place.address_components.forEach(function (comp) {
-                if (comp.types[0] === 'sublocality_level_1') {
+                if (comp.types[0] === 'sublocality_level_1' || comp.types[0] === 'postal_town') {
                     document.getElementById('city').innerHTML = comp.long_name;
                     document.getElementById('location_city').value = comp.long_name;
                 }
