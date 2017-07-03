@@ -238,7 +238,7 @@ class TournamentsController extends Controller
         $startTime = microtime(true);
 
         // order by
-        if ($request->input('concluded')) {
+        if ($request->input('concluded') || $request->input('desc')) {
             $ordering = 'desc';
         } else {
             $ordering = 'asc';

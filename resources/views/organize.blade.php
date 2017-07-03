@@ -56,10 +56,10 @@
 
     <script type="text/javascript">
         // Script to trigger tournament load
-        getTournamentData("creator={{ $user }}", function(data) {
+        getTournamentData("creator={{ $user }}&desc=1", function(data) {
             updateTournamentTable('#created', ['title', 'date', 'location', 'cardpool', 'approval', 'conclusion', 'players', 'claims',
                 'action_edit', 'action_delete'], 'no tournaments to show', '{{ csrf_token() }}', data);
-            getTournamentData("creator={{ $user }}&incomplete=1", function(data) {
+            getTournamentData("creator={{ $user }}&incomplete=1&desc=1", function(data) {
                 updateTournamentTable('#incomplete', ['title', 'date', 'location', 'cardpool', 'players',
                     'created_at', 'action_edit', 'action_purge'], 'no incomplete items', '{{ csrf_token() }}', data);
                 if (data.length) {
