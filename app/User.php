@@ -71,4 +71,9 @@ class User extends Authenticatable
         }
         return "";
     }
+
+    public function communityCount() {
+        $tournament_ids = Tournament::where('creator', $this->id)->pluck('id');
+        return Entry::whereIn('tournament_id', $tournament_ids)->whereIn('type', [3,4])->where('user', '!=', $this->id)->distinct('user')->count('user');
+    }
 }

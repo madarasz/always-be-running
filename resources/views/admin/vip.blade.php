@@ -11,6 +11,7 @@
                         <th>user</th>
                         <th>#claims</th>
                         <th>#TO</th>
+                        <th>#claimers</th>
                         <th>reputation</th>
                         <th>#badges</th>
                         <th>country</th>
@@ -37,6 +38,7 @@
                         <th>user</th>
                         <th>#claims</th>
                         <th>#TO</th>
+                        <th>#claimers</th>
                         <th>reputation</th>
                         <th>#badges</th>
                         <th>country</th>
