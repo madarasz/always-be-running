@@ -32,6 +32,7 @@ class BadgeController extends Controller
      */
     public function refreshBadges(Request $request) {
         $this->authorize('admin', Tournament::class, $request->user());
+        set_time_limit(600);
 
         $startTime = microtime(true);
         $badgesBefore = DB::table('badge_user')->count();
@@ -386,10 +387,14 @@ class BadgeController extends Controller
     }
 
     public function addCommunityBuilder($userid) {
-        $badges = [48 => false, 666 => false]; // array has to have at least two elements
-        $tounamentIDs = Tournament::where('creator', $userid)->where('approved', 1)->pluck('id');
+        $badges = [48 => false, 68 => false];
+        $tournamentIDs = Tournament::where('creator', $userid)->where('approved', 1)->pluck('id');
+        $count = Entry::whereIn('tournament_id', $tournamentIDs)->whereIn('type', [3,4])->where('user', '!=', $userid)
+            ->distinct()->count('user');
 
-        if (Entry::whereIn('tournament_id', $tounamentIDs)->whereIn('type', [3,4])->where('user', '!=', $userid)->distinct()->count('user') > 9) {
+        if ($count > 29) {
+            $badges[68] = true;
+        } elseif ($count > 9) {
             $badges[48] = true;
         }
 
