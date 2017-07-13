@@ -150,6 +150,7 @@
                         I'm posting summaries of newly developed featues to
                         <a href="https://www.patreon.com/alwaysberunning/posts">my Patreon page</a>.
                         <ul>
+                            <li><a href="https://www.patreon.com/posts/12936369">Developer's report - June 2017</a></li>
                             <li><a href="https://www.patreon.com/posts/11514676">Developer's report - May 2017</a></li>
                             <li><a href="https://www.patreon.com/posts/9843435">Developer's report - April 2017</a></li>
                             <li><a href="https://www.patreon.com/posts/8635509">Developer's report - March 2017</a></li>

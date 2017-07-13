@@ -21,6 +21,7 @@
                     <i class="fa fa-globe" aria-hidden="true"></i>
                     Admins
                 </h5>
+                <div class="m-b-1">Check out their profiles for contact information.</div>
                 <ul>
                     <li>
                         <strong>UK</strong>
@@ -60,7 +61,7 @@
                         <strong>Central Europe</strong>
                         <ul>
                             <li><a href="/profile/9871" class="admin">TwadaCZ</a></li>
-                            <li><a href="/profile/1361" class="admin">Necro</a></li>
+                            <li><a href="/profile/1276" class="admin">Necro</a></li>
                         </ul>
                     </li>
                 </ul>
