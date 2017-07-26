@@ -194,6 +194,15 @@ function refreshAddressInfo(place) {
                 }
             });
         }
+        // another fix for city if still not found
+        if (document.getElementById('city').innerHTML == '') {
+            place.address_components.forEach(function (comp) {
+                if (comp.types[0] === 'administrative_area_level_1') {
+                    document.getElementById('city').innerHTML = comp.long_name;
+                    document.getElementById('location_city').value = comp.long_name;
+                }
+            });
+        }
         // non-US location has no state
         if (document.getElementById('country').innerHTML !== 'United States') {
             document.getElementById('state').innerHTML = '';
