@@ -706,10 +706,12 @@ hr.dashed {
 .img-patron {
     content: url(/img/logo_patreon.png);
     height: 1em;
+    max-height: 1em;
 }
 .img-patron-o {
     content: url(/img/logo_patreon_o.png);
     height: 1em;
+    max-height: 1em;
 }
 .img-inline {
     height: 1em;
