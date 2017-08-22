@@ -36,3 +36,4 @@ app/Http/Controllers/ASController.php
 jquery.bracket.min.js
 jquery.bracket.min.css
 resources/views/partials/wanted-alt.blade.php
+phpinfo.php

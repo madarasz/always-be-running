@@ -46,9 +46,13 @@
                 @include('partials.badgelist-year', ['badge_list' => $badges->where('tournament_type_id', 5)->where('winlevel', 2)->reverse()])
                 @include('partials.badgelist-year', ['badge_list' => $badges->where('tournament_type_id', 5)->where('winlevel', 5)->reverse()])
                 {{--Europe Championship--}}
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('tournament_type_id', 9)->where('winlevel', 1)->reverse()])
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('tournament_type_id', 9)->where('winlevel', 2)->reverse()])
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('tournament_type_id', 9)->where('winlevel', 5)->reverse()])
+                @include('partials.badgelist-year', ['badge_list' => $badges->where('id', 65)])
+                @include('partials.badgelist-year', ['badge_list' => $badges->where('id', 66)])
+                @include('partials.badgelist-year', ['badge_list' => $badges->where('id', 67)])
+                {{--North American Championship--}}
+                @include('partials.badgelist-year', ['badge_list' => $badges->where('id', 69)])
+                @include('partials.badgelist-year', ['badge_list' => $badges->where('id', 70)])
+                @include('partials.badgelist-year', ['badge_list' => $badges->where('id', 71)])
                 {{--Nationals--}}
                 @include('partials.badgelist-year', ['badge_list' => $badges->where('tournament_type_id', 4)->where('winlevel', 1)->reverse()])
                 @include('partials.badgelist-year', ['badge_list' => $badges->where('tournament_type_id', 4)->where('winlevel', 2)->reverse()])

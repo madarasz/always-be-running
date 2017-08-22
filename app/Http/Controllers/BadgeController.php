@@ -71,6 +71,7 @@ class BadgeController extends Controller
         }
         $this->addChampionshipBadges($userid, null, 2, $badges);    // store champion
         $this->addChampionshipBadges($userid, 2017, 9, $badges, [82]);    // 2017 european championship
+        $this->addChampionshipBadges($userid, 2017, 10, $badges, [617]);    // 2017 north american championship, tournament_type_id is a hack
         $this->addPlayerLevelBadges($userid, $badges);
         $this->addFactionBadges($userid, $badges);
         $this->addRecurringBadge($userid, $badges);
@@ -139,7 +140,7 @@ class BadgeController extends Controller
             if ($found) {
                 $badgeid = Badge::where('tournament_type_id', $type)->where('year', $year)->where('winlevel', 2)->first()->id;
                 $badges[$badgeid] = true;
-            } elseif ($type == 5 || $type == 9) {
+            } elseif ($type == 5 || $type == 9 || $type == 10) {
                 // participation
                 $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('runner_deck_id', '>', 0)->where('type', 3)->first();
                 if ($found) {
@@ -283,7 +284,7 @@ class BadgeController extends Controller
      */
     public function addNDBBadges($userid) {
         $user = User::where('id', $userid)->first();
-        $badges = [21 => false, 25 => false, 39 => false, 31 => false, 32 => false, 33 => false];
+        $badges = [21 => false, 25 => false, 39 => false, 31 => false, 32 => false, 33 => false, 72 => false];
 
         if ($user->published_decks >= 20) {
             $badges[21] = true; // Hard-working publisher
@@ -299,6 +300,11 @@ class BadgeController extends Controller
             $badges[32] = true;  // NetrunnerDB Celeb
         } elseif ($user->reputation >= 100) {
             $badges[33] = true;   // NetrunnerDB Known
+        }
+
+        // ABR birthday badge
+        if ($user->created_at->format('Y-m-d') <= (date('Y')-1).date('-m-d')) {
+            $badges[72] = true;
         }
 
         $this->refreshUserBadges($userid, $badges);
