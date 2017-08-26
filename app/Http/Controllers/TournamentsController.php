@@ -229,9 +229,127 @@ class TournamentsController extends Controller
     }
 
     /**
+     * Returns JSON data on upcoming tournaments and recurring events.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function upcomingTournamentJSON() {
+        $yesterday = date('Y.m.d.', time() - 86400); // to be on the safe side
+        $tournaments = Tournament::where('date', '>=', $yesterday)->where('concluded', 0)
+            ->where('approved', 1)->orderBy('date', 'asc')->get();
+        $recurring = Tournament::whereNotNull('recur_weekly')->where('approved', 1)->orderBy('recur_weekly')->get();
+
+        $result = [
+            'tournaments' => $this->tournametDataFormat($tournaments),
+            'recurring_events' => $this->tournametDataFormat($recurring)
+        ];
+
+        return response()->json($result);
+    }
+
+    public function resultTournamentJSON() {
+        $tournaments = Tournament::where('concluded', 1)->where('approved', 1)->orderBy('date', 'desc')->get();
+
+        return response()->json($this->tournametDataFormat($tournaments));
+    }
+
+    /**
+     * Formats tournament data.
+     * @param $data array event data to be represented as JSON
+     * @param null $forUser user ID if claim status, broken deck links to be added for user
+     * @return array
+     */
+    private function tournametDataFormat($data, $forUser = null) {
+        $appUrl = env('APP_URL');
+        $result = [];
+
+        foreach($data as $tournament) {
+            // location
+            if ($tournament->tournament_type_id == 7) {
+                $location = 'online';
+            } else if ($tournament->location_country === 'United States') {
+                $location = $tournament->location_country.', '.$tournament->location_state.', '.$tournament->location_city;
+            } else {
+                $location = $tournament->location_country.', '.$tournament->location_city;
+            }
+
+            $event_data = [
+                'id' => $tournament->id,
+                'title' => $tournament->title,
+                'creator_id' => $tournament->creator,
+                'creator_name' => $tournament->user()->first()->displayUsername(),
+                'creator_supporter' => $tournament->user->supporter,
+                'creator_class' => $tournament->user->linkClass(),
+                'created_at' => $tournament->created_at->format('Y.m.d. H:i:s'),
+                'location' => $location,
+                'location_lat' => $tournament->location_lat,
+                'location_lng' => $tournament->location_long,
+                'location_country' => $tournament->location_country,
+                'location_state' => $tournament->location_state,
+                'address' => $tournament->location_address,
+                'store' => $tournament->location_store,
+                'place_id' => $tournament->location_place_id,
+                'contact' => $tournament->contact,
+                'approved' => $tournament->approved,
+                'registration_count' => $tournament->registration_number(),
+                'photos' => $tournament->photos->count(),
+                'url' => $appUrl.$tournament->seoUrl(),
+                'link_facebook' => $tournament->link_facebook
+            ];
+
+            // if not recurring / recurring
+            if (!$tournament->recur_weekly) {
+                $event_data['cardpool'] = $tournament->cardpool['name'];
+                $event_data['date'] = $tournament->date;
+                $event_data['type'] = $tournament->tournament_type['type_name'];
+                $event_data['format'] = $tournament->tournament_format['format_name'];
+                $event_data['concluded'] = $tournament->concluded == 1;
+                $event_data['charity'] = $tournament->charity == 1;
+            } else {
+                $event_data['recurring_day'] = $tournament->recurDay();
+            }
+
+            // if concluded
+            if ($tournament->concluded) {
+                $event_data['players_count'] = $tournament->players_number;
+                $event_data['top_count'] = $tournament->top_number;
+                $event_data['claim_count'] = $tournament->claim_number();
+                $event_data['claim_conflict'] = $tournament->conflict == 1;
+                $event_data['matchdata'] = $tournament->import == 1;
+                $event_data['videos'] = $tournament->videos->count();
+
+                // winner IDs
+                if ($tournament->top_number) {
+                    $winner = Entry::where('tournament_id', $tournament->id)->where('rank_top', 1)->first(); // with top cut
+                } else {
+                    $winner = Entry::where('tournament_id', $tournament->id)->where('rank', 1)->first(); // without top cut
+                }
+                if (!is_null($winner)) {
+                    $event_data['winner_runner_identity'] = $winner['runner_deck_identity'];
+                    $event_data['winner_corp_identity'] = $winner['corp_deck_identity'];
+                }
+            }
+
+            // for specific user, add broken flag
+            if ($forUser) {
+                $entry = Entry::where('tournament_id', $tournament->id)->where('user', $forUser)
+                    ->whereNotNull('rank')->first();
+                $event_data['user_claim'] = !is_null($entry);
+                // check for broken claims
+                if (!is_null($entry)) {
+                    $event_data['user_claim_broken'] = $entry->broken_runner || $entry->broken_corp;
+                }
+            }
+
+            array_push($result, $event_data);
+        }
+
+        return $result;
+    }
+
+    /**
      * JSON API for listing tournaments.
      * @param Request $request GET parameters:
-     *      approved, concluded, start, end, type, country, state, deleted, creator, user
+     *      approved, concluded, start, end, type, country, state, deleted, creator, user, etc.
      * @return mixed JSON result
      */
     public function tournamentJSON(Request $request) {
@@ -324,85 +442,16 @@ class TournamentsController extends Controller
 
         $tournaments = $tournaments->select()->get();
 
-        // modify and flatten result
-        $result = [];
-        $appUrl = env('APP_URL');
-        foreach($tournaments as $tournament) {
-            // location
-            if ($tournament->tournament_type_id == 7) {
-                $location = 'online';
-            } else if ($tournament->location_country === 'United States') {
-                $location = $tournament->location_country.', '.$tournament->location_state.', '.$tournament->location_city;
-            } else {
-                $location = $tournament->location_country.', '.$tournament->location_city;
-            }
-
-            array_push($result, [
-                'id' => $tournament->id,
-                'title' => $tournament->title,
-                'type' => $tournament->tournament_type['type_name'],
-                'format' => $tournament->tournament_format['format_name'],
-                'date' => $tournament->date,
-                'creator_id' => $tournament->creator,
-                'creator_name' => $tournament->user()->first()->displayUsername(),
-                'creator_supporter' => $tournament->user->supporter,
-                'creator_class' => $tournament->user->linkClass(),
-                'created_at' => $tournament->created_at->format('Y.m.d. H:i:s'),
-                'cardpool' => $tournament->cardpool['name'],
-                'location' => $location,
-                'location_lat' => $tournament->location_lat,
-                'location_lng' => $tournament->location_long,
-                'location_country' => $tournament->location_country,
-                'location_state' => $tournament->location_state,
-                'address' => $tournament->location_address,
-                'store' => $tournament->location_store,
-                'contact' => $tournament->contact,
-                'place_id' => $tournament->location_place_id,
-                'concluded' => $tournament->concluded == 1,
-                'approved' => $tournament->approved,
-                'players_count' => $tournament->players_number,
-                'top_count' => $tournament->top_number,
-                'registration_count' => $tournament->registration_number(),
-                'claim_count' => $tournament->claim_number(),
-                'claim_conflict' => $tournament->conflict == 1,
-                'recurring_day' => $tournament->recur_weekly ? $tournament->recurDay() : null,
-                'charity' => $tournament->charity == 1,
-                'matchdata' => $tournament->import == 1,
-                'videos' => $tournament->videos->count(),
-                'photos' => $tournament->photos->count(),
-                'url' => $appUrl.$tournament->seoUrl()
-            ]);
-
-            // user specific claim
-            if ($request->input('user') || $request->input('foruser')) {
-                $userId = $request->input('user') ? $request->input('user') : $request->input('foruser');
-                $entry = Entry::where('tournament_id', $tournament->id)->where('user', $userId)
-                    ->whereNotNull('rank')->first();
-                $result[count($result)-1]['user_claim'] = !is_null($entry);
-                // check for broken claims
-                if (!is_null($entry)) {
-                    $result[count($result) - 1]['user_claim_broken'] = $entry->broken_runner || $entry->broken_corp;
-                }
-            }
-
-            // winner IDs
-            if ($tournament->concluded) {
-                if ($tournament->top_number) {
-                    $winner = Entry::where('tournament_id', $tournament->id)->where('rank_top', 1)->first(); // with top cut
-                } else {
-                    $winner = Entry::where('tournament_id', $tournament->id)->where('rank', 1)->first(); // without top cut
-                }
-                if (!is_null($winner)) {
-                    $result[count($result)-1]['winner_runner_identity'] = $winner['runner_deck_identity'];
-                    $result[count($result)-1]['winner_corp_identity'] = $winner['corp_deck_identity'];
-                }
-            }
+        // flatten result
+        $userId = null;
+        if ($request->input('user') || $request->input('foruser')) {
+            $userId = $request->input('user') ? $request->input('user') : $request->input('foruser');
         }
+        $result = $this->tournametDataFormat($tournaments, $userId);
 
         // insert time measurement on last element
         if (count($result)) {
-            $endTime = microtime(true);
-            $result[count($result) - 1]['rendered_in'] = date("i:s:u", $endTime - $startTime);
+            $result[count($result) - 1]['rendered_in'] = date("i:s:u", microtime(true) - $startTime);
         }
 
         return response()->json($result);

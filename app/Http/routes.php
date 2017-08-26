@@ -58,7 +58,10 @@ Route::delete('photos/{id}', 'PhotosController@destroy');
 Route::get('/oauth2/redirect', 'NetrunnerDBController@login');
 Route::get('/logout', 'NetrunnerDBController@logout');
 
-Route::get('/api/tournaments', 'TournamentsController@tournamentJSON');
+Route::get('/api/tournaments/upcoming', 'TournamentsController@upcomingTournamentJSON');
+Route::get('/api/tournaments/results', 'TournamentsController@resultTournamentJSON');
+Route::get('/api/tournaments', 'TournamentsController@tournamentJSON'); // for internal use
+
 Route::get('/api/userdecks', 'NetrunnerDBController@getUserDecksJSON');
 Route::get('/api/entries', 'EntriesController@entriesJSON');
 Route::post('/api/nrtm', 'TournamentsController@NRTMEndpoint');
