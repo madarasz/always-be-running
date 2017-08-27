@@ -243,4 +243,9 @@ class PagesController extends Controller
     {
         return view('thankyou');
     }
+
+    public function api()
+    {
+        return view('api');
+    }
 }

@@ -13,6 +13,7 @@ Route::get('markdown', 'PagesController@markdown');
 Route::get('badges', 'BadgeController@badges');
 Route::get('support-me', 'PagesController@supportMe');
 Route::get('thank-you', 'PagesController@thankYou');
+Route::get('apidoc', 'PagesController@api');
 
 Route::get('admin', 'AdminController@lister')->name('admin');
 Route::get('admin/identities/update', 'NetrunnerDBController@requestIdentities');
