@@ -27,7 +27,9 @@
             {{--Delete--}}
             @if (is_null($tournament->deleted_at))
                 {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id", 'class' => 'inline-block']) !!}
-                {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Delete tournament', array('type' => 'submit', 'class' => 'btn btn-danger', 'id' => 'delete-button')) !!}
+                    {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Delete tournament',
+                        array('type' => 'submit', 'class' => 'btn btn-danger', 'id' => 'delete-button',
+                            'onclick' =>"return confirm('Are you sure you want to delete this tournament?')")) !!}
                 {!! Form::close() !!}
                 {{--Restore--}}
             @elseif ($user->admin)
