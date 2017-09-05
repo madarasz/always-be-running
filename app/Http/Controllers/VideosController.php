@@ -251,9 +251,17 @@ class VideosController extends Controller
     private function YTDurationToLength($duration)
     {
         if (preg_match('/PT(\d+H)?(\d+M)?(\d+S)?/', $duration, $matches)) {
-            $hours = intval($matches[1]);
-            $mins = intval($matches[2]);
-            $secs = intval($matches[3]);
+            $hours = 0; $mins = 0; $secs = 0;
+            // handle zero values, weird youtube stuff
+            if (count($matches) > 1) {
+                $hours = intval($matches[1]);
+                if (count($matches) > 2) {
+                    $mins = intval($matches[2]);
+                    if (count($matches) > 3) {
+                        $secs = intval($matches[3]);
+                    }
+                }
+            }
 
             return $this->formatLength($hours, $mins, $secs);
         } else {
