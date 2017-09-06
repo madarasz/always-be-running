@@ -75,7 +75,7 @@
     </div>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        var defaultFilter = "approved=1&concluded=1&recur=0&end={{ $nowdate }}",
+        var defaultFilter = "?approved=1&concluded=1&recur=0&end={{ $nowdate }}",
                 newFilter = defaultFilter,  // changed with user's default filter
                 packlist = [],
                 currentPack = "",
