@@ -61,7 +61,11 @@ function codeAddress(data, map, bounds, infowindow, callback) {
             })(infotext, infowindow, map, marker));
         }
     }
-    setZoom(map, bounds);
+
+    // set zoom if map not empty
+    if (data.length > 0) {
+        setZoom(map, bounds);
+    }
 
     // make callback if exists
     typeof callback === 'function' && callback.apply(this, arguments);
@@ -216,13 +220,17 @@ function refreshAddressInfo(place) {
 
 // hides recurring events from map if needed
 function hideRecurringMap(map) {
-    var bounds = new google.maps.LatLngBounds();
+    var bounds = new google.maps.LatLngBounds(),
+        markerCount = map.markers.length;
+
     if (document.getElementById('hide-recurring-map').checked) {
+        markerCount = 0;
         for (var i = 0; i < map.markers.length; i++) {
             if (map.markers[i].icon === markerIconUrl('blue')) {
                 map.markers[i].setVisible(false);
             } else {
                 bounds.extend(map.markers[i].getPosition());
+                markerCount++;
             }
         }
     } else {
@@ -230,6 +238,13 @@ function hideRecurringMap(map) {
             map.markers[i].setVisible(true);
             bounds.extend(map.markers[i].getPosition());
         }
+    }
+
+    if (markerCount == 0) {
+        bounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(85, -180),           // top left corner of earth
+            new google.maps.LatLng(-85, 179)            // bottom right corner
+        );
     }
     setZoom(map, bounds);
 }

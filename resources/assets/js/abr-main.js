@@ -51,9 +51,9 @@ function recurCheck() {
 //    };
 //})();
 
-function getTournamentData(filters, callback) {
+function getTournamentData(postfix, callback) {
     $.ajax({
-        url: '/api/tournaments?' + filters,
+        url: '/api/tournaments' + postfix,
         dataType: "json",
         async: true,
         success: function (data) {
@@ -62,38 +62,38 @@ function getTournamentData(filters, callback) {
     });
 }
 
-function updateDiscover(table, columns, filter, map, bounds, infowindow, callback) {
-    $(table + '-loader').removeClass('hidden-xs-up');
-    $(table).find('tbody').empty();
-
-    getTournamentData(filter, function(data) {
-        updateTournamentTable(table, columns, 'no tournaments to show', '', data);
-        updateTournamentCalendar(data);
-        codeAddress(data, map, bounds, infowindow, callback);
-    });
+// filter tournament array
+function filterTournamentData(data, field, filterValue, includeOnline) {
+    for (var i = 0; i < data.length; i++) {
+        if (data[i][field] != filterValue && (!includeOnline || data[i]['location'] != 'online')) {
+            data.splice(i, 1);
+            i--;
+        }
+    }
 }
 
-// update filter settings for the Upcoming page
-function filterDiscover(default_filter, default_country, map, infowindow) {
-    var filter = default_filter,
-        recur_filter = 'approved=1&recur=1',
-        type = document.getElementById('tournament_type_id').value,
+// filter events on Upcoming page
+function filterUpcoming() {
+    upcomingDataFiltered = $.extend(true, {}, upcomingDataAll);
+
+    var type = document.getElementById('tournament_type_id').value,
         countrySelector = document.getElementById('location_country'),
         stateSelector = document.getElementById('location_state'),
         country = countrySelector.options[parseInt(countrySelector.value)+1].innerHTML,
         state = stateSelector.options[parseInt(stateSelector.value)+1].innerHTML,
         includeOnline = document.getElementById('include-online').checked;
+
     // type filtering
-    if (type > 0) {
-        filter = filter + '&type=' + type;
+    if (type != '---') {
+        filterTournamentData(upcomingDataFiltered.tournaments, 'type', type, '');
         $('#filter-type').addClass('active-filter');
     } else {
         $('#filter-type').removeClass('active-filter');
     }
     // country filtering
     if (country !== '---') {
-        filter = filter + '&country=' + country;
-        recur_filter = recur_filter + '&country=' + country;
+        filterTournamentData(upcomingDataFiltered.tournaments, 'location_country', country, includeOnline);
+        filterTournamentData(upcomingDataFiltered.recurring_events, 'location_country', country);
         $('#filter-country').addClass('active-filter');
         $('#filter-online').removeClass('hidden-xs-up');
         if (country === 'United States') {
@@ -101,15 +101,12 @@ function filterDiscover(default_filter, default_country, map, infowindow) {
             $('#filter-spacer').addClass('hidden-xs-up');
             // state filtering
             if (state !== '---') {
-                filter = filter + '&state=' + state;
-                recur_filter = recur_filter + '&state=' + state;
+                filterTournamentData(upcomingDataFiltered.tournaments, 'location_state', state, includeOnline ? 'online' : '');
+                filterTournamentData(upcomingDataFiltered.recurring_events, 'location_state', state, '');
                 $('#filter-state').addClass('active-filter');
             } else {
                 $('#filter-state').removeClass('active-filter');
             }
-        }
-        if (includeOnline) {
-            filter = filter + '&include_online=1';
         }
     } else {
         $('#filter-country').removeClass('active-filter');
@@ -121,27 +118,53 @@ function filterDiscover(default_filter, default_country, map, infowindow) {
         $('#filter-spacer').removeClass('hidden-xs-up');
     }
     // user's default country
-    if (countrySelector.value == default_country) {
+    if (country == defaultCountry) {
         $('#label-default-country').removeClass('hidden-xs-up');
     } else {
         $('#label-default-country').addClass('hidden-xs-up');
     }
 
+    // refresh tournaments
+    displayUpcomingPageTournaments(upcomingDataFiltered);
+}
+
+// display upcoming tournaments, recurring events, calendar and map on Upcoming page
+function displayUpcomingPageTournaments(data) {
+    // empty tables
+    $('#discover-table').find('tbody').empty();
+    $('#recur-table').find('tbody').empty();
+    // empty map
     clearMapMarkers(map);
     var bounds = new google.maps.LatLngBounds();
+    // empty calendar
     calendardata = {};
-    // get tournaments
-    updateDiscover('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'], filter, map, bounds,
-        infowindow, function() {
-            // get weekly events
-            updateDiscover('#recur-table', ['title', 'location', 'recurday'], recur_filter, map, bounds, infowindow, function() {
-                drawCalendar(calendardata);
-                hideRecurring();
-                hideRecurringMap(map);
-                updatePaging('discover-table');
-                updatePaging('recur-table');
-            });
-        });
+
+    // upcoming tournaments
+    updateTournamentTable('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'],
+        'no tournaments to show', '', data.tournaments);
+    updateTournamentCalendar(data.tournaments);
+    codeAddress(data.tournaments, map, bounds, infowindow);
+    // recurring events
+    updateTournamentTable('#recur-table', ['title', 'location', 'recurday'],
+        'no tournaments to show', '', data.recurring_events);
+
+    // hide or display recurring events
+    if (!document.getElementById('hide-recurring').checked) {
+        updateTournamentCalendar(data.recurring_events);
+    }
+    if (!document.getElementById('hide-recurring-map').checked) {
+        codeAddress(data.recurring_events, map, bounds, infowindow);
+    }
+    hideRecurring();
+    hideRecurringMap(map);
+
+    // draw calendar
+    drawCalendar(calendardata);
+    // enable filters
+    $('#button-near-me').prop("disabled", false);
+    // update paging
+    updatePaging('discover-table');
+    updatePaging('recur-table');
 }
 
 function conclusionCheck() {

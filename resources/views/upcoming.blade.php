@@ -15,9 +15,9 @@
                     <div class="col-md-3 col-xs-12" id="filter-type">
                         <div class="input-group">
                             {!! Form::label('tournament_type_id', 'Type:') !!}
-                            {!! Form::select('tournament_type_id', $tournament_types,
+                            {!! Form::select('tournament_type_id', array_combine($tournament_types, $tournament_types),
                                 null, ['class' => 'form-control filter',
-                                'onchange' => "filterDiscover(default_filter, '".@$default_country_id."', map, infowindow)", 'disabled' => '']) !!}
+                                'onchange' => "filterUpcoming()", 'disabled' => '']) !!}
                         </div>
                     </div>
                     <div class="col-md-3 col-xs-12" id="filter-country">
@@ -25,7 +25,7 @@
                             {!! Form::label('location_country', 'Country:') !!}
                             {!! Form::select('location_country', $countries, null,
                                 ['class' => 'form-control filter',
-                                'onchange' => "filterDiscover(default_filter, '".@$default_country_id."', map, infowindow)", 'disabled' => '']) !!}
+                                'onchange' => "filterUpcoming()", 'disabled' => '']) !!}
                         </div>
                         <div class="legal-bullshit text-xs-center">
                             <span class="hidden-xs-up" id="label-default-country">
@@ -33,7 +33,7 @@
                             </span>
                             <span class="hidden-xs-up" id="filter-online">
                                 {!! Form::checkbox('videos', null, true, ['id' => 'include-online',
-                                'onchange' => "filterDiscover(default_filter, '".@$default_country_id."', map, infowindow)"]) !!}
+                                'onchange' => "filterUpcoming()"]) !!}
                                 {!! Html::decode(Form::label('include-online', 'include online')) !!}
                             </span>
                         </div>
@@ -43,7 +43,7 @@
                             {!! Form::label('location_state', 'US State:') !!}
                             {!! Form::select('location_state', $states,
                                         null, ['class' => 'form-control filter',
-                                        'onchange'=>"filterDiscover(default_filter, '".@$default_country_id."', map, infowindow)", 'disabled' => '']) !!}
+                                        'onchange'=>"filterUpcoming()", 'disabled' => '']) !!}
                         </div>
                     </div>
                 </div>
@@ -77,7 +77,7 @@
                 </h5>
                 @include('partials.calendar')
                 <div class="text-xs-center">
-                    <input type="checkbox" id="hide-recurring" checked onchange="hideRecurring()"/>
+                    <input type="checkbox" id="hide-recurring" checked onchange="displayUpcomingPageTournaments(upcomingDataFiltered)"/>
                     <label for="hide-recurring">hide weekly events</label>
                 </div>
             </div>
@@ -110,7 +110,7 @@
                     </em>
                 </div>
                 <div class="text-xs-center">
-                    <input type="checkbox" id="hide-recurring-map" checked onchange="hideRecurringMap(map)"/>
+                    <input type="checkbox" id="hide-recurring-map" checked onchange="displayUpcomingPageTournaments(upcomingDataFiltered)"/>
                     <label for="hide-recurring-map">hide weekly events</label>
                 </div>
             </div>
@@ -134,22 +134,11 @@
         document.getElementById('marker-both').setAttribute('src', markerIconUrl('purple'));
 
         var map, infowindow, bounds, calendardata = {},
-            default_filter = 'start={{ $nowdate }}&recur=0&concluded=0&approved=1',
-            recur_filter = 'approved=1&recur=1',
-            new_filter = default_filter,    // changed with user's default filter
-            new_recur_filter = recur_filter,
+            upcomingDataAll = { tournaments: [], recurring_events: []},
+            upcomingDataFiltered = { tournaments: [], recurring_events: [] },
+            defaultCountry = '',
             userLocation = null,
             shortestDistance = 1000.0; // set possible maximum distance while locating user here
-
-        @if (@$default_country)
-            // user's default country
-            new_filter = default_filter + '&country=' + '{{ $default_country }}' + '&include_online=1';
-            new_recur_filter = recur_filter + '&country=' + '{{ $default_country }}';
-            $('#label-default-country').removeClass('hidden-xs-up');
-            document.getElementById('location_country').value = '{{ $default_country_id }}';
-            $('#filter-country').addClass('active-filter');
-            $('#filter-online').removeClass('hidden-xs-up');
-        @endif
 
         function initializeMap() {
             map = new google.maps.Map(document.getElementById('map'), {
@@ -158,19 +147,28 @@
             });
             infowindow = new google.maps.InfoWindow();
             bounds = new google.maps.LatLngBounds();
+
             $('.filter').prop("disabled", false);
             clearMapMarkers(map);
-            // get tournaments
-            updateDiscover('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'],
-                    new_filter, map, bounds, infowindow, function() {
-                        // get weekly events
-                        updateDiscover('#recur-table', ['title', 'location', 'recurday'], new_recur_filter, map, bounds, infowindow, function() {
-                            drawCalendar(calendardata);
-                            hideRecurring();
-                            hideRecurringMap(map);
-                            $('#button-near-me').prop("disabled", false);
-                        });
-                    });
+            $('#discover-table-loader').removeClass('hidden-xs-up');
+            $('#revur-table-loader').removeClass('hidden-xs-up');
+
+            // get tournament + recurring event data and display them
+            getTournamentData('/upcoming', function (data) {
+                upcomingDataAll = $.extend(true, {}, data);
+                upcomingDataFiltered = $.extend(true, {}, data);
+                // if user has default country filter
+                @if (@$default_country)
+                    defaultCountry = '{{ $default_country }}';
+                    $('#label-default-country').removeClass('hidden-xs-up');
+                    document.getElementById('location_country').value = '{{ $default_country_id }}';
+                    $('#filter-country').addClass('active-filter');
+                    $('#filter-online').removeClass('hidden-xs-up');
+                    filterTournamentData(upcomingDataFiltered.tournaments, 'location_country', defaultCountry, true);
+                    filterTournamentData(upcomingDataFiltered.recurring_events, 'location_country', defaultCountry);
+                @endif
+                displayUpcomingPageTournaments(upcomingDataFiltered);
+            });
         }
 
     </script>
