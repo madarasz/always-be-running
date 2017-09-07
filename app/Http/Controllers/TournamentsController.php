@@ -232,7 +232,7 @@ class TournamentsController extends Controller
      * Returns JSON data on upcoming tournaments and recurring events.
      * @return \Illuminate\Http\JsonResponse
      */
-    public function upcomingTournamentJSON() {
+    public function upcomingTournamentJSON(Request $request) {
         $yesterday = date('Y.m.d.', time() - 86400); // to be on the safe side
         $tournaments = Tournament::where('date', '>=', $yesterday)->where('concluded', 0)
             ->where('approved', 1)->orderBy('date', 'asc')->get();
@@ -246,10 +246,30 @@ class TournamentsController extends Controller
         return response()->json($result);
     }
 
-    public function resultTournamentJSON() {
-        $tournaments = Tournament::where('concluded', 1)->where('approved', 1)->orderBy('date', 'desc')->get();
+    public function resultTournamentJSON(Request $request) {
+        $tournaments = Tournament::where('concluded', 1)->where('approved', 1)->orderBy('date', 'desc');
+
+        $this->applyLimitOffset($request, $tournaments);
+
+        $tournaments = $tournaments->get();
 
         return response()->json($this->tournametDataFormat($tournaments));
+    }
+
+    private function applyLimitOffset(Request $request, &$tournaments) {
+        // applying limit
+        if ($request->input('limit')) {
+            $tournaments = $tournaments->take(intval($request->input('limit')));
+        }
+
+        // applying offset
+        if ($request->input('offset')) {
+            $tournaments = $tournaments->skip(intval($request->input('offset')));
+            // offset without limit bugfix
+            if (!$request->input('limit')) {
+                $tournaments = $tournaments->take(PHP_INT_MAX);
+            }
+        }
     }
 
     /**

@@ -11,6 +11,7 @@
                     ['columns' => ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims' ],
                     'title' => 'Tournament results from the past', 'id' => 'results', 'icon' => 'fa-list-alt',
                     'subtitle' => 'only concluded tournaments', 'doublerow' => true, 'loader' => true, 'maxrows' => 50])
+                <div class="loader hidden-xs-up" id="results-more-loader">loading more</div>
                 @include('tournaments.partials.icons')
             </div>
         </div>
@@ -87,8 +88,8 @@
                 currentPack = "",
                 runnerIDs = [], corpIDs = [];
 
-        // load tournaments
-        getTournamentData('/results', function(data) {
+        // load tournaments, first 50 for quick display
+        getTournamentData('/results?limit=50', function(data) {
             // duplicate arrays
             resultsDataAll = data.slice();
             resultsDataFiltered = data.slice();
@@ -98,7 +99,25 @@
 
             // display
             updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', resultsDataFiltered);
-            $('.filter').prop("disabled", false);
+            $('#results-more-loader').removeClass('hidden-xs-up');
+            $('#results-controls').addClass('hidden-xs-up');
+
+            // load the rest
+            getTournamentData('/results?offset=50', function(data) {
+                resultsDataAll = resultsDataAll.concat(data);
+                resultsDataFiltered = resultsDataAll.slice();
+
+                // apply filters in URL
+                applyInitialResultsFilters();
+
+                // display all tournaments
+                $('#results').find('tbody').empty();
+                updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', resultsDataFiltered);
+
+                $('#results-more-loader').addClass('hidden-xs-up');
+                $('#results-controls').removeClass('hidden-xs-up');
+                $('.filter').prop("disabled", false);
+            });
         });
 
         // statistics charts
