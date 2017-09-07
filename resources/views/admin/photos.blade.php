@@ -78,7 +78,7 @@
             <div class="bracket">
                 <h5>
                     <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                    Approved photos
+                    Latest approved photos
                 </h5>
                 @include('admin.gallery', ['photos' => $photos, 'approval' => true])
             </div>

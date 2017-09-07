@@ -59,7 +59,7 @@ class AdminController extends Controller
         $broken_count = Entry::where('broken_runner', '>', 0)->count() + Entry::where('broken_corp', '>', 0)->count();
         $broken_user_ids = Entry::where('broken_runner', true)->orWhere('broken_corp', true)->pluck('user')->all();
         $broken_users = User::whereIn('id', $broken_user_ids)->get();
-        $photos = Photo::orderBy('id', 'desc')->get();
+        $photos = Photo::orderBy('id', 'desc')->limit(16)->get();
         $photo_tournaments = Photo::whereIn('tournament_id', $approved_tournaments)
             ->select('tournament_id', DB::raw('count(*) as total'))
             ->groupBy('tournament_id')->orderBy('total', 'desc')->pluck('total', 'tournament_id');
