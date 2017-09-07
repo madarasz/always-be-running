@@ -203,75 +203,13 @@ function updateIdStats(packname) {
     });
 }
 
-
-// update filter settings for the Results page
-function filterResults(filter, packlist, default_country) {
-    var type = document.getElementById('tournament_type_id').value,
-        typeName = $("#tournament_type_id option:selected").text(),
-        cardpool = document.getElementById('cardpool').value,
-        cardpoolName = $("#cardpool option:selected").text(),
-        country = $("#location_country option:selected").text(),
-        videos = document.getElementById('videos').checked;
-    // type filtering
-    if (type > 0) {
-        filter = filter + '&type=' + type;
-        $('#filter-type').addClass('active-filter');
-    } else {
-        $('#filter-type').removeClass('active-filter');
-    }
-    // country filtering
-    if (country !== '---') {
-        filter = filter + '&country=' + country;
-        $('#filter-country').addClass('active-filter');
-    } else {
-        $('#filter-country').removeClass('active-filter');
-    }
-    // cardpool filtering
-    if (cardpool != -1) {
-        filter = filter + '&cardpool=' + cardpool;
-        $('#filter-cardpool').addClass('active-filter');
-    } else {
-        $('#filter-cardpool').removeClass('active-filter');
-    }
-    // filter for vides
-    if (videos) {
-        filter = filter + '&videos=1';
-        $('#filter-video').addClass('active-filter');
-    } else {
-        $('#filter-video').removeClass('active-filter');
-    }
-    // user's default country
-    if (country === default_country) {
-        $('#label-default-country').removeClass('hidden-xs-up');
-    } else {
-        $('#label-default-country').addClass('hidden-xs-up');
-    }
-
-    $('.loader').removeClass('hidden-xs-up');
-    $('#results').find('tbody').empty();
-    getTournamentData(filter, function(data) {
-        $('.loader').addClass('hidden-xs-up');
-        updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', data);
-        updateResultsURL(cardpoolName, typeName, country, videos);
-
-        // switch ID statistics
-        if (currentPack !== cardpoolName) {
-            currentPack = cardpoolName;
-            // no filter is statistics for latest pack
-            if (cardpoolName === '---') {
-                cardpoolName = packlist[0];
-            }
-            updateIdStats(cardpoolName);
-        }
-    });
-}
-
 // updates
-function updateResultsURL(cardpool, type, country, videos) {
+function updateResultsURL(cardpool, type, country, format, videos) {
     var vidURL = videos ? 'videos' : '-',
         newUrl = '/results' + '/' + convertToURLString(cardpool)
         + '/' + convertToURLString(type)
-        + '/' + convertToURLString(country) + '/' + vidURL;
+        + '/' + convertToURLString(country)
+        + '/' + convertToURLString(format) + '/' + vidURL;
     window.history.pushState("Results", "Results - " + cardpool + " - " + type + " - " + country, newUrl);
 }
 
@@ -370,3 +308,69 @@ function getStatData(data, week) {
     return 0;
 }
 
+// update filter settings for the Results page
+function filterResults() {
+    resultsDataFiltered = resultsDataAll.slice();
+
+    var type = document.getElementById('tournament_type_id').value,
+        cardpool = document.getElementById('cardpool').value,
+        country = document.getElementById('location_country').value,
+        format = document.getElementById('format').value,
+        videos = document.getElementById('videos').checked;
+
+    // type filtering
+    if (type != '---') {
+        filterTournamentData(resultsDataFiltered, 'type', type, '');
+        $('#filter-type').addClass('active-filter');
+    } else {
+        $('#filter-type').removeClass('active-filter');
+    }
+    // country filtering
+    if (country !== '---') {
+        filterTournamentData(resultsDataFiltered, 'location_country', country);
+        $('#filter-country').addClass('active-filter');
+    } else {
+        $('#filter-country').removeClass('active-filter');
+    }
+    // cardpool filtering
+    if (cardpool != '---') {
+        filterTournamentData(resultsDataFiltered, 'cardpool', cardpool);
+        $('#filter-cardpool').addClass('active-filter');
+    } else {
+        $('#filter-cardpool').removeClass('active-filter');
+    }
+    // format filtering
+    if (format != '---') {
+        filterTournamentData(resultsDataFiltered, 'format', format);
+        $('#filter-format').addClass('active-filter');
+    } else {
+        $('#filter-format').removeClass('active-filter');
+    }
+    // filter for videos
+    if (videos) {
+        filterTournamentData(resultsDataFiltered, 'videos', true);
+        $('#filter-video').addClass('active-filter');
+    } else {
+        $('#filter-video').removeClass('active-filter');
+    }
+    // user's default country
+    if (country === defaultCountry) {
+        $('#label-default-country').removeClass('hidden-xs-up');
+    } else {
+        $('#label-default-country').addClass('hidden-xs-up');
+    }
+
+    $('#results').find('tbody').empty();
+    updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', resultsDataFiltered);
+    updateResultsURL(cardpool, type, country, format, videos);
+
+    // switch ID statistics
+    if (currentPack !== cardpool) {
+        currentPack = cardpool;
+        // no filter is statistics for latest pack
+        if (cardpool === '---') {
+            cardpool = packlist[0];
+        }
+        updateIdStats(cardpool);
+    }
+}

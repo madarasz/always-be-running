@@ -21,28 +21,34 @@
                 {!! Form::open(['url' => '/tournaments']) !!}
                     <div class="form-group" id="filter-cardpool">
                         {!! Form::label('cardpool', 'Cardpool') !!}
-                        {!! Form::select('cardpool', $tournament_cardpools,
+                        {!! Form::select('cardpool', array_combine($tournament_cardpools, $tournament_cardpools),
                             null, ['class' => 'form-control filter',
-                            'onchange' => "filterResults(defaultFilter, packlist, '".@$default_country_id."')", 'disabled' => '']) !!}
+                            'onchange' => "filterResults()", 'disabled' => '']) !!}
                     </div>
                     <div class="form-group" id="filter-type">
                         {!! Form::label('tournament_type_id', 'Type') !!}
-                        {!! Form::select('tournament_type_id', $tournament_types,
+                        {!! Form::select('tournament_type_id', array_combine($tournament_types,$tournament_types),
                             null, ['class' => 'form-control filter',
-                            'onchange' => "filterResults(defaultFilter, packlist, '".@$default_country_id."')", 'disabled' => '']) !!}
+                            'onchange' => "filterResults()", 'disabled' => '']) !!}
                     </div>
                     <div class="form-group" id="filter-country">
                         {!! Form::label('location_country', 'Country') !!}
-                        {!! Form::select('location_country', $countries, null,
+                        {!! Form::select('location_country', array_combine($countries, $countries), null,
                             ['class' => 'form-control filter',
-                            'onchange' => "filterResults(defaultFilter, packlist, '".@$default_country_id."')", 'disabled' => '']) !!}
+                            'onchange' => "filterResults()", 'disabled' => '']) !!}
                         <div class="legal-bullshit text-xs-center hidden-xs-up" id="label-default-country">
                             using user's default filter
                         </div>
                     </div>
+                    <div class="form-group" id="filter-format">
+                        {!! Form::label('format', 'Format') !!}
+                        {!! Form::select('format', array_combine($tournament_formats, $tournament_formats), null,
+                            ['class' => 'form-control filter',
+                            'onchange' => "filterResults()", 'disabled' => '']) !!}
+                    </div>
                     <div class="form-group" id="filter-video">
                         {!! Form::checkbox('videos', null, null, ['id' => 'videos', 'class' => 'filter', 'disabled' => '',
-                            'onchange' => "filterResults(defaultFilter, packlist, '".@$default_country_id."')"]) !!}
+                            'onchange' => "filterResults()"]) !!}
                         {!! Html::decode(Form::label('videos', 'has video <i class="fa fa-video-camera" aria-hidden="true"></i>')) !!}
                     </div>
                 {!! Form::close() !!}
@@ -75,61 +81,23 @@
     </div>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        var defaultFilter = "?approved=1&concluded=1&recur=0&end={{ $nowdate }}",
-                newFilter = defaultFilter,  // changed with user's default filter
+        var resultsDataAll = [], resultsDataFiltered = [],
                 packlist = [],
+                defaultCountry = "",
                 currentPack = "",
                 runnerIDs = [], corpIDs = [];
 
-        @if ($cardpool !== '' && $cardpool !== '-')
-            // cardpool from URL
-            var availableCardpools = collectOptions('cardpool'),
-                    requestedCardpool = '{{ $cardpool }}';
-            if (requestedCardpool in availableCardpools) {
-                document.getElementById('cardpool').value = availableCardpools[requestedCardpool];
-                newFilter = newFilter + '&cardpool=' + availableCardpools[requestedCardpool];
-                $('#filter-cardpool').addClass('active-filter');
-            }
-        @endif
+        // load tournaments
+        getTournamentData('/results', function(data) {
+            // duplicate arrays
+            resultsDataAll = data.slice();
+            resultsDataFiltered = data.slice();
 
-        @if ($type !== '' && $type !== '-')
-            // type from URL
-            var availableTypes = collectOptions('tournament_type_id'),
-                    requestedType = '{{ $type }}';
-            if (requestedType in availableTypes) {
-                document.getElementById('tournament_type_id').value = availableTypes[requestedType];
-                newFilter = newFilter + '&type=' + availableTypes[requestedType];
-                $('#filter-type').addClass('active-filter');
-            }
-        @endif
+            // apply filters in URL
+            applyInitialResultsFilters();
 
-        @if ($videos !== '' && $videos !== '-')
-            // just tournaments with videos
-            newFilter = newFilter + '&videos=1';
-            document.getElementById('videos').checked = true;
-            $('#filter-video').addClass('active-filter');
-        @endif
-
-        @if ($country !== '' && $country !== '-')
-            // country from URL
-            var availableCountries = collectOptions('location_country'),
-                    requestedCountry = '{{ $country }}';
-            if (requestedCountry in availableCountries) {
-                document.getElementById('location_country').value = availableCountries[requestedCountry];
-                newFilter = newFilter + '&country=' + convertFromURLString(requestedCountry);
-                $('#filter-country').addClass('active-filter');
-            }
-        @elseif (@$default_country)
-            // user's default country
-            newFilter = defaultFilter + '&country=' + '{{ $default_country }}';
-            $('#label-default-country').removeClass('hidden-xs-up');
-            document.getElementById('location_country').value = '{{ $default_country_id }}';
-            $('#filter-country').addClass('active-filter');
-        @endif
-
-        // table entries
-        getTournamentData(newFilter, function(data) {
-            updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', data);
+            // display
+            updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', resultsDataFiltered);
             $('.filter').prop("disabled", false);
         });
 
@@ -149,6 +117,79 @@
             drawResultStats('stat-chart-runner', runnerIDs, 0.04);
             drawResultStats('stat-chart-corp', corpIDs, 0.04);
         });
+
+        // apply Results page filters from URL and user settings
+        function applyInitialResultsFilters() {
+            var requestedCardpool = '-',
+                    requestedType = '-',
+                    requestedCountry = '-',
+                    requestedFormat = '-';
+
+            // cardpool from URL
+            @if ($cardpool !== '' && $cardpool !== '-')
+                var availableCardpools = collectOptions('cardpool');
+                requestedCardpool = '{{ $cardpool }}';
+
+                if (requestedCardpool in availableCardpools) {
+                    filterTournamentData(resultsDataFiltered, 'cardpool', availableCardpools[requestedCardpool]);
+                    document.getElementById('cardpool').value = availableCardpools[requestedCardpool];
+                    $('#filter-cardpool').addClass('active-filter');
+                }
+            @endif
+
+            // type from URL
+            @if ($type !== '' && $type !== '-')
+                var availableTypes = collectOptions('tournament_type_id');
+                requestedType = '{{ $type }}';
+
+                if (requestedType in availableTypes) {
+                    filterTournamentData(resultsDataFiltered, 'type', availableTypes[requestedType]);
+                    document.getElementById('tournament_type_id').value = availableTypes[requestedType];
+                    $('#filter-type').addClass('active-filter');
+                }
+            @endif
+
+            // format from URL
+            @if ($format !== '' && $format !== '-')
+                var availableFormats = collectOptions('format');
+                requestedFormat = '{{ $format }}';
+
+                if (requestedFormat in availableFormats) {
+                    filterTournamentData(resultsDataFiltered, 'format', availableFormats[requestedFormat]);
+                    document.getElementById('format').value = availableFormats[requestedFormat];
+                    $('#filter-format').addClass('active-filter');
+                }
+            @endif
+
+            // country from URL
+            @if ($country !== '' && $country !== '-')
+                var availableCountries = collectOptions('location_country');
+                requestedCountry = '{{ $country }}';
+
+                if (requestedCountry in availableCountries) {
+                    filterTournamentData(resultsDataFiltered, 'location_country', convertFromURLString(requestedCountry));
+                    document.getElementById('location_country').value = availableCountries[requestedCountry];
+                    $('#filter-country').addClass('active-filter');
+                }
+            @elseif (@$default_country && $country !== '-')
+                // user's default country
+                defaultCountry = '{{ $default_country }}';
+                filterTournamentData(resultsDataFiltered, 'location_country', defaultCountry);
+                $('#label-default-country').removeClass('hidden-xs-up');
+                document.getElementById('location_country').value = defaultCountry;
+                $('#filter-country').addClass('active-filter');
+                updateResultsURL(requestedCardpool, requestedType, defaultCountry, requestedFormat,
+                        document.getElementById('videos').checked);
+            @endif
+
+            // just tournaments with videos
+            @if ($videos !== '' && $videos !== '-')
+                filterTournamentData(resultsDataFiltered, 'videos', true);
+                document.getElementById('videos').checked = true;
+                $('#filter-video').addClass('active-filter');
+            @endif
+
+        }
     </script>
 @stop
 

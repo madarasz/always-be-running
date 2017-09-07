@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Entry;
 use App\Photo;
+use App\TournamentFormat;
 use App\User;
 use App\Badge;
 use App\CardIdentity;
@@ -53,20 +54,21 @@ class PagesController extends Controller
             'default_country', 'default_country_id', 'featured'));
     }
 
-    public function results(Request $request, $cardpool = "", $type = "", $country = "", $videos = "")
+    public function results(Request $request, $cardpool = "", $type = "", $country = "", $format = "", $videos = "")
     {
-        $nowdate = date('Y.m.d.', time() + 86400); // actually tomorrow, to be on the safe side
-        $tournaments = Tournament::where('date', '<=', $nowdate)->where('approved', 1)->where('concluded',1);
+        $tournaments = Tournament::where('approved', 1)->where('concluded',1);
         $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->unique()->all())->pluck('type_name', 'id')->all();
         $tournament_cardpools = CardPack::whereIn('id', $tournaments->pluck('cardpool_id')->unique()->all())->where('id', '!=', 'unknown')
             ->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $countries = $tournaments->where('location_country', '!=', '')->orderBy('location_country')
             ->pluck('location_country')->unique()->all();
+        $tournament_formats = TournamentFormat::whereIn('id', $tournaments->pluck('tournament_format_id')->unique()->all())->pluck('format_name', 'id')->all();
         $featured = Tournament::where('featured', '>', 0)->where('concluded', 1)->where('approved', 1)
             ->orderBy('date', 'desc')->get();
 
         // adding empty filters
         $tournament_types = [-1 => '---'] + $tournament_types;
+        $tournament_formats = [-1 => '---'] + $tournament_formats;
         $countries = [-1 => '---'] + $countries;
         $tournament_cardpools = [-1 => '---'] + $tournament_cardpools;
         $message = session()->has('message') ? session('message') : '';
@@ -79,8 +81,8 @@ class PagesController extends Controller
         }
 
         return view('results', compact('registered', 'message', 'nowdate', 'tournament_types', 'countries',
-            'tournament_cardpools', 'page_section', 'default_country', 'default_country_id',
-            'cardpool', 'type', 'country', 'videos', 'featured'));
+            'tournament_cardpools', 'tournament_formats', 'page_section', 'default_country', 'default_country_id',
+            'cardpool', 'type', 'country', 'format', 'videos', 'featured'));
     }
 
     /**
