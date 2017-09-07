@@ -33,9 +33,9 @@
         </div>
         <div class="col-xs-4">
             <div class="bracket">
-                <img src="/img/placeholder-youtube.png" class="img-fluid"/>
-                <div class="legal-bullshit text-xs-center">support me video coming soon</div>
-                <hr/>
+                {{--<img src="/img/placeholder-youtube.png" class="img-fluid"/>--}}
+                {{--<div class="legal-bullshit text-xs-center">support me video coming soon</div>--}}
+                {{--<hr/>--}}
                 <div class="text-xs-center">
                     <strong>Thank you to all of my supporters!</strong><br/>
                     @foreach($supporters as $key=>$supporter)
