@@ -91,21 +91,29 @@ var idShorter = function (a,b) {
 //}
 
 // pie charts on IDs on tournament detail page
-function drawEntryStats(data, side, element, playersNum) {
+function drawEntryStats(data, side, element, playersNum, doingFaction) {
     var stat_results = [['ID', 'number of decks', 'faction']], unknown = -1;
     for (var i = 0, len = data.length; i < len; i++) {
         var found = false;
         for (var u = 1, len2 = stat_results.length; u < len2; u++) {
-            if (shortenID(data[i][side+'_deck_identity_title']) === stat_results[u][0]) {
-                stat_results[u][1]++;
-                found = true;
-                break;
+            if ((!doingFaction && shortenID(data[i][side+'_deck_identity_title']) === stat_results[u][0]) ||
+                (doingFaction && data[i][side+'_deck_identity_faction'] === stat_results[u][0])) {
+                    stat_results[u][1]++;
+                    found = true;
+                    break;
             }
         }
         if (!found) {
-            stat_results.push([shortenID(data[i][side+'_deck_identity_title']), 1, data[i][side+'_deck_identity_faction']]);
-            if (shortenID(data[i][side+'_deck_identity_title']) === 'unknown') {
-                unknown = stat_results.length-1;
+            if (!doingFaction) {
+                stat_results.push([shortenID(data[i][side + '_deck_identity_title']), 1, data[i][side + '_deck_identity_faction']]);
+                if (shortenID(data[i][side + '_deck_identity_title']) === 'unknown') {
+                    unknown = stat_results.length - 1;
+                }
+            } else {
+                stat_results.push([data[i][side + '_deck_identity_faction'], 1, data[i][side + '_deck_identity_faction']]);
+                if (shortenID(data[i][side + '_deck_identity_title']) === 'unknown') {
+                    unknown = stat_results.length - 1;
+                }
             }
         }
 
