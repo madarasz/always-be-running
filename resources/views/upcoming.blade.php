@@ -72,14 +72,21 @@
         <div class="col-md-6 col-xs-12">
             <div class="bracket">
                 <h5>
-                    <i class="fa fa-calendar" aria-hidden="true"></i> Upcoming calendar<br/>
+                    <i class="fa fa-calendar" aria-hidden="true"></i> Upcoming calendar
+                    <div class="pull-right">
+                        <button id="button-show-weekly-calendar" class="btn btn-primary btn-xs" disabled="disabled">
+                            <i class="fa fa-eye" aria-hidden="true"></i>
+                            Show recurring
+                        </button>
+                        <button id="button-hide-weekly-calendar" class="btn btn-primary btn-xs hidden-xs-up">
+                            <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                            Hide recurring
+                        </button>
+                    </div>
+                    <br/>
                     <small>past events are hidden</small>
                 </h5>
                 @include('partials.calendar')
-                <div class="text-xs-center">
-                    <input type="checkbox" id="hide-recurring" checked onchange="displayUpcomingPageTournaments(upcomingDataFiltered)"/>
-                    <label for="hide-recurring">hide weekly events</label>
-                </div>
             </div>
         </div>
         <div class="col-md-6 col-xs-12">
@@ -93,6 +100,14 @@
                             <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                             <span id="text-location-error"></span>
                         </span>
+                        <button id="button-show-weekly-map" class="btn btn-primary btn-xs" disabled="disabled">
+                            <i class="fa fa-eye" aria-hidden="true"></i>
+                            Show recurring
+                        </button>
+                        <button id="button-hide-weekly-map" class="btn btn-primary btn-xs hidden-xs-up">
+                            <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                            Hide recurring
+                        </button>
                         <button id="button-near-me" class="btn btn-primary btn-xs" onclick="getLocation()" disabled>
                             <i class="fa fa-bullseye" aria-hidden="true"></i>
                             Zoom to me
@@ -109,10 +124,6 @@
                         <img src="" id="marker-both" class="map-legend-icon"/> both
                     </em>
                 </div>
-                <div class="text-xs-center">
-                    <input type="checkbox" id="hide-recurring-map" checked onchange="displayUpcomingPageTournaments(upcomingDataFiltered)"/>
-                    <label for="hide-recurring-map">hide weekly events</label>
-                </div>
             </div>
         </div>
     </div>
@@ -121,7 +132,7 @@
         <div class="col-xs-12">
             <div class="bracket">
                 @include('tournaments.partials.tabledin',
-                ['columns' => ['title', 'location', 'recurday'], 'title' => 'Weekly events',
+                ['columns' => ['title', 'location', 'recurday'], 'title' => 'Recurring events / meetups',
                 'id' => 'recur-table', 'icon' => 'fa-repeat', 'loader' => true, 'maxrows' => 10])
             </div>
         </div>
@@ -138,6 +149,7 @@
             upcomingDataFiltered = { tournaments: [], recurring_events: [] },
             defaultCountry = '',
             userLocation = null,
+            showWeeklyOnMap = false, showWeeklyOnCalendar = false,
             shortestDistance = 1000.0; // set possible maximum distance while locating user here
 
         function initializeMap() {
@@ -168,8 +180,36 @@
                     filterTournamentData(upcomingDataFiltered.recurring_events, 'location_country', defaultCountry);
                 @endif
                 displayUpcomingPageTournaments(upcomingDataFiltered);
+                $('#button-show-weekly-map').prop("disabled", false);
+                $('#button-show-weekly-calendar').prop("disabled", false);
             });
         }
+
+        // show / hide recurring buttons
+        $('#button-show-weekly-map').click(function() {
+            $('#button-show-weekly-map').addClass('hidden-xs-up');
+            $('#button-hide-weekly-map').removeClass('hidden-xs-up');
+            showWeeklyOnMap = true;
+            displayUpcomingPageTournaments(upcomingDataFiltered);
+        });
+        $('#button-hide-weekly-map').click(function() {
+            $('#button-hide-weekly-map').addClass('hidden-xs-up');
+            $('#button-show-weekly-map').removeClass('hidden-xs-up');
+            showWeeklyOnMap = false;
+            displayUpcomingPageTournaments(upcomingDataFiltered);
+        });
+        $('#button-show-weekly-calendar').click(function() {
+            $('#button-show-weekly-calendar').addClass('hidden-xs-up');
+            $('#button-hide-weekly-calendar').removeClass('hidden-xs-up');
+            showWeeklyOnCalendar = true;
+            displayUpcomingPageTournaments(upcomingDataFiltered);
+        });
+        $('#button-hide-weekly-calendar').click(function() {
+            $('#button-hide-weekly-calendar').addClass('hidden-xs-up');
+            $('#button-show-weekly-calendar').removeClass('hidden-xs-up');
+            showWeeklyOnCalendar = false;
+            displayUpcomingPageTournaments(upcomingDataFiltered);
+        });
 
     </script>
     <script async defer

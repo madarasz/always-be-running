@@ -151,10 +151,10 @@ function displayUpcomingPageTournaments(data) {
         'no tournaments to show', '', data.recurring_events);
 
     // hide or display recurring events
-    if (!document.getElementById('hide-recurring').checked) {
+    if (showWeeklyOnCalendar) {
         updateTournamentCalendar(data.recurring_events);
     }
-    if (!document.getElementById('hide-recurring-map').checked) {
+    if (showWeeklyOnMap) {
         codeAddress(data.recurring_events, map, bounds, infowindow);
     }
     hideRecurring();
@@ -368,7 +368,7 @@ function shortenID(fulltitle) {
 
 // checkbox for hiding recurring events on Upcoming page calendar
 function hideRecurring() {
-    if (document.getElementById('hide-recurring').checked) {
+    if (!showWeeklyOnCalendar) {
         $('.fc-content').each(function() {
             var recurringCount = $(this).find('.recurring').length;
             if (recurringCount && recurringCount == $(this).find('.fc-calendar-event').length) {

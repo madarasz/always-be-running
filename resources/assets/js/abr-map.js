@@ -223,7 +223,7 @@ function hideRecurringMap(map) {
     var bounds = new google.maps.LatLngBounds(),
         markerCount = map.markers.length;
 
-    if (document.getElementById('hide-recurring-map').checked) {
+    if (!showWeeklyOnMap) {
         markerCount = 0;
         for (var i = 0; i < map.markers.length; i++) {
             if (map.markers[i].icon === markerIconUrl('blue')) {
