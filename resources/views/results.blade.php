@@ -18,6 +18,7 @@
         <div class="col-md-4 pull-md-8 col-lg-3 pull-lg-9 col-col-sm-12">
             {{--Filters--}}
             <div class="bracket">
+                <div class="loader" id="filter-loader" style="margin-top: 0">loading</div>
                 <h5><i class="fa fa-filter" aria-hidden="true"></i> Filter</h5>
                 {!! Form::open(['url' => '/tournaments']) !!}
                     <div class="form-group" id="filter-cardpool">
@@ -115,6 +116,7 @@
                 updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', resultsDataFiltered);
 
                 $('#results-more-loader').addClass('hidden-xs-up');
+                $('#filter-loader').addClass('hidden-xs-up');
                 $('#results-controls').removeClass('hidden-xs-up');
                 $('.filter').prop("disabled", false);
             });
