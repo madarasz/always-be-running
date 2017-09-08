@@ -40,7 +40,7 @@
     </div>
     <script type="text/javascript">
         var calendardata = {};
-        getTournamentData('foruser={{ $user->id }}&desc=1', function(data) {
+        getTournamentData('?foruser={{ $user->id }}&desc=1', function(data) {
             $('.loader').addClass('hidden-xs-up');
             updateTournamentTable('#my-table', ['title', 'location', 'date', 'cardpool', 'user_claim'], 'no tournaments to show', '', data);
             updateTournamentCalendar(data);
