@@ -15,7 +15,10 @@
                     @include('tournaments.partials.list-format', ['tournament' => $claim->tournament, 'class' => 'no-li'])
                     <strong>#{{ $claim->rank() }} / {{ $claim->tournament->players_number }}</strong>
                     @if ($claim->type == 3)
-                        <a href="{{ $claim->runner_deck_url() }}" title="{{ $claim->runner_deck_title }}"><img src="/img/ids/{{ $claim->runner_deck_identity }}.png" class="id-small"></a>&nbsp;<a href="{{ $claim->corp_deck_url() }}" title="{{ $claim->corp_deck_title }}"><img src="/img/ids/{{ $claim->corp_deck_identity }}.png" class="id-small"></a>
+                        <a href="{{ $claim->runner_deck_url() }}" title="{{ $claim->runner_deck_title }}"><img src="/img/ids/{{ $claim->runner_deck_identity }}.png" class="id-small"></a>
+                        @if ($claim->broken_runner)<i class="fa fa-chain-broken text-danger broken-deck-profile" title="broken link"></i>@endif
+                        <a href="{{ $claim->corp_deck_url() }}" title="{{ $claim->corp_deck_title }}"><img src="/img/ids/{{ $claim->corp_deck_identity }}.png" class="id-small"></a>
+                        @if ($claim->broken_corp)<i class="fa fa-chain-broken text-danger broken-deck-profile" title="broken link"></i>@endif
                     @else
                         <img src="/img/ids/{{ $claim->runner_deck_identity }}.png" class="id-small">&nbsp;<img src="/img/ids/{{ $claim->corp_deck_identity }}.png" class="id-small">
                     @endif

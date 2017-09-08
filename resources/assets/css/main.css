@@ -919,3 +919,8 @@ img.badge {
     margin: 0 5px;
     padding:  1px 5px;
 }
+/* profile broken link */
+.broken-deck-profile {
+    margin-left: -2px;
+    vertical-align: middle;
+}
