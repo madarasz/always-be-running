@@ -135,9 +135,9 @@ class TournamentsController extends Controller
         }
 
         $runnerIDs = $this->categorizeIDs(CardIdentity::where('runner', 1)
-            ->orderBy('faction_code')->orderBy('title')->get());
+            ->orderBy('faction_code')->orderBy('title')->groupBy('title')->get());
         $corpIDs = $this->categorizeIDs(CardIdentity::where('runner', 0)
-            ->orderBy('faction_code')->orderBy('title')->get());
+            ->orderBy('faction_code')->orderBy('title')->groupBy('title')->get());
         $type = $tournament->tournament_type->type_name;
         $format = $tournament->tournament_format->format_name;
         $message = session()->has('message') ? session('message') : '';
