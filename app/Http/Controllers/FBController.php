@@ -17,6 +17,8 @@ class FBController extends Controller
      */
     private function getEventDetails($id) {
 
+        $fields = 'cover,description,end_time,id,name,place,start_time'; // requested event fields
+
         // if not numerical ID
         if (!ctype_digit($id)) {
             // extract ID from URL
@@ -32,7 +34,7 @@ class FBController extends Controller
         $fb->setDefaultAccessToken($fb->getApp()->getAccessToken());
 
         try {
-            $eventData = json_decode($fb->get('/' . $id)->getBody(), true);
+            $eventData = json_decode($fb->get('/' . $id. '?fields='. $fields)->getBody(), true);
         } catch (\Exception $e) {
             return ['error' => $e->getMessage()];
         }
@@ -111,10 +113,10 @@ class FBController extends Controller
         $start_time = substr($data['start_time'], 11, 5);
         $description = $data['description'];
         $tournament_type_id = $this->guessTournamentTypeFromTitle($title);
-        if (ctype_digit($request->event)) {
-            $link_facebook = 'https://www.facebook.com/events/'.$request->event;
-        } else {
-            $link_facebook = $request->event;
+        $link_facebook = 'https://www.facebook.com/events/'.$data['id'];
+        // cover photo
+        if (array_key_exists('source', $data['cover'])) {
+            $description = '![facebook_cover_image]('.$data['cover']['source'].")\n\n".$description;
         }
 
         // extracting location data
