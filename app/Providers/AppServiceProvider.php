@@ -29,6 +29,18 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend('conc_code', function($attribute, $value, $parameters, $validator) {
             return (file_exists('tjsons/nrtm/import_'.$parameters[0].'.json')); // NRTM temp upload exists
         });
+        // validator for tournament end dates
+        Validator::extend('date_later', function($attribute, $value, $parameters, $validator) {
+            $start = strtotime(substr(str_replace(".", "/", $parameters[0]),0,10));
+            $end = strtotime(substr(str_replace(".", "/", $parameters[1]),0,10));
+            return ($end > $start); // end is later
+        });
+        // validator for tournament end dates, max length
+        Validator::extend('date_later_max_week', function($attribute, $value, $parameters, $validator) {
+            $start = strtotime(substr(str_replace(".", "/", $parameters[0]),0,10));
+            $end = strtotime(substr(str_replace(".", "/", $parameters[1]),0,10));
+            return ($end - $start <= 60 * 60 * 24 * 7 || $end <= $start); // end is max a week later
+        });
     }
 
     /**

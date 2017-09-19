@@ -30,7 +30,9 @@ class TournamentRequest extends Request
             'date' => 'date_format:Y.m.d.',
             'players_number' => 'integer|between:1,1000'.$player_rules,
             'top_number' => 'integer|between:0,1000|players_top:'.Request::get('players_number').','.Request::get('top_number'),
-            'link_facebook' => ['regex:/https:\/\/.*facebook\.com\/((groups)|(events))/']
+            'link_facebook' => ['regex:/https:\/\/.*facebook\.com\/((groups)|(events))/'],
+            'end_date' => 'date_later:'.Request::get('date').','.Request::get('end_date').
+                '|date_later_max_week:'.Request::get('date').','.Request::get('end_date')
         ];
 
         if (Request::get('tournament_type_id') != 7) // non-online tournament requires location
@@ -48,7 +50,9 @@ class TournamentRequest extends Request
         return [
             'date_format' => 'Please enter the date using YYYY.MM.DD. format.',
             'players_top' => 'Players in top cut should be less than the total number of players.',
-            'link_facebook.regex' => 'Facebook event/group should be a valid URL of an event or group.'
+            'link_facebook.regex' => 'Facebook event/group should be a valid URL of an event or group.',
+            'date_later' => 'End date should be later than (start) date.',
+            'date_later_max_week' => 'Event should not be longer than a week.'
         ];
     }
 
