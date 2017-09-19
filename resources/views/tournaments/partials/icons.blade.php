@@ -16,7 +16,9 @@
             <i title="video" class="fa fa-camera"></i>
             has photo |
             <i title="video" class="fa fa-video-camera"></i>
-            has video<br/>
+            has video |
+            <i title="multiple day event" class="fa fa-plus-circle text-primary"></i>
+            multiple day event <br/>
         @endunless
         <span class="tournament-type type-store" title="store championship">S</span> store championship |
         <span class="tournament-type type-regional" title="regional championship">R</span> regional championship |

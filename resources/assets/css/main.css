@@ -554,6 +554,9 @@ blockquote {
         display: block;
     }
 }
+.line-breaker {
+    white-space: nowrap;
+}
 
 /* map legend for map icons */
 .map-legend-icon {
@@ -923,4 +926,9 @@ img.badge {
 .broken-deck-profile {
     margin-left: -2px;
     vertical-align: middle;
+}
+.icon-upper {
+    color: #0275d8 !important;
+    font-size: 80%;
+    vertical-align: top;
 }

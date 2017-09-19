@@ -12,7 +12,7 @@ class Tournament extends Model
     protected $fillable = ['title', 'date', 'location_country', 'location_state', 'location_city', 'location_store',
         'location_address', 'location_place_id', 'players_number', 'description', 'concluded', 'decklist', 'top_number', 'creator',
         'tournament_type_id', 'start_time', 'cardpool_id', 'conflict', 'contact', 'import', 'location_lat', 'location_long',
-        'recur_weekly', 'incomplete', 'link_facebook', 'tournament_format_id'];
+        'recur_weekly', 'incomplete', 'link_facebook', 'tournament_format_id', 'end_date'];
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
     protected $hidden = ['tournament_type_id', 'tournament_format_id', 'cardpool_id'];
     protected $appends = ['claimNumber', 'seoUrl'];

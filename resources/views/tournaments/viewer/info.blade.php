@@ -24,8 +24,12 @@
             <br/>
         @endunless
         <span id="tournament-date">
-                        @if ($tournament->date)
-                {{ $tournament->date }}
+            @if ($tournament->date)
+                @if(@$tournament->end_date)
+                    {{ substr($tournament->date,0,10) }} - {{ $tournament->end_date }}
+                @else
+                    {{ $tournament->date }}
+                @endif
             @else
                 <br/>
                 <em>recurring: {{ $tournament->recurDay() }}</em>

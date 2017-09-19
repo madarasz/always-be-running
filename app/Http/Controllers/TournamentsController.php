@@ -328,6 +328,11 @@ class TournamentsController extends Controller
                 $event_data['recurring_day'] = $tournament->recurDay();
             }
 
+            // if multiple days
+            if ($tournament->end_date) {
+                $event_data['end_date'] = $tournament->end_date;
+            }
+
             // if concluded
             if ($tournament->concluded) {
                 $event_data['players_count'] = $tournament->players_number;

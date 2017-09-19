@@ -165,22 +165,45 @@
                 {!! Form::text('start_time', old('start_time', $tournament->start_time), ['class' => 'form-control', 'placeholder' => 'HH:MM']) !!}
             </div>
             {{--Weekly reoccurance--}}
-            <div class="form-group hide-nonrequired">
-                {!! Form::label('recur_weekly', 'Weekly recurrence') !!}
-                @include('partials.popover', ['direction' => 'right', 'content' =>
-                            'Select if the event recurs weekly. This is ideal for weekly get-togethers.
-                            This option is only available for the <strong>non-tournament event</strong> type.<br/>
-                            <br/>
-                            Recurring events are listed separately.'])
-                <div style="position: relative">
-                    <div id="overlay-weekly" class="overlay" style="top: 0; bottom: 0">
-                        <div>only 'non-tournament' may have recurrence</div>
-                    </div>
-                    {!! Form::select('recur_weekly', ['0' => '- no recurrence -', '1' => 'Monday', '2' => 'Tuesday',
-                        '3' => 'Wednesday', '4' => 'Thursday', '5' => 'Friday', '6' => 'Saturday', '7' => 'Sunday'],
-                        old('recur_weekly', $tournament->recur_weekly), ['class' => 'form-control', 'onchange' => 'recurCheck()']) !!}
+            <fieldset class="form-group hide-nonrequired">
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="radio" class="end-date form-check-input" name="end_date_selector" id="end-date-single" value="single" checked />
+                        <span>single day event</span>
+                    </label>
+                <div class="form-check">
+                    <label class="form-check-label" style="width: 100%">
+                        <input type="radio" class="end-date form-check-input" name="end_date_selector" id="end-date-multiple" value="multiple"/>
+                        multiple day event, end date:
+                        <div class="input-group">
+                            {!! Form::text('end_date', old('end_date', $tournament->end_date),
+                                     ['class' => 'form-control', 'required' => '', 'placeholder' => 'YYYY.MM.DD.', 'id' => 'end_date', 'disabled' => '']) !!}
+                            <div class="input-group-addon" id="datepicker-icon-end">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </label>
                 </div>
-            </div>
+                <div class="form-check">
+                    <label class="form-check-label" style="width: 100%">
+                        <input type="radio" class="end-date form-check-input" name="end_date_selector" id="end-date-recur" value="recurring" disabled="disabled"/>
+                        weekly recurrence
+                        @include('partials.popover', ['direction' => 'right', 'content' =>
+                                    'Select if the event recurs weekly. This is ideal for weekly get-togethers.
+                                    This option is only available for the <strong>non-tournament event</strong> type.<br/>
+                                    <br/>
+                                    Recurring events are listed separately.'])
+                        <div style="position: relative">
+                            <div id="overlay-weekly" class="overlay" style="top: 0; bottom: 0">
+                                <div>only for 'non-tournament' type</div>
+                            </div>
+                            {!! Form::select('recur_weekly', ['1' => 'Monday', '2' => 'Tuesday',
+                                '3' => 'Wednesday', '4' => 'Thursday', '5' => 'Friday', '6' => 'Saturday', '7' => 'Sunday'],
+                                old('recur_weekly', $tournament->recur_weekly), ['class' => 'form-control', 'id' => 'recur_weekly']) !!}
+                        </div>
+                    </label>
+                </div>
+            </fieldset>
         </div>
         {{--Location--}}
         <div class="bracket">
@@ -255,10 +278,31 @@
         todayHighlight: true,
         weekStart: 1 //TODO: custom
     });
+    $('#end_date').datepicker({
+        autoclose: true,
+        format: 'yyyy.mm.dd.',
+        orientation: 'bottom',
+        todayHighlight: true,
+        weekStart: 1 //TODO: custom
+    });
 
     // clicking icon should also show datepicker
     $('#datepicker-icon').click(function(){
         $('#date').trigger('focus.datepicker.data-api');
+    });
+    $('#datepicker-icon-end').click(function(){
+        document.getElementById('end-date-multiple').checked = true;
+        $('#end_date').trigger('focus.datepicker.data-api');
+    });
+    $('#end_date').click(function(){
+        document.getElementById('end-date-multiple').checked = true;
+    });
+    $('#recur_weekly').click(function(){
+        document.getElementById('end-date-recur').checked = true;
+        recurCheck();
+    });
+    $('.end-date').click(function() {
+        recurCheck();
     });
 
     function initializeMap() {

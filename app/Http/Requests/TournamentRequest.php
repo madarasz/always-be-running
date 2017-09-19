@@ -93,7 +93,8 @@ class TournamentRequest extends Request
             $input['creator'] = $user_id;
         }
 
-        if ($input['tournament_type_id'] == 7) // online tournament has no location
+        // online tournament has no location
+        if ($input['tournament_type_id'] == 7)
         {
             $input['location_country'] = '';
             $input['location_us_state'] = '';
@@ -104,12 +105,13 @@ class TournamentRequest extends Request
             $input['location_long'] = null;
         }
 
-        if ($input['tournament_type_id'] == 8) // non-tournament has no conclusion
+        // non-tournament has no conclusion
+        if ($input['tournament_type_id'] == 8)
         {
             $input['concluded'] = 0;
             $input['players_number'] = null;
             $input['top_number'] = null;
-            if ($input['recur_weekly'] == 0) {
+            if ($input['end_date_selector'] != 'recurring') {
                 $input['recur_weekly'] = null;
             } else {    // recurring event
                 $input['date'] = null;
@@ -117,6 +119,11 @@ class TournamentRequest extends Request
             }
         } else {
             $input['recur_weekly'] = null;
+        }
+
+        // end date not necessary
+        if ($input['end_date_selector'] != 'multiple') {
+            $input['end_date'] = null;
         }
 
         $this->replace($input);

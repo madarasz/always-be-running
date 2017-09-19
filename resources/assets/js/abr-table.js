@@ -101,13 +101,21 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
         }
         // date
         if ($.inArray('date', columns) > -1) {
-            newrow.append($('<td>').append($('<span>', {
+            var cell = $('<td>').appendTo(newrow);
+            cell.append($('<span>', {
                 text: element.date ? element.date.substring(0, 5) : element.recurring_day,
                 class: 'line-breaker'
-            }), $('<span>', {
+            }));
+            var endpart = $('<span>', {
                 text: element.date ? element.date.substring(5) : '',
                 class: 'line-breaker'
-            })));
+            }).appendTo(cell);
+            if (element.end_date) {
+                $('<i>', {
+                    class: 'fa fa-plus-circle icon-upper',
+                    title: 'multiple day event'
+                }).appendTo(endpart);
+            }
         }
         // location
         if ($.inArray('location', columns) > -1) {

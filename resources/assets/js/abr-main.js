@@ -29,12 +29,31 @@ function changeTournamentType() {
 }
 
 function recurCheck() {
-    if ($("#tournament_type_id option:selected").html() === 'non-tournament event' &&
-        $("#recur_weekly option:selected").html() !== '- no recurrence -') {
-            document.getElementById('date').setAttribute('disabled','');
-            $('#req-date').addClass('hidden-xs-up');
-            document.getElementById('date').removeAttribute('required');
-            $('#overlay-cardpool').removeClass('hidden-xs-up');
+    // check if non-tournament
+    if ($("#tournament_type_id option:selected").html() === 'non-tournament event') {
+        document.getElementById('end-date-recur').removeAttribute('disabled', '');
+    } else {
+        document.getElementById('end-date-recur').setAttribute('disabled','');
+        if (document.getElementById('end-date-recur').checked) {
+            document.getElementById('end-date-single').checked = true;
+        }
+    }
+
+    // multiple days
+    if (document.getElementById('end-date-multiple').checked) {
+        document.getElementById('end_date').removeAttribute('disabled');
+        document.getElementById('end_date').setAttribute('required', '');
+    } else {
+        document.getElementById('end_date').setAttribute('disabled', '');
+        document.getElementById('end_date').removeAttribute('required');
+    }
+
+    // recurring
+    if (document.getElementById('end-date-recur').checked) {
+        document.getElementById('date').setAttribute('disabled', '');
+        $('#req-date').addClass('hidden-xs-up');
+        document.getElementById('date').removeAttribute('required');
+        $('#overlay-cardpool').removeClass('hidden-xs-up');
     } else {
         document.getElementById('date').removeAttribute('disabled');
         $('#req-date').removeClass('hidden-xs-up');

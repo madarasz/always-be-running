@@ -31,7 +31,9 @@
                     <strong>Concluded tournamets</strong> (tournaments with results):
                     <a href="<?php env('APP_URL')?>/api/tournaments/results">https://alwaysberunning.net/api/tournaments/results</a>
                     <br/>
-                    <em>Only approved and concluded tournaments are displayed.</em>
+                    <em>Only approved and concluded tournaments are displayed.</em><br/>
+                    Supports <strong>limit</strong> and <strong>offset</strong> parameters, example:
+                    <a href="<?php env('APP_URL')?>/api/tournaments/results?offset=20&limit=10">https://alwaysberunning.net/api/tournaments/results?offset=20&limit=10</a>
                     <blockquote class="help-markdown m-b-3">
                         [<br/>
                         &nbsp;&nbsp;<em>event objects</em><br/>
@@ -266,6 +268,14 @@
                         <td>recurring_day</td>
                         <td>string</td>
                         <td>name of day (in English)</td>
+                    </tr>
+                    <tr class="row-worlds">
+                        <td colspan="3" class="text-xs-center"><em>multiple day event properties</em></td>
+                    </tr>
+                    <tr>
+                        <td>end_date</td>
+                        <td>string</td>
+                        <td>event end date, YYYY.mm.dd. format</td>
                     </tr>
                 </table>
                 <p class="p-t-2">
