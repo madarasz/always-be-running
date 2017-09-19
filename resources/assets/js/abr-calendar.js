@@ -100,10 +100,17 @@ function updateTournamentCalendar(data) {
     $.each(data, function (index, element) {
         if (element.date) {
             var entry = '<a href="/tournaments/' + element.id + '">' + element.title + '</a><small>' + element.location + '</small>';
-            if (typeof calendardata[convertDateForCalendar(element.date)] == "undefined") {
-                calendardata[convertDateForCalendar(element.date)] = [entry];
+            if (!element.end_date) {
+                // single day event
+                addEntryToCalendar(element, entry);
             } else {
-                calendardata[convertDateForCalendar(element.date)].push(entry);
+                // multiple day event
+                for (var day = new Date(convertDateForCalendar(element.date));
+                     day <= new Date(convertDateForCalendar(element.end_date));
+                     day.setDate(day.getDate() + 1)) {
+                        element.date = day.getFullYear() + '.' + ('0' + (day.getMonth()+1)).slice(-2) + '.' + ('0' + day.getDate()).slice(-2) + '.';
+                        addEntryToCalendar(element, entry);
+                }
             }
         } else {
             // get first day
@@ -126,4 +133,12 @@ function updateTournamentCalendar(data) {
     });
 
 
+}
+
+function addEntryToCalendar(element, entry) {
+    if (typeof calendardata[convertDateForCalendar(element.date)] == "undefined") {
+        calendardata[convertDateForCalendar(element.date)] = [entry];
+    } else {
+        calendardata[convertDateForCalendar(element.date)].push(entry);
+    }
 }
