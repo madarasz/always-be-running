@@ -168,12 +168,14 @@
             <fieldset class="form-group hide-nonrequired">
                 <div class="form-check">
                     <label class="form-check-label">
-                        <input type="radio" class="end-date form-check-input" name="end_date_selector" id="end-date-single" value="single" checked />
+                        <input type="radio" class="end-date form-check-input" name="end_date_selector" id="end-date-single" value="single"
+                                {{ !$tournament->end_date && !$tournament->recur_weekly ? 'checked' : '' }}/>
                         <span>single day event</span>
                     </label>
                 <div class="form-check">
                     <label class="form-check-label" style="width: 100%">
-                        <input type="radio" class="end-date form-check-input" name="end_date_selector" id="end-date-multiple" value="multiple"/>
+                        <input type="radio" class="end-date form-check-input" name="end_date_selector" id="end-date-multiple" value="multiple"
+                                {{ $tournament->end_date ? 'checked' : '' }}/>
                         multiple day event, end date:
                         <div class="input-group">
                             {!! Form::text('end_date', old('end_date', $tournament->end_date),
@@ -186,7 +188,8 @@
                 </div>
                 <div class="form-check">
                     <label class="form-check-label" style="width: 100%">
-                        <input type="radio" class="end-date form-check-input" name="end_date_selector" id="end-date-recur" value="recurring" disabled="disabled"/>
+                        <input type="radio" class="end-date form-check-input" name="end_date_selector" id="end-date-recur" value="recurring"
+                                {{ $tournament->recur_weekly ? 'checked' : 'disabled' }}/>
                         weekly recurrence
                         @include('partials.popover', ['direction' => 'right', 'content' =>
                                     'Select if the event recurs weekly. This is ideal for weekly get-togethers.
