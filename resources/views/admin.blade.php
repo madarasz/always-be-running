@@ -118,13 +118,13 @@
 
         // get tournament data
         getTournamentData("?approved=null", function(data) {
-            updateTournamentTable('#pending', ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
+            updateTournamentTable('#pending', ['title', 'date', 'cardpool', 'approval', 'location', 'players',
                 'action_edit', 'action_approve', 'action_reject', 'action_delete'], 'no pending tournaments', '{{ csrf_token() }}', data);
             getTournamentData("?approved=0", function(data) {
-                updateTournamentTable('#rejected', ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
+                updateTournamentTable('#rejected', ['title', 'date', 'cardpool', 'approval', 'location', 'players',
                     'action_edit', 'action_approve', 'action_delete'], 'no rejected tournaments', '{{ csrf_token() }}', data);
                 getTournamentData("?conflict=1", function(data) {
-                    updateTournamentTable('#conflict', ['title', 'date', 'type', 'creator', 'approval', 'players', 'claims', 'action_delete'],
+                    updateTournamentTable('#conflict', ['title', 'date', 'location', 'creator', 'approval', 'players', 'claims', 'action_delete'],
                             'no tournaments with conflicts', '{{ csrf_token() }}', data);
                     getTournamentData("?approved=1&concluded=0&recur=0&end={{ $nowdate }}", function(data) {
                         updateTournamentTable('#late', ['title', 'date', 'location', 'creator', 'conclusion', 'players', 'action_delete'],

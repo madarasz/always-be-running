@@ -9,11 +9,11 @@
             <div class="bracket">
                 {{--Pending--}}
                 @include('tournaments.partials.tabledin',
-                    ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
+                    ['columns' => ['title', 'date', 'location', 'cardpool', 'approval', 'players',
                         'action_edit', 'action_approve', 'action_reject', 'action_delete'],
                     'title' => 'Pending tournaments', 'id' => 'pending', 'icon' => 'fa-question-circle-o', 'loader' => true])
                 @include('tournaments.partials.tabledin',
-                    ['columns' => ['title', 'date', 'cardpool', 'approval', 'conclusion', 'players', 'decks',
+                    ['columns' => ['title', 'date', 'location', 'cardpool', 'approval', 'players',
                         'action_edit', 'action_approve', 'action_delete'],
                     'title' => 'Rejected tournaments', 'id' => 'rejected', 'icon' => 'fa-thumbs-down', 'loader' => true])
             </div>
@@ -24,7 +24,7 @@
             <div class="bracket">
                 {{--Conflict--}}
                 @include('tournaments.partials.tabledin',
-                    ['columns' => ['title', 'date', 'type', 'creator', 'approval', 'players', 'claims', 'action_delete'],
+                    ['columns' => ['title', 'date', 'location', 'creator', 'approval', 'players', 'claims', 'action_delete'],
                     'title' => 'Conflicts',
                     'id' => 'conflict', 'icon' => 'fa-exclamation-triangle', 'loader' => true])
             </div>
