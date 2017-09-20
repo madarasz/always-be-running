@@ -94,24 +94,24 @@
                 </div>
             </div>
         </div>
-        <div class="card card-darker">
-            <div class="card-block">
-                <em>2017-08-18</em><br/>
-                <p>Dear supporters,</p>
-                <p>
-                    Currently my job, the summer, renovating my flat and a possible startup venture are draining all
-                    my spare time.
-                </p>
-                <p>
-                    Active development of new features is on pause. No need to fear, the sites will remain up and
-                    running. I will be still doing bugfixes, you can report problems via GitHub or email.
-                    KnowTheMeta.com will receive data updates every 1-2 weeks.
-                </p>
-                <p>
-                    Thank you for all your support so far. I will keep you updated.
-                </p>
-            </div>
-        </div>
+        {{--<div class="card card-darker">--}}
+            {{--<div class="card-block">--}}
+                {{--<em>2017-08-18</em><br/>--}}
+                {{--<p>Dear supporters,</p>--}}
+                {{--<p>--}}
+                    {{--Currently my job, the summer, renovating my flat and a possible startup venture are draining all--}}
+                    {{--my spare time.--}}
+                {{--</p>--}}
+                {{--<p>--}}
+                    {{--Active development of new features is on pause. No need to fear, the sites will remain up and--}}
+                    {{--running. I will be still doing bugfixes, you can report problems via GitHub or email.--}}
+                    {{--KnowTheMeta.com will receive data updates every 1-2 weeks.--}}
+                {{--</p>--}}
+                {{--<p>--}}
+                    {{--Thank you for all your support so far. I will keep you updated.--}}
+                {{--</p>--}}
+            {{--</div>--}}
+        {{--</div>--}}
     </div>
     <hr/>
     <div class="row">
