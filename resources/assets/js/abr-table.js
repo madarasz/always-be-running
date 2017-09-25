@@ -368,7 +368,8 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 value: csrftoken
             }), $('<button>', {
                 type: 'submit',
-                'class': 'btn btn-danger btn-xs'
+                'class': 'btn btn-danger btn-xs',
+                'onclick': "return confirm('Are you sure you want to delete this tournament?')"
             }).append($('<i>', {
                 'class': 'fa fa-trash',
                 'aria-hidden': true
@@ -389,11 +390,12 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 value: csrftoken
             }), $('<button>', {
                 type: 'submit',
-                'class': 'btn btn-danger btn-xs'
+                'class': 'btn btn-danger btn-xs',
+                'onclick': "return confirm('Are you sure you want to remove this tournament? This cannot be undone. All related information and claims will be lost.')"
             }).append($('<i>', {
                 'class': 'fa fa-times',
                 'aria-hidden': true
-            }), ' delete'))));
+            }), ' remove'))));
         }
 
     }, columns, emptyMessage);
