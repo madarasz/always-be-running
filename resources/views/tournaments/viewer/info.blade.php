@@ -5,14 +5,13 @@
         <div class="alert alert-warning" id="approval-needed">
             <i class="fa fa-question-circle-o" aria-hidden="true"></i>
             This tournament hasn't been approved by the admins yet.
-            You can already share it, though it's not appearing in any tournament lists.
         </div>
     @elseif ($tournament->approved == 0)
         <div class="alert alert-danger" id="approval-rejected">
             <i class="fa fa-thumbs-down" aria-hidden="true"></i>
             This tournament has been rejected by an admin.
             Only the tournament creator and the admins can see this tournament.
-            Please try to fix the issue.
+            Please try to fix the issue or get in contact with the admins.
         </div>
     @endif
     {{--Location, date--}}

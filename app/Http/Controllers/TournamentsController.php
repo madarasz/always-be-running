@@ -235,8 +235,12 @@ class TournamentsController extends Controller
     public function upcomingTournamentJSON(Request $request) {
         $yesterday = date('Y.m.d.', time() - 86400); // to be on the safe side
         $tournaments = Tournament::where('date', '>=', $yesterday)->where('concluded', 0)
-            ->where('approved', 1)->orderBy('date', 'asc')->get();
-        $recurring = Tournament::whereNotNull('recur_weekly')->where('approved', 1)->orderBy('recur_weekly')->get();
+            ->where(function($query){
+                $query->where('approved', 1)->orWhereNull('approved');
+            })->orderBy('date', 'asc')->get();
+        $recurring = Tournament::whereNotNull('recur_weekly')->where(function($query){
+            $query->where('approved', 1)->orWhereNull('approved');
+        })->orderBy('recur_weekly')->get();
 
         $result = [
             'tournaments' => $this->tournametDataFormat($tournaments),
@@ -247,7 +251,9 @@ class TournamentsController extends Controller
     }
 
     public function resultTournamentJSON(Request $request) {
-        $tournaments = Tournament::where('concluded', 1)->where('approved', 1)->orderBy('date', 'desc');
+        $tournaments = Tournament::where('concluded', 1)->where(function($query){
+            $query->where('approved', 1)->orWhereNull('approved');
+        })->orderBy('date', 'desc');
 
         $this->applyLimitOffset($request, $tournaments);
 

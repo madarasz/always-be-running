@@ -52,7 +52,8 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
 
             cell.append($('<a>', {
                 text: element.title,
-                href: element.url
+                href: element.url,
+                class: element.approved ? '' : ' font-italic'
             })).appendTo(newrow);
 
             var tInfo = $('<span>', { class: 'text-nowrap' });

@@ -19,7 +19,7 @@
                     <strong>Upcoming tournaments and recurring events</strong>:
                     <a href="<?php env('APP_URL')?>/api/tournaments/upcoming">https://alwaysberunning.net/api/tournaments/upcoming</a>
                     <br/>
-                    <em>Only approved events are displayed. Tournaments with past dates are filtered out.</em>
+                    <em>Rejected events and tournaments with past dates are filtered out.</em>
                     <blockquote class="help-markdown m-b-3">
                         {<br/>
                         &nbsp;&nbsp;"tournaments": [<em>event objects</em>]<br/>
@@ -31,7 +31,7 @@
                     <strong>Concluded tournamets</strong> (tournaments with results):
                     <a href="<?php env('APP_URL')?>/api/tournaments/results">https://alwaysberunning.net/api/tournaments/results</a>
                     <br/>
-                    <em>Only approved and concluded tournaments are displayed.</em><br/>
+                    <em>Only concluded tournaments are displayed. Rejected tournaments are filtered out.</em><br/>
                     Supports <strong>limit</strong> and <strong>offset</strong> parameters, example:
                     <a href="<?php env('APP_URL')?>/api/tournaments/results?offset=20&limit=10">https://alwaysberunning.net/api/tournaments/results?offset=20&limit=10</a>
                     <blockquote class="help-markdown m-b-3">
