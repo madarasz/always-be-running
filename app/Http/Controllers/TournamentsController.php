@@ -419,6 +419,9 @@ class TournamentsController extends Controller
                 $tournaments = $tournaments->where('tournament_type_id', '!=', 8);   // non-tournaments are left out for concluded ones
             }
         }
+        if ($request->input('hide-non')) {
+            $tournaments = $tournaments->where('tournament_type_id', '!=', 8);   // non-tournaments are left out for concluded ones
+        }
         if ($request->input('type')) {
             $tournaments = $tournaments->where('tournament_type_id', $request->input('type'));
         }
