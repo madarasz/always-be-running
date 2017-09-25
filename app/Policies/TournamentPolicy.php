@@ -28,7 +28,7 @@ class TournamentPolicy
     }
 
     public function purge(User $user, Tournament $tournament) {
-        return $user->id == 1276 || $user->id == $tournament->creator || ($user->admin && $tournament->incomplete);
+        return $user->id == 1276 || $user->id == $tournament->creator || $user->admin;
     }
 
     public function admin(User $user) {

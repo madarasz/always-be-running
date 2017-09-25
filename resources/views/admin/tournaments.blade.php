@@ -48,7 +48,7 @@
                 @include('tournaments.partials.tabledin',
                     ['columns' => ['title', 'date', 'creator', 'approval', 'conclusion', 'players', 'decks',
                         'action_edit', 'action_restore', 'action_purge'],
-                    'title' => 'Deleted tournaments', 'subtitle' => 'only creator and Necro can hard delete',
+                    'title' => 'Deleted tournaments',
                     'id' => 'deleted', 'icon' => 'fa-times-circle-o', 'loader' => true])
             </div>
         </div>
