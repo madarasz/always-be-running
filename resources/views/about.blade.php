@@ -66,6 +66,8 @@
                     </li>
                 </ul>
             </div>
+        </div>
+        <div class="col-md-6 col-xs-12">
             {{--Developers--}}
             <div class="bracket">
                 <h5 class="p-b-1">
@@ -77,8 +79,6 @@
                     <li><a href="/profile/1221" class="admin">johno</a> - youtube tournament videos</li>
                 </ul>
             </div>
-        </div>
-        <div class="col-md-6 col-xs-12">
             {{--Helpers--}}
             <div class="bracket">
                 <h5 class="p-b-1">

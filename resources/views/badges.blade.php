@@ -35,6 +35,16 @@
                     @endif
                 @endforeach
             </div>
+            <div class="bracket">
+                <p>
+                    <strong>Other badges:</strong>
+                </p>
+                @foreach($badges as $badge)
+                    @if ($badge->order < 100)
+                        @include('partials.badgelist')
+                    @endif
+                @endforeach
+            </div>
         </div>
         <div class="col-md-6 col-xs-12">
             <div class="bracket">
@@ -89,16 +99,6 @@
                 <div class="small-text">
                     You get +1 reputation for each like on your decklists and reviews, +5 for each favorite.
                 </div>
-            </div>
-            <div class="bracket">
-                <p>
-                    <strong>Other badges:</strong>
-                </p>
-                @foreach($badges as $badge)
-                    @if ($badge->order < 100)
-                        @include('partials.badgelist')
-                    @endif
-                @endforeach
             </div>
         </div>
     </div>
