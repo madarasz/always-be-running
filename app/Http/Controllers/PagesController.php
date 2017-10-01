@@ -8,6 +8,7 @@ use App\TournamentFormat;
 use App\User;
 use App\Badge;
 use App\CardIdentity;
+use App\Video;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Tournament;
@@ -56,6 +57,7 @@ class PagesController extends Controller
 
     public function results(Request $request, $cardpool = "", $type = "", $country = "", $format = "", $videos = "")
     {
+        $nowdate = date('Y.m.d.');
         $tournaments = Tournament::where('approved', 1)->where('concluded',1);
         $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->unique()->all())->pluck('type_name', 'id')->all();
         $tournament_cardpools = CardPack::whereIn('id', $tournaments->pluck('cardpool_id')->unique()->all())->where('id', '!=', 'unknown')
@@ -82,7 +84,7 @@ class PagesController extends Controller
 
         return view('results', compact('registered', 'message', 'nowdate', 'tournament_types', 'countries',
             'tournament_cardpools', 'tournament_formats', 'page_section', 'default_country', 'default_country_id',
-            'cardpool', 'type', 'country', 'format', 'videos', 'featured'));
+            'cardpool', 'type', 'country', 'format', 'videos', 'featured', 'nowdate'));
     }
 
     /**
@@ -249,5 +251,21 @@ class PagesController extends Controller
     public function api()
     {
         return view('api');
+
+    }
+    public function birthdayFirst()
+    {
+        $tournaments = Tournament::where('approved', 1)->where('concluded', 1)->count();
+        $weekly = Tournament::where('approved', 1)->whereNull('date')->count();
+        $countries = Tournament::where('approved', 1)->pluck('location_country')->unique()->count();
+        $users = User::count();
+        $supporters = User::where('supporter', '>', 0)->get();
+        $claims = Entry::whereIn('type', [3, 4])->count();
+        $decks = Entry::where('type', 3)->count() * 2;
+        $videos = Video::count();
+        $photos = Photo::count();
+        $badges = Badge::count();
+        return view('birthday', compact('tournaments', 'weekly', 'countries', 'users', 'claims', 'decks',
+            'videos', 'photos', 'badges', 'supporters'));
     }
 }
