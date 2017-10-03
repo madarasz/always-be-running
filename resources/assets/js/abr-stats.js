@@ -316,9 +316,10 @@ function getStatData(data, week) {
     return 0;
 }
 
-// update filter settings for the Results page
+// update filter settings for the Results page, to be concluded tournaments included
 function filterResults() {
     resultsDataFiltered = resultsDataAll.slice();
+    toBeConcludedFiltered = toBeConcludedAll.slice();
 
     var type = document.getElementById('tournament_type_id').value,
         cardpool = document.getElementById('cardpool').value,
@@ -329,6 +330,7 @@ function filterResults() {
     // type filtering
     if (type != '---') {
         filterTournamentData(resultsDataFiltered, 'type', type, '');
+        filterTournamentData(toBeConcludedFiltered, 'type', type, '');
         $('#filter-type').addClass('active-filter');
     } else {
         $('#filter-type').removeClass('active-filter');
@@ -336,6 +338,7 @@ function filterResults() {
     // country filtering
     if (country !== '---') {
         filterTournamentData(resultsDataFiltered, 'location_country', country);
+        filterTournamentData(toBeConcludedFiltered, 'location_country', country);
         $('#filter-country').addClass('active-filter');
     } else {
         $('#filter-country').removeClass('active-filter');
@@ -343,6 +346,7 @@ function filterResults() {
     // cardpool filtering
     if (cardpool != '---') {
         filterTournamentData(resultsDataFiltered, 'cardpool', cardpool);
+        filterTournamentData(toBeConcludedFiltered, 'cardpool', cardpool);
         $('#filter-cardpool').addClass('active-filter');
     } else {
         $('#filter-cardpool').removeClass('active-filter');
@@ -350,6 +354,7 @@ function filterResults() {
     // format filtering
     if (format != '---') {
         filterTournamentData(resultsDataFiltered, 'format', format);
+        filterTournamentData(toBeConcludedFiltered, 'format', format);
         $('#filter-format').addClass('active-filter');
     } else {
         $('#filter-format').removeClass('active-filter');
@@ -369,7 +374,14 @@ function filterResults() {
     }
 
     $('#results').find('tbody').empty();
-    updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', resultsDataFiltered);
+
+    updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'],
+        'no tournaments to show', '', resultsDataFiltered);
+    if ($('#to-be-concluded').length > 0) {
+        $('#to-be-concluded').find('tbody').empty();
+        updateTournamentTable('#to-be-concluded', ['title', 'date', 'location', 'cardpool', 'conclusion', 'players'],
+            'no tournaments waiting for conclusion', '', toBeConcludedFiltered);
+    }
     updateResultsURL(cardpool, type, country, format, videos);
 
     // switch ID statistics

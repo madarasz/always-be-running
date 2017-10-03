@@ -5,17 +5,68 @@
     @include('partials.message')
     <div class="row">
         {{--Results table--}}
-        <div class="col-md-8 push-md-4 col-lg-9 push-lg-3 col-sm-12">
+        <div class="col-lg-9 push-lg-3 col-12">
             <div class="bracket">
-                @include('tournaments.partials.tabledin',
-                    ['columns' => ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims' ],
-                    'title' => 'Tournament results from the past', 'id' => 'results', 'icon' => 'fa-list-alt',
-                    'subtitle' => 'only concluded tournaments', 'doublerow' => true, 'loader' => true, 'maxrows' => 50])
-                <div class="loader hidden-xs-up" id="results-more-loader">loading more</div>
+                {{--Result / to be concluded tabs for logged in users--}}
+                @if (@Auth::user())
+                <div class="modal-tabs">
+                    <ul id="result-tabs" class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#tab-results" role="tab">
+                                <h5>
+                                    <i class="fa fa-list-alt" aria-hidden="true"></i>
+                                    Tournament results
+                                    <br/>
+                                    <small>concluded tournaments from the past</small>
+                                </h5>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#tab-to-be-concluded" role="tab">
+                                <h5>
+                                    <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                    Waiting for conclusion
+                                    <br/>
+                                    <small>add player number / results</small>
+                                </h5>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-content">
+                    {{--Results table--}}
+                    <div class="tab-pane active" id="tab-results" role="tabpanel">
+                        @include('tournaments.partials.tabledin',
+                            ['columns' => ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims' ],
+                            'skip_header' => true, 'id' => 'results', 'doublerow' => true, 'loader' => true, 'maxrows' => 50])
+                        <div class="loader hidden-xs-up" id="results-more-loader">loading more</div>
+                    </div>
+                    {{--Conclude modal--}}
+                    @include('tournaments.modals.conclude')
+                    {{--To be concluded table--}}
+                    <div class="tab-pane" id="tab-to-be-concluded" role="tabpanel">
+                        @include('tournaments.partials.tabledin',
+                            ['columns' => ['title', 'date', 'location', 'cardpool', 'conclusion', 'regs'],
+                            'skip_header' => true, 'id' => 'to-be-concluded', 'doublerow' => true, 'loader' => true, 'maxrows' => 50])
+                    </div>
+                </div>
+                @else
+                    <h5>
+                        <i class="fa fa-list-alt" aria-hidden="true"></i>
+                        Tournament results
+                        <br/>
+                        <small>concluded tournaments from the past</small>
+                    </h5>
+                    @include('tournaments.partials.tabledin',
+                            ['columns' => ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims' ],
+                            'skip_header' => true, 'id' => 'results', 'doublerow' => true, 'loader' => true, 'maxrows' => 50])
+                    <div class="loader hidden-xs-up" id="results-more-loader">loading more</div>
+                @endif
+
                 @include('tournaments.partials.icons')
             </div>
         </div>
-        <div class="col-md-4 pull-md-8 col-lg-3 pull-lg-9 col-col-sm-12">
+        <div class="col-lg-3 pull-lg-9 col-12">
             {{--Filters--}}
             <div class="bracket">
                 <div class="loader" id="filter-loader" style="margin-top: 0">loading</div>
@@ -83,7 +134,7 @@
     </div>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        var resultsDataAll = [], resultsDataFiltered = [],
+        var resultsDataAll = [], resultsDataFiltered = [], toBeConcludedAll = [], toBeConcludedFiltered = [],
                 packlist = [],
                 defaultCountry = "",
                 currentPack = "",
@@ -102,6 +153,19 @@
             updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', resultsDataFiltered);
             $('#results-more-loader').removeClass('hidden-xs-up');
             $('#results-controls').addClass('hidden-xs-up');
+
+            @if(@Auth::user())
+            // load tournaments to be concluded
+            getTournamentData("?approved=1&concluded=0&recur=0&hide-non=1&desc=1&end={{ $nowdate }}", function(data) {
+                toBeConcludedAll = data;
+                toBeConcludedFiltered = toBeConcludedAll.slice();
+
+                applyInitialResultsFilters();
+
+                updateTournamentTable('#to-be-concluded', ['title', 'date', 'location', 'cardpool', 'conclusion', 'players'],
+                        'no tournaments waiting for conclusion', '', toBeConcludedFiltered);
+            });
+            @endif
 
             // load the rest
             getTournamentData('/results?offset=50', function(data) {
@@ -153,6 +217,7 @@
 
                 if (requestedCardpool in availableCardpools) {
                     filterTournamentData(resultsDataFiltered, 'cardpool', availableCardpools[requestedCardpool]);
+                    filterTournamentData(toBeConcludedFiltered, 'cardpool', availableCardpools[requestedCardpool]);
                     document.getElementById('cardpool').value = availableCardpools[requestedCardpool];
                     $('#filter-cardpool').addClass('active-filter');
                 }
@@ -165,6 +230,7 @@
 
                 if (requestedType in availableTypes) {
                     filterTournamentData(resultsDataFiltered, 'type', availableTypes[requestedType]);
+                    filterTournamentData(toBeConcludedFiltered, 'type', availableTypes[requestedType]);
                     document.getElementById('tournament_type_id').value = availableTypes[requestedType];
                     $('#filter-type').addClass('active-filter');
                 }
@@ -177,6 +243,7 @@
 
                 if (requestedFormat in availableFormats) {
                     filterTournamentData(resultsDataFiltered, 'format', availableFormats[requestedFormat]);
+                    filterTournamentData(toBeConcludedFiltered, 'format', availableFormats[requestedFormat]);
                     document.getElementById('format').value = availableFormats[requestedFormat];
                     $('#filter-format').addClass('active-filter');
                 }
@@ -189,6 +256,7 @@
 
                 if (requestedCountry in availableCountries) {
                     filterTournamentData(resultsDataFiltered, 'location_country', convertFromURLString(requestedCountry));
+                    filterTournamentData(toBeConcludedFiltered, 'location_country', convertFromURLString(requestedCountry));
                     document.getElementById('location_country').value = availableCountries[requestedCountry];
                     $('#filter-country').addClass('active-filter');
                 }
@@ -196,6 +264,7 @@
                 // user's default country
                 defaultCountry = '{{ $default_country }}';
                 filterTournamentData(resultsDataFiltered, 'location_country', defaultCountry);
+                filterTournamentData(toBeConcludedFiltered, 'location_country', defaultCountry);
                 $('#label-default-country').removeClass('hidden-xs-up');
                 document.getElementById('location_country').value = defaultCountry;
                 $('#filter-country').addClass('active-filter');
