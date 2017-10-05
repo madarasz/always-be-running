@@ -126,17 +126,13 @@
                 getTournamentData("?conflict=1", function(data) {
                     updateTournamentTable('#conflict', ['title', 'date', 'location', 'creator', 'approval', 'players', 'claims', 'action_delete'],
                             'no tournaments with conflicts', '{{ csrf_token() }}', data);
-                    getTournamentData("?approved=1&concluded=0&recur=0&hide-non=1&end={{ $nowdate }}", function(data) {
-                        updateTournamentTable('#late', ['title', 'date', 'location', 'creator', 'conclusion', 'players', 'action_delete'],
-                                'no late tournaments', '{{ csrf_token() }}', data);
-                        getTournamentData("?deleted=1", function(data) {
-                            updateTournamentTable('#deleted', ['title', 'date', 'creator', 'approval', 'conclusion', 'players', 'decks',
-                                'action_edit', 'action_restore', 'action_purge'], 'no deleted tournaments', '{{ csrf_token() }}', data);
-                            getTournamentData("?incomplete=1", function(data) {
-                                updateTournamentTable('#incomplete', ['title', 'date', 'location', 'cardpool', 'creator', 'players',
-                                    'created_at', 'action_edit', 'action_purge'], 'no incomplete items', '{{ csrf_token() }}', data);
-                                drawAdminChart(entryTypes);
-                            });
+                    getTournamentData("?deleted=1", function(data) {
+                        updateTournamentTable('#deleted', ['title', 'date', 'creator', 'approval', 'conclusion', 'players', 'decks',
+                            'action_edit', 'action_restore', 'action_purge'], 'no deleted tournaments', '{{ csrf_token() }}', data);
+                        getTournamentData("?incomplete=1", function(data) {
+                            updateTournamentTable('#incomplete', ['title', 'date', 'location', 'cardpool', 'creator', 'players',
+                                'created_at', 'action_edit', 'action_purge'], 'no incomplete items', '{{ csrf_token() }}', data);
+                            drawAdminChart(entryTypes);
                         });
                     });
                 });

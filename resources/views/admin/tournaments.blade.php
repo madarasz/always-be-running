@@ -33,17 +33,6 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="bracket">
-                {{--Late conclusion--}}
-                @include('tournaments.partials.tabledin',
-                    ['columns' => ['title', 'date', 'location', 'creator', 'conclusion', 'regs', 'action_delete'],
-                    'title' => 'Tournaments to be concluded', 'subtitle' => 'creators should conclude these',
-                    'id' => 'late', 'icon' => 'fa-clock-o', 'loader' => true])
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="bracket">
                 {{--Deleted--}}
                 @include('tournaments.partials.tabledin',
                     ['columns' => ['title', 'date', 'creator', 'approval', 'conclusion', 'players', 'decks',
