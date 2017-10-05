@@ -16,6 +16,12 @@
                 onclick="togglePhotoAdd(false)">
             <i class="fa fa-check" aria-hidden="true"></i> Done
         </button>
+        @if ($user->admin && $tournament->photos()->whereNull('approved')->count() )
+            <a class="btn btn-success btn-xs pull-right m-r-1" id="button-approve-all-photos"
+               href="/photos/{{ $tournament->id }}/approve-all">
+                <i class="fa fa-thumbs-up" aria-hidden="true"></i> Approve all
+            </a>
+        @endif
     @endif
 </h5>
 {{--Add photos--}}

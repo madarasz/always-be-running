@@ -154,4 +154,23 @@ class PhotosController extends Controller
         return redirect()->back()->with('message', 'Photo rotated');
     }
 
+    /**
+     * Approves all photos on a tournament
+     * @param $id tournament ID
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function approveAll($id, Request $request) {
+        $tournament = Tournament::findOrFail($id);
+        $photos = $tournament->photos();
+        $this->authorize('admin', Tournament::class, $request->user());
+
+        $photos->update(['approved' => true]);
+
+        // TODO: add badge
+
+        // redirecting to tournament
+        return redirect()->back()->with('message', 'All photos are approved.');
+    }
+
 }
