@@ -3,8 +3,10 @@
 @section('content')
     {{--Conclude, transfer modals--}}
     @if ($user && ($user->admin || $user->id == $tournament->creator))
-        @include('tournaments.modals.conclude')
         @include('tournaments.modals.transfer')
+    @endif
+    @if ($user)
+        @include('tournaments.modals.conclude')
     @endif
     {{--Header--}}
     @include('tournaments.viewer.header')

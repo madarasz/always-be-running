@@ -27,6 +27,10 @@ class TournamentPolicy
         return $user->admin || $user->id == $tournament->creator;
     }
 
+    public function conclude(User $user, Tournament $tournament) {
+        return $user->admin || $user->id == $tournament->creator || $user->id == $tournament->concluded_by;
+    }
+
     public function purge(User $user, Tournament $tournament) {
         return $user->id == 1276 || $user->id == $tournament->creator || $user->admin;
     }

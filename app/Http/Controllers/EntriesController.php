@@ -405,7 +405,7 @@ class EntriesController extends Controller
         $tournament = Tournament::withTrashed()->findOrFail($entry->tournament_id);
 
         // auth check
-        $this->authorize('own', $tournament, $request->user());
+        $this->authorize('conclude', $tournament, $request->user());
 
         // delete
         Entry::destroy($id);
@@ -430,7 +430,7 @@ class EntriesController extends Controller
         $tournament = Tournament::withTrashed()->findOrFail($request->tournament_id);
 
         // auth check
-        $this->authorize('own', $tournament, $request->user());
+        $this->authorize('conclude', $tournament, $request->user());
 
         // add anonym entry
         Entry::create($request->all() + ['type' => 13]);

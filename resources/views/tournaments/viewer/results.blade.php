@@ -13,6 +13,40 @@
                 Claims can be removed by the tournament creator, admins or claim owners.
             </div>
         @endif
+        {{--Concluded by--}}
+        @if ($tournament->concluded_by)
+            <div id="concluded-by" class="small-text m-b-1">
+                <strong>Concluded by:</strong>
+                <a href="/profile/{{ $tournament->concluded_by }}" class="{{ $tournament->concluder->linkClass() }}">{{ $tournament->concluder->displayUsername() }}</a>
+                @include('partials.popover', ['direction' => 'right', 'content' =>
+                        'If the results / player number / top-cut is incorrect, ask the tournament creator or admins to
+                         edit it.'])
+                {{--revert conclusion button--}}
+                @if ($user && ($user->admin || $user->id == $tournament->creator || $user->id == $tournament->concluded_by))
+                    {!! Form::open(['method' => 'POST', 'url' => "/tournaments/$tournament->id/conclude/revert", 'style' => 'display: inline']) !!}
+                        {!! Form::button('<i class="fa fa-undo" aria-hidden="true"></i> Revert conclusion',
+                            array('type' => 'submit', 'class' => 'btn btn-danger btn-xs',
+                            'onclick' => "return confirm('Are you sure you want to reset this tournament to an unconcluded state? All claims and imported entries are kept and will be displayed after this tournament is concluded again.')")) !!}
+                    {!! Form::close() !!}
+                @endif
+                {{--admin info--}}
+                @if ($user && ($user->admin))
+                    <br/>
+                    <strong>admin/creator info:</strong>
+                    timestamp: {{ $tournament->concluded_at }}
+                    - via
+                    @if ($tournament->import == 1)
+                        NRTM import
+                    @elseif ($tournament->import == 2)
+                        CSV import
+                    @elseif ($tournament->import == 3)
+                        manual import
+                    @else
+                        manual conclusion
+                    @endif
+                @endif
+            </div>
+        @endif
         {{--Player numbers--}}
         <div id="player-numbers">
             <strong>Number of players</strong>: {{ $tournament->players_number }}<br/>
@@ -64,7 +98,7 @@
             The tournament creator should set it to 'concluded', so players can make claims.
         </div>
         {{--Conclude modal, button--}}
-        @if ($user && ($user->admin || $user->id == $tournament->creator))
+        @if ($user)
             <div class="text-xs-center">
                 <button class="btn btn-conclude" data-toggle="modal" data-target="#concludeModal"
                         data-tournament-id="{{$tournament->id}}"

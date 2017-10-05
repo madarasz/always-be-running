@@ -1,12 +1,13 @@
 {{--Import NRTM, Clear anonym claims--}}
-@if ($user && ($user->admin || $user->id == $tournament->creator))
+@if ($user && ($user->admin || $user->id == $tournament->creator || $user->id == $tournament->concluded_by))
     <a name="importing"/>
     <div class="text-xs-center">
         @if ($tournament->import)
             {{--Clear import--}}
             {!! Form::open(['method' => 'DELETE', 'url' => "/tournaments/$tournament->id/clearanonym", 'class' => 'inline-block']) !!}
             {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove all imported claims',
-                array('type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'id' => 'button-clear-nrtm')) !!}
+                array('type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'id' => 'button-clear-nrtm',
+                'onclick' => "return confirm('Are you sure you want to remove all imported entries?')")) !!}
             {!! Form::close() !!}
         @else
             {{--Import--}}

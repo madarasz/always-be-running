@@ -500,7 +500,7 @@ class TournamentsController extends Controller
     public function clearAnonym($id, Request $request) {
 
         $tournament = Tournament::withTrashed()->findorFail($id);
-        $this->authorize('own', $tournament, $request->user());
+        $this->authorize('conclude', $tournament, $request->user());
 
         // delete claims
         Entry::where('tournament_id', $tournament->id)->whereNull('runner_deck_id')->whereNotNull('import_username')->delete();
@@ -522,9 +522,14 @@ class TournamentsController extends Controller
      */
     public function concludeManual($id, Requests\ConcludeRequest $request) {
         $tournament = Tournament::findorFail($id);
-        $this->authorize('own', $tournament, $request->user());
+        $this->authorize('logged_in', $tournament, $request->user());
 
-        $tournament->update(array_merge($request->all(), ['concluded' => true, 'featured' => 0]));
+        $tournament->update(array_merge($request->all(), [
+            'concluded' => true,
+            'featured' => 0,
+            'concluded_by' => $request->user()->id,
+            'concluded_at' => date('Y-m-d H:i:s')
+        ]));
 
         // redirecting to show newly created tournament
         return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
@@ -552,7 +557,7 @@ class TournamentsController extends Controller
         } else {
             // conclude existing tournament
             $tournament = Tournament::findorFail($id);
-            $this->authorize('own', $tournament, $request->user());
+            $this->authorize('logged_in', $tournament, $request->user());
         }
 
         $errors = [];
@@ -563,13 +568,13 @@ class TournamentsController extends Controller
             rename('tjsons/nrtm/import_'.$request->input('conclusion_code').'.json', 'tjsons/'.$tournament->id.'.json');
             // process file
             $json = json_decode(file_get_contents('tjsons/' . $tournament->id . '.json'), true);
-            $this->processNRTMjson($json, $tournament, $errors);
+            $this->processNRTMjson($json, $tournament, $errors, $request->user()->id);
         } elseif ($request->hasFile('jsonresults') && $request->file('jsonresults')->isValid()) { // NRTM JSON
                 // store file
                 $request->file('jsonresults')->move('tjsons', $tournament->id . '.json');
                 // process file
                 $json = json_decode(file_get_contents('tjsons/' . $tournament->id . '.json'), true);
-                $this->processNRTMjson($json, $tournament, $errors);
+                $this->processNRTMjson($json, $tournament, $errors, $request->user()->id);
         } elseif ($request->hasFile('csvresults') && $request->file('csvresults')->isValid()) { // CSV file
                 // store file
                 $request->file('csvresults')->move('tjsons', $tournament->id . '.csv');
@@ -582,7 +587,7 @@ class TournamentsController extends Controller
                         $topcut = intval($row[2]);
                     }
                 }
-                $this->processCSV($csv, $tournament, $topcut, $errors);
+                $this->processCSV($csv, $tournament, $topcut, $errors, $request->user()->id);
         } else {
                 array_push($errors, 'There was a problem with uploading the file.');
         }
@@ -606,6 +611,29 @@ class TournamentsController extends Controller
             return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
                 ->with('message', 'Tournament concluded by import.');
         }
+    }
+
+    /**
+     * Resets tournament to an unconcluded state.
+     * @param $id
+     * @param Request $request
+     */
+    public function revertConclusion($id, Request $request) {
+        $tournament = Tournament::findorFail($id);
+        $this->authorize('conclude', $tournament, $request->user());
+
+        $tournament->update([
+            'concluded' => false,
+            'concluded_by' => null,
+            'concluded_at' => null,
+            'import' => 0,
+            'top_number' => null,
+            'players_number' => null
+        ]);
+
+        // redirecting to show newly created tournament
+        return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
+            ->with('message', 'Tournament conclusion reverted.');
     }
 
     /**
@@ -633,7 +661,7 @@ class TournamentsController extends Controller
      * @param $json NRTM JSON
      * @param $tournament tournament object
      */
-    private function processNRTMjson($json, &$tournament, &$errors) {
+    private function processNRTMjson($json, &$tournament, &$errors, $user) {
 
         if (array_key_exists('players', $json)) {
 
@@ -659,6 +687,8 @@ class TournamentsController extends Controller
             $tournament->featured = 0;
             $tournament->top_number = $json['cutToTop']; // number of players in top cut
             $tournament->players_number = count($json['players']); // number of players
+            $tournament->concluded_at = date('Y-m-d H:i:s');
+            $tournament->concluded_by = $user;
 
             foreach ($json['players'] as $swiss) {
 
@@ -728,8 +758,10 @@ class TournamentsController extends Controller
      * @param $errors
      * @return boolean
      */
-    private function processCSV($csv, &$tournament, $topcut, &$errors) {
+    private function processCSV($csv, &$tournament, $topcut, &$errors, $user) {
         $tournament->concluded = true;
+        $tournament->concluded_at = date('Y-m-d H:i:s');
+        $tournament->concluded_by = $user;
         $tournament->import = 2;
         $tournament->featured = 0;
         $tournament->top_number = $topcut; // number of players in top cut

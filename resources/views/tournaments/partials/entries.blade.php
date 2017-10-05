@@ -98,7 +98,7 @@
                         @endif
                     {!! Form::close() !!}
                 </td>
-            @elseif ($user && ($user->admin || $user->id == $creator))
+            @elseif ($user && $entry->type > 4 && ($user->admin || $user->id == $creator || $user->id == $tournament->concluded_by))
                 <td class="text-xs-right">
                     {!! Form::open(['method' => 'DELETE', 'url' => "/entries/anonym/$entry->id"]) !!}
                         {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i>', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs delete-anonym')) !!}
