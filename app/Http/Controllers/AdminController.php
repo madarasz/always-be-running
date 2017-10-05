@@ -68,10 +68,8 @@ class AdminController extends Controller
             ->groupBy('user_id')->orderBy('total', 'desc')->pluck('total', 'user_id');
         // VIP information
         $vips = [];
-        if ($request->user()->id == 1276) {
-            $vip_ids = DB::select('SELECT DISTINCT user_id FROM badge_user WHERE badge_id IN (1,2,8,9,10,11,14,15,17,18,31,39,48,56,57,59,60,61,62)');
-            $vips = User::whereIn('id', json_decode(json_encode($vip_ids), true))->with('claims', 'tournamentsCreated')->get();
-        }
+        $vip_ids = DB::select('SELECT DISTINCT user_id FROM badge_user WHERE badge_id IN (1,2,8,9,10,11,14,15,17,18,31,39,48,56,57,59,60,61,62)');
+        $vips = User::whereIn('id', json_decode(json_encode($vip_ids), true))->with('claims', 'tournamentsCreated')->get();
 
         // Know the Meta update calculation
         $ktm_update = preg_replace('/\./i', '-', file_get_contents('http://www.knowthemeta.com/LastUpdate/'));

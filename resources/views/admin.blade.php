@@ -53,14 +53,12 @@
                     Stats
                 </a>
             </li>
-            @if(\Illuminate\Support\Facades\Auth::user()->id == 1276)
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#tab-vip" role="tab">
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                        VIP
-                    </a>
-                </li>
-            @endif
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#tab-vip" role="tab">
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                    VIP
+                </a>
+            </li>
         </ul>
     </div>
 
@@ -81,9 +79,7 @@
         {{--Stats--}}
         @include('admin.stats')
         {{--VIP--}}
-        @if(\Illuminate\Support\Facades\Auth::user()->id == 1276)
-            @include('admin.vip')
-        @endif
+        @include('admin.vip')
     </div>
     {{--screen size checker--}}
     <p>
