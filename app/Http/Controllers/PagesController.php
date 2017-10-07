@@ -55,8 +55,15 @@ class PagesController extends Controller
             'default_country', 'default_country_id', 'featured'));
     }
 
-    public function results(Request $request, $cardpool = "", $type = "", $country = "", $format = "", $videos = "")
+    public function results(Request $request)
     {
+        // GET parameters for filtering
+        $cardpool = $request->input('cardpool');
+        $type = $request->input('type');
+        $country = $request->input('country');
+        $format = $request->input('format');
+        $videos = $request->input('videos');
+
         $nowdate = date('Y.m.d.');
         $tournaments = Tournament::where('approved', 1)->where('concluded',1);
         $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->unique()->all())->pluck('type_name', 'id')->all();

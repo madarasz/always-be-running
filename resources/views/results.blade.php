@@ -164,6 +164,8 @@
 
                 updateTournamentTable('#to-be-concluded', ['title', 'date', 'location', 'cardpool', 'conclusion', 'players'],
                         'no tournaments waiting for conclusion', '', toBeConcludedFiltered);
+                updatePaging('to-be-concluded');
+
             });
             @endif
 
@@ -178,6 +180,7 @@
                 // display all tournaments
                 $('#results').find('tbody').empty();
                 updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', resultsDataFiltered);
+                updatePaging('results');
 
                 $('#results-more-loader').addClass('hidden-xs-up');
                 $('#filter-loader').addClass('hidden-xs-up');
@@ -211,46 +214,46 @@
                     requestedFormat = '-';
 
             // cardpool from URL
-            @if ($cardpool !== '' && $cardpool !== '-')
-                var availableCardpools = collectOptions('cardpool');
-                requestedCardpool = '{{ $cardpool }}';
+                    @if ($cardpool !== null)
+                        var availableCardpools = collectOptions('cardpool');
+            requestedCardpool = '{{ $cardpool }}';
 
-                if (requestedCardpool in availableCardpools) {
-                    filterTournamentData(resultsDataFiltered, 'cardpool', availableCardpools[requestedCardpool]);
-                    filterTournamentData(toBeConcludedFiltered, 'cardpool', availableCardpools[requestedCardpool]);
-                    document.getElementById('cardpool').value = availableCardpools[requestedCardpool];
-                    $('#filter-cardpool').addClass('active-filter');
-                }
+            if (requestedCardpool in availableCardpools) {
+                filterTournamentData(resultsDataFiltered, 'cardpool', availableCardpools[requestedCardpool]);
+                filterTournamentData(toBeConcludedFiltered, 'cardpool', availableCardpools[requestedCardpool]);
+                document.getElementById('cardpool').value = availableCardpools[requestedCardpool];
+                $('#filter-cardpool').addClass('active-filter');
+            }
             @endif
 
             // type from URL
-            @if ($type !== '' && $type !== '-')
-                var availableTypes = collectOptions('tournament_type_id');
-                requestedType = '{{ $type }}';
+                    @if ($type !== null)
+                        var availableTypes = collectOptions('tournament_type_id');
+            requestedType = '{{ $type }}';
 
-                if (requestedType in availableTypes) {
-                    filterTournamentData(resultsDataFiltered, 'type', availableTypes[requestedType]);
-                    filterTournamentData(toBeConcludedFiltered, 'type', availableTypes[requestedType]);
-                    document.getElementById('tournament_type_id').value = availableTypes[requestedType];
-                    $('#filter-type').addClass('active-filter');
-                }
+            if (requestedType in availableTypes) {
+                filterTournamentData(resultsDataFiltered, 'type', availableTypes[requestedType]);
+                filterTournamentData(toBeConcludedFiltered, 'type', availableTypes[requestedType]);
+                document.getElementById('tournament_type_id').value = availableTypes[requestedType];
+                $('#filter-type').addClass('active-filter');
+            }
             @endif
 
             // format from URL
-            @if ($format !== '' && $format !== '-')
-                var availableFormats = collectOptions('format');
-                requestedFormat = '{{ $format }}';
+                    @if ($format !== null)
+                        var availableFormats = collectOptions('format');
+            requestedFormat = '{{ $format }}';
 
-                if (requestedFormat in availableFormats) {
-                    filterTournamentData(resultsDataFiltered, 'format', availableFormats[requestedFormat]);
-                    filterTournamentData(toBeConcludedFiltered, 'format', availableFormats[requestedFormat]);
-                    document.getElementById('format').value = availableFormats[requestedFormat];
-                    $('#filter-format').addClass('active-filter');
-                }
+            if (requestedFormat in availableFormats) {
+                filterTournamentData(resultsDataFiltered, 'format', availableFormats[requestedFormat]);
+                filterTournamentData(toBeConcludedFiltered, 'format', availableFormats[requestedFormat]);
+                document.getElementById('format').value = availableFormats[requestedFormat];
+                $('#filter-format').addClass('active-filter');
+            }
             @endif
 
             // country from URL
-            @if ($country !== '' && $country !== '-')
+            @if ($country !== null)
                 var availableCountries = collectOptions('location_country');
                 requestedCountry = '{{ $country }}';
 
@@ -260,7 +263,7 @@
                     document.getElementById('location_country').value = availableCountries[requestedCountry];
                     $('#filter-country').addClass('active-filter');
                 }
-            @elseif (@$default_country && $country !== '-')
+            @elseif (@$default_country && $country == null && $videos == null && $format == null && $type == null && $cardpool == null)
                 // user's default country
                 defaultCountry = '{{ $default_country }}';
                 filterTournamentData(resultsDataFiltered, 'location_country', defaultCountry);
@@ -273,7 +276,7 @@
             @endif
 
             // just tournaments with videos
-            @if ($videos !== '' && $videos !== '-')
+            @if ($videos !== null)
                 filterTournamentData(resultsDataFiltered, 'videos', true);
                 document.getElementById('videos').checked = true;
                 $('#filter-video').addClass('active-filter');

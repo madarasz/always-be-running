@@ -211,13 +211,24 @@ function updateIdStats(packname) {
     });
 }
 
-// updates
+// updates result page url with filters
 function updateResultsURL(cardpool, type, country, format, videos) {
-    var vidURL = videos ? 'videos' : '-',
-        newUrl = '/results' + '/' + convertToURLString(cardpool)
-        + '/' + convertToURLString(type)
-        + '/' + convertToURLString(country)
-        + '/' + convertToURLString(format) + '/' + vidURL;
+    var newUrl = '/results?';
+    if (cardpool.charAt(0) !== '-' ) {
+        newUrl += 'cardpool=' + convertToURLString(cardpool) + '&';
+    }
+    if (type.charAt(0) !== '-') {
+        newUrl += 'type=' + convertToURLString(type) + '&';
+    }
+    if (country.charAt(0) !== '-') {
+        newUrl += 'country=' + convertToURLString(country) + '&';
+    }
+    if (format.charAt(0) !== '-') {
+        newUrl += 'format=' + convertToURLString(format) + '&';
+    }
+    if (videos) {
+        newUrl += 'videos=true';
+    }
     window.history.pushState("Results", "Results - " + cardpool + " - " + type + " - " + country, newUrl);
 }
 
@@ -391,6 +402,7 @@ function filterResults() {
         if (cardpool === '---') {
             cardpool = packlist[0];
         }
+        // TODO: check if cardpool is in packlist
         updateIdStats(cardpool);
     }
 }
