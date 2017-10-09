@@ -180,12 +180,12 @@
                 // display all tournaments
                 $('#results').find('tbody').empty();
                 updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', resultsDataFiltered);
-                updatePaging('results');
 
                 $('#results-more-loader').addClass('hidden-xs-up');
                 $('#filter-loader').addClass('hidden-xs-up');
                 $('#results-controls').removeClass('hidden-xs-up');
                 $('.filter').prop("disabled", false);
+                updatePaging('results');
             });
         });
 
