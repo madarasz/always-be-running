@@ -257,8 +257,14 @@
             {!! Form::label('hide-non', 'hide non-required fields') !!}
         </p>
         <p class="text-xs-center">
+            {{--create button--}}
             {!! Form::submit($submitButton, ['class' => 'btn btn-primary']) !!}
-                    <br/>
+            {{--cancel button--}}
+            <a href="/organize" class="btn btn-secondary m-l-2">
+                <i class="fa fa-times" aria-hidden="true"></i>
+                cancel
+            </a>
+            <br/>
         </p>
     </div>
 </div>
