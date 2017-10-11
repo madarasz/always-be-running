@@ -68,8 +68,8 @@
     $(window).resize(function(){
         drawEntryStats(chartData, 'runner', 'stat-chart-runner', playernum);
         drawEntryStats(chartData, 'corp', 'stat-chart-corp', playernum);
-        drawEntryStats(data, 'runner', 'stat-chart-runner-faction', playernum, true);
-        drawEntryStats(data, 'corp', 'stat-chart-corp-faction', playernum, true);
+        drawEntryStats(chartData, 'runner', 'stat-chart-runner-faction', playernum, true);
+        drawEntryStats(chartData, 'corp', 'stat-chart-corp-faction', playernum, true);
     });
 
 </script>
