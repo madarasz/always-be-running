@@ -100,6 +100,9 @@ var tournamentFromCommands = {
                     case 'selects':
                         fillFormSelects(this, data['selects']);
                         break;
+                    case 'radios':
+                        fillFormRadios(this, data['radios']);
+                        break;
                     case 'checkboxes':
                         fillFormCheckboxes(this, data['checkboxes']);
                         break;
@@ -113,7 +116,7 @@ var tournamentFromCommands = {
 
         function mapSearch(client, data) {
             client
-                .log('* Adding location *')
+                .log('--- Adding location ---')
                 .api.useXpath().clearValue(client.elements.location_search.selector)
                 .keys(data)
                 .pause(500)
@@ -126,7 +129,7 @@ var tournamentFromCommands = {
         function fillFormInputs(client, data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) {
-                    client.log('* Typing into field "' + property + '": ' + data[property] + ' *');
+                    client.log('--- Typing into field "' + property + '": ' + data[property] + ' ---');
                     client.api.useXpath()
                         .clearValue(util.format(client.elements.inputs.selector, property))
                         .setValue(util.format(client.elements.inputs.selector, property), data[property]);
@@ -137,10 +140,19 @@ var tournamentFromCommands = {
         function fillFormSelects(client, data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) {
-                    client.log('* Selecting in "' + property + '": ' + data[property] + ' *');
+                    client.log('--- Selecting in "' + property + '": ' + data[property] + ' ---');
                     client.api.useXpath().click(util.format(client.elements.selects.selector,property))
-                        .setValue(util.format(client.elements.selects.selector,property), data[property])
-                        .keys(['\uE006']);
+                        .setValue(util.format(client.elements.selects.selector,property), data[property]);
+                        //.keys(['\uE006']);
+                }
+            }
+        }
+
+        function fillFormRadios(client, data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) {
+                    client.log('--- Selecting radio in "' + property + '": ' + data[property] + ' ---');
+                    client.api.useXpath().click(util.format(client.elements.radios.selector, data[property]));
                 }
             }
         }
@@ -148,7 +160,7 @@ var tournamentFromCommands = {
         function fillFormTextareas(client, data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) {
-                    client.log('* Typing into textarea "' + property + '": ' + data[property] + '* ');
+                    client.log('--- Typing into textarea "' + property + '": ' + data[property] + '--- ');
                     client.api.useXpath().clearValue(util.format(client.elements.textareas.selector,property))
                         .setValue(util.format(client.elements.textareas.selector,property), data[property]);
                 }
@@ -158,7 +170,7 @@ var tournamentFromCommands = {
         function fillFormCheckboxes(client, data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) {
-                    client.log('* Clicking checkbox "' + property + '" *');
+                    client.log('--- Clicking checkbox "' + property + '" ---');
                     client.api.useCss().verify.elementPresent(util.format(client.elements.checkboxes.selector, property));
 
                     var required = data[property];
@@ -167,14 +179,14 @@ var tournamentFromCommands = {
                     client.api.element('css selector', util.format(client.elements.checkboxes_checked.selector, property),
                         (function(required, property, client) {     // closure FTW
                             return function(found) {
-                                client.log('- required state: ' + required);
+                                client.log('----- required state: ' + required);
                                 var state = found.status != -1;
-                                client.log('- current state: ' + state);
+                                client.log('----- current state: ' + state);
                                 //client.log(JSON.stringify(found));
 
                                 //click if needed
                                 if (state != required) {
-                                    client.log('- clicking!');
+                                    client.log('------ clicking!');
                                     client.api.useCss().click(util.format(client.elements.checkboxes.selector, property));
                                 }
                             }
@@ -191,9 +203,31 @@ var tournamentFromCommands = {
         return this;
     },
 
+    validateLocation: function(data, client) {
+
+        var util = require('util');
+
+        this.log('*** Validating location ***');
+        this.api.pause(200);
+
+        for (var property in data) {
+            if (data.hasOwnProperty(property)) {
+                this.api.useXpath().verify.elementPresent(
+                    util.format(this.elements.location_validator.selector, property, data[property])
+                );
+            }
+        }
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this;
+    },
+
     validate: function(client) {
 
-        this.log('* Validating tournament form page *');
+        this.log('*** Validating tournament form page ***');
 
         this.waitForElementVisible('@validator', 10000);
 
@@ -213,6 +247,7 @@ module.exports = {
         inputs: "//input[@id='%s']",
         textareas: "//textarea[@id='%s']",
         selects: "//select[@id='%s']",
+        radios: "//input[@id='%s']",
         errorlist: "//div[@id='error-list']/ul/li[contains(., '%s')]",
         checkboxes: "input[id='%s']",                   // css selector!
         checkboxes_checked: "input:checked[id='%s']",    // css selector!
@@ -220,6 +255,7 @@ module.exports = {
             selector: "//h4[contains(.,'Create new tournament') or contains(.,'Edit tournament')]",
             locateStrategy: 'xpath'
         },
+        location_validator: "//input[@id='%s' and @value='%s']",
         players_number_disabled: {
             selector: "//input[@id='players_number' and @disabled]",
             locateStrategy: 'xpath'
@@ -270,6 +306,14 @@ module.exports = {
         },
         overlay_location: {
             selector: "//div[@id='overlay-location']",
+            locateStrategy: 'xpath'
+        },
+        overlay_recurring: {
+            selector: "//div[@id='overlay-weekly']",
+            locateStrategy: 'xpath'
+        },
+        overlay_cardpool: {
+            selector: "//div[@id='overlay-cardpool']",
             locateStrategy: 'xpath'
         }
     }

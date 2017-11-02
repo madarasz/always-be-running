@@ -7,6 +7,18 @@ var menuCommands = {
         }
 
         return this;
+    },
+
+    validateMenu: function(item, client) {
+        this.log('*** Validating existence of menu item: ' + item + ' ***');
+
+        this.waitForElementVisible('@' + item, 10000);
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this;
     }
 };
 
@@ -29,8 +41,24 @@ module.exports = {
             selector: "//a[contains(text(),'Admin')]",
             locateStrategy: 'xpath'
         },
-        my: {
-            selector: "//a[contains(text(),'My Tournaments')]",
+        personal: {
+            selector: "//a[contains(text(),'Personal')]",
+            locateStrategy: 'xpath'
+        },
+        profile: {
+            selector: "//a[contains(text(),'Profile')]",
+            locateStrategy: 'xpath'
+        },
+        login: {
+            selector: "//a[contains(text(),'Login via NetrunnerDB')]",
+            locateStrategy: 'xpath'
+        },
+        logout: {
+            selector: "//a[@id='button-logout']",
+            locateStrategy: 'xpath'
+        },
+        acceptCookies: {
+            selector: "//a[@class='cc_btn cc_btn_accept_all']",
             locateStrategy: 'xpath'
         }
     }

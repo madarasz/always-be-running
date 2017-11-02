@@ -6,21 +6,21 @@
   "custom_commands_path": "./tests/nightwatch/commands",
   "custom_assertions_path": "./tests/nightwatch/assertions",
   "page_objects_path": "./tests/nightwatch/pageobjects",
-  "globals_path": "./tests/nightwatch/globals/login-data.js",
+  "globals_path": "./tests/nightwatch/globals/globals.js",
   "test_workers": {
     "enabled": false,
     "workers": "auto"
   },
   "selenium": {
     "start_process": true,
-    "server_path": "./tests/nightwatch/bin/selenium-server-standalone.jar",
+    "server_path": "./tests/nightwatch/bin/selenium-server-standalone-2.53.1.jar",
     "log_path": "",
     "host": "127.0.0.1",
     "port": 4444,
     "cli_args": {
-      "webdriver.chrome.driver": "./tests/nightwatch/bin/chromedriver",
-      "webdriver.ie.driver": "",
-      "webdriver.firefox.profile": "webdriver"
+      "webdriver.chrome.driver": "./node_modules/chromedriver/bin/chromedriver",
+      "webdriver.gecko.driver" : "./node_modules/geckodriver/bin/geckodriver",
+      "webdriver.edge.driver" : ""
     }
   },
   "test_settings": {
@@ -46,14 +46,21 @@
         "acceptSslCerts" : true
       }
     },
+    "firefox": {
+      "desiredCapabilities" : {
+        "browserName" : "firefox",
+        "javascriptEnabled" : true,
+        "acceptSslCerts" : true
+      }
+    },
     "phantomjs": {
       "desiredCapabilities": {
       "browserName": "phantomjs",
       "javascriptEnabled": true,
       "acceptSslCerts": true,
-      "phantomjs.binary.path": "./tests/nightwatch/bin/phantomjs",
+      "phantomjs.binary.path": "./node_modules/phantomjs/bin/phantomjs",
       "phantomjs.cli.args": []
-  }
-}
+      }
+    }
   }
 }

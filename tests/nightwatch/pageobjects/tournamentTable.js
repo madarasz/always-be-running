@@ -8,7 +8,7 @@ var tableCommands = {
         var util = require('util');
 
         this.api.useXpath()
-            .waitForElementVisible(util.format(this.elements.row.selector, table_id, title), 5000);
+            .waitForElementPresent(util.format(this.elements.row.selector, table_id, title), 5000);
 
         if (data.hasOwnProperty('texts')) {
             data.texts.forEach(function(item) {
@@ -26,6 +26,10 @@ var tableCommands = {
             data.texts_missing.forEach(function(item) {
                 this.api.assert.elementNotPresent(util.format(this.elements.text.selector, table_id, title, item));
             }, this);
+        }
+
+        if (data.hasOwnProperty('multi_day') && data['multi_day']) {
+            this.api.verify.elementPresent(util.format(this.elements.multiDay.selector, table_id, title));
         }
 
         if (typeof callback === "function") {
@@ -58,9 +62,12 @@ var tableCommands = {
 
         this.log('*** Clickeing tournament on table ('+table_id+'): '+title+' ***');
 
-        var util = require('util');
+        var util = require('util'),
+            selector = util.format(this.elements.title.selector, table_id, title);
 
-        this.api.useXpath().click(util.format(this.elements.title.selector, table_id, title));
+        this.api.useXpath()
+            .getLocationInView(selector)
+            .click(selector);
 
         if (typeof callback === "function") {
             callback.call(client);
@@ -77,12 +84,19 @@ var tableCommands = {
 
         var util = require('util');
 
-        if (action === 'delete') {
-            this.api.click(util.format(this.elements.deleteButton.selector, table_id, title));
-            this.log('* Checking if delete was successfull *');
+        if (action == 'delete' || action == 'remove') {
+            var selector = util.format(this.elements.actionButton.selector, table_id, title, action);
+            this.api
+                .getLocationInView(selector)
+                .click(util.format(selector))
+                .acceptAlert();
+            this.log('*** Checking if delete was successfull ***');
             this.api.assert.elementNotPresent(util.format(this.elements.row.selector, table_id, title));
         } else {
-            this.api.click(util.format(this.elements.button.selector, table_id, title, action));
+            var selector = util.format(this.elements.button.selector, table_id, title, action);
+            this.api
+                .getLocationInView(selector)
+                .click(selector);
         }
 
         if (typeof callback === "function") {
@@ -100,7 +114,8 @@ module.exports = {
         row: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]",
         text: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td[contains(.,'%s')]",
         label: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/span[contains(.,'%s')]",
-        deleteButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'delete')]",
+        multiDay: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/span/i[contains(@class, 'fa-plus-circle')]",
+        actionButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'%s')]",
         button: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/*[contains(.,'%s')]",
         title: "//table[@id='%s']/tbody/tr/td/a[contains(.,'%s')]"
     }

@@ -40,7 +40,7 @@
                     <li class="nav-item notif-green notif-badge{{ @$page_section == 'profile' ? ' active' : '' }}" id="nav-profile">
                         <a class="nav-link" href="/profile/{{ Auth::user()->id }}">Profile</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="/logout"><i class="fa fa-power-off" title="Logout"></i></a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout" id="button-logout"><i class="fa fa-power-off" title="Logout"></i></a></li>
                 @else
                     <li class="nav-item"><a class="nav-link" href="/oauth2/redirect">Login via NetrunnerDB</a></li>
                 @endif

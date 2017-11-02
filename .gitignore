@@ -26,7 +26,7 @@ public/build
 tests/nightwatch/bin
 selenium-debug.log
 tests/nightwatch/reports
-tests/nightwatch/globals/login-data.js
+tests/nightwatch/globals/globals.js
 cards.json
 composer.phar
 resources/assets/js/bootstrap.min.js

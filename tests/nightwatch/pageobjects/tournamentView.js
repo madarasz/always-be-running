@@ -115,7 +115,7 @@ var tournamentViewCommands = {
 
     validate: function(client) {
 
-        this.log('* Validating tournament details page *');
+        this.log('*** Validating tournament details page ***');
 
         this.waitForElementVisible('@validator', 10000);
 
@@ -134,9 +134,12 @@ module.exports = {
     elements: {
         title: "//span[@id='tournament-title' and contains(., '%s')]",
         ttype: "//span[@id='tournament-type' and contains(., '%s')]",
+        tformat: "//span[@id='tournament-format' and contains(., '%s')]",
         creator: "//span[@id='tournament-creator' and contains(., '%s')]",
         description: "//div[@id='tournament-description' and contains(., '%s')]",
         cardpool: "//span[@id='cardpool' and contains(., '%s')]",
+        facebookGroup: "//a[contains(., 'Facebook group') and @href='%s']",
+        facebookEvent: "//a[contains(., 'Facebook event') and @href='%s']",
         date: "//span[@id='tournament-date' and contains(., '%s')]",
         time: "//span[@id='start-time' and contains(., '%s')]",
         location: "//span[@id='tournament-location' and contains(., '%s')]",
@@ -185,6 +188,14 @@ module.exports = {
         },
         deleteButton: {
             selector: "//button[@id='delete-button']",
+            locateStrategy: 'xpath'
+        },
+        transferButton: {
+            selector: "//button[@id='button-transfer']",
+            locateStrategy: 'xpath'
+        },
+        featureButton: {
+            selector: "//button[@id='feature-button']",
             locateStrategy: 'xpath'
         },
         conflictWarning: {

@@ -44,7 +44,7 @@
     @if ($tournament->date)
         <p>
             <strong>Legal cardpool up to:</strong> <span id="cardpool"><em>{{ $tournament->cardpool->name }}</em></span><br/>
-            <strong>Format:</strong> <span id="cardpool">{{ $format }}</span>
+            <strong>Format:</strong> <span id="tournament-format">{{ $format }}</span>
             @include('partials.popover', ['direction' => 'right', 'content' =>
                         '<ul>
                             <li><strong>Standard:</strong> Most tournaments are like this. <em>Tournament Regulations</em> by FFG, the latest <em>MWL</em> and <em>FAQ</em> are in effect.</li>
