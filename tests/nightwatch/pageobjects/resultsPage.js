@@ -34,11 +34,11 @@ module.exports = {
             locateStrategy: 'xpath'
         },
         resultsTab: {
-            selector: "//li[@id='tab-results']",
+            selector: "//li[@id='t-results']",
             locateStrategy: 'xpath'
         },
         toBeConcludedTab: {
-            selector: "//li[@id='tab-to-be-concluded']",
+            selector: "//li[@id='t-to-be-concluded']",
             locateStrategy: 'xpath'
         },
         resultsTable: {

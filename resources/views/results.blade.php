@@ -11,7 +11,7 @@
                 @if (@Auth::user())
                 <div class="modal-tabs">
                     <ul id="result-tabs" class="nav nav-tabs" role="tablist">
-                        <li class="nav-item" id="tab-results">
+                        <li class="nav-item" id="t-results">
                             <a class="nav-link active" data-toggle="tab" href="#tab-results" role="tab">
                                 <h5>
                                     <i class="fa fa-list-alt" aria-hidden="true"></i>
@@ -21,7 +21,7 @@
                                 </h5>
                             </a>
                         </li>
-                        <li class="nav-item" id="tab-to-be-concluded">
+                        <li class="nav-item" id="t-to-be-concluded">
                             <a class="nav-link" data-toggle="tab" href="#tab-to-be-concluded" role="tab">
                                 <h5>
                                     <i class="fa fa-clock-o" aria-hidden="true"></i>
