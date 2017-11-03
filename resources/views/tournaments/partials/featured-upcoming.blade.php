@@ -39,6 +39,25 @@
                         </div>
                     </div>
                 @endforeach
+                {{--support me box--}}
+                <div class="col-md-4 col-xs-6">
+                    <div class="featured-box">
+                        <div class="featured-header">
+                            <div class="featured-bg" style="background-color: #fee3a9"></div>
+                            <div class="stuff">
+                                <div class="featured-title">
+                                    <i title="support me" class="fa fa-gift"></i>
+                                    <a href="/support-me" class="supporter">
+                                        <strong>Support AlwaysBeRunning.net</strong>
+                                    </a>
+                                </div>
+                                <div class="featured-title">
+                                    <em>thank you for using this site</em>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
