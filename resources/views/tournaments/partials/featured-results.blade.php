@@ -12,6 +12,21 @@
                                 <li>TO is a <a href="/support-me">supporter</a></li>
                             </ul>'])
     </h5>
+    {{--support me box--}}
+    <div class="featured-box">
+        <div class="featured-header">
+            <div class="featured-bg support-bg"></div>
+            <div class="stuff">
+                <div class="featured-title">
+                    <i title="support me" class="fa fa-gift"></i>
+                    <a href="/support-me" class="supporter">
+                        <strong>Support me</strong>
+                    </a>
+                </div>
+                <span class="small-text">thank you for using this site</span>
+            </div>
+        </div>
+    </div>
     @foreach($featured as $ft)
         <div class="featured-box">
             {{--header--}}

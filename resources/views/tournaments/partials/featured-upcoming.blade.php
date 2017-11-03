@@ -43,7 +43,7 @@
                 <div class="col-md-4 col-xs-6">
                     <div class="featured-box">
                         <div class="featured-header">
-                            <div class="featured-bg" style="background-color: #fee3a9"></div>
+                            <div class="featured-bg support-bg"></div>
                             <div class="stuff">
                                 <div class="featured-title">
                                     <i title="support me" class="fa fa-gift"></i>

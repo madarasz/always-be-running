@@ -856,6 +856,9 @@ a.admin:hover {
     z-index: -1;
     top: 0;
 }
+.support-bg {
+    background-color: #fee3a9;
+}
 .stuff {
     padding: 0.5em;
     text-shadow: 1px 1px white;
