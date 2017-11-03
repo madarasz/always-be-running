@@ -15,6 +15,7 @@ module.exports = {
      * - Validate tournament form, fill out form with single day tournament data
      * - Validate that location is found and correct
      * - Save tournament, validate tournament details page
+     * - Click Update button, verify tournament form, click Cancel
      * - Navigate to Organize page, validate entry on table of created tournaments
      * - Navigate to Upcoming page, check upcoming tournaments table
      * - Logout
@@ -53,7 +54,7 @@ module.exports = {
             .validate()
             .assertForm({
                 visible: ['players_number_disabled', 'map_loaded', 'overlay_recurring'],
-                not_visible: ['overlay_conclusion', 'overlay_location']
+                not_visible: ['overlay_conclusion', 'overlay_location', 'overlay_cardpool']
             })
             .fillForm({
                 inputs: {
@@ -148,6 +149,48 @@ module.exports = {
                 unregisterButton: false,
                 registerButton: true
             });
+
+        // click Update button, verify tournament form, click Cancel
+        browser.log('* Click Update button, verify tournament form, click Cancel *');
+        browser.page.tournamentView().click('@editButton');
+        browser.page.tournamentForm()
+            .validate()
+            .assertForm({
+                visible: ['players_number_disabled', 'map_loaded', 'overlay_recurring',
+                    'location_country', 'location_city', 'location_store', 'location_address'],
+                not_present: ['location_state'],
+                not_visible: ['overlay_location', 'overlay_cardpool', 'overlay_conclusion'],
+                inputs: {
+                    title: tournamentSingleDay.title,
+                    date: tournamentSingleDay.date,
+                    link_facebook: tournamentSingleDay.facebook,
+                    start_time: tournamentSingleDay.time,
+                    contact: tournamentSingleDay.contact
+                },
+                textareas: {description: tournamentSingleDay.description},
+                selects: {
+                    tournament_type_id: tournamentSingleDay.type_id,
+                    tournament_format_id: tournamentSingleDay.format_id,
+                    cardpool_id: tournamentSingleDay.cardpool_id
+                },
+                radios: {
+                    date_type_id: tournamentSingleDay.date_type_id
+                },
+                checkboxes: {
+                    decklist: tournamentSingleDay.decklist,
+                    concluded: tournamentSingleDay.conclusion
+                }
+            })
+            .validateLocation({
+                location_country: tournamentSingleDay.country,
+                location_city: tournamentSingleDay.city,
+                location_store: tournamentSingleDay.store,
+                location_address: tournamentSingleDay.address,
+                location_place_id: tournamentSingleDay.location_place_id,
+                location_lat: tournamentSingleDay.location_lat,
+                location_long: tournamentSingleDay.location_long
+            })
+            .click('@cancel_button');
 
         // navigate to Organize page, validate entry on table of created tournaments
         browser.log('* Navigate to Organize page, validate entry on table of created tournaments *');
@@ -325,6 +368,44 @@ module.exports = {
                 registerButton: true
             });
 
+        // click Update button, verify tournament form, click Cancel
+        browser.log('* Click Update button, verify tournament form, click Cancel *');
+        browser.page.tournamentView().click('@editButton');
+        browser.page.tournamentForm()
+            .validate()
+            .assertForm({
+                visible: ['players_number_disabled', 'map_loaded', 'overlay_conclusion', 'overlay_cardpool',
+                    'location_country', 'location_city' ],
+                not_present: ['location_state', 'location_store', 'location_address'],
+                not_visible: ['overlay_location', 'overlay_recurring'],
+                inputs: {
+                    title: tournamentRecurring.title,
+                    link_facebook: tournamentRecurring.facebook,
+                    start_time: tournamentRecurring.time,
+                    contact: tournamentRecurring.contact
+                },
+                textareas: { description: tournamentRecurring.description },
+                selects: {
+                    tournament_type_id: tournamentRecurring.type_id,
+                    tournament_format_id: tournamentRecurring.format_id,
+                    recur_weekly: tournamentRecurring.recur_weekly_id
+                },
+                radios: {
+                    date_type_id: tournamentRecurring.date_type_id
+                },
+                checkboxes: {
+                    decklist: tournamentRecurring.decklist
+                }
+            })
+            .validateLocation({
+                location_country: tournamentRecurring.country,
+                location_city: tournamentRecurring.city,
+                location_place_id: tournamentRecurring.location_place_id,
+                location_lat: tournamentRecurring.location_lat,
+                location_long: tournamentRecurring.location_long
+            })
+            .click('@cancel_button');
+
         // navigate to Organize page, validate entry on table of created tournaments
         browser.log('* Navigate to Organize page, validate entry on table of created tournaments *');
         browser.page.mainMenu()
@@ -374,8 +455,8 @@ module.exports = {
      * Save tournament, validate tournament details page
      * Navigate to Organize page, validate entry on table of created tournaments
      * Navigate to Results page, check results table
-     * Login with NRDB (admin user), hard delete tournament
      * Logout
+     * Login with NRDB (admin user), hard delete tournament
      */
     'Create multi-day, online tournament (concluded)': function (browser) {
 
@@ -489,6 +570,41 @@ module.exports = {
                 unregisterButton: false,
                 registerButton: false
             });
+
+        // click Update button, verify tournament form, click Cancel
+        browser.log('* Click Update button, verify tournament form, click Cancel *');
+        browser.page.tournamentView().click('@editButton');
+        browser.page.tournamentForm()
+            .validate()
+            .assertForm({
+                visible: ['map_loaded', 'overlay_recurring', 'overlay_location'],
+                not_present: ['players_number_disabled',
+                    'location_state', 'location_country', 'location_city', 'location_store', 'location_address'],
+                not_visible: ['overlay_cardpool', 'overlay_conclusion'],
+                inputs: {
+                    title: tournamentOnlineConcluded.title,
+                    date: tournamentOnlineConcluded.date,
+                    start_time: tournamentOnlineConcluded.time,
+                    contact: tournamentOnlineConcluded.contact,
+                    players_number: tournamentOnlineConcluded.players_number,
+                    end_date: tournamentOnlineConcluded.end_date
+                },
+                textareas: { description: tournamentOnlineConcluded.description },
+                selects: {
+                    tournament_type_id: tournamentOnlineConcluded.type_id,
+                    tournament_format_id: tournamentOnlineConcluded.format_id,
+                    cardpool_id: tournamentOnlineConcluded.cardpool_id,
+                    top_number: tournamentOnlineConcluded.top_number
+                },
+                radios: {
+                    date_type_id: tournamentOnlineConcluded.date_type_id
+                },
+                checkboxes: {
+                    decklist: tournamentOnlineConcluded.decklist,
+                    concluded: tournamentOnlineConcluded.conclusion
+                }
+            })
+            .click('@cancel_button');
 
         // navigate to Organize page, validate entry on table of created tournaments
         browser.log('* Navigate to Organize page, validate entry on table of created tournaments *');

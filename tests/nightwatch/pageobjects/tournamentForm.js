@@ -51,6 +51,14 @@ var tournamentFromCommands = {
             }
         }
 
+        if (data.hasOwnProperty('radios')) {
+            for (var property in data.radios) {
+                if (data.radios.hasOwnProperty(property)) {
+                    this.waitForElementPresent(util.format(this.elements.radio_checked.selector, data.radios[property]), 1000);
+                }
+            }
+        }
+
         if (data.hasOwnProperty('errors')) {
             for (var property in data.errors) {
                 if (data.errors.hasOwnProperty(property)) {
@@ -248,6 +256,7 @@ module.exports = {
         textareas: "//textarea[@id='%s']",
         selects: "//select[@id='%s']",
         radios: "//input[@id='%s']",
+        radio_checked: "//input[@id='%s' and @checked]",
         errorlist: "//div[@id='error-list']/ul/li[contains(., '%s')]",
         checkboxes: "input[id='%s']",                   // css selector!
         checkboxes_checked: "input:checked[id='%s']",    // css selector!
@@ -298,6 +307,10 @@ module.exports = {
         },
         submit_button: {
             selector: "//input[@type='submit']",
+            locateStrategy: 'xpath'
+        },
+        cancel_button: {
+            selector: "//a[@id='button-cancel']",
             locateStrategy: 'xpath'
         },
         overlay_conclusion: {

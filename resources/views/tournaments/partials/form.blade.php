@@ -260,7 +260,7 @@
             {{--create button--}}
             {!! Form::submit($submitButton, ['class' => 'btn btn-primary']) !!}
             {{--cancel button--}}
-            <a href="/organize" class="btn btn-secondary m-l-2">
+            <a href="#" onclick="window.history.back()" class="btn btn-secondary m-l-2" id="button-cancel">
                 <i class="fa fa-times" aria-hidden="true"></i>
                 cancel
             </a>

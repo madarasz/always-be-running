@@ -13,7 +13,7 @@ var emptyLogin = {
     username: 'NecroEmpty',
     password: 'EXAMPLE'
 };
-// single day tournament
+// single day tournament (future date)
 var tournamentSingleDay = {
     title: 'Test Single Day - ' + formatDate(new Date()),
     type: 'non-FFG tournament',
@@ -30,6 +30,7 @@ var tournamentSingleDay = {
     date: '2999.01.01.',
     time: '12:40',
     date_type: 'single',
+    date_type_id: 'end-date-single',
     location_input: 'Budapest metagame',
     location: 'Hungary, Budapest',
     country: 'Hungary',
@@ -38,8 +39,8 @@ var tournamentSingleDay = {
     store: 'Metagame Kártya-, és Társasjáték Bolt',
     address: 'Budapest, Kádár u. 10, 1132 Hungary',
     location_place_id: 'ChIJIaFnNgzcQUcRnH7g2gqy2Xk',
-    location_lat: 47.511,
-    location_long: 19.054
+    location_lat: '47.511667',
+    location_long: '19.054372000000058'
 };
 // recurring tournament
 var tournamentRecurring = {
@@ -54,6 +55,7 @@ var tournamentRecurring = {
     description: 'description recurring',
     time: '18:00',
     recur_weekly: 'Wednesday',
+    recur_weekly_id: '3',
     date_type: 'recurring',
     date_type_id: 'end-date-recur',
     location_input: 'Barcelona',
@@ -67,12 +69,34 @@ var tournamentRecurring = {
     location_lat: '41.38506389999999',
     location_long: '2.1734034999999494'
 };
-
+// online, multi-day concluded tournament
+var tournamentOnlineConcluded = {
+    title: 'Test Multi-Day - ' + formatDate(new Date()),
+    type: 'online event',
+    type_id: '7',
+    cardpool: 'Terminal Directive',
+    cardpool_id: 'td',
+    format: '1.1.1.1',
+    format_id: '3',
+    decklist: true,
+    contact: 'alwaysberunning@gmail.com',
+    description: 'description online',
+    conclusion: true,
+    players_number: '22',
+    top: 'top 4',
+    top_number: '4',
+    date: '2017.01.01.',
+    end_date: '2017.01.05.',
+    time: '11:40',
+    date_type: 'multiple',
+    date_type_id: 'end-date-multiple'
+};
 
 module.exports = {
     adminLogin: adminLogin,
     regularLogin: regularLogin,
     emptyLogin: emptyLogin,
     tournamentSingleDay: tournamentSingleDay,
-    tournamentRecurring: tournamentRecurring
+    tournamentRecurring: tournamentRecurring,
+    tournamentOnlineConcluded: tournamentOnlineConcluded
 };
