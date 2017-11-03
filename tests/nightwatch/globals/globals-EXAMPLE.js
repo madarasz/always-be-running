@@ -83,6 +83,7 @@ var tournamentOnlineConcluded = {
     description: 'description online',
     conclusion: true,
     players_number: '22',
+    players_number_wrong: '2',
     top: 'top 4',
     top_number: '4',
     date: '2017.01.01.',

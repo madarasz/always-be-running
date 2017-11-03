@@ -8,9 +8,9 @@ exports.command = function (username, password, callback) {
         .windowMaximize('current')
 
         // logout if needed
-        .element('Xpath', "//a[contains(text(),'Logout')]", function(result) {
+        .element('Xpath', "//a[@id='button-logout']", function(result) {
             if (result.value && result.value.ELEMENT) {
-                client.click("//a[contains(text(),'Logout')]")
+                client.click("//a[@id='button-logout']")
             }
         })
 

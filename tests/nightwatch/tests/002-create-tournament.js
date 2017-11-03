@@ -36,8 +36,6 @@ module.exports = {
         browser.page.mainMenu()
             .selectMenu('organize');
 
-        browser.page.organizePage().validate(false);
-
         // login with NRDB (regular user)
         browser.log('* Login with NRDB (regular user) *');
         browser.login(regularLogin.username, regularLogin.password);
@@ -259,8 +257,6 @@ module.exports = {
         browser.page.mainMenu()
             .selectMenu('organize');
 
-        browser.page.organizePage().validate(false);
-
         // login with NRDB (regular user)
         browser.log('* Login with NRDB (regular user) *');
         browser.login(regularLogin.username, regularLogin.password);
@@ -473,8 +469,6 @@ module.exports = {
         browser.page.mainMenu()
             .selectMenu('organize');
 
-        browser.page.organizePage().validate(false);
-
         // login with NRDB (regular user)
         browser.log('* Login with NRDB (regular user) *');
         browser.login(regularLogin.username, regularLogin.password);
@@ -626,6 +620,8 @@ module.exports = {
         });
 
         // logout
+        browser.page.mainMenu()
+            .selectMenu('organize');    // results page loads slow, navigating to organize
         browser.log('* Logout *');
         browser.page.mainMenu().selectMenu('logout');
 
@@ -648,5 +644,106 @@ module.exports = {
             })
             .selectTournamentAction('deleted', tournamentOnlineConcluded.title, 'remove');
 
+    },
+
+    /**
+     * Navigate to Organize pag
+     * Login with NRDB (regular user)
+     * Validate login, click Create Tournament
+     * Fill date, end date (earlier than start date), submit, check for validation errors
+     * Fix end date > date, set conclusion, submit, check for validation errors
+     * Fix end date > date, set conclusion, submit, wrong player number, check for validation errors
+     * @param browser
+     */
+    'Tournament form validation': function (browser) {
+
+        var regularLogin = browser.globals.regularLogin,
+            tournamentOnlineConcluded = browser.globals.tournamentOnlineConcluded;
+
+        // open browser
+        browser.url(browser.launchUrl);
+        browser.page.upcomingPage().validate();
+
+        // navigate to Organize page
+        browser.log('* Navigate to Organize page *');
+        browser.page.mainMenu()
+            .selectMenu('organize');
+
+        // login with NRDB (regular user)
+        browser.log('* Login with NRDB (regular user) *');
+        browser.login(regularLogin.username, regularLogin.password);
+
+        // validate login, click Create Tournament
+        browser.log('* Validate login, click Create Tournament *');
+        browser.page.organizePage()
+            .validate(true)
+            .clickCommand('createTournament');
+
+        // Fill date, end date (earlier than start date), submit, check for validation errors
+        browser.log('* Fill date, end date (earlier than start date), submit, check for validation errors *');
+        browser.page.tournamentForm()
+            .validate()
+            .fillForm({
+                radios: {
+                    date_type_id: tournamentOnlineConcluded.date_type_id
+                }
+            })
+            .fillForm({
+                inputs: {
+                    date: tournamentOnlineConcluded.end_date,
+                    end_date: tournamentOnlineConcluded.date
+                }
+            });
+        browser.page.mainMenu().click('@acceptCookies'); // cookies info is in the way
+        browser.page.tournamentForm()
+            .getLocationInView('@submit_button').click('@submit_button')
+            .assertForm({
+                errors: [
+                    'The location city field is required.',
+                    'The location country field is required.',
+                    'End date should be later than (start) date.'
+                ]
+            });
+
+        // Fix end date > date, set conclusion, submit, wrong player number, check for validation errors
+        browser.log('* Fix end date > date, set conclusion, wrong player number, submit, check for validation errors *');
+        browser.page.tournamentForm()
+            .fillForm({
+                inputs: {
+                    date: tournamentOnlineConcluded.date,
+                    end_date: tournamentOnlineConcluded.end_date
+                },
+                checkboxes: {
+                    concluded: tournamentOnlineConcluded.conclusion
+                }
+            })
+            .getLocationInView('@submit_button').click('@submit_button')
+            .assertForm({
+                errors: [
+                    'The location city field is required.',
+                    'The location country field is required.',
+                    'The players number field is required.'
+                ]
+            });
+
+        // Input less players than top cut, check for validation errors
+        browser.log('* Input less players than top cut, check for validation errors *');
+        browser.page.tournamentForm()
+            .fillForm({
+                inputs: {
+                    players_number: tournamentOnlineConcluded.players_number_wrong
+                },
+                selects: {
+                    top_number: tournamentOnlineConcluded.top
+                }
+            })
+            .getLocationInView('@submit_button').click('@submit_button')
+            .assertForm({
+                errors: [
+                    'The location city field is required.',
+                    'The location country field is required.',
+                    'Players in top cut should be less than the total number of players.'
+                ]
+            });
     }
 };
