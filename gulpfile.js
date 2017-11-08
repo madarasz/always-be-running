@@ -2,6 +2,8 @@ process.env.DISABLE_NOTIFIER = true;
 var elixir = require('laravel-elixir');
 var gulp = require("gulp");
 var shell = require("gulp-shell");
+var nightwatch = require('gulp-nightwatch');
+var clean = require('gulp-rimraf');
 
 /*
  |--------------------------------------------------------------------------
@@ -60,3 +62,25 @@ elixir(function(mix) {
     });
 });
 
+// run automated nightwatch tests
+gulp.task('nightwatch:chrome', function(){
+    return gulp.src('')
+        .pipe(nightwatch({
+            configFile: './tests/nightwatch/nightwatch.json',
+            cliArgs: [ '--env chrome' ]
+        }));
+});
+gulp.task('nightwatch:phantomjs', function(){
+    return gulp.src('')
+        .pipe(nightwatch({
+            configFile: './tests/nightwatch/nightwatch.json',
+            cliArgs: [ '--env phantomjs' ]
+        }));
+});
+// deleting reports and screenshots of nightwatch tests
+gulp.task('nightwatch:clean', function(){
+    console.log('Cleaning reports and screenshots.');
+    // TODO: it still deletes the .gitkeep file
+    return gulp.src(['!tests/nightwatch/reports/screenshots/.gitkeep', 'tests/nightwatch/reports/*' ],
+        { read: false, dot: true }).pipe(clean());
+});

@@ -1,7 +1,7 @@
 module.exports = {
 
     beforeEach: function(browser) {
-        browser.deleteCookies();
+        browser.deleteCookies().windowMaximize('current');
     },
 
     after: function(browser) {

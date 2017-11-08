@@ -85,11 +85,18 @@ var tableCommands = {
         var util = require('util');
 
         if (action == 'delete' || action == 'remove') {
+            // click delete / remove
             var selector = util.format(this.elements.actionButton.selector, table_id, title, action);
             this.api
                 .getLocationInView(selector)
                 .click(util.format(selector))
                 .acceptAlert();
+            // TODO: accept dialog workaround for PhantomJS
+            //this.api.execute(function() {
+            //    window.confirm = function(msg){return true;};
+            //    return true;
+            //});
+            // check if delete was successful
             this.log('*** Checking if delete was successfull ***');
             this.api.assert.elementNotPresent(util.format(this.elements.row.selector, table_id, title));
         } else {

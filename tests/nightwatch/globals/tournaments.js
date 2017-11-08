@@ -1,18 +1,3 @@
-// user with admin rights and available published decklists
-var adminLogin = {
-    username: 'Necro',
-    password: 'EXAMPLE'
-};
-// regular user with available published decklists
-var regularLogin = {
-    username: 'Necro2',
-    password: 'EXAMPLE'
-};
-// user with no published decklists
-var emptyLogin = {
-    username: 'NecroEmpty',
-    password: 'EXAMPLE'
-};
 // single day tournament (future date)
 var tournamentSingleDay = {
     title: 'Test Single Day - ' + formatDate(new Date()),
@@ -93,10 +78,18 @@ var tournamentOnlineConcluded = {
     date_type_id: 'end-date-multiple'
 };
 
+function formatDate(date) {
+    var year = date.getFullYear(),
+        month = date.getMonth() + 1, // months are zero indexed
+        day = date.getDate(),
+        hour = date.getHours(),
+        minute = date.getMinutes(),
+        minuteFormatted = minute < 10 ? "0" + minute : minute;
+
+    return year + "." + month + "." + day + " " + hour + ":" + minuteFormatted;
+}
+
 module.exports = {
-    adminLogin: adminLogin,
-    regularLogin: regularLogin,
-    emptyLogin: emptyLogin,
     tournamentSingleDay: tournamentSingleDay,
     tournamentRecurring: tournamentRecurring,
     tournamentOnlineConcluded: tournamentOnlineConcluded
