@@ -49,7 +49,7 @@
 </div>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
-    var chartData, chartDataTop,
+    var chartData, chartDataTop = [],
         showIDs = true,
         showAll = true,
         playernum = parseInt('{{ $tournament->players_number }}'),
@@ -66,10 +66,18 @@
             success: function (data) {
                 $('.stat-load').addClass('hidden-xs-up');
                 chartData = data;
+
+                // make top-cut data
                 if (topnum > 0) {
-                    chartDataTop = data.slice(0,16);
+                    for (var i = 0; i < chartData.length; i++) {
+                        if (parseInt(chartData[i].rank_top) > 0) {
+                            chartDataTop.push(chartData[i]);
+                        }
+                    }
+
                     $('#button-group-top').removeClass('hidden-xs-up');
                 }
+
                 drawTournamentCharts();
                 $('#button-showmatches').removeClass('disabled').prop("disabled", false);
                 $('#button-stats-id').prop("disabled", false);
