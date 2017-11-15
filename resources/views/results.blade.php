@@ -156,7 +156,7 @@
 
             @if(@Auth::user())
             // load tournaments to be concluded
-            getTournamentData("?approved=1&concluded=0&recur=0&hide-non=1&desc=1&end={{ $nowdate }}", function(data) {
+            getTournamentData("?concluded=0&recur=0&hide-non=1&desc=1&end={{ $nowdate }}", function(data) {
                 toBeConcludedAll = data;
                 toBeConcludedFiltered = toBeConcludedAll.slice();
 

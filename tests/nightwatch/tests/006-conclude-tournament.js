@@ -14,11 +14,17 @@ module.exports = {
      * Validate login, click Create Tournament
      * Fill out tournament form with past tournament data
      * Save tournament, validate tournament details page
+     * Navigate to Results page
+     * Check that tournament is in to-be-concluded table and not in results table
+     * Navigate to tournament details
      * Conclude tournament manually, assert tournament page
-     * Navigate to Results page, validate tournament in table
+     * Navigate to Results page, check that tournament is in results table, not in to-be-concluded
      * Navigate to tournament view, revert conclusion, validate tournament
      * Logout
-     * Login with NRDB (admin user), hard delete tournament
+     * Login with NRDB (admin user)
+     * Navigate to Results page
+     * Check that tournament is in to-be-concluded table and not in results table
+     * Hard delete tournament
      */
     'Manual Conclusion (with top-cut), revert by creator': function (browser) {
         var regularLogin = browser.globals.regularLogin,
@@ -106,7 +112,30 @@ module.exports = {
                 revertButton: false
             });
 
-        // Conclude tournament manually, validate tournament page
+        // Navigate to Results page
+        browser.log('* Navigate to Results page *');
+        browser.page.mainMenu()
+            .selectMenu('results');
+
+        // Check that tournament is in to-be-concluded table and not in results table
+        browser.log('* Check that tournament is in to-be-concluded table and not in results table *');
+        browser.page.tournamentTable()
+            .assertMissingRow('results', tournamentOnlineConcluded.title)
+            .click('@toBeConcludedTab')
+            .assertTable('to-be-concluded', tournamentOnlineConcluded.title, {
+                texts: [tournamentOnlineConcluded.date, tournamentOnlineConcluded.cardpool, 'online',
+                    tournamentOnlineConcluded.cardpool],
+                buttons: ['conclude']
+            });
+
+        // Navigate to tournament details
+        browser.log('* Navigate to tournament details  *');
+        browser.page.mainMenu()
+            .selectMenu('organize'); // TODO: navigate form the Results page
+        browser.page.tournamentTable()
+            .selectTournament('created', tournamentOnlineConcluded.title);
+
+        // Conclude tournament manually, assert tournament page
         browser.log('* Conclude tournament manually, assert tournament page *');
         browser.page.tournamentView()
             .click('@buttonConclude');
@@ -157,15 +186,17 @@ module.exports = {
                 revertButton: true
             });
 
-        // Navigate to Results page, validate tournament in table
-        browser.log('* Navigate to Results page, validate tournament in table *');
+        // Navigate to Results page, check that tournament is in results table, not in to-be-concluded table
+        browser.log('* Navigate to Results page, check that tournament is in results table, not in to-be-concluded table *');
         browser.page.mainMenu()
             .selectMenu('results');
         browser.page.tournamentTable()
             .assertTable('results', tournamentOnlineConcluded.title, {
                 texts: [tournamentOnlineConcluded.date, tournamentOnlineConcluded.cardpool, 'online',
                     tournamentOnlineConcluded.cardpool, tournamentOnlineConcluded.players_number]
-            });
+            })
+            .click('@toBeConcludedTab')
+            .assertMissingRow('to-be-concluded', tournamentOnlineConcluded.title);
 
         // Navigate to tournament view, revert conclusion, validate tournament
         browser.log('* Navigate to tournament view, revert conclusion, validate tournament *');
@@ -219,9 +250,28 @@ module.exports = {
         browser.log('* Logout *');
         browser.page.mainMenu().selectMenu('logout');
 
-        // login as admin, hard delete tournament
+        // login as admin
         browser.log('* Login with NRDB (admin user), hard delete tournament *');
         browser.login(adminLogin.username, adminLogin.password);
+
+        // Navigate to Results page
+        browser.log('* Navigate to Results page *');
+        browser.page.mainMenu()
+            .selectMenu('results');
+
+        // Check that tournament is in to-be-concluded table and not in results table
+        browser.log('* Check that tournament is in to-be-concluded table and not in results table *');
+        browser.page.tournamentTable()
+            .assertMissingRow('results', tournamentOnlineConcluded.title)
+            .click('@toBeConcludedTab')
+            .assertTable('to-be-concluded', tournamentOnlineConcluded.title, {
+                texts: [tournamentOnlineConcluded.date, tournamentOnlineConcluded.cardpool, 'online',
+                    tournamentOnlineConcluded.cardpool],
+                buttons: ['conclude']
+            });
+
+        // Hard delete tournament
+        browser.log('* Hard delete tournament *');
         browser.page.mainMenu().selectMenu('admin');
         browser.page.tournamentTable()
             .assertTable('pending', tournamentOnlineConcluded.title, {

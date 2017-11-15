@@ -135,6 +135,14 @@ module.exports = {
         actionButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'%s')]",
         button: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/*[contains(.,'%s')]",
         title: "//table[@id='%s']/tbody/tr/td/a[contains(.,'%s')]",
-        nextButton: "//a[@id='%s-controls-forward']"
+        nextButton: "//a[@id='%s-controls-forward']",
+        resultsTab:  {
+            selector: "//li[@id='t-results']",
+            locateStrategy: 'xpath'
+        },
+        toBeConcludedTab:  {
+             selector: "//li[@id='t-to-be-concluded']",
+            locateStrategy: 'xpath'
+        }
     }
 };
