@@ -1,6 +1,6 @@
 // single day tournament (future date)
 var tournamentSingleDay = {
-    title: 'Test Single Day - ' + formatDate(new Date()),
+    title: formatDate(new Date()) + ' Test Single Day',
     type: 'non-FFG tournament',
     type_id: '6',
     cardpool: 'Business First',
@@ -29,7 +29,7 @@ var tournamentSingleDay = {
 };
 // recurring tournament
 var tournamentRecurring = {
-    title: 'Test Recurring - ' + formatDate(new Date()),
+    title: formatDate(new Date()) + ' Test Recurring',
     type: 'non-tournament event',
     type_id: '8',
     format: 'standard',
@@ -56,7 +56,7 @@ var tournamentRecurring = {
 };
 // online, multi-day concluded tournament
 var tournamentOnlineConcluded = {
-    title: 'Test Multi-Day - ' + formatDate(new Date()),
+    title: formatDate(new Date()) + ' - Test Multi-Day',
     type: 'online event',
     type_id: '7',
     cardpool: 'Terminal Directive',
@@ -84,9 +84,12 @@ function formatDate(date) {
         day = date.getDate(),
         hour = date.getHours(),
         minute = date.getMinutes(),
+        dayFormatted = day < 10 ? "0" + day : day,
+        monthFormatted = month < 10 ? "0" + month : month,
+        hourFormatted = hour < 10 ? "0" + hour : hour,
         minuteFormatted = minute < 10 ? "0" + minute : minute;
 
-    return year + "." + month + "." + day + " " + hour + ":" + minuteFormatted;
+    return year + "." + monthFormatted + "." + dayFormatted + " " + hourFormatted + ":" + minuteFormatted;
 }
 
 module.exports = {

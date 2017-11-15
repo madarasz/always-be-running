@@ -25,7 +25,10 @@ module.exports = {
 
         var regularLogin = browser.globals.regularLogin,
             adminLogin = browser.globals.adminLogin,
-            tournamentSingleDay = browser.globals.tournamentSingleDay;
+            tournamentSingleDay = JSON.parse(JSON.stringify(browser.globals.tournamentSingleDay)); // clone
+
+        tournamentSingleDay.title = browser.currentTest.module.substring(0,3) + "|" +
+            browser.currentTest.name.substring(0,29) + "|" + tournamentSingleDay.title.substring(0, 16);
 
         // open browser
         browser.url(browser.launchUrl);
@@ -99,7 +102,7 @@ module.exports = {
 
         // save tournament, validate tournament details page
         browser.log('* Save tournament, validate tournament details page *');
-        browser.page.mainMenu().click('@acceptCookies'); // cookies info is in the way
+        browser.page.mainMenu().acceptCookies(); // cookies info is in the way
         browser.page.tournamentForm().getLocationInView('@submit_button').click('@submit_button');
         browser.page.tournamentView()
             .validate()
@@ -246,7 +249,10 @@ module.exports = {
 
         var regularLogin = browser.globals.regularLogin,
             adminLogin = browser.globals.adminLogin,
-            tournamentRecurring = browser.globals.tournamentRecurring;
+            tournamentRecurring = JSON.parse(JSON.stringify(browser.globals.tournamentRecurring)); // clone
+
+        tournamentRecurring.title = browser.currentTest.module.substring(0,3) + "|" +
+            browser.currentTest.name.substring(0,29) + "|" + tournamentRecurring.title.substring(0, 16);
 
         // open browser
         browser.url(browser.launchUrl);
@@ -320,7 +326,7 @@ module.exports = {
 
         // save tournament, validate tournament details page
         browser.log('* Save tournament, validate tournament details page *');
-        browser.page.mainMenu().click('@acceptCookies'); // cookies info is in the way
+        browser.page.mainMenu().acceptCookies(); // cookies info is in the way
         browser.page.tournamentForm().getLocationInView('@submit_button').click('@submit_button');
         browser.page.tournamentView()
             .validate()
@@ -458,7 +464,10 @@ module.exports = {
 
         var regularLogin = browser.globals.regularLogin,
             adminLogin = browser.globals.adminLogin,
-            tournamentOnlineConcluded = browser.globals.tournamentOnlineConcluded;
+            tournamentOnlineConcluded = JSON.parse(JSON.stringify(browser.globals.tournamentOnlineConcluded)); // clone
+
+        tournamentOnlineConcluded.title = browser.currentTest.module.substring(0,3) + "|" +
+            browser.currentTest.name.substring(0,29) + "|" + tournamentOnlineConcluded.title.substring(0, 16);
 
         // open browser
         browser.url(browser.launchUrl);
@@ -500,6 +509,13 @@ module.exports = {
                     date_type_id: tournamentOnlineConcluded.date_type_id
                 },
                 checkboxes: {
+                    decklist: tournamentOnlineConcluded.decklist
+                }
+            });
+        browser.page.mainMenu().acceptCookies(); // cookies info is in the way
+        browser.page.tournamentForm()
+            .fillForm({
+                checkboxes: {
                     decklist: tournamentOnlineConcluded.decklist,
                     concluded: tournamentOnlineConcluded.conclusion
                 }
@@ -520,7 +536,6 @@ module.exports = {
 
         // save tournament, validate tournament details page
         browser.log('* Save tournament, validate tournament details page *');
-        browser.page.mainMenu().click('@acceptCookies'); // cookies info is in the way
         browser.page.tournamentForm().getLocationInView('@submit_button').click('@submit_button');
         browser.page.tournamentView()
             .validate()
@@ -694,7 +709,7 @@ module.exports = {
                     end_date: tournamentOnlineConcluded.date
                 }
             });
-        browser.page.mainMenu().click('@acceptCookies'); // cookies info is in the way
+        browser.page.mainMenu().acceptCookies(); // cookies info is in the way
         browser.page.tournamentForm()
             .getLocationInView('@submit_button').click('@submit_button')
             .assertForm({

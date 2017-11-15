@@ -22,6 +22,12 @@ var tableCommands = {
             }, this);
         }
 
+        if (data.hasOwnProperty('buttons')) {
+            data.buttons.forEach(function(item) {
+                this.api.verify.elementPresent(util.format(this.elements.button.selector, table_id, title, item));
+            }, this);
+        }
+
         if (data.hasOwnProperty('texts_missing')) {
             data.texts_missing.forEach(function(item) {
                 this.api.assert.elementNotPresent(util.format(this.elements.text.selector, table_id, title, item));
@@ -60,11 +66,15 @@ var tableCommands = {
     // clicks tournament for tournament detailed view
     selectTournament: function(table_id, title, callback) {
 
-        this.log('*** Clickeing tournament on table ('+table_id+'): '+title+' ***');
+        this.log('*** Clicking tournament on table ('+table_id+'): '+title+' ***');
 
         var util = require('util'),
             selector = util.format(this.elements.title.selector, table_id, title);
 
+        // check if row exists
+        this.api.useXpath().waitForElementPresent(selector, 5000);
+
+        // click row
         this.api.useXpath()
             .getLocationInView(selector)
             .click(selector);
@@ -124,6 +134,7 @@ module.exports = {
         multiDay: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/span/i[contains(@class, 'fa-plus-circle')]",
         actionButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'%s')]",
         button: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/*[contains(.,'%s')]",
-        title: "//table[@id='%s']/tbody/tr/td/a[contains(.,'%s')]"
+        title: "//table[@id='%s']/tbody/tr/td/a[contains(.,'%s')]",
+        nextButton: "//a[@id='%s-controls-forward']"
     }
 };

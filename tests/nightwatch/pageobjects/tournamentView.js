@@ -150,6 +150,7 @@ module.exports = {
         verifySwissEntry: "//table[@id='entries-swiss']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
         verifyTopEntry: "//table[@id='entries-top']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
         entryRemoveButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'%s')]",
+        concludedBy: "//div[@id='concluded-by' and contains(.,'%s')]",
         decklist: {
             selector: "//span[@id='decklist-mandatory']",
             locateStrategy: 'xpath'
@@ -192,6 +193,10 @@ module.exports = {
         },
         transferButton: {
             selector: "//button[@id='button-transfer']",
+            locateStrategy: 'xpath'
+        },
+        revertButton: {
+            selector: "//button[@id='button-revert']",
             locateStrategy: 'xpath'
         },
         featureButton: {

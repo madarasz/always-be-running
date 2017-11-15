@@ -25,7 +25,7 @@
                 @if ($user && ($user->admin || $user->id == $tournament->creator || $user->id == $tournament->concluded_by))
                     {!! Form::open(['method' => 'POST', 'url' => "/tournaments/$tournament->id/conclude/revert", 'style' => 'display: inline']) !!}
                         {!! Form::button('<i class="fa fa-undo" aria-hidden="true"></i> Revert conclusion',
-                            array('type' => 'submit', 'class' => 'btn btn-danger btn-xs',
+                            array('type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'id' => 'button-revert',
                             'onclick' => "return confirm('Are you sure you want to reset this tournament to an unconcluded state? All claims and imported entries are kept and will be displayed after this tournament is concluded again.')")) !!}
                     {!! Form::close() !!}
                 @endif

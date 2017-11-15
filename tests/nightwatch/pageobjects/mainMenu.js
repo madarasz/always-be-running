@@ -19,6 +19,20 @@ var menuCommands = {
         }
 
         return this;
+    },
+
+    acceptCookies: function(client) {
+        this.log('*** Accepting cookies ***');
+
+        this
+            .waitForElementVisible('@acceptCookies', 10000)
+            .click('@acceptCookies');
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this;
     }
 };
 
