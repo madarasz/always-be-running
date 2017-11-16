@@ -935,3 +935,9 @@ img.badge {
     font-size: 80%;
     vertical-align: top;
 }
+/* contact icons in footer */
+.contact-icon {
+    color: #373a3c;
+    font-size: 150%;
+    vertical-align: bottom;
+}

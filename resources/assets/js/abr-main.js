@@ -599,3 +599,29 @@ function getCookie(cname) {
     }
     return "";
 }
+
+// tries to open Slack app with #abr channel. falls back to Slack web link
+// TODO: does not open app for iOS
+var timeout;
+function goToSlackChannel() {
+    var now = new Date().valueOf();
+
+    // redirect to slack app
+    $('<iframe />')
+        .attr('src', 'slack://channel?team=T0AV68M8C&id=C7RRXGD8B')
+        .attr('style', 'display:none;')
+        .appendTo('body');
+
+    // redirect to web link of slack
+    timeout = setTimeout(function() {
+        if (new Date().valueOf() - now > 400) return; // abort if code execution was stopped (app opened)
+        document.location = "https://stimhack.slack.com/messages/C7RRXGD8B/";
+    }, 200);
+
+    window.addEventListener('pagehide', preventPopup);
+}
+function preventPopup() {
+    clearTimeout(timeout);
+    timeout = null;
+    window.removeEventListener('pagehide', preventPopup);
+}

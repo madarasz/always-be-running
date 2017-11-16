@@ -11,9 +11,31 @@
                     Contact
                 </h5>
                 <p>This site is created by <strong>Necro</strong>.</p>
-                <p>You can contact me via: alwaysberunning (at) gmail.comt</p>
+                <p>
+                    You can contact me via:
+                    <ul>
+                        <li>
+                            <i class="fa fa-slack" aria-hidden="true"></i>
+                            Stimhack Slack <a href="#" onclick="goToSlackChannel()">#abr</a> channel
+                        </li>
+                        <li>
+                            <i class="fa fa-envelope-o" aria-hidden="true"></i> alwaysberunning (at) gmail.com
+                        </li>
+                        <li>
+                            <i class="fa fa-twitter" aria-hidden="true"></i>
+                            <a href="https://twitter.com/alwaysberunnin">{{'@'}}alwaysberunnin</a>
+                        </li>
+                        <li>
+                            <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                            <a href="https://www.facebook.com/alwaysberunning/">/alwaysberunning</a>
+                        </li>
+                        <li>
+                            <i class="fa fa-github" aria-hidden="true"></i>
+                            bugs and feature requests: <a href="https://github.com/madarasz/always-be-running">Github</a>
+                        </li>
+                    </ul>
+                </p>
                 <p>All ideas, suggestions, feedback are welcome.</p>
-                <p>Bugs and feaure requests: <a href="https://github.com/madarasz/always-be-running">Github</a></p>
             </div>
             {{--Admins--}}
             <div class="bracket">

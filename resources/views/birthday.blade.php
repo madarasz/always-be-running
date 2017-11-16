@@ -136,12 +136,6 @@
                         <a href="/support-me">You can be a supporter as well.</a>
                     </p>
 
-                    {{--<p class="m-t-2">--}}
-                        {{--Follow us on:--}}
-                        {{--<a href="https://twitter.com/alwaysberunnin"><img src="/img/social-twitter.png" class="img-inline m-r-0"></a>--}}
-                        {{--<a href="https://www.facebook.com/alwaysberunning"><img src="/img/social-fb.png" class="img-inline"></a>--}}
-                    {{--</p>--}}
-
                 </div>
             </div>
         </div>
