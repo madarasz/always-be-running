@@ -90,7 +90,7 @@
                             <a href="/oauth2/redirect">Login via NetrunnerDB</a> to claim spot.
                         </div>
                         {{--Publish private decks--}}
-                        <div class="form-group text-xs-center m-b-0">
+                        <div class="form-group text-xs-center m-b-0 hidden-xs-up">
                             {!! Form::checkbox('auto_publish', null, true, ['id' => 'auto_publish']) !!}
                             {!! Form::label('auto_publish', 'publish selected private decks') !!}
                             {{-- <span class="text-danger legal-bullshit">(currently not working, sorry)</span> --}}
@@ -164,15 +164,15 @@
                         </div>
                     {!! Form::close() !!}
                     {{--Reminder for users not sharing private decks and not having published decks--}}
-                    @if ($user && !$user->sharing && !$user->published_decks)
-                        <div class="alert alert-warning view-indicator text-xs-center" id="warning-not-sharing">
-                            <i class="fa fa-info-circle" aria-hidden="true"></i>
-                            You are not sharing your <em>private decks</em>. This is fine.<br/>
-                            If you want to claim with a <em>private deck</em>, go to
-                            <a href="https://netrunnerdb.com/en/user/profile"><strong>NetrunnerDB&nbsp;account&nbsp;settings</strong></a>,
-                            enable <strong>Share&nbsp;your&nbsp;decks</strong> and <strong>relogin</strong> to AlwaysBeRunning.net.
-                        </div>
-                    @endif
+                    {{--@if ($user && !$user->sharing && !$user->published_decks)--}}
+                        {{--<div class="alert alert-warning view-indicator text-xs-center" id="warning-not-sharing">--}}
+                            {{--<i class="fa fa-info-circle" aria-hidden="true"></i>--}}
+                            {{--You are not sharing your <em>private decks</em>. This is fine.<br/>--}}
+                            {{--If you want to claim with a <em>private deck</em>, go to--}}
+                            {{--<a href="https://netrunnerdb.com/en/user/profile"><strong>NetrunnerDB&nbsp;account&nbsp;settings</strong></a>,--}}
+                            {{--enable <strong>Share&nbsp;your&nbsp;decks</strong> and <strong>relogin</strong> to AlwaysBeRunning.net.--}}
+                        {{--</div>--}}
+                    {{--@endif--}}
                 </div>
                 <div class="container-fluid bd-example-row tab-pane" id="tab-without-decks" role="tabpanel">
                     {{--Claim without decks--}}
