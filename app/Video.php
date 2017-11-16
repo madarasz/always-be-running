@@ -8,7 +8,7 @@ class Video extends Model
 {
     public $timestamps = true;
     protected $fillable = ['video_title', 'video_id', 'thumbnail_url', 'channel_name', 'tournament_id', 'user_id',
-        'type', 'length'];
+        'type', 'length', 'flag_removed'];
     protected $dates = ['created_at', 'updated_at'];
     protected $hidden = ['tournament_id', 'user_id', 'created_at', 'updated_at'];
 

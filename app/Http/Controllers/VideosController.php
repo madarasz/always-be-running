@@ -47,7 +47,8 @@ class VideosController extends Controller
         $errors = [];
 
         if ($data) {
-            $exists = Video::where(['video_id' => $data['video_id'], 'tournament_id' => $tournament->id])->count();
+            $exists = Video::where(['video_id' => $data['video_id'], 'tournament_id' => $tournament->id, 'flag_removed' => false])
+                ->count();
 
             if ($exists < 1) {
                 $data['tournament_id'] = $tournament->id;
@@ -237,6 +238,41 @@ class VideosController extends Controller
         } else {
             return false;
         }
+    }
+
+    /**
+     * Goes through all videos. Flags missing videos, updates length if found.
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function scanForRemovedVideos(Request $request) {
+        $this->authorize('admin', Tournament::class, $request->user());
+        $count = 0;
+        $videos = Video::get();
+        foreach ($videos as $video) {
+            if ($video->type == 1) {
+                // youtube
+                $details = $this->youtubeLookup($video->video_id);
+            } else {
+                // twitch
+                $details = $this->twitchLookup($video->video_id);
+            }
+
+            if ($details == false) {
+                // flag as missing/deleted
+
+                $video->update(['flag_removed' => true]);
+                $count++;
+            } else {
+                // mark as not missing, update length
+
+                $video->update([
+                    'flag_removed' => false,
+                    'length' => array_key_exists('length', $details) ? $details['length'] : null
+                ]);
+            }
+        }
+        return back()->with('message', 'Missing videos flagged: '.$count);
     }
 
     private function secsToLength($seconds)

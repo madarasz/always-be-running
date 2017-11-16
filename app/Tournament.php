@@ -38,7 +38,7 @@ class Tournament extends Model
     }
 
     public function videos() {
-        return $this->hasMany(Video::class, 'tournament_id', 'id');
+        return $this->hasMany(Video::class, 'tournament_id', 'id')->where('flag_removed', false);
     }
 
     public function photos() {

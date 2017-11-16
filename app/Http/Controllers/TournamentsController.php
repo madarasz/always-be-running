@@ -462,7 +462,7 @@ class TournamentsController extends Controller
             $tournaments = $tournaments->where('conflict', $request->input('conflict'));
         }
         if (!is_null($request->input('videos'))) {  // just =1, =0 not supported
-            $videoIDs = Video::pluck('tournament_id')->all();
+            $videoIDs = Video::where('flag_removed', false)->pluck('tournament_id')->all();
             $tournaments = $tournaments->whereIn('id', $videoIDs);
         }
         if ($request->input('deleted')) {

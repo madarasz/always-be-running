@@ -38,10 +38,10 @@ class AdminController extends Controller
         $last_cycle = $count_cycles > 1 ? $cycles[1]->name : '';
         $count_packs = CardPack::count();
         $approved_tournaments = Tournament::where('approved', 1)->whereNull('recur_weekly')->pluck('id')->all(); // + non-recurring
-        $video_channels = Video::whereIn('tournament_id', $approved_tournaments)
+        $video_channels = Video::whereIn('tournament_id', $approved_tournaments)->where('flag_removed', false)
             ->select('channel_name', DB::raw('count(*) as total'))
             ->groupBy('channel_name')->orderBy('total', 'desc')->pluck('total', 'channel_name');
-        $video_users = Video::whereIn('tournament_id', $approved_tournaments)
+        $video_users = Video::whereIn('tournament_id', $approved_tournaments)->where('flag_removed', false)
             ->select('user_id', DB::raw('count(*) as total'))
             ->groupBy('user_id')->orderBy('total', 'desc')->pluck('total', 'user_id');
         $video_users_tagged = VideoTag::select('user_id', DB::raw('count(*) as total'))->where('user_id', '>', 0)
@@ -66,6 +66,7 @@ class AdminController extends Controller
         $photo_users = Photo::whereIn('tournament_id', $approved_tournaments)
             ->select('user_id', DB::raw('count(*) as total'))
             ->groupBy('user_id')->orderBy('total', 'desc')->pluck('total', 'user_id');
+        $missing_videos = Video::where('flag_removed', true)->get();
         // VIP information
         $vips = [];
         $vip_ids = DB::select('SELECT DISTINCT user_id FROM badge_user WHERE badge_id IN (1,2,8,9,10,11,14,15,17,18,31,39,48,56,57,59,60,61,62)');
@@ -108,7 +109,7 @@ class AdminController extends Controller
         return view('admin', compact('user', 'message', 'nowdate', 'badge_type_count', 'badge_count', 'unseen_badge_count',
             'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles',
             'page_section', 'video_channels', 'video_users', 'entry_types', 'published_count', 'private_count',
-            'backlink_count', 'no_backlink_count', 'unexported_count', 'broken_count', 'broken_users',
+            'backlink_count', 'no_backlink_count', 'unexported_count', 'broken_count', 'broken_users', 'missing_videos',
             'ktm_update', 'ktm_packs', 'photos', 'photo_tournaments', 'photo_users', 'video_users_tagged', 'vips'));
     }
 

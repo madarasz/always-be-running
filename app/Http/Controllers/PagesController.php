@@ -269,7 +269,7 @@ class PagesController extends Controller
         $supporters = User::where('supporter', '>', 0)->get();
         $claims = Entry::whereIn('type', [3, 4])->count();
         $decks = Entry::where('type', 3)->count() * 2;
-        $videos = Video::count();
+        $videos = Video::where('flag_removed', false)->count();
         $photos = Photo::count();
         $badges = Badge::count();
         return view('birthday', compact('tournaments', 'weekly', 'countries', 'users', 'claims', 'decks',

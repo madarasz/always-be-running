@@ -312,7 +312,7 @@ class BadgeController extends Controller
 
     public function addVideoBadge($userid) {
         $badges = [47 => false, 666 => false]; // array has to have at least two elements
-        if (Video::where('user_id', $userid)->count() >= 5) {
+        if (Video::where('user_id', $userid)->where('flag_removed', false)->count() >= 5) {
             $badges[47] = true;
         }
         $this->refreshUserBadges($userid, $badges);

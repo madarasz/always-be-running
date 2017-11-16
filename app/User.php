@@ -48,7 +48,7 @@ class User extends Authenticatable
     }
 
     public function videos() {
-        return $this->belongsToMany(Video::class, 'video_tags', 'user_id', 'video_id');
+        return $this->belongsToMany(Video::class, 'video_tags', 'user_id', 'video_id')->where('flag_removed', false);
     }
 
     public function claims() {

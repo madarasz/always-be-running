@@ -22,6 +22,7 @@ Route::get('admin/packs/update', 'NetrunnerDBController@requestPacks');
 Route::get('admin/badges/refresh', 'BadgeController@refreshBadges');
 Route::get('admin/entries/refresh', 'AdminController@setEntryTypes');
 Route::get('admin/decks/broken', 'AdminController@detectBrokenDecks');
+Route::get('admin/videos/broken', 'VideosController@scanForRemovedVideos');
 
 Route::resource('tournaments', 'TournamentsController');
 Route::get('tournaments/{id}/approve', 'AdminController@approveTournament');
