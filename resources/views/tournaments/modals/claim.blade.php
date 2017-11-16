@@ -90,6 +90,13 @@
                             <a href="/oauth2/redirect">Login via NetrunnerDB</a> to claim spot.
                         </div>
                         {{--Publish private decks--}}
+                        <div class="alert alert-warning view-indicator text-xs-center">
+                            <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                            Claiming with private decks is temporarily disabled.
+                            <a href="https://forum.stimhack.com/t/netrunnerdb-exploit-and-how-to-protect-yourself/9305" target="_blank">
+                                Read more.
+                            </a>
+                        </div>
                         <div class="form-group text-xs-center m-b-0 hidden-xs-up">
                             {!! Form::checkbox('auto_publish', null, true, ['id' => 'auto_publish']) !!}
                             {!! Form::label('auto_publish', 'publish selected private decks') !!}
