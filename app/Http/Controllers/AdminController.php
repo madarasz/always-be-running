@@ -39,8 +39,8 @@ class AdminController extends Controller
         $count_packs = CardPack::count();
         $approved_tournaments = Tournament::where('approved', 1)->whereNull('recur_weekly')->pluck('id')->all(); // + non-recurring
         $video_channels = Video::whereIn('tournament_id', $approved_tournaments)->where('flag_removed', false)
-            ->select('channel_name', DB::raw('count(*) as total'))
-            ->groupBy('channel_name')->orderBy('total', 'desc')->pluck('total', 'channel_name');
+            ->select('channel_name', 'type', DB::raw('count(*) as total'))
+            ->groupBy('channel_name')->orderBy('total', 'desc')->get();
         $video_users = Video::whereIn('tournament_id', $approved_tournaments)->where('flag_removed', false)
             ->select('user_id', DB::raw('count(*) as total'))
             ->groupBy('user_id')->orderBy('total', 'desc')->pluck('total', 'user_id');

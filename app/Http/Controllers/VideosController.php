@@ -82,8 +82,7 @@ class VideosController extends Controller
         App('App\Http\Controllers\BadgeController')->addVideoBadge($request->user()->id);
 
         // redirecting to tournament
-        return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
-            ->with('message', 'Video deleted.');
+        return redirect()->back()->with('message', 'Video deleted.');
     }
 
     /**

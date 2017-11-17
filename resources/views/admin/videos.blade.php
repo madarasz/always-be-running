@@ -12,15 +12,23 @@
                         <table class="table table-sm table-striped abr-table" id="videos">
                             <thead>
                             <tr>
+                                <th></th>
                                 <th>channel name</th>
                                 <th>number of videos</th>
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($video_channels as $name => $count)
+                            @foreach($video_channels as $video_channel)
                                 <tr>
-                                    <td>{{ $name }}</td>
-                                    <td>{{ $count }}</td>
+                                    <td>
+                                        @if ($video_channel->type == 1)
+                                            <i class="fa fa-youtube-play" title="youtube"></i>
+                                        @else
+                                            <i class="fa fa-twitch" title="twitch"></i>
+                                        @endif
+                                    </td>
+                                    <td>{{ $video_channel->channel_name }}</td>
+                                    <td>{{ $video_channel->total }}</td>
                                 </tr>
                             @endforeach
                             </tbody>
@@ -59,6 +67,7 @@
                         <h5>
                             <i class="fa fa-user-circle-o" aria-hidden="true"></i>
                             Users tagged in videos
+                            <div class="small-text">with at least 5 videos</div>
                         </h5>
                         <table class="table table-sm table-striped abr-table" id="tags">
                             <thead>
@@ -69,6 +78,7 @@
                             </thead>
                             <tbody>
                             @foreach($video_users_tagged as $userid => $count)
+                                @if ($count >= 5)
                                 <?php $vuser = App\User::findOrFail($userid); ?>
                                 <tr>
                                     <td>
@@ -78,6 +88,7 @@
                                     </td>
                                     <td>{{ $count }}</td>
                                 </tr>
+                                @endif
                             @endforeach
                             </tbody>
                         </table>
@@ -105,6 +116,7 @@
                                 <th></th>
                                 <th>title</th>
                                 <th>channel</th>
+                                <th>t. date</th>
                                 <th>tournament</th>
                                 <th></th>
                             </tr>
@@ -114,9 +126,9 @@
                                 <tr>
                                     <td>
                                         @if ($missing_video->type == 1)
-                                            <i class="fa fa-youtube-play" aria-hidden="true"></i>
+                                            <i class="fa fa-youtube-play" title="youtube"></i>
                                         @else
-                                            <i class="fa fa-twitch" aria-hidden="true"></i>
+                                            <i class="fa fa-twitch" title="twitch"></i>
                                         @endif
                                     </td>
                                     <td>
@@ -130,6 +142,9 @@
                                                 {{ $missing_video->channel_name }}
                                             </a>
                                         @endif
+                                    </td>
+                                    <td>
+                                        {{ $missing_video->tournament->date }}
                                     </td>
                                     <td>
                                         <a href="{{ $missing_video->tournament->seoUrl() }}">
