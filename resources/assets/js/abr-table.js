@@ -238,7 +238,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 'class': 'text-xs-center'
             }).appendTo(newrow);
 
-            if (element.type !== 'non-tournament event') { // if not a non-tournament
+            if (element.type !== 'non-tournament event' && element.date) { // if not a non-tournament
                 if (element.concluded) {
                     cell.append($('<span>', {
                         text: 'concluded',
