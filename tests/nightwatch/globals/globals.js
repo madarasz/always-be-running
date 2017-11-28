@@ -2,10 +2,12 @@ var accounts = require('./accounts.js');
 var tournaments = require('./tournaments.js');
 
 module.exports = {
+    // TODO: do 'login' and 'tournament' object only
     adminLogin: accounts.adminLogin,
     regularLogin: accounts.regularLogin,
     emptyLogin: accounts.emptyLogin,
     tournamentSingleDay: tournaments.tournamentSingleDay,
     tournamentRecurring: tournaments.tournamentRecurring,
-    tournamentOnlineConcluded: tournaments.tournamentOnlineConcluded
+    tournamentOnlineConcluded: tournaments.tournamentOnlineConcluded,
+    tournamentNrtmJsonWithoutTopCut: tournaments.tournamentNrtmJsonWithoutTopCut
 };

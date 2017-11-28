@@ -43,6 +43,10 @@ module.exports = {
             selector: "//a[contains(text(),'Create Tournament')]",
             locateStrategy: 'xpath'
         },
+        createFromResults: {
+            selector: "//button[contains(text(),'Create from Results')]",
+            locateStrategy: 'xpath'
+        },
         loginRequired: {
             selector: "//h4[contains(text(),'Login required')]",
             locateStrategy: 'xpath'

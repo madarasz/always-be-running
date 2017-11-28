@@ -148,7 +148,11 @@ module.exports = {
                 registeredPlayers: false,
                 noRegisteredPlayers: true,
                 unregisterButton: false,
-                registerButton: true
+                registerButton: true,
+                showMatches: false,
+                showPoints: false,
+                chartRunnerIds: false,
+                chartCorpIds: false
             });
 
         // click Update button, verify tournament form, click Cancel
@@ -367,7 +371,11 @@ module.exports = {
                 registeredPlayers: false,
                 noRegisteredPlayers: true,
                 unregisterButton: false,
-                registerButton: true
+                registerButton: true,
+                showMatches: false,
+                showPoints: false,
+                chartRunnerIds: false,
+                chartCorpIds: false
             });
 
         // click Update button, verify tournament form, click Cancel
@@ -414,7 +422,7 @@ module.exports = {
             .selectMenu('organize');
         browser.page.tournamentTable().assertTable('created', tournamentRecurring.title, {
             texts: [tournamentRecurring.recur_weekly, tournamentRecurring.location],
-            labels: ['pending', 'not yet']
+            labels: ['pending']
         });
 
         // navigate to Upcoming page, check recurring tournaments table
@@ -577,7 +585,11 @@ module.exports = {
                 registeredPlayers: false,
                 noRegisteredPlayers: true,
                 unregisterButton: false,
-                registerButton: false
+                registerButton: false,
+                showMatches: false,
+                showPoints: false,
+                chartRunnerIds: true,
+                chartCorpIds: true
             });
 
         // click Update button, verify tournament form, click Cancel

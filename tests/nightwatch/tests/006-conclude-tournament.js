@@ -109,7 +109,11 @@ module.exports = {
                 noRegisteredPlayers: true,
                 unregisterButton: false,
                 registerButton: true,
-                revertButton: false
+                revertButton: false,
+                showMatches: false,
+                showPoints: false,
+                chartRunnerIds: false,
+                chartCorpIds: false
             });
 
         // Navigate to Results page
@@ -183,7 +187,11 @@ module.exports = {
                 noRegisteredPlayers: true,
                 unregisterButton: false,
                 registerButton: false,
-                revertButton: true
+                revertButton: true,
+                showMatches: false,
+                showPoints: false,
+                chartRunnerIds: true,
+                chartCorpIds: true
             });
 
         // Navigate to Results page, check that tournament is in results table, not in to-be-concluded table
@@ -243,7 +251,11 @@ module.exports = {
                 noRegisteredPlayers: true,
                 unregisterButton: false,
                 registerButton: true,
-                revertButton: false
+                revertButton: false,
+                showMatches: false,
+                showPoints: false,
+                chartRunnerIds: false,
+                chartCorpIds: false
             });
 
         // logout

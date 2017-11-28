@@ -77,6 +77,36 @@ var tournamentOnlineConcluded = {
     date_type: 'multiple',
     date_type_id: 'end-date-multiple'
 };
+//  nrtm-without-topcut.json values
+var tournamentNrtmJsonWithoutTopCut = {
+    old_title: 'Netrunner-Turnier',
+    title: formatDate(new Date()) + ' - Test NRTM.json without top-cut',
+    type: 'online event',
+    type_id: '7',
+    cardpool: 'Terminal Directive',
+    cardpool_id: 'td',
+    players_number: '9',
+    top_number: '0',
+    date: '2017.01.01.',
+    imported_results: {
+        swiss: [
+            { rank: 1, player: 'Jörg', corp_title: 'Skorpios Defense Systems', runner_title: 'Hayley Kaplan' },
+            { rank: 2, player: 'Dominik', corp_title: 'Controlling the Message', runner_title: 'Armand "Geist" Walker' },
+            { rank: 3, player: 'Jan', corp_title: 'Gagarin Deep Space', runner_title: 'Armand "Geist" Walker' },
+            { rank: 4, player: 'René', corp_title: 'Controlling the Message', runner_title: 'Hayley Kaplan' },
+            { rank: 5, player: 'Volker', corp_title: 'Personal Evolution', runner_title: 'Steve Cambridge' },
+            { rank: 6, player: 'Luis', corp_title: 'Near-Earth Hub', runner_title: 'Hayley Kaplan' },
+            { rank: 7, player: 'Fabian', corp_title: 'Cerebral Imaging', runner_title: 'Sunny Lebeau' },
+            { rank: 8, player: 'Tim', corp_title: 'AgInfusion', runner_title: 'Rielle "Kit" Peddler' },
+            { rank: 9, player: 'Gereon', corp_title: 'Spark Agency', runner_title: 'Ele "Smoke" Scovak' }
+        ],
+        swiss_rounds: 3,
+        bye: true,
+        points: [
+            { player: 'Jörg', points: '18', sos: '3.250', esos: '3.479' }
+        ]
+    }
+};
 
 function formatDate(date) {
     var year = date.getFullYear(),
@@ -95,5 +125,6 @@ function formatDate(date) {
 module.exports = {
     tournamentSingleDay: tournamentSingleDay,
     tournamentRecurring: tournamentRecurring,
-    tournamentOnlineConcluded: tournamentOnlineConcluded
+    tournamentOnlineConcluded: tournamentOnlineConcluded,
+    tournamentNrtmJsonWithoutTopCut: tournamentNrtmJsonWithoutTopCut
 };

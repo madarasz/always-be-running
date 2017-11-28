@@ -26,6 +26,76 @@ var tournamentViewCommands = {
         return this;
     },
 
+    assertImport: function (data, client) {
+
+        this.log('*** Verifying imported results ***');
+
+        var util = require('util');
+
+        for (var i = 0; i < data.swiss.length; i++) {
+            this.api.useXpath().verify.elementPresent(
+                util.format(this.elements.verifyImportedEntry.selector, 'entries-swiss',
+                    data.swiss[i].rank, data.swiss[i].player, data.swiss[i].corp_title, data.swiss[i].runner_title));
+        }
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this;
+    },
+
+    validateMatches: function (data, client) {
+
+        this.log('*** Verifying imported match data ***');
+
+        var util = require('util');
+
+        // swiss round number
+        this.api.useXpath().verify.elementPresent(util.format(this.elements.matchSwissRounds.selector, data.swiss_rounds));
+
+        // swiss round 1 entries
+        for (var i = 0; i < data.swiss.length; i++) {
+            this.api.useXpath().verify.elementPresent(
+                util.format(this.elements.matchEntry.selector, 'tbody-matches-swiss-1',
+                    data.swiss[i].player, data.swiss[i].corp_title, data.swiss[i].runner_title));
+        }
+
+        // swiss round 1 bye
+        if (data.bye) {
+            this.api.useXpath().verify.elementPresent(util.format(this.elements.matchEntryBye.selector, 'tbody-matches-swiss-1'));
+        } else {
+            this.api.useXpath().verify.elementNotPresent(util.format(this.elements.matchEntryBye.selector, 'tbody-matches-swiss-1'));
+        }
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this;
+
+    },
+
+    validatePoints: function (data, client) {
+
+        this.log('*** Verifying imported points data ***');
+
+        var util = require('util');
+
+        for (var i = 0; i < data.points.length; i++) {
+            this.api.useXpath().verify.elementPresent(
+                util.format(this.elements.pointEntry.selector,
+                    data.points[i].player, data.points[i].points, data.points[i].sos, data.points[i].esos));
+        }
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this;
+
+    },
+
     //claim: function(data, client) {
     //
     //    this.log('*** Creating claim for tournament ***');
@@ -149,8 +219,13 @@ module.exports = {
         registeredPlayer: "//ul[@id='registered-players']/li[contains(., '%s')]",
         verifySwissEntry: "//table[@id='entries-swiss']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
         verifyTopEntry: "//table[@id='entries-top']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
+        verifyImportedEntry: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]",
         entryRemoveButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'%s')]",
         concludedBy: "//div[@id='concluded-by' and contains(.,'%s')]",
+        matchSwissRounds: "//table[@id='table-matches-swiss']/thead/th[contains(.,'Round %d')]",
+        matchEntry: "//tbody[@id='%s']/tr/td[contains(.,'%s')]/../../tr/td[contains(.,'%s')]/../../tr/td[contains(.,'%s')]",
+        matchEntryBye: "//tbody[@id='%s']/tr/td[contains(.,'BYE')]",
+        pointEntry: "//table[@id='entries-swiss']/tbody/tr/td[contains(.,'%s')]/../td[@class='cell-points' and contains(.,'%s') and contains(.,'%s') and contains(.,'%s')]",
         decklist: {
             selector: "//span[@id='decklist-mandatory']",
             locateStrategy: 'xpath'
@@ -243,6 +318,14 @@ module.exports = {
             selector: "//button[@id='remove-claim']",
             locateStrategy: 'xpath'
         },
+        showMatches: {
+            selector: "//button[@id='button-showmatches']",
+            locateStrategy: 'xpath'
+        },
+        showPoints: {
+            selector: "//button[@id='button-showpoints']",
+            locateStrategy: 'xpath'
+        },
         claimError: {
             selector: "//div[@id='error-list']",
             locateStrategy: 'xpath'
@@ -293,6 +376,14 @@ module.exports = {
         },
         addressInfo: {
             selector: "//span[@id='address']",
+            locateStrategy: 'xpath'
+        },
+        chartRunnerIds: {
+            selector: "//div[@id='stat-chart-runner']/div",
+            locateStrategy: 'xpath'
+        },
+        chartCorpIds: {
+            selector: "//div[@id='stat-chart-corp']/div",
             locateStrategy: 'xpath'
         }
     }

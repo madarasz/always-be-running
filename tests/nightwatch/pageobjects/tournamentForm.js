@@ -328,6 +328,10 @@ module.exports = {
         overlay_cardpool: {
             selector: "//div[@id='overlay-cardpool']",
             locateStrategy: 'xpath'
+        },
+        hide_non_required: {
+            selector: "//input[@id='hide-non']",
+            locateStrategy: 'xpath'
         }
     }
 };

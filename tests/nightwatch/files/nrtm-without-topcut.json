@@ -1,0 +1,536 @@
+{
+  "players" : [
+    {
+      "id" : 5,
+      "averageScore" : 4.5,
+      "isBye" : false,
+      "pod" : 0,
+      "corpIdentity" : "Skorpios Defense Systems",
+      "extendedStrengthOfSchedule" : 3.47917,
+      "forfeit" : false,
+      "progressionCut" : false,
+      "runnerIdentity" : "Hayley Kaplan",
+      "rank" : 1,
+      "corpFaction" : "Weyland",
+      "strengthOfSchedule" : 3.25,
+      "matchPoints" : 18,
+      "runnerFaction" : "Shaper",
+      "opponents" : [
+        0,
+        9,
+        2,
+        7
+      ],
+      "name" : "Jörg"
+    },
+    {
+      "id" : 6,
+      "averageScore" : 4.25,
+      "isBye" : false,
+      "pod" : 0,
+      "corpIdentity" : "Controlling the Message",
+      "extendedStrengthOfSchedule" : 3.32292,
+      "forfeit" : false,
+      "progressionCut" : false,
+      "runnerIdentity" : "Armand \"Geist\" Walker",
+      "rank" : 2,
+      "corpFaction" : "NBN",
+      "strengthOfSchedule" : 2.875,
+      "matchPoints" : 17,
+      "runnerFaction" : "Criminal",
+      "opponents" : [
+        4,
+        8,
+        3,
+        9
+      ],
+      "name" : "Dominik"
+    },
+    {
+      "id" : 9,
+      "averageScore" : 3.75,
+      "isBye" : false,
+      "pod" : 0,
+      "corpIdentity" : "Gagarin Deep Space",
+      "extendedStrengthOfSchedule" : 3.21875,
+      "forfeit" : false,
+      "progressionCut" : false,
+      "runnerIdentity" : "Armand \"Geist\" Walker",
+      "rank" : 3,
+      "corpFaction" : "Weyland",
+      "strengthOfSchedule" : 3.5,
+      "matchPoints" : 15,
+      "runnerFaction" : "Criminal",
+      "opponents" : [
+        1,
+        5,
+        7,
+        6
+      ],
+      "name" : "Jan"
+    },
+    {
+      "id" : 2,
+      "averageScore" : 3.75,
+      "isBye" : false,
+      "pod" : 0,
+      "corpIdentity" : "Controlling the Message",
+      "extendedStrengthOfSchedule" : 3.34375,
+      "forfeit" : false,
+      "progressionCut" : false,
+      "runnerIdentity" : "Hayley Kaplan",
+      "rank" : 4,
+      "corpFaction" : "NBN",
+      "strengthOfSchedule" : 3.1875,
+      "matchPoints" : 15,
+      "runnerFaction" : "Shaper",
+      "opponents" : [
+        7,
+        1,
+        5,
+        4
+      ],
+      "name" : "René"
+    },
+    {
+      "id" : 8,
+      "averageScore" : 3.25,
+      "isBye" : false,
+      "pod" : 0,
+      "corpIdentity" : "Personal Evolution",
+      "extendedStrengthOfSchedule" : 3.25,
+      "forfeit" : false,
+      "progressionCut" : false,
+      "runnerIdentity" : "Steve Cambridge",
+      "rank" : 5,
+      "corpFaction" : "Jinteki",
+      "strengthOfSchedule" : 2.91667,
+      "matchPoints" : 13,
+      "runnerFaction" : "Criminal",
+      "opponents" : [
+        3,
+        6,
+        4,
+        0
+      ],
+      "name" : "Volker"
+    },
+    {
+      "id" : 4,
+      "averageScore" : 3,
+      "isBye" : false,
+      "pod" : 0,
+      "corpIdentity" : "Near-Earth Hub",
+      "extendedStrengthOfSchedule" : 3.18229,
+      "forfeit" : false,
+      "progressionCut" : false,
+      "runnerIdentity" : "Hayley Kaplan",
+      "rank" : 6,
+      "corpFaction" : "NBN",
+      "strengthOfSchedule" : 3.375,
+      "matchPoints" : 12,
+      "runnerFaction" : "Shaper",
+      "opponents" : [
+        6,
+        7,
+        8,
+        2
+      ],
+      "name" : "Luis"
+    },
+    {
+      "id" : 1,
+      "averageScore" : 3,
+      "isBye" : false,
+      "pod" : 0,
+      "corpIdentity" : "Cerebral Imaging",
+      "extendedStrengthOfSchedule" : 3.39583,
+      "forfeit" : false,
+      "progressionCut" : false,
+      "runnerIdentity" : "Sunny Lebeau",
+      "rank" : 7,
+      "corpFaction" : "Haas-Bioroid",
+      "strengthOfSchedule" : 3,
+      "matchPoints" : 12,
+      "runnerFaction" : "Sunny Lebeau",
+      "opponents" : [
+        9,
+        2,
+        0,
+        3
+      ],
+      "name" : "Fabian"
+    },
+    {
+      "id" : 7,
+      "averageScore" : 2.25,
+      "isBye" : false,
+      "pod" : 0,
+      "corpIdentity" : "AgInfusion",
+      "extendedStrengthOfSchedule" : 3.32813,
+      "forfeit" : false,
+      "progressionCut" : false,
+      "runnerIdentity" : "Rielle \"Kit\" Peddler",
+      "rank" : 8,
+      "corpFaction" : "Jinteki",
+      "strengthOfSchedule" : 3.75,
+      "matchPoints" : 9,
+      "runnerFaction" : "Shaper",
+      "opponents" : [
+        2,
+        4,
+        9,
+        5
+      ],
+      "name" : "Tim"
+    },
+    {
+      "id" : 3,
+      "averageScore" : 1.5,
+      "isBye" : false,
+      "pod" : 0,
+      "corpIdentity" : "Spark Agency",
+      "extendedStrengthOfSchedule" : 2.93056,
+      "forfeit" : false,
+      "progressionCut" : false,
+      "runnerIdentity" : "Ele \"Smoke\" Scovak",
+      "rank" : 9,
+      "corpFaction" : "NBN",
+      "strengthOfSchedule" : 3.5,
+      "matchPoints" : 6,
+      "runnerFaction" : "Shaper",
+      "opponents" : [
+        8,
+        0,
+        6,
+        1
+      ],
+      "name" : "Gereon"
+    }
+  ],
+  "cutToTop" : 0,
+  "version" : "v1.45",
+  "usesPods" : false,
+  "type" : "",
+  "preliminaryRounds" : 4,
+  "rounds" : [
+    [
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 9,
+          "runnerScore" : 3,
+          "corpScore" : 3
+        },
+        "eliminationGame" : false,
+        "table" : 1,
+        "player1" : {
+          "id" : 1,
+          "runnerScore" : 0,
+          "corpScore" : 0
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 3,
+          "runnerScore" : 0,
+          "corpScore" : 0
+        },
+        "eliminationGame" : false,
+        "table" : 2,
+        "player1" : {
+          "id" : 8,
+          "runnerScore" : 3,
+          "corpScore" : 3
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 2,
+          "runnerScore" : 3,
+          "corpScore" : 0
+        },
+        "eliminationGame" : false,
+        "table" : 3,
+        "player1" : {
+          "id" : 7,
+          "runnerScore" : 3,
+          "corpScore" : 0
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 6,
+          "runnerScore" : 0,
+          "corpScore" : 3
+        },
+        "eliminationGame" : false,
+        "table" : 4,
+        "player1" : {
+          "id" : 4,
+          "runnerScore" : 0,
+          "corpScore" : 3
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 0,
+          "runnerScore" : 0,
+          "corpScore" : 0
+        },
+        "eliminationGame" : false,
+        "table" : 5,
+        "player1" : {
+          "id" : 5,
+          "runnerScore" : 3,
+          "corpScore" : 3
+        }
+      }
+    ],
+    [
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 5,
+          "runnerScore" : 3,
+          "corpScore" : 0
+        },
+        "eliminationGame" : false,
+        "table" : 1,
+        "player1" : {
+          "id" : 9,
+          "runnerScore" : 3,
+          "corpScore" : 0
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 6,
+          "runnerScore" : 1,
+          "corpScore" : 3
+        },
+        "eliminationGame" : false,
+        "table" : 2,
+        "player1" : {
+          "id" : 8,
+          "runnerScore" : 0,
+          "corpScore" : 1
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 4,
+          "runnerScore" : 0,
+          "corpScore" : 0
+        },
+        "eliminationGame" : false,
+        "table" : 3,
+        "player1" : {
+          "id" : 7,
+          "runnerScore" : 3,
+          "corpScore" : 3
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 1,
+          "runnerScore" : 0,
+          "corpScore" : 0
+        },
+        "eliminationGame" : false,
+        "table" : 4,
+        "player1" : {
+          "id" : 2,
+          "runnerScore" : 3,
+          "corpScore" : 3
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 0,
+          "runnerScore" : 0,
+          "corpScore" : 0
+        },
+        "eliminationGame" : false,
+        "table" : 5,
+        "player1" : {
+          "id" : 3,
+          "runnerScore" : 3,
+          "corpScore" : 3
+        }
+      }
+    ],
+    [
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 7,
+          "runnerScore" : 0,
+          "corpScore" : 0
+        },
+        "eliminationGame" : false,
+        "table" : 1,
+        "player1" : {
+          "id" : 9,
+          "runnerScore" : 3,
+          "corpScore" : 3
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 2,
+          "runnerScore" : 3,
+          "corpScore" : 0
+        },
+        "eliminationGame" : false,
+        "table" : 2,
+        "player1" : {
+          "id" : 5,
+          "runnerScore" : 3,
+          "corpScore" : 0
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 4,
+          "runnerScore" : 3,
+          "corpScore" : 3
+        },
+        "eliminationGame" : false,
+        "table" : 3,
+        "player1" : {
+          "id" : 8,
+          "runnerScore" : 0,
+          "corpScore" : 0
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 3,
+          "runnerScore" : 0,
+          "corpScore" : 0
+        },
+        "eliminationGame" : false,
+        "table" : 4,
+        "player1" : {
+          "id" : 6,
+          "runnerScore" : 3,
+          "corpScore" : 2
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 0,
+          "runnerScore" : 0,
+          "corpScore" : 0
+        },
+        "eliminationGame" : false,
+        "table" : 5,
+        "player1" : {
+          "id" : 1,
+          "runnerScore" : 3,
+          "corpScore" : 3
+        }
+      }
+    ],
+    [
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 6,
+          "runnerScore" : 2,
+          "corpScore" : 3
+        },
+        "eliminationGame" : false,
+        "table" : 1,
+        "player1" : {
+          "id" : 9,
+          "runnerScore" : 0,
+          "corpScore" : 0
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 4,
+          "runnerScore" : 0,
+          "corpScore" : 3
+        },
+        "eliminationGame" : false,
+        "table" : 2,
+        "player1" : {
+          "id" : 2,
+          "runnerScore" : 0,
+          "corpScore" : 3
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 7,
+          "runnerScore" : 0,
+          "corpScore" : 0
+        },
+        "eliminationGame" : false,
+        "table" : 3,
+        "player1" : {
+          "id" : 5,
+          "runnerScore" : 3,
+          "corpScore" : 3
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 1,
+          "runnerScore" : 3,
+          "corpScore" : 3
+        },
+        "eliminationGame" : false,
+        "table" : 4,
+        "player1" : {
+          "id" : 3,
+          "runnerScore" : 0,
+          "corpScore" : 0
+        }
+      },
+      {
+        "intentionalDraw" : false,
+        "player2" : {
+          "id" : 0,
+          "runnerScore" : 0,
+          "corpScore" : 0
+        },
+        "eliminationGame" : false,
+        "table" : 5,
+        "player1" : {
+          "id" : 8,
+          "runnerScore" : 3,
+          "corpScore" : 3
+        }
+      }
+    ]
+  ],
+  "date" : "",
+  "links" : {
+    "rel" : "describedby",
+    "href" : "http:\/\/steffens.org\/nrtm\/nrtm-schema.json"
+  },
+  "city" : "",
+  "cacheRefresh" : false,
+  "allowedSet" : "",
+  "country" : "",
+  "name" : "Netrunner-Turnier"
+}

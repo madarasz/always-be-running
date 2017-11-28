@@ -1,7 +1,8 @@
 var concludeCommands = {
 
     validate: function(title, client) {
-        this.log('* Validating conclude tournament modal *');
+
+        this.log('*** Validating conclude tournament modal ***');
 
         var util = require('util');
         this.api.useXpath().waitForElementVisible(util.format(this.elements.validator.selector, title), 3000);
@@ -12,6 +13,25 @@ var concludeCommands = {
 
         return this;
 
+    },
+
+    concludeNrtmJson: function (filename, client) {
+
+        var filepath = require('path').resolve(__dirname + '/../files/' + filename);
+
+        this.log('*** Concluding via NRTM.json file: ' + filepath + ' *** ');
+
+        this
+            .api.useXpath()
+            .clearValue(this.elements.inputNRTMFile.selector)
+            .setValue(this.elements.inputNRTMFile.selector, filepath)
+            .click(this.elements.submitImport.selector);
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this;
     },
 
     concludeManual: function (data, client) {
@@ -42,7 +62,7 @@ module.exports = {
             selector: "//input[@type='submit' and @value='Conclude manually']",
             locateStrategy: 'xpath'
         },
-        submitNRTM: {
+        submitImport: {
             selector: "//input[@type='submit' and @value='Conclude via import']",
             locateStrategy: 'xpath'
         },
