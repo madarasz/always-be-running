@@ -41,6 +41,8 @@
                         CSV import
                     @elseif ($tournament->import == 3)
                         manual import
+                    @elseif ($tournament->import == 4)
+                        Cobr.ai
                     @else
                         manual conclusion
                     @endif

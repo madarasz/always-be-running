@@ -690,6 +690,14 @@ class TournamentsController extends Controller
             $tournament->concluded_at = date('Y-m-d H:i:s');
             $tournament->concluded_by = $user;
 
+            if (array_key_exists('uploadedFrom', $json) && $json['uploadedFrom'] == 'Cobra') {
+                // imported by Cobr.ai
+                $tournament->import = 4;
+            } else {
+                // imported by NRTM
+                $tournament->import = 1;
+            }
+
             foreach ($json['players'] as $swiss) {
 
                 // get identities
@@ -722,7 +730,7 @@ class TournamentsController extends Controller
                     // saving new claim
                     Entry::create([
                         'approved' => 1,
-                        'type' => 11,
+                        'type' => 10 + $tournament->import, // 11 if NRTM, 14 if Cobr.ai
                         'tournament_id' => $tournament->id,
                         'rank' => $swiss['rank'],
                         'rank_top' => $ranktop,

@@ -282,8 +282,17 @@ class AdminController extends Controller
      */
     private function addEntryTypeNames($array) {
         $result = [];
-        $typeNames = ['' => 'undefinied', 0 => 'registered for tournament', 11 => 'imported by NRTM', 12 => 'imported by CSV',
-            13 => 'imported manually', 2 => 'registered with decklist', 3 => 'claim with decklist', 4 => 'claim without decklist'];
+        $typeNames = [
+            '' => 'undefinied',
+            0 => 'registered for tournament',
+            11 => 'imported by NRTM',
+            12 => 'imported by CSV',
+            13 => 'imported manually',
+            14 => 'imported by Cobr.ai',
+            2 => 'registered with decklist',
+            3 => 'claim with decklist',
+            4 => 'claim without decklist'
+        ];
         foreach ($typeNames as $typeCode => $typeName) {
             if (array_key_exists($typeCode, $array)) {
                 $result[$typeName] = $array[$typeCode];

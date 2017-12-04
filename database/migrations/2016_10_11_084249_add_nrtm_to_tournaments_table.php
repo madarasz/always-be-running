@@ -13,7 +13,12 @@ class AddNrtmToTournamentsTable extends Migration
     public function up()
     {
         Schema::table('tournaments', function (Blueprint $table) {
-            $table->boolean('import')->default(0); // flag for nrtm import was done
+            $table->boolean('import')->default(0);
+            // 0 - no import
+            // 1 - by NRTM
+            // 2 - by CSV
+            // 3 - by manual
+            // 4 - by Cobr.ai
         });
     }
 

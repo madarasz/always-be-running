@@ -21,6 +21,7 @@ class AddTypeToEntriesTable extends Migration
             // 11 - imported entry by NRTM
             // 12 - imported entry by CSV
             // 13 - imported entry by manual
+            // 14 - imported entry by Cobr.ai
         });
     }
 
