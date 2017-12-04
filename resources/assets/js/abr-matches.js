@@ -150,9 +150,15 @@ function fillMatchRow(player1, player2, matchId, match) {
             $('#' + matchId + 'p2-win').text('WINS');
         }
     } else {
-        $('#' + matchId + 'score').html((match.player1.corpScore + match.player1.runnerScore) + '&nbsp;-&nbsp;' + (match.player2.corpScore + match.player2.runnerScore));
-        $('#' + matchId + 'score1').html(match.player1.corpScore + '&nbsp;-&nbsp;' + match.player2.runnerScore);
-        $('#' + matchId + 'score2').html(match.player1.runnerScore + '&nbsp;-&nbsp;' + match.player2.corpScore);
+        if (match.player1.corpScore + match.player1.runnerScore + match.player2.corpScore + match.player2.runnerScore > 0) {
+            // NRTM
+            $('#' + matchId + 'score').html((match.player1.corpScore + match.player1.runnerScore) + '&nbsp;-&nbsp;' + (match.player2.corpScore + match.player2.runnerScore));
+            $('#' + matchId + 'score1').html(match.player1.corpScore + '&nbsp;-&nbsp;' + match.player2.runnerScore);
+            $('#' + matchId + 'score2').html(match.player1.runnerScore + '&nbsp;-&nbsp;' + match.player2.corpScore);
+        } else {
+            // Cobr.ai doesn't have scores per sides, only combinedScore
+            $('#' + matchId + 'score').html((match.player1.combinedScore) + '&nbsp;-&nbsp;' + (match.player2.combinedScore));
+        }
     }
 }
 
