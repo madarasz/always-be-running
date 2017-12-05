@@ -12,6 +12,7 @@ use App\CardIdentity;
 use App\Video;
 use App\Http\Requests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TournamentsController extends Controller
 {
@@ -135,9 +136,11 @@ class TournamentsController extends Controller
         }
 
         $runnerIDs = $this->categorizeIDs(CardIdentity::where('runner', 1)
-            ->orderBy('faction_code')->orderBy('title')->groupBy('title')->get());
+            ->orderBy('faction_code')->orderBy('title')->groupBy('title')
+            ->get(['pack_code', 'faction_code', 'title', DB::raw('MAX(id) as id')]));
         $corpIDs = $this->categorizeIDs(CardIdentity::where('runner', 0)
-            ->orderBy('faction_code')->orderBy('title')->groupBy('title')->get());
+            ->orderBy('faction_code')->orderBy('title')->groupBy('title')
+            ->get(['pack_code', 'faction_code', 'title', DB::raw('MAX(id) as id')]));
         $type = $tournament->tournament_type->type_name;
         $format = $tournament->tournament_format->format_name;
         $message = session()->has('message') ? session('message') : '';

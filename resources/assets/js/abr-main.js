@@ -312,8 +312,12 @@ function showVideoList(show) {
 function recalculateDeckNames(postfix) {
     var corp = document.getElementById('corp_deck_identity' + postfix),
         runner = document.getElementById('runner_deck_identity' + postfix);
-    document.getElementById('corp_deck_title' + postfix).value = shortenID(corp.options[corp.selectedIndex].text);
-    document.getElementById('runner_deck_title' + postfix).value = shortenID(runner.options[runner.selectedIndex].text);
+    if (corp.selectedIndex > -1) {
+        document.getElementById('corp_deck_title' + postfix).value = shortenID(corp.options[corp.selectedIndex].text);
+    }
+    if (runner.selectedIndex > -1) {
+        document.getElementById('runner_deck_title' + postfix).value = shortenID(runner.options[runner.selectedIndex].text);
+    }
 }
 
 function percentageToString(fraction) {
