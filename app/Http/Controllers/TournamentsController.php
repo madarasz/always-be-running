@@ -27,6 +27,14 @@ class TournamentsController extends Controller
         $request->sanitize_data($request->user()->id);
         $tournament = Tournament::create($request->all());
 
+        // if concluded, set concluded by, concluded at
+        if ($tournament->concluded) {
+            $tournament->update(array_merge($request->all(), [
+                'concluded_by' => $request->user()->id,
+                'concluded_at' => date('Y-m-d H:i:s')
+            ]));
+        }
+
         // redirecting to show newly created tournament
         return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
             ->with('message', 'Tournament created.');
