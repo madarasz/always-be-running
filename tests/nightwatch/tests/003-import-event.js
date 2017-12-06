@@ -39,7 +39,9 @@ module.exports = {
         // Validate Conclude modal, upload NRTM.json
         browser.log('* Validate Conclude modal, upload NRTM.json *');
         browser.page.concludeModal()
-            .validate('use this for new concluded tournaments')
+            .validate('use this for new concluded tournaments');
+        browser.page.mainMenu().acceptCookies(); // cookies info is in the way
+        browser.page.concludeModal()
             .concludeNrtmJson('nrtm-without-topcut.json');
 
         // Validate imported form values, fill remaining fields, create tournament
@@ -69,7 +71,6 @@ module.exports = {
                 }
             });
 
-        browser.page.mainMenu().acceptCookies(); // cookies info is in the way
         browser.page.tournamentForm().getLocationInView('@submit_button').click('@submit_button');
 
         // Validate tournament details page with results
