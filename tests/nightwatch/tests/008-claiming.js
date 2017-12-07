@@ -19,13 +19,10 @@ module.exports = {
      * Remove claim, validate tournament page, conflict is gone
      * Claim again, validate conflict
      * Remove conflicting imported entry, validate conflict is gone
-     * Logout
-     * Login with NRDB (admin user), hard delete tournament
      */
     'Claiming with published decks, no top-cut, conflicting import': function (browser) {
 
         var regularLogin = browser.globals.regularLogin,
-            adminLogin = browser.globals.adminLogin,
             claim1 = browser.globals.claims.claim1,
             tournamentNrtmJsonWithoutTopCut = JSON.parse(JSON.stringify(browser.globals.tournamentNrtmJsonWithoutTopCut)); // clone
 
@@ -288,30 +285,10 @@ module.exports = {
                 registerButton: false,
                 revertButton: true,
                 showMatches: true,
-                showPoints: true,
+                showPoints: true
             });
 
-        // logout
-        browser.log('* Logout *');
-        browser.page.mainMenu().selectMenu('logout');
-
-        // login as admin, hard delete tournament
-        browser.log('* Login with NRDB (admin user), hard delete tournament *');
-        browser.login(adminLogin.username, adminLogin.password);
-        browser.page.mainMenu().selectMenu('admin');
-        browser.page.tournamentTable()
-            .assertTable('pending', tournamentNrtmJsonWithoutTopCut.title, {
-                texts: [tournamentNrtmJsonWithoutTopCut.date],
-                labels: ['pending']
-            })
-            .selectTournamentAction('pending', tournamentNrtmJsonWithoutTopCut.title, 'delete');
-
-        browser.page.tournamentTable()
-            .assertTable('deleted', tournamentNrtmJsonWithoutTopCut.title, {
-                texts: [tournamentNrtmJsonWithoutTopCut.date, regularLogin.username],
-                labels: ['pending']
-            })
-            .selectTournamentAction('deleted', tournamentNrtmJsonWithoutTopCut.title, 'remove');
-
+        // data cleanup, delete tournament
+        browser.sqlDeleteTournament(tournamentNrtmJsonWithoutTopCut.title, browser.globals.database.connection);
     }
 };

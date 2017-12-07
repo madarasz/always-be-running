@@ -152,27 +152,8 @@ module.exports = {
                 labels: ['concluded']
             });
 
-        // logout
-        browser.log('* Logout *');
-        browser.page.mainMenu().selectMenu('logout');
-
-        // login as admin, hard delete tournament
-        browser.log('* Login with NRDB (admin user), hard delete tournament *');
-        browser.login(adminLogin.username, adminLogin.password);
-        browser.page.mainMenu().selectMenu('admin');
-        browser.page.tournamentTable()
-            .assertTable('pending', tournamentNrtmJsonWithoutTopCut.title, {
-                texts: [tournamentNrtmJsonWithoutTopCut.date],
-                labels: ['pending']
-            })
-            .selectTournamentAction('pending', tournamentNrtmJsonWithoutTopCut.title, 'delete');
-
-        browser.page.tournamentTable()
-            .assertTable('deleted', tournamentNrtmJsonWithoutTopCut.title, {
-                texts: [tournamentNrtmJsonWithoutTopCut.date, regularLogin.username],
-                labels: ['pending']
-            })
-            .selectTournamentAction('deleted', tournamentNrtmJsonWithoutTopCut.title, 'remove');
+        // data cleanup, delete tournament
+        browser.sqlDeleteTournament(tournamentNrtmJsonWithoutTopCut.title, browser.globals.database.connection);
 
     }
 };

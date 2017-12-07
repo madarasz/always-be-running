@@ -97,11 +97,8 @@
 - Conclude tournament manually, assert tournament page
 - Navigate to Results page, check that tournament is in results table, not in to-be-concluded
 - Navigate to tournament view, revert conclusion, validate tournament
-- Logout
-- Login with NRDB (admin user)
 - Navigate to Results page
 - Check that tournament is in to-be-concluded table and not in results table
-- Hard delete tournament
 
 **TODO**
 
@@ -122,8 +119,6 @@
 * Remove claim, validate tournament page, conflict is gone
 * Claim again, validate conflict
 * Remove conflicting imported entry, validate conflict is gone
-* Logout
-* Login with NRDB (admin user), hard delete tournament
 
 **TODO**
 
@@ -131,6 +126,7 @@
 - Claiming with other's deck
 - Claiming with private deck
 - Claiming with IDs
+- conflict icon in tables
 - Manual import
 - Merges (import + user claim)
    - user claim then NRTM import

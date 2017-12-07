@@ -20,11 +20,8 @@ module.exports = {
      * Conclude tournament manually, assert tournament page
      * Navigate to Results page, check that tournament is in results table, not in to-be-concluded
      * Navigate to tournament view, revert conclusion, validate tournament
-     * Logout
-     * Login with NRDB (admin user)
      * Navigate to Results page
      * Check that tournament is in to-be-concluded table and not in results table
-     * Hard delete tournament
      */
     'Manual Conclusion (with top-cut), revert by creator': function (browser) {
         var regularLogin = browser.globals.regularLogin,
@@ -258,14 +255,6 @@ module.exports = {
                 chartCorpIds: false
             });
 
-        // logout
-        browser.log('* Logout *');
-        browser.page.mainMenu().selectMenu('logout');
-
-        // login as admin
-        browser.log('* Login with NRDB (admin user), hard delete tournament *');
-        browser.login(adminLogin.username, adminLogin.password);
-
         // Navigate to Results page
         browser.log('* Navigate to Results page *');
         browser.page.mainMenu()
@@ -282,21 +271,7 @@ module.exports = {
                 buttons: ['conclude']
             });
 
-        // Hard delete tournament
-        browser.log('* Hard delete tournament *');
-        browser.page.mainMenu().selectMenu('admin');
-        browser.page.tournamentTable()
-            .assertTable('pending', tournamentOnlineConcluded.title, {
-                texts: [tournamentOnlineConcluded.date, tournamentOnlineConcluded.cardpool, 'online'],
-                labels: ['pending']
-            })
-            .selectTournamentAction('pending', tournamentOnlineConcluded.title, 'delete');
-        browser.page.tournamentTable()
-            .assertTable('deleted', tournamentOnlineConcluded.title, {
-                texts: [tournamentOnlineConcluded.date, regularLogin.username],
-                buttons: ['conclude']
-            })
-            .selectTournamentAction('deleted', tournamentOnlineConcluded.title, 'remove');
-
+        // data cleanup, delete tournament
+        browser.sqlDeleteTournament(tournamentOnlineConcluded.title, browser.globals.database.connection);
     }
 };
