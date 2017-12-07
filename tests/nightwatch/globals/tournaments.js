@@ -86,8 +86,10 @@ var tournamentNrtmJsonWithoutTopCut = {
     cardpool: 'Terminal Directive',
     cardpool_id: 'td',
     players_number: '9',
+    top: '- no elimination rounds -',
     top_number: '0',
     date: '2017.01.01.',
+    conclusion: true,
     imported_results: {
         swiss: [
             { rank: 1, player: 'Jörg', corp_title: 'Skorpios Defense Systems', runner_title: 'Hayley Kaplan' },

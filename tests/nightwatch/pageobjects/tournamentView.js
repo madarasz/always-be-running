@@ -10,7 +10,8 @@ var tournamentViewCommands = {
         for (var property in data) {
             if (data.hasOwnProperty(property)) {
                 if (data[property] === true) {
-                    this.verify.elementPresent('@'+property);
+                    this.waitForElementPresent('@'+property, 3000);
+                    //this.verify.elementPresent('@'+property);
                 } else if (data[property] === false) {
                     this.verify.elementNotPresent('@'+property);
                 } else {
@@ -52,7 +53,7 @@ var tournamentViewCommands = {
         var util = require('util');
 
         // swiss round number
-        this.api.useXpath().verify.elementPresent(util.format(this.elements.matchSwissRounds.selector, data.swiss_rounds));
+        this.api.useXpath().waitForElementPresent(util.format(this.elements.matchSwissRounds.selector, data.swiss_rounds), 3000);
 
         // swiss round 1 entries
         for (var i = 0; i < data.swiss.length; i++) {
@@ -167,6 +168,21 @@ var tournamentViewCommands = {
         return this;
     },
 
+    removeAnonym: function(table, rank, playerName, client) {
+
+        this.log('*** Removing anonym claim: #'+rank+' ***');
+
+        var util = require('util');
+
+        this.api.useXpath().click(util.format(this.elements.deleteAnonym.selector, table, rank, playerName));
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this;
+    },
+
     removeClaimOfUser: function(username, client) {
 
         this.log('*** Removing claim of user: '+username+' ***');
@@ -217,8 +233,8 @@ module.exports = {
         address: "//span[@id='address' and contains(., '%s')]",
         contact: "//span[@id='contact' and contains(., '%s')]",
         registeredPlayer: "//ul[@id='registered-players']/li[contains(., '%s')]",
-        verifySwissEntry: "//table[@id='entries-swiss']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
-        verifyTopEntry: "//table[@id='entries-top']/tbody/tr[@class='%s']/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
+        verifySwissEntry: "//table[@id='entries-swiss']/tbody/tr[contains(@class,'%s')]/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
+        verifyTopEntry: "//table[@id='entries-top']/tbody/tr[contains(@class,'%s')]/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
         verifyImportedEntry: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]",
         entryRemoveButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'%s')]",
         concludedBy: "//div[@id='concluded-by' and contains(.,'%s')]",
@@ -226,6 +242,7 @@ module.exports = {
         matchEntry: "//tbody[@id='%s']/tr/td[contains(.,'%s')]/../../tr/td[contains(.,'%s')]/../../tr/td[contains(.,'%s')]",
         matchEntryBye: "//tbody[@id='%s']/tr/td[contains(.,'BYE')]",
         pointEntry: "//table[@id='entries-swiss']/tbody/tr/td[contains(.,'%s')]/../td[@class='cell-points' and contains(.,'%s') and contains(.,'%s') and contains(.,'%s')]",
+        deleteAnonym: "//table[@id='%s']//td[contains(.,'#%s')]/../td[contains(.,'%s')]/../td/form/button[contains(@class,'delete-anonym')]",
         decklist: {
             selector: "//span[@id='decklist-mandatory']",
             locateStrategy: 'xpath'
@@ -339,11 +356,11 @@ module.exports = {
             locateStrategy: 'xpath'
         },
         ownClaimInTable: {
-            selector: "//table/tbody/tr[@class='info']",
+            selector: "//table/tbody/tr[contains(@class, 'own-claim')]",
             locateStrategy: 'xpath'
         },
         conflictInTable: {
-            selector: "//table/tbody/tr[@class='danger']",
+            selector: "//table/tbody/tr[contains(@class,'danger')]",
             locateStrategy: 'xpath'
         },
         dueWarning: {

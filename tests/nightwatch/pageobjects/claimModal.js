@@ -1,10 +1,22 @@
 var claimCommands = {
 
-    validate: function(title, client) {
+    validate: function(title, players_number, top_number, client) {
         this.log('* Validating conclude tournament modal *');
 
         var util = require('util');
+
+        // subtitle
         this.api.useXpath().waitForElementVisible(util.format(this.elements.validator.selector, title), 3000);
+
+        // swiss selector
+        this.api.useXpath().verify.elementPresent(util.format(this.elements.swissOption.selector, players_number));
+
+        // top selector
+        if (parseInt(top_number) > 0) {
+            this.api.useXpath().verify.elementPresent(util.format(this.elements.topOption.selector, top_number));
+        } else {
+            this.api.useXpath().verify.elementNotPresent(util.format(this.elements.topOption.selector, 1));
+        }
 
         if (typeof callback === "function"){
             callback.call(client);
@@ -22,16 +34,25 @@ var claimCommands = {
         this
             .api.useXpath()
             .waitForElementVisible(this.elements.loadingFinished.selector, 20000);
-        this
-            .selectOption(this.elements.inputRank.selector, data['rank'])
-            .selectOption(this.elements.inputTopRank.selector, data['rank_top'])
-            .selectOption(this.elements.inputCorpDeck.selector, data['corp_deck'])
-            .selectOption(this.elements.inputRunnerDeck.selector, data['runner_deck'])
-            //.setValue(this.elements.inputRank.selector, data['rank'])
-            //.setValue(this.elements.inputTopRank.selector, data['rank_top'])
-            //.setValue(this.elements.inputCorpDeck.selector, data['corp_deck'])
-            //.setValue(this.elements.inputRunnerDeck.selector, data['runner_deck'])
-            .click(this.elements.submit.selector);
+
+        // set swiss rank
+        this.api.useXpath().click(this.elements.inputRank.selector)
+            .setValue(this.elements.inputRank.selector, data.rank);
+
+        // set top rank
+        if (data.rank_top > 0) {
+            this.api.useXpath().click(this.elements.inputTopRank.selector)
+                .setValue(this.elements.inputTopRank.selector, data.rank_top);
+        }
+
+        // set decks
+        this.api.useXpath().click(this.elements.inputCorpDeck.selector)
+            .setValue(this.elements.inputCorpDeck.selector, data.corp_deck);
+        this.api.useXpath().click(this.elements.inputRunnerDeck.selector)
+            .setValue(this.elements.inputRunnerDeck.selector, data.runner_deck);
+
+        // submit claim
+        this.click(this.elements.submit.selector);
 
         if (typeof callback === "function"){
             callback.call(client);
@@ -39,20 +60,6 @@ var claimCommands = {
 
         return this;
 
-    },
-
-    // TODO: move this to somewhere global
-    selectOption: function (xpathSelector, value) {
-        this.api.useXpath()
-            .click(xpathSelector)
-            .setValue(xpathSelector, value)
-            .keys(['\uE006']);
-
-        if (typeof callback === "function"){
-            callback.call(client);
-        }
-
-        return this;
     }
 
 };
@@ -61,6 +68,8 @@ module.exports = {
     commands: [claimCommands],
     elements: {
         validator: "//h4[@class='modal-title' and contains(.,'Claim spot on tournament')]/div[@class='modal-subtitle' and contains(.,'%s')]",
+        swissOption: "//select[@id='rank']/option[%s]",
+        topOption: "//select[@id='rank_top']/option[%s]",
         submit: {
             selector: "//button[@type='submit' and contains(.,'Claim spot')]",
             locateStrategy: 'xpath'

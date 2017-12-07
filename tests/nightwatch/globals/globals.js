@@ -1,5 +1,6 @@
 var accounts = require('./accounts.js');
 var tournaments = require('./tournaments.js');
+var claims = require('./claims.js');
 
 module.exports = {
     // TODO: do 'login' and 'tournament' object only
@@ -9,5 +10,6 @@ module.exports = {
     tournamentSingleDay: tournaments.tournamentSingleDay,
     tournamentRecurring: tournaments.tournamentRecurring,
     tournamentOnlineConcluded: tournaments.tournamentOnlineConcluded,
-    tournamentNrtmJsonWithoutTopCut: tournaments.tournamentNrtmJsonWithoutTopCut
+    tournamentNrtmJsonWithoutTopCut: tournaments.tournamentNrtmJsonWithoutTopCut,
+    claims: claims
 };
