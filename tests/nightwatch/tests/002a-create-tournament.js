@@ -23,9 +23,9 @@ module.exports = {
      */
     'Create single day tournament (future date)': function (browser) {
 
-        var regularLogin = browser.globals.regularLogin,
-            adminLogin = browser.globals.adminLogin,
-            tournamentSingleDay = JSON.parse(JSON.stringify(browser.globals.tournamentSingleDay)); // clone
+        var regularLogin = browser.globals.accounts.regularLogin,
+            adminLogin = browser.globals.accounts.adminLogin,
+            tournamentSingleDay = JSON.parse(JSON.stringify(browser.globals.tournaments.tournamentSingleDay)); // clone
 
         tournamentSingleDay.title = browser.currentTest.module.substring(0,3) + "|" +
             browser.currentTest.name.substring(0,29) + "|" + tournamentSingleDay.title.substring(0, 16);

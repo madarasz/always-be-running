@@ -4,14 +4,8 @@ var claims = require('./claims.js');
 var database = require('./database.js');
 
 module.exports = {
-    // TODO: do 'login' and 'tournament' object only
-    adminLogin: accounts.adminLogin,
-    regularLogin: accounts.regularLogin,
-    emptyLogin: accounts.emptyLogin,
-    tournamentSingleDay: tournaments.tournamentSingleDay,
-    tournamentRecurring: tournaments.tournamentRecurring,
-    tournamentOnlineConcluded: tournaments.tournamentOnlineConcluded,
-    tournamentNrtmJsonWithoutTopCut: tournaments.tournamentNrtmJsonWithoutTopCut,
+    accounts: accounts,
+    tournaments: tournaments,
     claims: claims,
     database: database
 };

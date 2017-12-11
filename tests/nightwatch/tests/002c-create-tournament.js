@@ -21,9 +21,9 @@ module.exports = {
      */
     'Create multi-day, online tournament (concluded)': function (browser) {
 
-        var regularLogin = browser.globals.regularLogin,
-            adminLogin = browser.globals.adminLogin,
-            tournamentOnlineConcluded = JSON.parse(JSON.stringify(browser.globals.tournamentOnlineConcluded)); // clone
+        var regularLogin = browser.globals.accounts.regularLogin,
+            adminLogin = browser.globals.accounts.adminLogin,
+            tournamentOnlineConcluded = JSON.parse(JSON.stringify(browser.globals.tournaments.tournamentOnlineConcluded)); // clone
 
         tournamentOnlineConcluded.title = browser.currentTest.module.substring(0,3) + "|" +
             browser.currentTest.name.substring(0,29) + "|" + tournamentOnlineConcluded.title.substring(0, 16);
@@ -235,8 +235,8 @@ module.exports = {
      */
     'Tournament form validation': function (browser) {
 
-        var regularLogin = browser.globals.regularLogin,
-            tournamentOnlineConcluded = browser.globals.tournamentOnlineConcluded;
+        var regularLogin = browser.globals.accounts.regularLogin,
+            tournamentOnlineConcluded = browser.globals.tournaments.tournamentOnlineConcluded;
 
         // open browser
         browser.url(browser.launchUrl);

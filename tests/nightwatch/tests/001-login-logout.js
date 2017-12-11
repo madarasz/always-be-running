@@ -19,7 +19,7 @@ module.exports = {
      */
     'Login - logout': function (browser) {
 
-        var regularLogin = browser.globals.regularLogin;
+        var regularLogin = browser.globals.accounts.regularLogin;
 
         // open browser
         browser.url(browser.launchUrl);

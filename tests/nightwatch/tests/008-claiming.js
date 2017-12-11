@@ -22,9 +22,9 @@ module.exports = {
      */
     'Claiming with published decks, no top-cut, conflicting import': function (browser) {
 
-        var regularLogin = browser.globals.regularLogin,
+        var regularLogin = browser.globals.accounts.regularLogin,
             claim1 = browser.globals.claims.claim1,
-            tournamentNrtmJsonWithoutTopCut = JSON.parse(JSON.stringify(browser.globals.tournamentNrtmJsonWithoutTopCut)); // clone
+            tournamentNrtmJsonWithoutTopCut = JSON.parse(JSON.stringify(browser.globals.tournaments.tournamentNrtmJsonWithoutTopCut)); // clone
 
         tournamentNrtmJsonWithoutTopCut.title = browser.currentTest.module.substring(0, 3) + "|" +
             browser.currentTest.name.substring(0, 29) + "|" + tournamentNrtmJsonWithoutTopCut.title.substring(0, 16);

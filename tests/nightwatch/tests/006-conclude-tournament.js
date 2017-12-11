@@ -24,9 +24,8 @@ module.exports = {
      * Check that tournament is in to-be-concluded table and not in results table
      */
     'Manual Conclusion (with top-cut), revert by creator': function (browser) {
-        var regularLogin = browser.globals.regularLogin,
-            adminLogin = browser.globals.adminLogin,
-            tournamentOnlineConcluded = JSON.parse(JSON.stringify(browser.globals.tournamentOnlineConcluded)); // clone
+        var regularLogin = browser.globals.accounts.regularLogin,
+            tournamentOnlineConcluded = JSON.parse(JSON.stringify(browser.globals.tournaments.tournamentOnlineConcluded)); // clone
 
         tournamentOnlineConcluded.title = browser.currentTest.module.substring(0,3) + "|" +
             browser.currentTest.name.substring(0,29) + "|" + tournamentOnlineConcluded.title.substring(0, 16);

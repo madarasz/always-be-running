@@ -10,9 +10,8 @@ module.exports = {
 
     'Import from NRTM.json (no top-cut)': function (browser) {
 
-        var regularLogin = browser.globals.regularLogin,
-            adminLogin = browser.globals.adminLogin,
-            tournamentNrtmJsonWithoutTopCut = JSON.parse(JSON.stringify(browser.globals.tournamentNrtmJsonWithoutTopCut)); // clone
+        var regularLogin = browser.globals.accounts.regularLogin,
+            tournamentNrtmJsonWithoutTopCut = JSON.parse(JSON.stringify(browser.globals.tournaments.tournamentNrtmJsonWithoutTopCut)); // clone
 
         tournamentNrtmJsonWithoutTopCut.title = browser.currentTest.module.substring(0,3) + "|" +
             browser.currentTest.name.substring(0,29) + "|" + tournamentNrtmJsonWithoutTopCut.title.substring(0, 16);

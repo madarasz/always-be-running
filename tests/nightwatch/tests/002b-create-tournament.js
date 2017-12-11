@@ -22,9 +22,9 @@ module.exports = {
      */
     'Create recurring tournament': function (browser) {
 
-        var regularLogin = browser.globals.regularLogin,
-            adminLogin = browser.globals.adminLogin,
-            tournamentRecurring = JSON.parse(JSON.stringify(browser.globals.tournamentRecurring)); // clone
+        var regularLogin = browser.globals.accounts.regularLogin,
+            adminLogin = browser.globals.accounts.adminLogin,
+            tournamentRecurring = JSON.parse(JSON.stringify(browser.globals.tournaments.tournamentRecurring)); // clone
 
         tournamentRecurring.title = browser.currentTest.module.substring(0,3) + "|" +
             browser.currentTest.name.substring(0,29) + "|" + tournamentRecurring.title.substring(0, 16);
