@@ -55,7 +55,7 @@ module.exports = {
                 inputs: {
                     title: tournamentOnlineConcluded.title,
                     date: tournamentOnlineConcluded.date,
-                    start_time: tournamentOnlineConcluded.time,
+                    start_time: tournamentOnlineConcluded.start_time,
                     contact: tournamentOnlineConcluded.contact
                 },
                 textareas: {description: tournamentOnlineConcluded.description},
@@ -76,7 +76,7 @@ module.exports = {
             .fillForm({
                 checkboxes: {
                     decklist: tournamentOnlineConcluded.decklist,
-                    concluded: tournamentOnlineConcluded.conclusion
+                    concluded: tournamentOnlineConcluded.concluded
                 }
             })
             .assertForm({
@@ -105,7 +105,7 @@ module.exports = {
                 creator: regularLogin.username,
                 description: tournamentOnlineConcluded.description,
                 date: tournamentOnlineConcluded.date.slice(0, -1) + ' - ' + tournamentOnlineConcluded.end_date,
-                time: tournamentOnlineConcluded.time,
+                time: tournamentOnlineConcluded.start_time,
                 cardpool: tournamentOnlineConcluded.cardpool,
                 contact: tournamentOnlineConcluded.contact,
                 map: false,
@@ -156,15 +156,15 @@ module.exports = {
                 inputs: {
                     title: tournamentOnlineConcluded.title,
                     date: tournamentOnlineConcluded.date,
-                    start_time: tournamentOnlineConcluded.time,
+                    start_time: tournamentOnlineConcluded.start_time,
                     contact: tournamentOnlineConcluded.contact,
                     players_number: tournamentOnlineConcluded.players_number,
                     end_date: tournamentOnlineConcluded.end_date
                 },
                 textareas: { description: tournamentOnlineConcluded.description },
                 selects: {
-                    tournament_type_id: tournamentOnlineConcluded.type_id,
-                    tournament_format_id: tournamentOnlineConcluded.format_id,
+                    tournament_type_id: tournamentOnlineConcluded.tournament_type_id,
+                    tournament_format_id: tournamentOnlineConcluded.tournament_format_id,
                     cardpool_id: tournamentOnlineConcluded.cardpool_id,
                     top_number: tournamentOnlineConcluded.top_number
                 },
@@ -173,7 +173,7 @@ module.exports = {
                 },
                 checkboxes: {
                     decklist: tournamentOnlineConcluded.decklist,
-                    concluded: tournamentOnlineConcluded.conclusion
+                    concluded: tournamentOnlineConcluded.concluded
                 }
             })
             .click('@cancel_button');

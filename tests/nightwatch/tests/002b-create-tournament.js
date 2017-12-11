@@ -55,8 +55,8 @@ module.exports = {
             .fillForm({
                 inputs: {
                     title: tournamentRecurring.title,
-                    link_facebook: tournamentRecurring.facebook,
-                    start_time: tournamentRecurring.time,
+                    link_facebook: tournamentRecurring.link_facebook,
+                    start_time: tournamentRecurring.start_time,
                     contact: tournamentRecurring.contact
                 },
                 textareas: {description: tournamentRecurring.description},
@@ -77,7 +77,7 @@ module.exports = {
             })
             .fillForm({
                 selects: {
-                    recur_weekly: tournamentRecurring.recur_weekly
+                    recur_weekly: tournamentRecurring.recur_weekly_text
                 }
             })
             .fillForm({
@@ -92,8 +92,8 @@ module.exports = {
                 not_present: ['location_state', 'location_store', 'location_address']
             })
             .validateLocation({
-                location_country: tournamentRecurring.country,
-                location_city: tournamentRecurring.city,
+                location_country: tournamentRecurring.location_country,
+                location_city: tournamentRecurring.location_city,
                 location_place_id: tournamentRecurring.location_place_id,
                 location_lat: tournamentRecurring.location_lat,
                 location_long: tournamentRecurring.location_long
@@ -110,9 +110,9 @@ module.exports = {
                 ttype: tournamentRecurring.type,
                 creator: regularLogin.username,
                 description: tournamentRecurring.description,
-                facebookEvent: tournamentRecurring.facebook,
-                date: 'recurring: ' + tournamentRecurring.recur_weekly,
-                time: tournamentRecurring.time,
+                facebookEvent: tournamentRecurring.link_facebook,
+                date: 'recurring: ' + tournamentRecurring.recur_weekly_text,
+                time: tournamentRecurring.start_time,
                 location: tournamentRecurring.location,
                 contact: tournamentRecurring.contact,
                 map: true,
@@ -161,15 +161,15 @@ module.exports = {
                 not_visible: ['overlay_location', 'overlay_recurring'],
                 inputs: {
                     title: tournamentRecurring.title,
-                    link_facebook: tournamentRecurring.facebook,
-                    start_time: tournamentRecurring.time,
+                    link_facebook: tournamentRecurring.link_facebook,
+                    start_time: tournamentRecurring.start_time,
                     contact: tournamentRecurring.contact
                 },
                 textareas: { description: tournamentRecurring.description },
                 selects: {
-                    tournament_type_id: tournamentRecurring.type_id,
-                    tournament_format_id: tournamentRecurring.format_id,
-                    recur_weekly: tournamentRecurring.recur_weekly_id
+                    tournament_type_id: tournamentRecurring.tournament_type_id,
+                    tournament_format_id: tournamentRecurring.tournament_format_id,
+                    recur_weekly: tournamentRecurring.recur_weekly
                 },
                 radios: {
                     date_type_id: tournamentRecurring.date_type_id
@@ -179,8 +179,8 @@ module.exports = {
                 }
             })
             .validateLocation({
-                location_country: tournamentRecurring.country,
-                location_city: tournamentRecurring.city,
+                location_country: tournamentRecurring.location_country,
+                location_city: tournamentRecurring.location_city,
                 location_place_id: tournamentRecurring.location_place_id,
                 location_lat: tournamentRecurring.location_lat,
                 location_long: tournamentRecurring.location_long
@@ -192,7 +192,7 @@ module.exports = {
         browser.page.mainMenu()
             .selectMenu('organize');
         browser.page.tournamentTable().assertTable('created', tournamentRecurring.title, {
-            texts: [tournamentRecurring.recur_weekly, tournamentRecurring.location],
+            texts: [tournamentRecurring.recur_weekly_text, tournamentRecurring.location],
             labels: ['pending']
         });
 
@@ -201,7 +201,7 @@ module.exports = {
         browser.page.mainMenu()
             .selectMenu('upcoming');
         browser.page.tournamentTable().assertTable('recur-table', tournamentRecurring.title, {
-            texts: [tournamentRecurring.recur_weekly, tournamentRecurring.location]
+            texts: [tournamentRecurring.recur_weekly_text, tournamentRecurring.location]
         });
 
         // logout
@@ -214,14 +214,14 @@ module.exports = {
         browser.page.mainMenu().selectMenu('admin');
         browser.page.tournamentTable()
             .assertTable('pending', tournamentRecurring.title, {
-                texts: [tournamentRecurring.recur_weekly, tournamentRecurring.location],
+                texts: [tournamentRecurring.recur_weekly_text, tournamentRecurring.location],
                 labels: ['pending']
             })
             .selectTournamentAction('pending', tournamentRecurring.title, 'delete');
 
         browser.page.tournamentTable()
             .assertTable('deleted', tournamentRecurring.title, {
-                texts: [tournamentRecurring.recur_weekly, regularLogin.username],
+                texts: [tournamentRecurring.recur_weekly_text, regularLogin.username],
                 labels: ['pending']
             })
             .selectTournamentAction('deleted', tournamentRecurring.title, 'remove');

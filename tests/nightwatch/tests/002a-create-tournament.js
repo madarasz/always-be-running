@@ -61,8 +61,8 @@ module.exports = {
                 inputs: {
                     title: tournamentSingleDay.title,
                     date: tournamentSingleDay.date,
-                    link_facebook: tournamentSingleDay.facebook,
-                    start_time: tournamentSingleDay.time,
+                    link_facebook: tournamentSingleDay.link_facebook,
+                    start_time: tournamentSingleDay.start_time,
                     contact: tournamentSingleDay.contact
                 },
                 textareas: {description: tournamentSingleDay.description},
@@ -76,7 +76,7 @@ module.exports = {
                 },
                 checkboxes: {
                     decklist: tournamentSingleDay.decklist,
-                    concluded: tournamentSingleDay.conclusion
+                    concluded: tournamentSingleDay.concluded
                 }
             })
             .fillForm({
@@ -91,10 +91,10 @@ module.exports = {
                 not_present: ['location_state']
             })
             .validateLocation({
-                location_country: tournamentSingleDay.country,
-                location_city: tournamentSingleDay.city,
-                location_store: tournamentSingleDay.store,
-                location_address: tournamentSingleDay.address,
+                location_country: tournamentSingleDay.location_country,
+                location_city: tournamentSingleDay.location_city,
+                location_store: tournamentSingleDay.location_store,
+                location_address: tournamentSingleDay.location_address,
                 location_place_id: tournamentSingleDay.location_place_id,
                 location_lat: tournamentSingleDay.location_lat,
                 location_long: tournamentSingleDay.location_long
@@ -112,13 +112,13 @@ module.exports = {
                 tformat: tournamentSingleDay.format,
                 creator: regularLogin.username,
                 description: tournamentSingleDay.description,
-                facebookGroup: tournamentSingleDay.facebook,
+                facebookGroup: tournamentSingleDay.link_facebook,
                 date: tournamentSingleDay.date,
-                time: tournamentSingleDay.time,
+                time: tournamentSingleDay.start_time,
                 cardpool: tournamentSingleDay.cardpool,
                 location: tournamentSingleDay.location,
-                store: tournamentSingleDay.store,
-                address: tournamentSingleDay.address,
+                store: tournamentSingleDay.location_store,
+                address: tournamentSingleDay.location_address,
                 contact: tournamentSingleDay.contact,
                 map: true,
                 decklist: true,
@@ -168,14 +168,14 @@ module.exports = {
                 inputs: {
                     title: tournamentSingleDay.title,
                     date: tournamentSingleDay.date,
-                    link_facebook: tournamentSingleDay.facebook,
-                    start_time: tournamentSingleDay.time,
+                    link_facebook: tournamentSingleDay.link_facebook,
+                    start_time: tournamentSingleDay.start_time,
                     contact: tournamentSingleDay.contact
                 },
                 textareas: {description: tournamentSingleDay.description},
                 selects: {
-                    tournament_type_id: tournamentSingleDay.type_id,
-                    tournament_format_id: tournamentSingleDay.format_id,
+                    tournament_type_id: tournamentSingleDay.tournament_type_id,
+                    tournament_format_id: tournamentSingleDay.tournament_format_id,
                     cardpool_id: tournamentSingleDay.cardpool_id
                 },
                 radios: {
@@ -183,14 +183,14 @@ module.exports = {
                 },
                 checkboxes: {
                     decklist: tournamentSingleDay.decklist,
-                    concluded: tournamentSingleDay.conclusion
+                    concluded: tournamentSingleDay.concluded
                 }
             })
             .validateLocation({
-                location_country: tournamentSingleDay.country,
-                location_city: tournamentSingleDay.city,
-                location_store: tournamentSingleDay.store,
-                location_address: tournamentSingleDay.address,
+                location_country: tournamentSingleDay.location_country,
+                location_city: tournamentSingleDay.location_city,
+                location_store: tournamentSingleDay.location_store,
+                location_address: tournamentSingleDay.location_address,
                 location_place_id: tournamentSingleDay.location_place_id,
                 location_lat: tournamentSingleDay.location_lat,
                 location_long: tournamentSingleDay.location_long

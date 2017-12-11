@@ -123,6 +123,7 @@ module.exports = {
 
         // Validate matches information and points
         browser.log('* Validate matches information and points *');
+        browser.pause(3000);
         browser.page.tournamentView()
             .getLocationInView('@showMatches').click('@showMatches')
             .validateMatches(tournamentNrtmJsonWithoutTopCut.imported_results)

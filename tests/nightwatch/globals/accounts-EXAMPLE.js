@@ -6,7 +6,8 @@ var adminLogin = {
 // regular user with available published decklists
 var regularLogin = {
     username: 'Necro2',
-    password: 'EXAMPLE'
+    password: 'EXAMPLE',
+    userid: 21903
 };
 // user with no published decklists
 var emptyLogin = {
