@@ -72,6 +72,7 @@ var tableCommands = {
             selector = util.format(this.elements.title.selector, table_id, title);
 
         // check if row exists
+        this.api.useXpath().waitForElementVisible('//body', 3000);
         this.api.useXpath().waitForElementPresent(selector, 5000);
 
         // click row
