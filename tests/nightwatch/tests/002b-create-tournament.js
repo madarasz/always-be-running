@@ -17,8 +17,6 @@ module.exports = {
      * - Save tournament, validate tournament details page
      * - Navigate to Organize page, validate entry on table of created tournaments
      * - Navigate to Upcoming page, check recurring tournaments table
-     * - Logout
-     * - Login as admin, hard delete tournament
      */
     'Create recurring tournament': function (browser) {
 
@@ -204,27 +202,8 @@ module.exports = {
             texts: [tournamentRecurring.recur_weekly_text, tournamentRecurring.location]
         });
 
-        // logout
-        browser.log('* Logout *');
-        browser.page.mainMenu().selectMenu('logout');
+        // data cleanup, delete tournament
+        browser.sqlDeleteTournament(tournamentRecurring.title, browser.globals.database.connection);
 
-        // login as admin, hard delete tournament
-        browser.log('* Login with NRDB (admin user), hard delete tournament *');
-        browser.login(adminLogin.username, adminLogin.password);
-        browser.page.mainMenu().selectMenu('admin');
-        browser.page.tournamentTable()
-            .assertTable('pending', tournamentRecurring.title, {
-                texts: [tournamentRecurring.recur_weekly_text, tournamentRecurring.location],
-                labels: ['pending']
-            })
-            .selectTournamentAction('pending', tournamentRecurring.title, 'delete');
-
-        browser.page.tournamentTable()
-            .assertTable('deleted', tournamentRecurring.title, {
-                texts: [tournamentRecurring.recur_weekly_text, regularLogin.username],
-                labels: ['pending']
-            })
-            .selectTournamentAction('deleted', tournamentRecurring.title, 'remove');
-
-    },
+    }
 };

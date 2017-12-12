@@ -18,8 +18,6 @@ module.exports = {
      * - Click Update button, verify tournament form, click Cancel
      * - Navigate to Organize page, validate entry on table of created tournaments
      * - Navigate to Upcoming page, check upcoming tournaments table
-     * - Logout
-     * - Login as admin, hard delete tournament
      */
     'Create single day tournament (future date)': function (browser) {
 
@@ -214,26 +212,8 @@ module.exports = {
             texts: [tournamentSingleDay.date, tournamentSingleDay.cardpool, tournamentSingleDay.location, tournamentSingleDay.type],
         });
 
-        // logout
-        browser.log('* Logout *');
-        browser.page.mainMenu().selectMenu('logout');
-
-        // login as admin, hard delete tournament
-        browser.log('* Login with NRDB (admin user), hard delete tournament *');
-        browser.login(adminLogin.username, adminLogin.password);
-        browser.page.mainMenu().selectMenu('admin');
-        browser.page.tournamentTable()
-            .assertTable('pending', tournamentSingleDay.title, {
-                texts: [tournamentSingleDay.date, tournamentSingleDay.cardpool, tournamentSingleDay.location],
-                labels: ['pending']
-            })
-            .selectTournamentAction('pending', tournamentSingleDay.title, 'delete');
-        browser.page.tournamentTable()
-            .assertTable('deleted', tournamentSingleDay.title, {
-                texts: [tournamentSingleDay.date, regularLogin.username],
-                labels: ['pending']
-            })
-            .selectTournamentAction('deleted', tournamentSingleDay.title, 'remove');
+        // data cleanup, delete tournament
+        browser.sqlDeleteTournament(tournamentSingleDay.title, browser.globals.database.connection);
 
     },
 };

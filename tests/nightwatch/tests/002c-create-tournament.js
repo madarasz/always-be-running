@@ -16,8 +16,6 @@ module.exports = {
      * Save tournament, validate tournament details page
      * Navigate to Organize page, validate entry on table of created tournaments
      * Navigate to Results page, check results table
-     * Logout
-     * Login with NRDB (admin user), hard delete tournament
      */
     'Create multi-day, online tournament (concluded)': function (browser) {
 
@@ -197,30 +195,8 @@ module.exports = {
                 tournamentOnlineConcluded.cardpool, tournamentOnlineConcluded.players_number]
         });
 
-        // logout
-        browser.page.mainMenu()
-            .selectMenu('organize');    // results page loads slow, navigating to organize
-        browser.log('* Logout *');
-        browser.page.mainMenu().selectMenu('logout');
-
-        // login as admin, hard delete tournament
-        browser.log('* Login with NRDB (admin user), hard delete tournament *');
-        browser.login(adminLogin.username, adminLogin.password);
-        browser.page.mainMenu().selectMenu('admin');
-        browser.page.tournamentTable()
-            .assertTable('pending', tournamentOnlineConcluded.title, {
-                texts: [tournamentOnlineConcluded.date, tournamentOnlineConcluded.cardpool, 'online'],
-                labels: ['pending'],
-                multi_day: true
-            })
-            .selectTournamentAction('pending', tournamentOnlineConcluded.title, 'delete');
-        browser.page.tournamentTable()
-            .assertTable('deleted', tournamentOnlineConcluded.title, {
-                texts: [tournamentOnlineConcluded.date, regularLogin.username],
-                labels: ['concluded'],
-                multi_day: true
-            })
-            .selectTournamentAction('deleted', tournamentOnlineConcluded.title, 'remove');
+        // data cleanup, delete tournament
+        browser.sqlDeleteTournament(tournamentOnlineConcluded.title, browser.globals.database.connection);
 
     },
 

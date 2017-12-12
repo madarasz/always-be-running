@@ -29,8 +29,6 @@
 - Navigate to Organize page, validate entry on table of created tournaments
 - Navigate to Upcoming page, check upcoming tournaments table
 - **TODO**: *Validate tournament on profile page*
-- Logout
-- Login as admin, hard delete tournament
 
 ##### Create recurring event
 - Navigate to Organize page
@@ -42,8 +40,6 @@
 - Click Update button, verify tournament form, click Cancel
 - Navigate to Organize page, validate entry on table of created tournaments
 - Navigate to Upcoming page, check recurring tournaments table
-- Logout
-- Login as admin, hard delete tournament
 
 ##### Create online, multi-day, concluded tournament
 - Navigate to Organize page
@@ -54,8 +50,6 @@
 - Click Update button, verify tournament form, click Cancel
 - Navigate to Organize page, validate entry on table of created tournaments
 - Navigate to Results page, check results table
-- Logout
-- Login with NRDB (admin user), hard delete tournament
 
 ##### Tournament form validation
 - Navigate to Organize pag
@@ -77,8 +71,6 @@
 - Validate matches information and points
 - Verify concluded tournament on Results page
 - Verify concluded tournament on Organize page
-- Logout
-- Login with NRDB (admin user), hard delete tournament
 
 **TODO**
 - Import from Facebook
