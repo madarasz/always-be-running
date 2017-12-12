@@ -11,6 +11,10 @@
                 <h5 id="pending-photo-title">
                     <i class="fa fa-question-circle-o" aria-hidden="true"></i>
                     Pending photos
+                    <a class="btn btn-success btn-xs pull-right m-r-1 disabled" id="button-approve-all-photos"
+                       href="/photos/0/approve-all">
+                        <i class="fa fa-thumbs-up" aria-hidden="true"></i> Approve all
+                    </a>
                 </h5>
                 @include('admin.gallery', ['photos' => $photos, 'approval' => null])
                 <div id="no-approve-photo" class="small-text">no photos to approve</div>

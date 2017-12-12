@@ -453,6 +453,7 @@ function updateNavBadges() {
                         $('#pending-photo-title').addClass('notif-red notif-badge-page').attr('data-badge', data.adminAlerts.pendingPhoto);
                         document.getElementById('tabf-photo').setAttribute("data-badge", data.adminAlerts.pendingPhoto);
                         $('#no-approve-photo').addClass('hidden-xs-up');
+                        $('#button-approve-all-photos').removeClass('disabled');
                     }
                 }
             }

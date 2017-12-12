@@ -155,15 +155,22 @@ class PhotosController extends Controller
     }
 
     /**
-     * Approves all photos on a tournament
-     * @param $id tournament ID
+     * Approves all photos on a tournament.
+     * @param $id tournament ID (0 if you want all pending photos to approved for all tournament)
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function approveAll($id, Request $request) {
-        $tournament = Tournament::findOrFail($id);
-        $photos = $tournament->photos();
         $this->authorize('admin', Tournament::class, $request->user());
+
+        if ($id > 0) {
+            // approve photos for a tournament
+            $tournament = Tournament::findOrFail($id);
+            $photos = $tournament->photos();
+        } else {
+            // approve all pending photos
+            $photos = Photo::whereNull('approved');
+        }
 
         $photos->update(['approved' => true]);
 
