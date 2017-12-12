@@ -100,6 +100,19 @@
 
 ### 008 Claiming
 
+##### Registering, un-registering
+* Navigate to Organize page
+* Login with NRDB (regular user)
+* Validate login, click Create Tournament
+* Fill out tournament form with past tournament data
+* Save tournament, validate tournament details page
+* Click register, validate tournament page
+* Go to Personal page, validate registered tournament entry
+* Go back to tournament details page, unregister, validate tournament details page
+* Register again, conclude tournament, validate tournament details page
+* Go to Personal page, validate claim button
+* Click unregister on Personal page, validate tournament missing on Personal page
+
 ##### Claiming with published decks
 * Login with NRDB (regular user)
 * Navigate to Organize page, create from results
@@ -107,18 +120,17 @@
 * Save tournament
 * Click claim, validate claim modal, add claim of published decklists
 * Validate tournament details page, validate claim
-* Import nrtm results (conflicting), validate conflicts
-* Remove claim, validate tournament page, conflict is gone
+* Import NRTM results (conflicting), validate conflicts
+* Go to organize, validate conflict and match data icons
+* Go to tournament details, remove claim, validate tournament page, conflict is gone
 * Claim again, validate conflict
 * Remove conflicting imported entry, validate conflict is gone
+* Go to Personal page, validate tournament entry with claimed status
 
 **TODO**
-
-- Registering / Unregistering
 - Claiming with other's deck
 - Claiming with private deck
 - Claiming with IDs
-- conflict icon in tables
 - Manual import
 - Merges (import + user claim)
    - user claim then NRTM import

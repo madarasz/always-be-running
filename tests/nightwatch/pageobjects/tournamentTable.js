@@ -27,6 +27,12 @@ var tableCommands = {
                 this.api.verify.elementPresent(util.format(this.elements.button.selector, table_id, title, item));
             }, this);
         }
+        if (data.hasOwnProperty('icons')) {
+            data.icons.forEach(function(item) {
+                this.api.verify.elementPresent(util.format(this.elements.icon.selector, table_id, title, item));
+            }, this);
+        }
+
 
         if (data.hasOwnProperty('texts_missing')) {
             data.texts_missing.forEach(function(item) {
@@ -132,6 +138,7 @@ module.exports = {
         row: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]",
         text: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td[contains(.,'%s')]",
         label: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/span[contains(.,'%s')]",
+        icon: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td//i[contains(@title,'%s')]",
         multiDay: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/span/i[contains(@class, 'fa-plus-circle')]",
         actionButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'%s')]",
         button: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/*[contains(.,'%s')]",
