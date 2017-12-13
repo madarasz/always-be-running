@@ -52,19 +52,19 @@
         @if( in_array('players', $columns) )
             <th class="text-xs-center hidden-sm-down">players</th>
             <th class="text-xs-center hidden-xs-down hidden-md-up">
-                @include('partials.popover', ['direction' => 'top', 'content' => 'players'])
+                <i class="fa fa-user" title="players"></i>
             </th>
         @endif
         @if( in_array('regs', $columns) )
             <th class="text-xs-center hidden-sm-down">regs</th>
             <th class="text-xs-center hidden-xs-down hidden-md-up">
-                @include('partials.popover', ['direction' => 'top', 'content' => 'registered players'])
+                <i class="fa fa-registered" title="registered"></i>
             </th>
         @endif
         @if( in_array('claims', $columns) )
             <th class="text-xs-center hidden-sm-down">claims</th>
             <th class="text-xs-center hidden-xs-down hidden-md-up">
-                @include('partials.popover', ['direction' => 'top', 'content' => 'claims'])
+                <i class="fa fa-address-card" title="claims"></i>
             </th>
         @endif
         @if( in_array('created_at', $columns) )

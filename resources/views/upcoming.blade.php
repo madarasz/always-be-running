@@ -8,11 +8,11 @@
             <div class="bracket">
                 {!! Form::open(['url' => '/tournaments']) !!}
                 <div class="row">
-                    <div class="col-md-3 col-xs-12">
+                    <div class="col-xl-3 col-md-4 col-xs-12">
                         <h5 class="h5-filter"><i class="fa fa-filter" aria-hidden="true"></i> Filter</h5>
                     </div>
-                    <div class="col-md-3" id="filter-spacer"></div>
-                    <div class="col-md-3 col-xs-12" id="filter-type">
+                    <div class="col-xl-3 hidden-lg-down" id="filter-spacer"></div>
+                    <div class="col-xl-3 col-md-4 col-xs-12" id="filter-type">
                         <div class="input-group">
                             {!! Form::label('tournament_type_id', 'Type:') !!}
                             {!! Form::select('tournament_type_id', array_combine($tournament_types, $tournament_types),
@@ -20,7 +20,7 @@
                                 'onchange' => "filterUpcoming()", 'disabled' => '']) !!}
                         </div>
                     </div>
-                    <div class="col-md-3 col-xs-12" id="filter-country">
+                    <div class="col-xl-3 col-md-4 col-xs-12" id="filter-country">
                         <div class="input-group">
                             {!! Form::label('location_country', 'Country:') !!}
                             {!! Form::select('location_country', $countries, null,

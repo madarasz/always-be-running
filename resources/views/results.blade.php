@@ -5,7 +5,7 @@
     @include('partials.message')
     <div class="row">
         {{--Results table--}}
-        <div class="col-lg-9 push-lg-3 col-12">
+        <div class="col-lg-9 push-lg-3 col-12" id="col-results">
             <div class="bracket">
                 {{--Result / to be concluded tabs for logged in users--}}
                 @if (@Auth::user())
@@ -66,43 +66,45 @@
                 @include('tournaments.partials.icons')
             </div>
         </div>
-        <div class="col-lg-3 pull-lg-9 col-12">
+        <div class="col-lg-3 pull-lg-9 col-12" id="col-other">
             {{--Filters--}}
-            <div class="bracket">
+            <div class="bracket" id="bracket-filters">
                 <div class="loader" id="filter-loader" style="margin-top: 0">loading</div>
                 <h5><i class="fa fa-filter" aria-hidden="true"></i> Filter</h5>
                 {!! Form::open(['url' => '/tournaments']) !!}
-                    <div class="form-group" id="filter-cardpool">
-                        {!! Form::label('cardpool', 'Cardpool') !!}
-                        {!! Form::select('cardpool', array_combine($tournament_cardpools, $tournament_cardpools),
-                            null, ['class' => 'form-control filter',
-                            'onchange' => "filterResults()", 'disabled' => '']) !!}
-                    </div>
-                    <div class="form-group" id="filter-type">
-                        {!! Form::label('tournament_type_id', 'Type') !!}
-                        {!! Form::select('tournament_type_id', array_combine($tournament_types,$tournament_types),
-                            null, ['class' => 'form-control filter',
-                            'onchange' => "filterResults()", 'disabled' => '']) !!}
-                    </div>
-                    <div class="form-group" id="filter-country">
-                        {!! Form::label('location_country', 'Country') !!}
-                        {!! Form::select('location_country', array_combine($countries, $countries), null,
-                            ['class' => 'form-control filter',
-                            'onchange' => "filterResults()", 'disabled' => '']) !!}
-                        <div class="legal-bullshit text-xs-center hidden-xs-up" id="label-default-country">
-                            using user's default filter
+                    <div class="row no-gutters">
+                        <div class="form-group col-xs-6 col-lg-12" id="filter-cardpool">
+                            {!! Form::label('cardpool', 'Cardpool') !!}
+                            {!! Form::select('cardpool', array_combine($tournament_cardpools, $tournament_cardpools),
+                                null, ['class' => 'form-control filter',
+                                'onchange' => "filterResults()", 'disabled' => '']) !!}
                         </div>
-                    </div>
-                    <div class="form-group" id="filter-format">
-                        {!! Form::label('format', 'Format') !!}
-                        {!! Form::select('format', array_combine($tournament_formats, $tournament_formats), null,
-                            ['class' => 'form-control filter',
-                            'onchange' => "filterResults()", 'disabled' => '']) !!}
-                    </div>
-                    <div class="form-group" id="filter-video">
-                        {!! Form::checkbox('videos', null, null, ['id' => 'videos', 'class' => 'filter', 'disabled' => '',
-                            'onchange' => "filterResults()"]) !!}
-                        {!! Html::decode(Form::label('videos', 'has video <i class="fa fa-video-camera" aria-hidden="true"></i>')) !!}
+                        <div class="form-group col-xs-6 col-lg-12" id="filter-type">
+                            {!! Form::label('tournament_type_id', 'Type') !!}
+                            {!! Form::select('tournament_type_id', array_combine($tournament_types,$tournament_types),
+                                null, ['class' => 'form-control filter',
+                                'onchange' => "filterResults()", 'disabled' => '']) !!}
+                        </div>
+                        <div class="form-group col-xs-6 col-lg-12" id="filter-country">
+                            {!! Form::label('location_country', 'Country') !!}
+                            {!! Form::select('location_country', array_combine($countries, $countries), null,
+                                ['class' => 'form-control filter',
+                                'onchange' => "filterResults()", 'disabled' => '']) !!}
+                            <div class="legal-bullshit text-xs-center hidden-xs-up" id="label-default-country">
+                                using user's default filter
+                            </div>
+                        </div>
+                        <div class="form-group col-xs-6 col-lg-12" id="filter-format">
+                            {!! Form::label('format', 'Format') !!}
+                            {!! Form::select('format', array_combine($tournament_formats, $tournament_formats), null,
+                                ['class' => 'form-control filter',
+                                'onchange' => "filterResults()", 'disabled' => '']) !!}
+                        </div>
+                        <div class="form-group col-xs-6 col-lg-12" id="filter-video">
+                            {!! Form::checkbox('videos', null, null, ['id' => 'videos', 'class' => 'filter', 'disabled' => '',
+                                'onchange' => "filterResults()"]) !!}
+                            {!! Html::decode(Form::label('videos', 'has video <i class="fa fa-video-camera" aria-hidden="true"></i>')) !!}
+                        </div>
                     </div>
                 {!! Form::close() !!}
             </div>
@@ -139,6 +141,8 @@
                 defaultCountry = "",
                 currentPack = "",
                 runnerIDs = [], corpIDs = [];
+
+        positionFilters();
 
         // load tournaments, first 50 for quick display
         getTournamentData('/results?limit=50', function(data) {
@@ -204,7 +208,22 @@
         $(window).resize(function(){
             drawResultStats('stat-chart-runner', runnerIDs, 0.04);
             drawResultStats('stat-chart-corp', corpIDs, 0.04);
+            positionFilters();
         });
+
+        // position filter bracket based on screen width
+        function positionFilters() {
+            console.log($(window).width());
+            console.log(window.matchMedia( "(min-width: 992px)").matches);
+            if (window.matchMedia( "(min-width: 992px)").matches) {
+//            if ($(window).width() >= 977) {
+                // lg-size
+                $('#col-other').prepend($('#bracket-filters'));
+            } else {
+                // below lg-size
+                $('#col-results').prepend($('#bracket-filters'));
+            }
+        }
 
         // apply Results page filters from URL and user settings
         function applyInitialResultsFilters() {

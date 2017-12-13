@@ -118,11 +118,15 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 }).appendTo(endpart);
             }
         }
-        // location
+        // location, small devices see only country
         if ($.inArray('location', columns) > -1) {
-            newrow.append($('<td>', {
-                text: element.location
-            }));
+            newrow.append($('<td>').append($('<span>', {
+                text: element.location,
+                class: 'hidden-sm-down'
+            }), $('<span>', {
+                text: element.location_country,
+                class: 'hidden-md-up'
+            })));
         }
         // recurring day
         if ($.inArray('recurday', columns) > -1) {
