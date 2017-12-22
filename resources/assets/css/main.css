@@ -941,6 +941,20 @@ img.badge {
     body {
         font-size: 18px;
     }
+    nav {
+        font-size: 130%;
+    }
+    .navbar-brand {
+        font-size: 130%;
+    }
+    nav div button {
+        font-size: 130% !important;
+        margin-left: 0.5em;
+    }
+    img.image-30x30{
+        width: auto;
+        height: 1.5em;
+    }
 }
 @media (max-width: 767px){
     body {
