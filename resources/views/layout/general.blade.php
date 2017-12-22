@@ -34,7 +34,7 @@
 
     @include('partials.navbar')
 
-    <div class="container">
+    <div class="container body-container">
     @yield('content')
 
     @include('partials.footer')

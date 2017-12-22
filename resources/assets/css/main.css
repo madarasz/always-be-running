@@ -941,11 +941,18 @@ img.badge {
     body {
         font-size: 18px;
     }
+    /* responsive navbar size */
     nav {
         font-size: 150%;
     }
+    .body-container {
+        padding-top: 0.5em;
+    }
     .navbar-brand {
         font-size: 150%;
+        max-width: 70%;
+        max-height: 1.7em;
+        overflow: hidden;
     }
     nav div button {
         font-size: 150% !important;
