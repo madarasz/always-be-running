@@ -942,13 +942,13 @@ img.badge {
         font-size: 18px;
     }
     nav {
-        font-size: 130%;
+        font-size: 150%;
     }
     .navbar-brand {
-        font-size: 130%;
+        font-size: 150%;
     }
     nav div button {
-        font-size: 130% !important;
+        font-size: 150% !important;
         margin-left: 0.5em;
     }
     img.image-30x30{
