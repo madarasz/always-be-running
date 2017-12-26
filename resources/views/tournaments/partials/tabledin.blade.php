@@ -38,7 +38,10 @@
             <th class="hidden-md-down">type</th>
         @endif
         @if( in_array('approval', $columns) )
-            <th class="text-xs-center">approval</th>
+            <th class="text-xs-center">
+                <span class="hidden-md-down">approval</span>
+                <i class="fa fa-check hidden-lg-up" aria-hidden="true"></i>
+            </th>
         @endif
         @if( in_array('user_claim', $columns) )
             <th class="text-xs-center">claim</th>

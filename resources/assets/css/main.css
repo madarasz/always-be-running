@@ -941,6 +941,19 @@ img.badge {
     body {
         font-size: 18px;
     }
+    h4 {
+        font-size: 2rem;
+    }
+    h5 {
+        font-size: 1.7rem;
+    }
+    table.abr-table td.tournament-title a {
+        font-size: 22px;
+    }
+    td.action i.fa {
+        font-size: 20px;
+    }
+
     /* responsive navbar size */
     nav {
         font-size: 150%;

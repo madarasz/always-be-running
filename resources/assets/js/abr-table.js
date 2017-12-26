@@ -37,7 +37,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
 
         // title
         if ($.inArray('title', columns) > -1) {
-            var cell = $('<td>');
+            var cell = $('<td>', { class: 'tournament-title' });
 
             // charity
             if (element.charity) {
@@ -174,12 +174,16 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
             if (element.approved === null) {
                 cell.append($('<span>', {
                     text: 'pending',
-                    'class': 'label label-warning'
+                    'class': 'hidden-md-down label label-warning'
+                }), $('<i>', {
+                    class: 'hidden-lg-up fa fa-question text-warning'
                 }));
             } else if (element.approved) {
                 cell.append($('<span>', {
                     text: 'approved',
-                    'class': 'label label-success'
+                    'class': 'hidden-md-down label label-success'
+                }), $('<i>', {
+                    class: 'hidden-lg-up fa fa-thumbs-up text-success'
                 }));
             } else {
                 cell.append($('<i>', {
@@ -187,7 +191,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                     'class': 'fa fa-thumbs-down text-danger'
                 }), ' ', $('<span>', {
                     text: 'rejected',
-                    'class': 'label label-danger'
+                    'class': 'label label-danger hidden-md-down'
                 }));
             }
         }
@@ -320,47 +324,59 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
         }
         // action_edit
         if ($.inArray('action_edit', columns) > -1) {
-            newrow.append($('<td>').append($('<a>', {
+            newrow.append($('<td>', {class: 'action'}).append($('<a>', {
                 'class': 'btn btn-primary btn-xs',
                 href: '/tournaments/' + element.id + '/edit'
             }).append($('<i>', {
                 'class': 'fa fa-pencil',
                 'aria-hidden': true
-            }), ' update')));
+            }), $('<span>', {
+                text: ' update',
+                class: 'hidden-md-down'
+            }))));
         }
         // action_approve
         if ($.inArray('action_approve', columns) > -1) {
-            newrow.append($('<td>').append($('<a>', {
+            newrow.append($('<td>', {class: 'action'}).append($('<a>', {
                 'class': 'btn btn-success btn-xs',
                 href: '/tournaments/' + element.id + '/approve'
             }).append($('<i>', {
                 'class': 'fa fa-thumbs-up',
                 'aria-hidden': true
-            }), ' approve')));
+            }), $('<span>', {
+                text: ' approve',
+                class: 'hidden-md-down'
+            }))));
         }
         // action_reject
         if ($.inArray('action_reject', columns) > -1) {
-            newrow.append($('<td>').append($('<a>', {
+            newrow.append($('<td>', {class: 'action'}).append($('<a>', {
                 'class': 'btn btn-danger btn-xs',
                 href: '/tournaments/' + element.id + '/reject'
             }).append($('<i>', {
                 'class': 'fa fa-thumbs-down',
                 'aria-hidden': true
-            }), ' reject')));
+            }), $('<span>', {
+                text: ' reject',
+                class: 'hidden-md-down'
+            }))));
         }
         // action_restore
         if ($.inArray('action_restore', columns) > -1) {
-            newrow.append($('<td>').append($('<a>', {
+            newrow.append($('<td>', {class: 'action'}).append($('<a>', {
                 'class': 'btn btn-primary btn-xs',
                 href: '/tournaments/' + element.id + '/restore'
             }).append($('<i>', {
                 'class': 'fa fa-recycle',
                 'aria-hidden': true
-            }), ' restore')));
+            }), $('<span>', {
+                text: ' restore',
+                class: 'hidden-md-down'
+            }))));
         }
         // action_delete
         if ($.inArray('action_delete', columns) > -1) {
-            newrow.append($('<td>').append($('<form>', {
+            newrow.append($('<td>', {class: 'action'}).append($('<form>', {
                 method: 'POST',
                 action: '/tournaments/' + element.id
             }).append($('<input>', {
@@ -378,11 +394,14 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
             }).append($('<i>', {
                 'class': 'fa fa-trash',
                 'aria-hidden': true
-            }), ' delete'))));
+            }), $('<span>', {
+                text: ' delete',
+                class: 'hidden-md-down'
+            })))));
         }
         // action_purge
         if ($.inArray('action_purge', columns) > -1) {
-            newrow.append($('<td>').append($('<form>', {
+            newrow.append($('<td>', {class: 'action'}).append($('<form>', {
                 method: 'POST',
                 action: '/tournaments/' + element.id + '/purge'
             }).append($('<input>', {
@@ -400,7 +419,10 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
             }).append($('<i>', {
                 'class': 'fa fa-times',
                 'aria-hidden': true
-            }), ' remove'))));
+            }), $('<span>', {
+                text: ' remove',
+                class: 'hidden-md-down'
+            })))));
         }
 
     }, columns, emptyMessage);
