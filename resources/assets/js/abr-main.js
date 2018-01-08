@@ -86,7 +86,8 @@ function filterTournamentData(data, field, filterValue, includeOnline) {
     for (var i = 0; i < data.length; i++) {
         if (data[i][field] != filterValue &&
             (!includeOnline || data[i]['location'] != 'online') && // include online location
-            (field != 'videos' || data[i]['videos'] == 0)) {  // filter for videos
+            (field != 'videos' || data[i]['videos'] == 0) && // filter for videos
+            (field != 'matchdata' || !data[i]['matchdata'])) { // filter for match data
                 data.splice(i, 1);
                 i--;
         }

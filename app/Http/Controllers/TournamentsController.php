@@ -356,7 +356,7 @@ class TournamentsController extends Controller
                 $event_data['top_count'] = $tournament->top_number;
                 $event_data['claim_count'] = $tournament->claim_number();
                 $event_data['claim_conflict'] = $tournament->conflict == 1;
-                $event_data['matchdata'] = $tournament->import == 1;
+                $event_data['matchdata'] = $tournament->import == 1 || $tournament->import == 4;
                 $event_data['videos'] = $tournament->videos->count();
 
                 // winner IDs

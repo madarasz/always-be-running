@@ -105,6 +105,11 @@
                                 'onchange' => "filterResults()"]) !!}
                             {!! Html::decode(Form::label('videos', 'has video <i class="fa fa-video-camera" aria-hidden="true"></i>')) !!}
                         </div>
+                        <div class="form-group col-xs-6 col-lg-12" id="filter-matchdata">
+                            {!! Form::checkbox('matchdata', null, null, ['id' => 'matchdata', 'class' => 'filter', 'disabled' => '',
+                                'onchange' => "filterResults()"]) !!}
+                            {!! Html::decode(Form::label('matchdata', 'has match data <i class="fa fa-handshake-o" aria-hidden="true"></i>')) !!}
+                        </div>
                     </div>
                 {!! Form::close() !!}
             </div>
@@ -299,6 +304,13 @@
                 filterTournamentData(resultsDataFiltered, 'videos', true);
                 document.getElementById('videos').checked = true;
                 $('#filter-video').addClass('active-filter');
+            @endif
+
+            // just tournaments with matchdata
+            @if ($matchdata !== null)
+                filterTournamentData(resultsDataFiltered, 'matchdata', true);
+                document.getElementById('matchdata').checked = true;
+                $('#filter-matchdata').addClass('active-filter');
             @endif
 
         }

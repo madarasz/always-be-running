@@ -63,6 +63,7 @@ class PagesController extends Controller
         $country = $request->input('country');
         $format = $request->input('format');
         $videos = $request->input('videos');
+        $matchdata = $request->input('matchdata');
 
         $nowdate = date('Y.m.d.');
         $tournaments = Tournament::where('approved', 1)->where('concluded',1);
@@ -91,7 +92,7 @@ class PagesController extends Controller
 
         return view('results', compact('registered', 'message', 'nowdate', 'tournament_types', 'countries',
             'tournament_cardpools', 'tournament_formats', 'page_section', 'default_country', 'default_country_id',
-            'cardpool', 'type', 'country', 'format', 'videos', 'featured', 'nowdate'));
+            'cardpool', 'type', 'country', 'format', 'videos', 'matchdata', 'featured', 'nowdate'));
     }
 
     /**

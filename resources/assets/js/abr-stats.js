@@ -212,7 +212,7 @@ function updateIdStats(packname) {
 }
 
 // updates result page url with filters
-function updateResultsURL(cardpool, type, country, format, videos) {
+function updateResultsURL(cardpool, type, country, format, videos, matchdata) {
     var newUrl = '/results?';
     if (cardpool.charAt(0) !== '-' ) {
         newUrl += 'cardpool=' + convertToURLString(cardpool) + '&';
@@ -227,7 +227,10 @@ function updateResultsURL(cardpool, type, country, format, videos) {
         newUrl += 'format=' + convertToURLString(format) + '&';
     }
     if (videos) {
-        newUrl += 'videos=true';
+        newUrl += 'videos=true&';
+    }
+    if (matchdata) {
+        newUrl += 'matchdata=true';
     }
     window.history.pushState("Results", "Results - " + cardpool + " - " + type + " - " + country, newUrl);
 }
@@ -336,7 +339,8 @@ function filterResults() {
         cardpool = document.getElementById('cardpool').value,
         country = document.getElementById('location_country').value,
         format = document.getElementById('format').value,
-        videos = document.getElementById('videos').checked;
+        videos = document.getElementById('videos').checked,
+        matchdata = document.getElementById('matchdata').checked;
 
     // type filtering
     if (type != '---') {
@@ -377,6 +381,13 @@ function filterResults() {
     } else {
         $('#filter-video').removeClass('active-filter');
     }
+    // filter for match data
+    if (matchdata) {
+        filterTournamentData(resultsDataFiltered, 'matchdata', true);
+        $('#filter-matchdata').addClass('active-filter');
+    } else {
+        $('#filter-matchdata').removeClass('active-filter');
+    }
     // user's default country
     if (country === defaultCountry) {
         $('#label-default-country').removeClass('hidden-xs-up');
@@ -393,7 +404,7 @@ function filterResults() {
         updateTournamentTable('#to-be-concluded', ['title', 'date', 'location', 'cardpool', 'conclusion', 'players'],
             'no tournaments waiting for conclusion', '', toBeConcludedFiltered);
     }
-    updateResultsURL(cardpool, type, country, format, videos);
+    updateResultsURL(cardpool, type, country, format, videos, matchdata);
 
     // switch ID statistics
     if (currentPack !== cardpool) {
