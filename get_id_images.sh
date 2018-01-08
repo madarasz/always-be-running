@@ -23,10 +23,10 @@ do
             fi
             if [ ${sides[$i]} == "corp" ]; then
                 echo corp
-                mogrify -crop 224x224+38+67 -resize 40x40 "public/img/ids/$card.png"
+                mogrify -crop 224x224+38+67 -resize 80x80 "public/img/ids/$card.png"
             else
                 echo runner
-                mogrify -crop 238x238+31+51 -resize 40x40 "public/img/ids/$card.png"
+                mogrify -crop 238x238+31+51 -resize 80x80 "public/img/ids/$card.png"
             fi
         fi
     fi

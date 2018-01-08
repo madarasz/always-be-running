@@ -17,7 +17,7 @@
             <li>Swiss rounds rank: <strong>#{{ $user_entry->rank }}</strong></li>
             <li>
                 Corporation {{ $user_entry->type == 3 ? 'deck' : 'ID'}}:
-                <img src="/img/ids/{{ $user_entry->corp_deck_identity }}.png">&nbsp;
+                <img src="/img/ids/{{ $user_entry->corp_deck_identity }}.png" class="id-small">&nbsp;
                 {{--public deck--}}
                 @if ($user_entry->corp_deck_type == 1)
                     <a href="{{ "https://netrunnerdb.com/en/decklist/".$user_entry->corp_deck_id }}">
@@ -34,7 +34,7 @@
             </li>
             <li>
                 Runner {{ $user_entry->type == 3 ? 'deck' : 'ID'}}:
-                <img src="/img/ids/{{ $user_entry->runner_deck_identity }}.png">&nbsp;
+                <img src="/img/ids/{{ $user_entry->runner_deck_identity }}.png" class="id-small">&nbsp;
                 {{--public deck--}}
                 @if ($user_entry->runner_deck_type == 1)
                     <a href="{{ "https://netrunnerdb.com/en/decklist/".$user_entry->runner_deck_id }}">

@@ -120,7 +120,8 @@
                     <?php
                         $tooltip = '<div style="padding: 0.5em"><strong>'.addslashes($claim->tournament->title).
                             '</strong><br/>claim: #'.$claim->rank().'/'.$claim->tournament->players_number.
-                            '&nbsp;<img src="/img/ids/'.$claim->runner_deck_identity.'.png">&nbsp;<img src="/img/ids/'.$claim->corp_deck_identity.'.png"></div>';
+                            '&nbsp;<img src="/img/ids/'.$claim->runner_deck_identity.'.png" class="id-medium">'.
+                            '&nbsp;<img src="/img/ids/'.$claim->corp_deck_identity.'.png" class="id-medium"></div>';
                     ?>
 
                     chartDataTable.addRow([
