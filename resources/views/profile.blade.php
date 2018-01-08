@@ -125,7 +125,7 @@
 
                     chartDataTable.addRow([
                         new Date({{ substr($claim->tournament->date, 0, 4) }},
-                                {{ substr($claim->tournament->date, 5, 2) }},
+                                {{ intval(substr($claim->tournament->date, 5, 2))-1 }},
                                 {{ substr($claim->tournament->date, 8, 2) }}),
                         {{ ($claim->rank() - $claim->tournament->players_number) / (-$claim->tournament->players_number+1)}},
                         'point { fill-color: ' + tournamentTypeToColor({{$claim->tournament->tournament_type_id}}) +
