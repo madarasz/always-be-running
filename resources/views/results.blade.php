@@ -100,12 +100,12 @@
                                 ['class' => 'form-control filter',
                                 'onchange' => "filterResults()", 'disabled' => '']) !!}
                         </div>
-                        <div class="form-group col-xs-6 col-lg-12" id="filter-video">
+                        <div class="form-group col-xs-6 col-lg-12 m-b-0" id="filter-video">
                             {!! Form::checkbox('videos', null, null, ['id' => 'videos', 'class' => 'filter', 'disabled' => '',
                                 'onchange' => "filterResults()"]) !!}
                             {!! Html::decode(Form::label('videos', 'has video <i class="fa fa-video-camera" aria-hidden="true"></i>')) !!}
                         </div>
-                        <div class="form-group col-xs-6 col-lg-12" id="filter-matchdata">
+                        <div class="form-group col-xs-6 col-lg-12 m-b-0" id="filter-matchdata">
                             {!! Form::checkbox('matchdata', null, null, ['id' => 'matchdata', 'class' => 'filter', 'disabled' => '',
                                 'onchange' => "filterResults()"]) !!}
                             {!! Html::decode(Form::label('matchdata', 'has match data <i class="fa fa-handshake-o" aria-hidden="true"></i>')) !!}
