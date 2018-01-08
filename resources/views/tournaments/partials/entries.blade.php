@@ -32,7 +32,7 @@
             {{--corp deck--}}
             <td>
                 @if ($entry->corp_deck_identity)
-                    <img src="/img/ids/{{ $entry->corp_deck_identity }}.png">
+                    <img src="/img/ids/{{ $entry->corp_deck_identity }}.png" class="id-medium">
                 @endif
             </td>
             <td>
@@ -60,7 +60,7 @@
             {{--runner deck--}}
             <td>
                 @if ($entry->runner_deck_identity)
-                    <img src="/img/ids/{{ $entry->runner_deck_identity }}.png">
+                    <img src="/img/ids/{{ $entry->runner_deck_identity }}.png" class="id-medium">
                 @endif
             </td>
             <td>

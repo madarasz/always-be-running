@@ -246,6 +246,10 @@ img.id-small {
     width: 20px;
     height: 20px;
 }
+img.id-medium {
+    width: 40px;
+    height: 40px;
+}
 
 /* 30x30 images */
 .image-30x30 {
