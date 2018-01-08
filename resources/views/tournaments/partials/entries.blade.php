@@ -3,8 +3,8 @@
     <thead>
         <th class="text-right">rank</th>
         <th>player</th>
-        <th>corp</th>
-        <th>runner</th>
+        <th colspan="2">corp</th>
+        <th colspan="2">runner</th>
         <th></th>
     </thead>
     <tbody>
@@ -32,8 +32,10 @@
             {{--corp deck--}}
             <td>
                 @if ($entry->corp_deck_identity)
-                    <img src="/img/ids/{{ $entry->corp_deck_identity }}.png">&nbsp;
+                    <img src="/img/ids/{{ $entry->corp_deck_identity }}.png">
                 @endif
+            </td>
+            <td>
                 @if ($entry->type == 3)
                     @if ($entry->broken_corp)
                         <i class="fa fa-chain-broken text-danger" title="broken link"></i>
@@ -58,8 +60,10 @@
             {{--runner deck--}}
             <td>
                 @if ($entry->runner_deck_identity)
-                    <img src="/img/ids/{{ $entry->runner_deck_identity }}.png">&nbsp;
+                    <img src="/img/ids/{{ $entry->runner_deck_identity }}.png">
                 @endif
+            </td>
+            <td>
                 @if ($entry->type == 3)
                         @if ($entry->broken_runner)
                             <i class="fa fa-chain-broken text-danger" title="broken link"></i>
