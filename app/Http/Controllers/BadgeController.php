@@ -246,21 +246,21 @@ class BadgeController extends Controller
             (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
                     ->where('rank_top', 1)->where('runner_deck_identity', $adamId)->first() ||
                 Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsNoTop)
-                    ->where('rank', 1)->whereIn('runner_deck_identity', $anarchs)->first())) {
+                    ->where('rank', 1)->where('runner_deck_identity', $adamId)->first())) {
             $badges[73] = true;
         }
         if ($apexCount > 2 &&
             (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
                     ->where('rank_top', 1)->where('runner_deck_identity', $apexId)->first() ||
                 Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsNoTop)
-                    ->where('rank', 1)->whereIn('runner_deck_identity', $anarchs)->first())) {
+                    ->where('rank', 1)->where('runner_deck_identity', $apexId)->first())) {
             $badges[74] = true;
         }
         if ($sunnyCount > 2 &&
             (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
                     ->where('rank_top', 1)->where('runner_deck_identity', $sunnyId)->first() ||
                 Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsNoTop)
-                    ->where('rank', 1)->whereIn('runner_deck_identity', $anarchs)->first())) {
+                    ->where('rank', 1)->where('runner_deck_identity', $sunnyId)->first())) {
             $badges[75] = true;
         }
 
