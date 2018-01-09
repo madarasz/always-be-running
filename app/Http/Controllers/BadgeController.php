@@ -61,7 +61,7 @@ class BadgeController extends Controller
         // prepare badges array
         $fromYear = 2016; $toYear = 2017;
         $badges = Badge::where('year', '>=', $fromYear)->where('year', '<=', $toYear)->pluck('id')->all();
-        $badges = array_merge([13, 14, 15, 27, 28, 29, 30, 34, 35, 36, 49, 50, 51, 52, 53, 54, 55], $badges);
+        $badges = array_merge([13, 14, 15, 27, 28, 29, 30, 34, 35, 36, 49, 50, 51, 52, 53, 54, 55, 73, 74, 75], $badges);
         $badges = array_combine($badges, array_fill(1, count($badges), false));
 
         for ($year = $fromYear; $year <= $toYear; $year++) {
@@ -174,7 +174,11 @@ class BadgeController extends Controller
     }
 
     private function addFactionBadges($userid, &$badges) {
-        $mini = Entry::where('user', $userid)->where('type', 3)->whereIn('runner_deck_identity', ['09029', '09045', '09037'])->where('type', 3)->first();
+        $adamId = '09037';
+        $apexId = '09029';
+        $sunnyId = '09045';
+        $mini = Entry::where('user', $userid)->where('type', 3)
+            ->whereIn('runner_deck_identity', [$adamId, $apexId, $sunnyId])->where('type', 3)->first();
         if ($mini) {
             $badges[27] = true; // minority report
         }
@@ -185,6 +189,9 @@ class BadgeController extends Controller
         $shaperCount = Entry::where('user', $userid)->whereIn('runner_deck_identity', $shapers)->where('type', 3)->count();
         $crimCount = Entry::where('user', $userid)->whereIn('runner_deck_identity', $crims)->where('type', 3)->count();
         $anarchCount = Entry::where('user', $userid)->whereIn('runner_deck_identity', $anarchs)->where('type', 3)->count();
+        $adamCount = Entry::where('user', $userid)->where('runner_deck_identity', $adamId)->where('type', 3)->count();
+        $apexCount = Entry::where('user', $userid)->where('runner_deck_identity', $apexId)->where('type', 3)->count();
+        $sunnyCount = Entry::where('user', $userid)->where('runner_deck_identity', $sunnyId)->where('type', 3)->count();
 
         if ($shaperCount && $crimCount && $anarchCount) {
             $badges[28] = true; // self-modifying personality
@@ -211,6 +218,7 @@ class BadgeController extends Controller
                 $q->whereNull('top_number')->orWhere('top_number', 0);
             })->where('concluded', 1)->pluck('id');
 
+        //  runners
         if ($shaperCount > 4 &&
             (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
                     ->where('rank_top', 1)->whereIn('runner_deck_identity', $shapers)->first() ||
@@ -233,7 +241,30 @@ class BadgeController extends Controller
             $badges[55] = true;
         }
 
+        // runners, mini
+        if ($adamCount > 2 &&
+            (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
+                    ->where('rank_top', 1)->where('runner_deck_identity', $adamId)->first() ||
+                Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsNoTop)
+                    ->where('rank', 1)->whereIn('runner_deck_identity', $anarchs)->first())) {
+            $badges[73] = true;
+        }
+        if ($apexCount > 2 &&
+            (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
+                    ->where('rank_top', 1)->where('runner_deck_identity', $apexId)->first() ||
+                Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsNoTop)
+                    ->where('rank', 1)->whereIn('runner_deck_identity', $anarchs)->first())) {
+            $badges[74] = true;
+        }
+        if ($sunnyCount > 2 &&
+            (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
+                    ->where('rank_top', 1)->where('runner_deck_identity', $sunnyId)->first() ||
+                Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsNoTop)
+                    ->where('rank', 1)->whereIn('runner_deck_identity', $anarchs)->first())) {
+            $badges[75] = true;
+        }
 
+        // corps
         if ($nbnCount > 4 &&
                 (Entry::where('user', $userid)->where('type', 3)->whereIn('tournament_id', $tournamentIDsTop)
                     ->where('rank_top', 1)->whereIn('corp_deck_identity', $nbn)->first() ||
