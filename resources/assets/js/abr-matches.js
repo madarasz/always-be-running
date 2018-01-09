@@ -82,7 +82,8 @@ function fillMatchPlayer(player, playernum, matchId, match) {
         if (match.eliminationGame) {
             // prepare elements
             var deck, id = $('<img>', {
-                src: '/img/ids/' + player[match['player' + playernum].role + '_deck_identity_id'] + '.png'
+                src: '/img/ids/' + player[match['player' + playernum].role + '_deck_identity_id'] + '.png',
+                class: 'id-small'
             });
             if (player[match['player' + playernum].role +'_deck_url']) {
                 deck = $('<a>', {
@@ -102,9 +103,11 @@ function fillMatchPlayer(player, playernum, matchId, match) {
         } else {
             // prepare ids
             var id1 = $('<img>', {
-                src: '/img/ids/' + player.corp_deck_identity_id + '.png'
+                src: '/img/ids/' + player.corp_deck_identity_id + '.png',
+                class: 'id-small'
             }), id2 = $('<img>', {
-                src: '/img/ids/' + player.runner_deck_identity_id + '.png'
+                src: '/img/ids/' + player.runner_deck_identity_id + '.png',
+                class: 'id-small'
             }), deck1, deck2;
 
             // prepare decks
