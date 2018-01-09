@@ -10,6 +10,9 @@
         &nbsp;from&nbsp; <a href="http://www.flaticon.com/" rel="nofollow">http://www.flaticon.com/</a>.<br/>
         Card illustrations by <a href="http://www.mattzeilinger.com/">Matt Zeilinger</a>,
         <a href="http://kaenlogos.deviantart.com/">Ralph Beisner</a>,
+        <a href="http://www.hannahchristenson.com/">Hannah Christenson</a>,
+        <a href="https://www.artstation.com/timur_shevtsov">Timur Shevtsov</a>,
+        <a href="https://www.artstation.com/carolinegariba">Caroline Gariba</a>,
         <a href="http://www.gongstudios.com/">Gong Studios</a> and
         <a href="http://viccolatte.deviantart.com/">Viktoria Gavrilenko</a>.
     </div>
