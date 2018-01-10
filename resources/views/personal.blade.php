@@ -22,7 +22,7 @@
                 @include('tournaments.partials.tabledin',
                 ['columns' => ['title', 'location', 'date', 'cardpool', 'user_claim'],
                 'title' => 'My tournaments', 'subtitle' => 'tournaments I registered to',
-                 'id' => 'my-table', 'icon' => 'fa-list-alt', 'loader' => true])
+                 'id' => 'my-table', 'icon' => 'fa-list-alt', 'loader' => true, 'doublerow' => true])
             </div>
         </div>
         <div class="col-lg-4 pull-lg-8 col-xs-12">
