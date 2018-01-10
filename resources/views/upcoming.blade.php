@@ -58,7 +58,7 @@
                 @include('tournaments.partials.tabledin',
                 ['columns' => ['title', 'location', 'date', 'regs', 'cardpool', 'type'],
                 'title' => 'Upcoming tournaments', 'id' => 'discover-table', 'icon' => 'fa-list-alt',
-                'loader' => true, 'maxrows' => 10])
+                'loader' => true, 'maxrows' => 10, 'pager_options' => [10,25,'all']])
                 @include('tournaments.partials.icons')
             </div>
         </div>

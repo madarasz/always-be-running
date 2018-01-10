@@ -432,6 +432,13 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
 
     // paging
     updatePaging(elementID.substr(1));
+    // read last used pager setting from cookie, apply if found
+    if (document.getElementById(elementID.substr(1)+'-options')) {
+        var savedOption = getCookie('pager-' + elementID.substr(1) + '-option');
+        if (savedOption != "") {
+            changePageOptions(elementID.substr(1), savedOption);
+        }
+    }
 }
 
 // update paging data
@@ -440,12 +447,16 @@ function updatePaging(elementId) {
         tablelength = $('[id^=' + elementId + '-row-').length;
     paging.currentpage = 1;
 
-    if (paging.maxrows && paging.maxrows <= tablelength) {
+    if (paging.maxrowsoriginal && paging.maxrowsoriginal <= tablelength) {
         paging.totalrows = tablelength;
         $('#' + elementId + '-controls').removeClass('hidden-xs-up');
+        $('#' + elementId + '-options').removeClass('hidden-xs-up');
         document.getElementById(elementId + '-number-total').innerHTML = tablelength;
+        console.log('showing:' + elementId);
     } else {
         $('#' + elementId + '-controls').addClass('hidden-xs-up');
+        $('#' + elementId + '-options').addClass('hidden-xs-up');
+        console.log('hiding:' + elementId);
     }
 
     updatePageControls(elementId);
@@ -490,5 +501,34 @@ function updatePageControls(elementId) {
         $('#'+elementId+'-controls-back').addClass('hidden-xs-up');
     } else {
         $('#'+elementId+'-controls-back').removeClass('hidden-xs-up');
+    }
+}
+
+function changePageOptions(elementId, rowsPerPage) {
+    var paging = document.getElementById(elementId + '-controls').dataset,
+        options = document.getElementById(elementId + '-options').dataset;
+
+    if (options.selected != rowsPerPage) {
+
+        // set values
+        options.selected = rowsPerPage;
+        paging.maxrows = parseInt(rowsPerPage);
+        if (isNaN(paging.maxrows)) {
+            paging.maxrows = 99999;
+        }
+        paging.currentpage = 1;
+        setCookie('pager-'+elementId+'-option', rowsPerPage, 30);
+
+        // set button states
+        $('#' + elementId + '-options span').each(function () {
+            if ($(this).text().trim() == rowsPerPage) {
+                $(this).addClass('label-active').removeClass('label-inactive');
+            } else {
+                $(this).addClass('label-inactive').removeClass('label-active');
+            }
+        });
+
+        // update row visibility
+        doTournamentPaging(elementId, null);
     }
 }

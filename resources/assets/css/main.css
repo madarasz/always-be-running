@@ -64,6 +64,21 @@ table.abr-table tr td {
 .label-success {
     background-color: #5cb85c;
 }
+.label-active {
+    background-color: #0275d8;
+    border: solid 1px #0275d8;
+}
+.label-inactive {
+    color: #0275d8 !important;
+    border: solid 1px #0275d8;
+    cursor: pointer;
+}
+.label-inactive:hover {
+    background-color: #5bc0de;
+    color: #fff !important;
+    border: solid 0px;
+    font-size: 105%;
+}
 .input-group label {
     margin-top: .5rem;
     margin-right: .5rem;
