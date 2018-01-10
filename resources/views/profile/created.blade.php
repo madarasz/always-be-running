@@ -3,9 +3,9 @@
         <i class="fa fa-list-alt" aria-hidden="true"></i>
         Created tournaments ({{$created_count}})
     </h5>
-    <ul>
-        @foreach($created as $tournament)
-            <li>
+    <ul id="list-created">
+        @foreach($created as $key=>$tournament)
+            <li id="list-created-row-{{ $key+1 }}" class="{{ $key>=$maxrows ? 'hidden-xs-up':'' }}">
                 @include('tournaments.partials.list-type', ['tournament' => $tournament, 'class' => 'no-li'])
                 @include('tournaments.partials.list-format', ['tournament' => $tournament, 'class' => 'no-li'])
                 <a href="{{ $tournament->seoUrl() }}">
@@ -25,4 +25,5 @@
             </li>
         @endforeach
     </ul>
+    @include('tournaments.partials.pager', ['id' => 'list-created', 'maxrows' => $maxrows])
 </div>

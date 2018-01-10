@@ -29,11 +29,11 @@
             @include('profile.badges')
             {{--Claims--}}
             @if ($claim_count)
-                @include('profile.claims')
+                @include('profile.claims', ['maxrows' => 8])
             @endif
             {{--Created tournaments--}}
             @if ($created_count)
-                @include('profile.created')
+                @include('profile.created', ['maxrows' => 8])
             @endif
         </div>
         <div class="col-md-8 col-xs-12">
@@ -67,6 +67,12 @@
     @endif
 
     <script type="text/javascript">
+
+        // initializer pagers for claim and created list
+        updatePaging('list-claims');
+        updatePaging('list-created');
+
+        // switch between edit and view profile
         function profileSwitchEdit() {
             $('.profile-text').addClass('hidden-xs-up');
             $('.profile-field').removeClass('hidden-xs-up');

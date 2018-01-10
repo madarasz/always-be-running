@@ -4,12 +4,12 @@
         <i class="fa fa-list-ol" aria-hidden="true"></i>
         Claims ({{$claim_count}})
     </h5>
-    <ul>
-        @foreach($claims as $claim)
+    <ul id="list-claims">
+        @foreach($claims as $key=>$claim)
             @if ($claim->tournament->tournament_type_id > 1 && $claim->tournament->tournament_type_id < 6)
-                <li style="list-style: none">
+                <li style="list-style: none" id="list-claims-row-{{ $key+1 }}" class="{{ $key>=$maxrows ? 'hidden-xs-up':'' }}">
             @else
-                <li>
+                <li id="list-claims-row-{{ $key+1 }}" class="{{ $key>=$maxrows ? 'hidden-xs-up':'' }}">
             @endif
                     @include('tournaments.partials.list-type', ['tournament' => $claim->tournament, 'class' => 'no-li'])
                     @include('tournaments.partials.list-format', ['tournament' => $claim->tournament, 'class' => 'no-li'])
@@ -29,4 +29,5 @@
                 </li>
         @endforeach
     </ul>
+    @include('tournaments.partials.pager', ['id' => 'list-claims', 'maxrows' => $maxrows])
 </div>

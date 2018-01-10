@@ -437,7 +437,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
 // update paging data
 function updatePaging(elementId) {
     var paging = document.getElementById(elementId + '-controls').dataset,
-        tablelength = $('#' + elementId + ' tbody tr').length;
+        tablelength = $('[id^=' + elementId + '-row-').length;
     paging.currentpage = 1;
 
     if (paging.maxrows && paging.maxrows <= tablelength) {
@@ -451,18 +451,19 @@ function updatePaging(elementId) {
     updatePageControls(elementId);
 }
 
-// clicking paging arrows for tournament table, direction==true forward, direction==false backward
+// clicking paging arrows for tournament table, direction==true forward, direction==false backward,
+// direction==null just refresh row visibility
 function doTournamentPaging(elementId, direction) {
     var paging = document.getElementById(elementId + '-controls').dataset;
 
-    if (direction) {
+    if (direction === true) {
         paging.currentpage++;
-    } else {
+    } else if (direction === false) {
         paging.currentpage--;
     }
 
     // hide all rows
-    $('#'+elementId+' tbody tr').addClass('hidden-xs-up');
+    $('[id^='+elementId+'-row-').addClass('hidden-xs-up');
 
     updatePageControls(elementId);
 
