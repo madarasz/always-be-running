@@ -18,8 +18,8 @@
     <h5>
         @unless($tournament->tournament_type_id == 7)
             <span id="tournament-location">
-                            {{ $tournament->location_country }}, {{$tournament->location_country === 'United States' ? $tournament->location_state.', ' : ''}}{{ $tournament->location_city }}
-                        </span>
+                {{ $tournament->location() }}
+            </span>
             <br/>
         @endunless
         <span id="tournament-date">

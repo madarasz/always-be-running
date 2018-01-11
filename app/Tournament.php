@@ -121,4 +121,16 @@ class Tournament extends Model
             return $this->entries()->where('rank', 1)->first();
         }
     }
+
+    public function location() {
+        if ($this->tournament_type_id == 7) {
+            return 'online';
+        } else {
+            if ($this->location_country === 'United States') {
+                return $this->location_country.', '.$this->location_state.', '.$this->location_city;
+            } else {
+                return $this->location_country.', '.$this->location_city;
+            }
+        }
+    }
 }

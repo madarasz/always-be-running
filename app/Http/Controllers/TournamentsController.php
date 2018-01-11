@@ -300,14 +300,6 @@ class TournamentsController extends Controller
         $result = [];
 
         foreach($data as $tournament) {
-            // location
-            if ($tournament->tournament_type_id == 7) {
-                $location = 'online';
-            } else if ($tournament->location_country === 'United States') {
-                $location = $tournament->location_country.', '.$tournament->location_state.', '.$tournament->location_city;
-            } else {
-                $location = $tournament->location_country.', '.$tournament->location_city;
-            }
 
             $event_data = [
                 'id' => $tournament->id,
@@ -317,7 +309,7 @@ class TournamentsController extends Controller
                 'creator_supporter' => $tournament->user->supporter,
                 'creator_class' => $tournament->user->linkClass(),
                 'created_at' => $tournament->created_at->format('Y.m.d. H:i:s'),
-                'location' => $location,
+                'location' => $tournament->location(),
                 'location_lat' => $tournament->location_lat,
                 'location_lng' => $tournament->location_long,
                 'location_country' => $tournament->location_country,
