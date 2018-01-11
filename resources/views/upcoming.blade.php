@@ -133,7 +133,8 @@
             <div class="bracket">
                 @include('tournaments.partials.tabledin',
                 ['columns' => ['title', 'location', 'recurday'], 'title' => 'Recurring events / meetups',
-                'id' => 'recur-table', 'icon' => 'fa-repeat', 'loader' => true, 'maxrows' => 10])
+                'id' => 'recur-table', 'icon' => 'fa-repeat', 'loader' => true,
+                'maxrows' => 10, 'pager_options' => [10,25,'all']])
             </div>
         </div>
     </div>
