@@ -1,34 +1,10 @@
 <div class="row">
     @foreach($tournament->photos as $key => $photo)
         <div class="gallery-item col-xs-4{{ $key > 2 ? ' hidden-xs-up more-photos' : '' }}">
-            <div style="position: relative;">
-                <a href="{{ $photo->url() }}" data-toggle="lightbox" data-gallery="gallery" data-title="{{ $photo->title }}"
-                   data-footer="{{ 'uploaded by <a href="/profile/'.$photo->user->id.'">'.$photo->user->displayUsername().'</a>' }}">
-                    <img src="{{ $photo->urlThumb() }}"/>
-                </a>
-                <div class="abs-top-left">
-                    {{--approve button--}}
-                    @if (!$photo->approved && $user && $user->admin)
-                        <a class="btn btn-sm btn-success fade-in" href="{{ '/photos/'.$photo->id.'/approve' }}">
-                            <i class="fa fa-thumbs-up" title="approve"></i>
-                        </a>
-                    @endif
-                    @if ($user && ($user->admin || $user->id == $photo->user_id || $user->id == $photo->tournament->creator))
-                        {{--rotate button--}}
-                        <a class="btn btn-sm btn-primary fade-in" href="{{ '/photos/'.$photo->id.'/rotate/ccw' }}">
-                            <i class="fa fa-undo" title="rotate"></i>
-                        </a>
-                        <a class="btn btn-sm btn-primary fade-in" href="{{ '/photos/'.$photo->id.'/rotate/cw' }}">
-                            <i class="fa fa-repeat" title="rotate"></i>
-                        </a>
-                        {{--delete button--}}
-                        {!! Form::open(['method' => 'DELETE', 'url' => "/photos/{$photo->id}", 'style' => 'display:inline;']) !!}
-                            {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i>',
-                            array('type' => 'submit', 'class' => 'btn btn-danger btn-sm fade-in', 'onclick' => 'return confirm("Delete photo?")')) !!}
-                        {!! Form::close() !!}
-                    @endif
-                </div>
-            </div>
+            @include('partials.gallery-item',
+                ['button_approve' => !$photo->approved && $user && $user->admin,
+                'button_rotate' => ($user && ($user->admin || $user->id == $photo->user_id || $user->id == $photo->tournament->creator)),
+                'button_delete' => ($user && ($user->admin || $user->id == $photo->user_id || $user->id == $photo->tournament->creator))])
         </div>
     @endforeach
 </div>
