@@ -38,7 +38,8 @@
                     <div class="tab-pane active" id="tab-results" role="tabpanel">
                         @include('tournaments.partials.tabledin',
                             ['columns' => ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims' ],
-                            'skip_header' => true, 'id' => 'results', 'doublerow' => true, 'loader' => true, 'maxrows' => 50])
+                            'skip_header' => true, 'id' => 'results', 'doublerow' => true, 'loader' => true,
+                            'maxrows' => 50, 'pager_options' => [50,100,'all']])
                         <div class="loader hidden-xs-up" id="results-more-loader">loading more</div>
                     </div>
                     {{--Conclude modal--}}
@@ -47,7 +48,8 @@
                     <div class="tab-pane" id="tab-to-be-concluded" role="tabpanel">
                         @include('tournaments.partials.tabledin',
                             ['columns' => ['title', 'date', 'location', 'cardpool', 'conclusion', 'regs'],
-                            'skip_header' => true, 'id' => 'to-be-concluded', 'doublerow' => true, 'loader' => true, 'maxrows' => 50])
+                            'skip_header' => true, 'id' => 'to-be-concluded', 'doublerow' => true, 'loader' => true,
+                            'maxrows' => 50, 'pager_options' => [50,100,'all']])
                     </div>
                 </div>
                 @else
