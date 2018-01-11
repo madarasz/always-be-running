@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use App\Http\Requests;
 use Intervention\Image\Facades\Image;
+use Intervention\Image\Exception\NotReadableException;
+use Mockery\CountValidator\Exception;
 
 class PhotosController extends Controller
 {
@@ -32,24 +34,30 @@ class PhotosController extends Controller
             $request->file('photo')->move('photo', $filename);
             File::copy('photo/' . $filename, 'photo/thumb_' . $filename);
 
-            // resizing image
-            $img = Image::make(public_path('photo/') . $filename);
-            $img->resize(1280, 1280, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-            $img->save();
+            try {
+                // resizing image
+                $img = Image::make(public_path('photo/') . $filename);
+                $img->resize(1280, 1280, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+                $img->save();
 
-            // trimming to square
-            $thumb = Image::make(public_path('photo/thumb_') . $filename);
-            $dim = min($thumb->height(), $thumb->width());
-            $thumb->resizeCanvas($dim, $dim, 'center');
-            // resize
-            $thumb->resize(200, 200, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-            $thumb->save();
+                // trimming to square
+                $thumb = Image::make(public_path('photo/thumb_') . $filename);
+                $dim = min($thumb->height(), $thumb->width());
+                $thumb->resizeCanvas($dim, $dim, 'center');
+                // resize
+                $thumb->resize(200, 200, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+                $thumb->save();
+            } catch (NotReadableException $e) {
+                $created->delete();
+                return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
+                    ->withErrors(['There was a problem uploading your photo.']);
+            }
 
             // saving filename in DB
             Photo::findOrFail($created->id)->update(['filename' => $filename, 'user_id' => $request->user()->id]);
@@ -59,7 +67,7 @@ class PhotosController extends Controller
                 ->with('message', 'Photo uploaded');
         } else {
             return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
-                ->withErrors(['There was a problem uploading your video.']);
+                ->withErrors(['There was a problem uploading your photo.']);
         }
     }
 
