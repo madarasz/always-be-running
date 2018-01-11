@@ -42,7 +42,7 @@ table.abr-table tr td {
 .label {
     font-style: italic;
     display: inline-block;
-    padding: .25em .4em;
+    padding: .25em .4em .25em .2em;
     font-size: 75%;
     font-weight: bold;
     line-height: 1;
@@ -72,12 +72,14 @@ table.abr-table tr td {
     color: #0275d8 !important;
     border: solid 1px #0275d8;
     cursor: pointer;
+    transform: scale(1);
+    transition: all .2s ease-in-out;
 }
 .label-inactive:hover {
     background-color: #5bc0de;
     color: #fff !important;
-    border: solid 0px;
-    font-size: 105%;
+    border: solid 1px #5bc0de;
+    transform: scale(1.2);
 }
 .input-group label {
     margin-top: .5rem;
