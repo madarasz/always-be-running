@@ -1,13 +1,12 @@
 {{--for badges for certain competative year--}}
-@if (@$badge_list && $badge_list->first())
-    <?php //dd($badge_list->first()); ?>
+@if (@$badge_list && $badge_list->count())
 <div class="row p-b-1">
     <div class="col-xs-2 text-xs-right">
-        <img src="/img/badges/{{ $badge_list->first()->filename }}" class="badge"/>
+        <img src="/img/badges/{{ $badge_list->get()[0]->filename }}" class="badge"/>
     </div>
     <div class="col-xs-10">
-        <strong>{{ $badge_list->first()->name }}</strong><br/>
-        {{ $badge_list->first()->description }}<br/>
+        <strong>{{ $badge_list->get()[0]->name }}</strong><br/>
+        {{ $badge_list->get()[0]->description }}<br/>
         <div class="small-text">
             @foreach($badge_list->get() as $badge)
                 @if ($badge->users()->count())

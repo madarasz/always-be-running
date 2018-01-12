@@ -37,12 +37,17 @@ class BadgeController extends Controller
         $nationals_top = Badge::where('tournament_type_id', 4)->where('winlevel', 2)->orderBy('order','desc');
         $regionals_winner = Badge::where('tournament_type_id', 3)->where('winlevel', 1)->orderBy('order','desc');
         $regionals_top = Badge::where('tournament_type_id', 3)->where('winlevel', 2)->orderBy('order','desc');
+        $comm_uk_winner = Badge::where('order', '>', 8100)->where('order', '<', 8199)->where('winlevel', 1)->orderBy('order','desc');
+        $comm_uk_player = Badge::where('order', '>', 8100)->where('order', '<', 8199)->where('winlevel', 2)->orderBy('order','desc');
+        $comm_hun_winner = Badge::where('order', '>', 8200)->where('order', '<', 8299)->where('winlevel', 1)->orderBy('order','desc');
+        $comm_hun_player = Badge::where('order', '>', 8200)->where('order', '<', 8299)->where('winlevel', 2)->orderBy('order','desc');
 
         return view('badges', compact([
             'badges', 'badges_worlds_winner', 'badges_worlds_top16', 'badges_worlds_player',
             'europe_winner', 'europe_top16', 'europe_player',
             'namerica_winner', 'namerica_top16', 'namerica_player',
-            'nationals_winner', 'nationals_top', 'regionals_winner', 'regionals_top'
+            'nationals_winner', 'nationals_top', 'regionals_winner', 'regionals_top',
+            'comm_uk_winner', 'comm_uk_player', 'comm_hun_winner', 'comm_hun_player'
         ]));
     }
 
@@ -56,8 +61,6 @@ class BadgeController extends Controller
         $startTime = microtime(true);
         $badgesBefore = DB::table('badge_user')->count();
         $users = User::all();
-
-        $this->addNationalBadges();
 
         foreach($users as $user) {
             $this->addClaimBadges($user->id);
@@ -82,7 +85,7 @@ class BadgeController extends Controller
         // prepare badges array
         $fromYear = 2016; $toYear = 2017;
         $badges = Badge::where('year', '>=', $fromYear)->where('year', '<=', $toYear)->pluck('id')->all();
-        $badges = array_merge([13, 14, 15, 27, 28, 29, 30, 34, 35, 36, 49, 50, 51, 52, 53, 54, 55, 73, 74, 75], $badges);
+        $badges = array_merge([13, 14, 15, 27, 28, 29, 30, 34, 35, 36, 49, 50, 51, 52, 53, 54, 55, 73, 74, 75, 76, 77, 78, 79, 80, 81], $badges);
         $badges = array_combine($badges, array_fill(1, count($badges), false));
 
         for ($year = $fromYear; $year <= $toYear; $year++) {
@@ -100,6 +103,7 @@ class BadgeController extends Controller
         $this->addCOS($userid, $badges);
         $this->addTravellerPlayer($userid, $badges);
         $this->addCharity($userid, $badges); // won't be deleted
+        $this->addNationalBadges($userid, $badges);
 
         $this->refreshUserBadges($userid, $badges);
     }
@@ -470,28 +474,30 @@ class BadgeController extends Controller
     }
 
     // national community awards
-    public function addNationalBadges() {
+    public function addNationalBadges($userid, &$badges) {
         $badge_list = [
-          ['tournament_id' => 1026, 'badges' => ['winner_badge_id' => 76, 'participant_badge_id' => 77]]    // UK
+            ['tournament_id' => 69, 'badges' => ['winner_badge_id' => 78, 'participant_badge_id' => 79]],    // UK 2016
+            ['tournament_id' => 1026, 'badges' => ['winner_badge_id' => 76, 'participant_badge_id' => 77]],    // UK 2017
+            ['tournament_id' => 782, 'badges' => ['winner_badge_id' => 80, 'participant_badge_id' => 81]],    // HU 2017
         ];
 
         foreach($badge_list as $tournament) {
             $event = Tournament::find($tournament['tournament_id']);
+
             // winner
             if ($event && $event->top_number > 0) {
-                $winner = Entry::where('tournament_id', $event->id)->where('rank_top', 1)->pluck('user')->all()[0];
+                $winner = Entry::where('tournament_id', $event->id)->where('rank_top', 1)->where('type', 3)->first();
             } else {
-                $winner = Entry::where('tournament_id', $event->id)->where('rank', 1)->pluck('user')->all()[0];
+                $winner = Entry::where('tournament_id', $event->id)->where('rank', 1)->where('type', 3)->first();
             }
-            if ($winner > 0) {
-                User::find($winner)->badges()->sync([$tournament['badges']['winner_badge_id']], false);
-            }
+            if ($winner && $winner->user == $userid) {
+                $badges[$tournament['badges']['winner_badge_id']] = true;
+            } else {
 
-            // participants
-            $players = Entry::where('tournament_id', $event->id)->where('user', '>', 0)->pluck('user')->all();
-            foreach ($players as $player) {
-                if ($player != $winner) {
-                    User::find($player)->badges()->sync([$tournament['badges']['participant_badge_id']], false);
+                // participants
+                $player = Entry::where('tournament_id', $event->id)->where('type', 3)->where('user', $userid)->first();
+                if ($player) {
+                    $badges[$tournament['badges']['participant_badge_id']] = true;
                 }
             }
         }

@@ -90,11 +90,10 @@
                 <p>
                     <strong>National community awards</strong>
                 </p>
-                @foreach($badges as $badge)
-                    @if ($badge->order > 8000 && $badge->order < 8999)
-                        @include('partials.badgelist')
-                    @endif
-                @endforeach
+                @include('partials.badgelist-year', ['badge_list' => $comm_uk_winner])
+                @include('partials.badgelist-year', ['badge_list' => $comm_uk_player])
+                @include('partials.badgelist-year', ['badge_list' => $comm_hun_winner])
+                @include('partials.badgelist-year', ['badge_list' => $comm_hun_player])
             </div>
             <div class="bracket">
                 <p>
