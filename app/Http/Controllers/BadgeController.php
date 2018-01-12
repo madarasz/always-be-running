@@ -57,6 +57,8 @@ class BadgeController extends Controller
         $badgesBefore = DB::table('badge_user')->count();
         $users = User::all();
 
+        $this->addNationalBadges();
+
         foreach($users as $user) {
             $this->addClaimBadges($user->id);
             $this->addTOBadges($user->id);
@@ -465,6 +467,34 @@ class BadgeController extends Controller
         }
 
         $this->refreshUserBadges($userid, $badges);
+    }
+
+    // national community awards
+    public function addNationalBadges() {
+        $badge_list = [
+          ['tournament_id' => 1026, 'badges' => ['winner_badge_id' => 76, 'participant_badge_id' => 77]]    // UK
+        ];
+
+        foreach($badge_list as $tournament) {
+            $event = Tournament::find($tournament['tournament_id']);
+            // winner
+            if ($event && $event->top_number > 0) {
+                $winner = Entry::where('tournament_id', $event->id)->where('rank_top', 1)->pluck('user')->all()[0];
+            } else {
+                $winner = Entry::where('tournament_id', $event->id)->where('rank', 1)->pluck('user')->all()[0];
+            }
+            if ($winner > 0) {
+                User::find($winner)->badges()->sync([$tournament['badges']['winner_badge_id']], false);
+            }
+
+            // participants
+            $players = Entry::where('tournament_id', $event->id)->where('user', '>', 0)->pluck('user')->all();
+            foreach ($players as $player) {
+                if ($player != $winner) {
+                    User::find($player)->badges()->sync([$tournament['badges']['participant_badge_id']], false);
+                }
+            }
+        }
     }
 
     /**

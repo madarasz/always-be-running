@@ -88,6 +88,16 @@
             </div>
             <div class="bracket">
                 <p>
+                    <strong>National community awards</strong>
+                </p>
+                @foreach($badges as $badge)
+                    @if ($badge->order > 8000 && $badge->order < 8999)
+                        @include('partials.badgelist')
+                    @endif
+                @endforeach
+            </div>
+            <div class="bracket">
+                <p>
                     <strong>For heavy NetrunnerDB users:</strong><br/>
                     <span class="small-text">needs relogin to refresh</span>
                 </p>
