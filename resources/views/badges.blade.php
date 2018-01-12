@@ -52,23 +52,23 @@
                     <strong>For competitive players:</strong>
                 </p>
                 {{--Worlds--}}
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('tournament_type_id', 5)->where('winlevel', 1)->reverse()])
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('tournament_type_id', 5)->where('winlevel', 2)->reverse()])
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('tournament_type_id', 5)->where('winlevel', 5)->reverse()])
+                @include('partials.badgelist-year', ['badge_list' => $badges_worlds_winner])
+                @include('partials.badgelist-year', ['badge_list' => $badges_worlds_top16])
+                @include('partials.badgelist-year', ['badge_list' => $badges_worlds_player])
                 {{--Europe Championship--}}
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('id', 65)])
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('id', 66)])
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('id', 67)])
+                @include('partials.badgelist-year', ['badge_list' => $europe_winner])
+                @include('partials.badgelist-year', ['badge_list' => $europe_top16])
+                @include('partials.badgelist-year', ['badge_list' => $europe_player])
                 {{--North American Championship--}}
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('id', 69)])
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('id', 70)])
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('id', 71)])
+                @include('partials.badgelist-year', ['badge_list' => $namerica_winner])
+                @include('partials.badgelist-year', ['badge_list' => $namerica_top16])
+                @include('partials.badgelist-year', ['badge_list' => $namerica_player])
                 {{--Nationals--}}
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('tournament_type_id', 4)->where('winlevel', 1)->reverse()])
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('tournament_type_id', 4)->where('winlevel', 2)->reverse()])
+                @include('partials.badgelist-year', ['badge_list' => $nationals_winner])
+                @include('partials.badgelist-year', ['badge_list' => $nationals_top])
                 {{--Regionals--}}
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('tournament_type_id', 3)->where('winlevel', 1)->reverse()])
-                @include('partials.badgelist-year', ['badge_list' => $badges->where('tournament_type_id', 3)->where('winlevel', 2)->reverse()])
+                @include('partials.badgelist-year', ['badge_list' => $regionals_winner])
+                @include('partials.badgelist-year', ['badge_list' => $regionals_top])
                 {{--Other--}}
                 @foreach($badges as $badge)
                     @if ($badge->order > 400 && $badge->order < 1000)
