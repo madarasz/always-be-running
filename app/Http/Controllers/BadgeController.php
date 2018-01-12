@@ -24,19 +24,19 @@ class BadgeController extends Controller
     public function badges()
     {
         $badges = Badge::orderBy('auto', 'desc')->orderBy('tournament_type_id', 'desc')->orderBy('order','asc')->get();
-        $badges_worlds_winner = $badges->where('tournament_type_id', 5)->where('winlevel', 1)->reverse();
-        $badges_worlds_top16 = $badges->where('tournament_type_id', 5)->where('winlevel', 2)->reverse();
-        $badges_worlds_player = $badges->where('tournament_type_id', 5)->where('winlevel', 3)->reverse();
-        $europe_winner = $badges->where('id', 65);
-        $europe_top16 = $badges->where('id', 66);
-        $europe_player = $badges->where('id', 67);
-        $namerica_winner = $badges->where('id', 69);
-        $namerica_top16 = $badges->where('id', 70);
-        $namerica_player = $badges->where('id', 71);
-        $nationals_winner = $badges->where('tournament_type_id', 4)->where('winlevel', 1)->reverse();
-        $nationals_top = $badges->where('tournament_type_id', 4)->where('winlevel', 2)->reverse();
-        $regionals_winner = $badges->where('tournament_type_id', 3)->where('winlevel', 1)->reverse();
-        $regionals_top = $badges->where('tournament_type_id', 3)->where('winlevel', 2)->reverse();
+        $badges_worlds_winner = Badge::where('tournament_type_id', 5)->where('winlevel', 1)->orderBy('order','desc');
+        $badges_worlds_top16 = Badge::where('tournament_type_id', 5)->where('winlevel', 2)->orderBy('order','desc');
+        $badges_worlds_player = Badge::where('tournament_type_id', 5)->where('winlevel', 3)->orderBy('order','desc');
+        $europe_winner = Badge::where('id', 65);
+        $europe_top16 = Badge::where('id', 66);
+        $europe_player = Badge::where('id', 67);
+        $namerica_winner = Badge::where('id', 69);
+        $namerica_top16 = Badge::where('id', 70);
+        $namerica_player = Badge::where('id', 71);
+        $nationals_winner = Badge::where('tournament_type_id', 4)->where('winlevel', 1)->orderBy('order','desc');
+        $nationals_top = Badge::where('tournament_type_id', 4)->where('winlevel', 2)->orderBy('order','desc');
+        $regionals_winner = Badge::where('tournament_type_id', 3)->where('winlevel', 1)->orderBy('order','desc');
+        $regionals_top = Badge::where('tournament_type_id', 3)->where('winlevel', 2)->orderBy('order','desc');
 
         return view('badges', compact([
             'badges', 'badges_worlds_winner', 'badges_worlds_top16', 'badges_worlds_player',
