@@ -26,7 +26,7 @@ class BadgeController extends Controller
         $badges = Badge::orderBy('auto', 'desc')->orderBy('tournament_type_id', 'desc')->orderBy('order','asc')->get();
         $badges_worlds_winner = Badge::where('tournament_type_id', 5)->where('winlevel', 1)->orderBy('order','desc');
         $badges_worlds_top16 = Badge::where('tournament_type_id', 5)->where('winlevel', 2)->orderBy('order','desc');
-        $badges_worlds_player = Badge::where('tournament_type_id', 5)->where('winlevel', 3)->orderBy('order','desc');
+        $badges_worlds_player = Badge::where('tournament_type_id', 5)->where('winlevel', 5)->orderBy('order','desc');
         $europe_winner = Badge::where('id', 65);
         $europe_top16 = Badge::where('id', 66);
         $europe_player = Badge::where('id', 67);
