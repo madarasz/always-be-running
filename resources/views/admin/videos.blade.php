@@ -144,12 +144,18 @@
                                         @endif
                                     </td>
                                     <td>
-                                        {{ $missing_video->tournament->date }}
+                                        @if (@$missing_video->tournament)
+                                            {{ $missing_video->tournament->date }}
+                                        @endif
                                     </td>
                                     <td>
-                                        <a href="{{ $missing_video->tournament->seoUrl() }}">
-                                            {{ $missing_video->tournament->title }}
-                                        </a>
+                                        @if (@$missing_video->tournament)
+                                            <a href="{{ $missing_video->tournament->seoUrl() }}">
+                                                {{ $missing_video->tournament->title }}
+                                            </a>
+                                        @else
+                                            <em>tournament deleted</em>
+                                        @endif
                                     </td>
                                     <td>
                                         {!! Form::open(['method' => 'DELETE', 'url' => "/videos/{$missing_video->id}"]) !!}
