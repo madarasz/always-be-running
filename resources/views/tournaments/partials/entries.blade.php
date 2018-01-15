@@ -115,8 +115,8 @@
             <tr>
                 <td class="text-right">#{{ $i+1 }}</td>
                 <td></td>
-                <td><em><small>unclaimed</small></em></td>
-                <td><em><small>unclaimed</small></em></td>
+                <td colspan="2"><em><small>unclaimed</small></em></td>
+                <td colspan="2"><em><small>unclaimed</small></em></td>
                 <td></td>
         @endforelse
         </tr>
