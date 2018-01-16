@@ -121,6 +121,12 @@ class PagesController extends Controller
         $user = $request->user();
         $created_count = Tournament::where('creator', $user->id)->count();
         $claim_count = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')->count();
+        $photo_count = Photo::where('user_id', $user->id)->count();
+        $photo_tournament_ids = Photo::where('user_id', $user->id)->pluck('tournament_id');
+        $photo_tournaments = Tournament::whereIn('id', $photo_tournament_ids)->orderBy('date', 'desc')->get();
+        $video_count = Video::where('user_id', $user->id)->count();
+        $video_tournament_ids = Video::where('user_id', $user->id)->pluck('tournament_id');
+        $video_tournaments = Tournament::whereIn('id', $video_tournament_ids)->orderBy('date', 'desc')->get();
         $username = $request->user()->name;
         $page_section = 'personal';
         $runnerIDs = app('App\Http\Controllers\TournamentsController')->categorizeIDs(CardIdentity::where('runner', 1)
@@ -128,7 +134,7 @@ class PagesController extends Controller
         $corpIDs = app('App\Http\Controllers\TournamentsController')->categorizeIDs(CardIdentity::where('runner', 0)
             ->orderBy('faction_code')->orderBy('title')->get());
         return view('personal', compact('message', 'user', 'username', 'page_section', 'created_count', 'claim_count',
-            'runnerIDs', 'corpIDs'));
+            'runnerIDs', 'corpIDs', 'photo_count', 'photo_tournaments', 'video_count', 'video_tournaments'));
     }
 
     public function about()
@@ -202,6 +208,7 @@ class PagesController extends Controller
 
         $userid = Auth::user()->id;
         $toclaim = Tournament::where('concluded', 1)->pluck('id');
+        $unavailableVideos = Video::where('user_id', $userid)->where('flag_removed', true)->count();
         $nowdate = date('Y.m.d.', time());
         $weeklaterdate = date('Y.m.d.', time() + 86400 * 7);
         $toconclude = Tournament::where('creator', $userid)->where('tournament_type_id', '!=', 8)
@@ -215,9 +222,10 @@ class PagesController extends Controller
             })->count();
         $result = [
             'personalAlerts' => [
-                'total' => $toclaimalert + $brokenclaim,
+                'total' => $toclaimalert + $brokenclaim + $unavailableVideos,
                 'toClaimAlert' => $toclaimalert,
-                'brokenClaimAlert' => $brokenclaim
+                'brokenClaimAlert' => $brokenclaim,
+                'unavailableVideos' => $unavailableVideos
             ],
             'organizeAlert' => [
                 'total' => $tocomplete + $toconclude + $tocardpool,

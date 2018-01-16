@@ -470,6 +470,14 @@ function updateNavBadges() {
                         $('#notif-brokenclaim').removeClass('hidden-xs-up');
                         document.getElementById('notif-brokenclaim').setAttribute("data-badge", data.personalAlerts.brokenClaimAlert);
                     }
+                    if (data.personalAlerts.toClaimAlert + data.personalAlerts.brokenClaimAlert > 0) {
+                        document.getElementById('tabf-tournament').setAttribute("data-badge", data.personalAlerts.toClaimAlert + data.personalAlerts.brokenClaimAlert);
+                    }
+                    if (data.personalAlerts.unavailableVideos) {
+                        $('#notif-unvideo').removeClass('hidden-xs-up');
+                        document.getElementById('notif-unvideo').setAttribute("data-badge", data.personalAlerts.unavailableVideos);
+                        document.getElementById('tabf-video').setAttribute("data-badge", data.personalAlerts.unavailableVideos);
+                    }
                 }
             }
             // profile page alerts

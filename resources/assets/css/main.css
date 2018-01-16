@@ -207,6 +207,9 @@ table.abr-table tr td {
 .row-selected {
     background-color: #ccdafa !important;
 }
+.row-danger {
+    background-color: #facecd !important;
+}
 
 .form-group.row {
     margin-bottom: 0;

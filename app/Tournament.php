@@ -41,6 +41,10 @@ class Tournament extends Model
         return $this->hasMany(Video::class, 'tournament_id', 'id')->where('flag_removed', false);
     }
 
+    public function videos_all() {
+        return $this->hasMany(Video::class, 'tournament_id', 'id');
+    }
+
     public function photos() {
         return $this->hasMany(Photo::class, 'tournament_id', 'id')->where(function($q) {
             $q->where('approved', true)->orWhereNull('approved');
