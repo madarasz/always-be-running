@@ -47,12 +47,11 @@ Google API keys, you can create yourself.
 
 ### Automated tests
 
-*Nightwatch tests are not working currently.*
 There are Nightwatch automated integration tests in the *tests/nightwatch* directory.
 
-#### Prerequisites
-- Have **selenium-server-standalone.jar** in *tests/nightwatch/bin/* directory (preferably version 2.53.1)
-- Browsers
-- - Firefox (supported by default, preferably version 46.0.1)
-- - Chrome (have **chromedriver** executable in *tests/nightwatch/bin/* directory)
-- - PhantomJS (have **phantomjs** executable in *tests/nightwatch/bin/* directory)
+Run Nightwatch tests on **Chrome** by command:
+
+        gulp nightwatch:chrome
+        
+There are currently problems with running tests on **PhantomJS** and **Safari**
+Safari browser must be enabled for automation, [https://webkit.org/blog/6900/webdriver-support-in-safari-10/](read more)

@@ -77,6 +77,13 @@ gulp.task('nightwatch:phantomjs', function(){
             cliArgs: [ '--env phantomjs' ]
         }));
 });
+gulp.task('nightwatch:safari', function(){
+    return gulp.src('')
+        .pipe(nightwatch({
+            configFile: './tests/nightwatch/nightwatch.json',
+            cliArgs: [ '--env safari' ]
+        }));
+});
 // deleting reports and screenshots of nightwatch tests
 gulp.task('nightwatch:clean', function(){
     console.log('Cleaning reports and screenshots.');
