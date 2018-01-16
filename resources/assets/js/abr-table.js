@@ -444,7 +444,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
 // update paging data
 function updatePaging(elementId) {
     var paging = document.getElementById(elementId + '-controls').dataset,
-        tablelength = $('[id^=' + elementId + '-row-').length;
+        tablelength = $('[id^=' + elementId + '-row-]').length;
     paging.currentpage = 1;
 
     if (paging.maxrowsoriginal && paging.maxrowsoriginal <= tablelength) {
@@ -452,11 +452,9 @@ function updatePaging(elementId) {
         $('#' + elementId + '-controls').removeClass('hidden-xs-up');
         $('#' + elementId + '-options').removeClass('hidden-xs-up');
         document.getElementById(elementId + '-number-total').innerHTML = tablelength;
-        console.log('showing:' + elementId);
     } else {
         $('#' + elementId + '-controls').addClass('hidden-xs-up');
         $('#' + elementId + '-options').addClass('hidden-xs-up');
-        console.log('hiding:' + elementId);
     }
 
     updatePageControls(elementId);
