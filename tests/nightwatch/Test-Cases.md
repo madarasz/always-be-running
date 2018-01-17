@@ -4,17 +4,22 @@
 
 ##### Login / logout
 - navigate to Results page, results table is visible, to-be-concluded tab is not visible
+- try Personal page, check login required
+- check Profile page, validate page
+- try Admin page, check 403
+- check Videos page, validate page
 - navigate to Organize page, requires login
 - login with NRDB (regular user)
 - check Organize page, create tournament option available, Profile, Personal menus available
 - navigate to Results page, results table is visible, to-be-concluded exists
+- navigate to Personal page, validate page
+- check Profile page, validate page
+- try Admin page, check 403
+- check Videos page, validate page
 - navigate to Organize page, logout
 - check Organize page, requires login, login menu available
-
-   **TODO:**
-   - *tournament detail page*
-   - *profile page*
-   - *personal page*
+- **TODO:**
+   - *tournament detail page while logged out*
 
 ### 002 Create event
 

@@ -55,6 +55,10 @@ module.exports = {
             selector: "//a[contains(text(),'Admin')]",
             locateStrategy: 'xpath'
         },
+        videos: {
+            selector: "//a[contains(text(),'Videos')]",
+            locateStrategy: 'xpath'
+        },
         personal: {
             selector: "//a[contains(text(),'Personal')]",
             locateStrategy: 'xpath'
