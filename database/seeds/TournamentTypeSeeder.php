@@ -14,7 +14,7 @@ class TournamentTypeSeeder extends Seeder
         DB::table('tournament_types')->insert(
             array(
                 array(
-                    'type_name' => 'GNK / seasonal tournament',
+                    'type_name' => 'GNK / seasonal',
                     'order' => 1,
                     'id' => 1
                 ),
