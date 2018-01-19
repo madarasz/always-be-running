@@ -107,7 +107,7 @@
         <table style="margin:  0 auto;">
             <tbody>
                 <tr>
-                    <td>
+                    <td class="hidden-xs-up">
                         {{--Manage in NRTM--}}
                         <a class="btn btn-manage" id="button-manage-nrtm" title="Download results from NRTM app"
                            href="https://steffens.org/nrtm/conclude.html?id={{ $tournament->id }}">
@@ -127,7 +127,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="small-text text-xs-center">(iOS app)</td>
+                    <td class="small-text text-xs-center hidden-xs-up">(iOS app)</td>
                     <td></td>
                 </tr>
             </tbody>
