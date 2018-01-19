@@ -1,7 +1,7 @@
 @extends('layout.general')
 
 @section('content')
-    <h4 class="page-header">Personal</h4>
+    <h4 class="page-header m-b-0">Personal</h4>
     @include('partials.message')
     @include('errors.list')
 
