@@ -52,7 +52,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
 
             cell.append($('<a>', {
                 text: element.title,
-                href: element.url,
+                href: element.url.substr(element.url.indexOf('/tournaments')),
                 class: element.approved ? '' : ' font-italic'
             })).appendTo(newrow);
 
