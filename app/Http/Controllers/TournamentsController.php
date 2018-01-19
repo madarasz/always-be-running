@@ -155,6 +155,8 @@ class TournamentsController extends Controller
         $nowdate = date('Y.m.d.');
         $user = $request->user();
         $entries = $tournament->entries;
+        $registeredIds = Entry::where('tournament_id', $id)->where('user', '>', 0)->pluck('user');
+        $registered = User::whereIn('id', $registeredIds)->get()->sortBy('displayUsernameLower');
         $regcount = $tournament->registration_number();
 
         // tournament entries
@@ -179,7 +181,7 @@ class TournamentsController extends Controller
 
         return view('tournaments.view',
             compact('tournament', 'message', 'type', 'format', 'nowdate', 'user', 'entries', 'runnerIDs', 'corpIDs',
-                'user_entry', 'entries_swiss', 'entries_top', 'regcount', 'all_users'));
+                'user_entry', 'entries_swiss', 'entries_top', 'regcount', 'all_users', 'registered'));
     }
 
     /**

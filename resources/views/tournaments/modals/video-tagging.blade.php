@@ -23,10 +23,8 @@
                                     <select name="user_id" class="form-control" id="user_id">
                                         @if($regcount)
                                             <optgroup label="registered users">
-                                                @foreach ($entries as $entry)
-                                                    @if ($entry->player)
-                                                        <option value="{{ $entry->player->id }}">{{ $entry->player->displayUsername() }}</option>
-                                                    @endif
+                                                @foreach ($registered as $player)
+                                                    <option value="{{ $player->id }}">{{ $player->displayUsername() }}</option>
                                                 @endforeach
                                             </optgroup>
                                             <optgroup label="all users">

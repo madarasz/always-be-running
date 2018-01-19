@@ -2,10 +2,8 @@
 <h6>Registered players {{ $regcount > 0 ? '('.$regcount.')' : '' }}</h6>
 @if ($regcount)
     <ul id="registered-players">
-        @foreach ($entries as $entry)
-            @if ($entry->player)
-                <li><a href="/profile/{{ $entry->player->id }}" class="{{ $entry->player->linkClass() }}">{{ $entry->player->displayUsername() }}</a></li>
-            @endif
+        @foreach ($registered as $player)
+            <li><a href="/profile/{{ $player->id }}" class="{{ $player->linkClass() }}">{{ $player->displayUsername() }}</a></li>
         @endforeach
     </ul>
 @else

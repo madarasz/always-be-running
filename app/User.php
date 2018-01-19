@@ -39,6 +39,14 @@ class User extends Authenticatable
         }
     }
 
+    public function getDisplayUsernameAttribute() {
+        return $this->displayUsername();
+    }
+
+    public function getDisplayUsernameLowerAttribute() {
+        return strtolower($this->displayUsername());
+    }
+
     public function badges() {
         return $this->belongsToMany('App\Badge', 'badge_user', 'user_id', 'badge_id')->withPivot('seen')->orderBy('order');
     }
