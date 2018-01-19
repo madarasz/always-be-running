@@ -484,20 +484,22 @@ class BadgeController extends Controller
         foreach($badge_list as $tournament) {
             $event = Tournament::find($tournament['tournament_id']);
 
-            // winner
-            if ($event && $event->top_number > 0) {
-                $winner = Entry::where('tournament_id', $event->id)->where('rank_top', 1)->where('type', 3)->first();
-            } else {
-                $winner = Entry::where('tournament_id', $event->id)->where('rank', 1)->where('type', 3)->first();
-            }
-            if ($winner && $winner->user == $userid) {
-                $badges[$tournament['badges']['winner_badge_id']] = true;
-            } else {
+            if ($event) {
+                // winner
+                if ($event && $event->top_number > 0) {
+                    $winner = Entry::where('tournament_id', $event->id)->where('rank_top', 1)->where('type', 3)->first();
+                } else {
+                    $winner = Entry::where('tournament_id', $event->id)->where('rank', 1)->where('type', 3)->first();
+                }
+                if ($winner && $winner->user == $userid) {
+                    $badges[$tournament['badges']['winner_badge_id']] = true;
+                } else {
 
-                // participants
-                $player = Entry::where('tournament_id', $event->id)->where('type', 3)->where('user', $userid)->first();
-                if ($player) {
-                    $badges[$tournament['badges']['participant_badge_id']] = true;
+                    // participants
+                    $player = Entry::where('tournament_id', $event->id)->where('type', 3)->where('user', $userid)->first();
+                    if ($player) {
+                        $badges[$tournament['badges']['participant_badge_id']] = true;
+                    }
                 }
             }
         }
