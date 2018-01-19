@@ -10,11 +10,15 @@ var resultsCommands = {
             this.waitForElementVisible('@toBeConcludedTab', 10000);
             this.waitForElementVisible('@resultsTable', 10000);
             this.waitForElementPresent('@toBeConcludedTable', 10000);
+            this.waitForElementPresent('@concludeButton', 10000);
+            this.waitForElementNotPresent('@loginWarning', 100);
         } else {
             this.waitForElementVisible('@resultsTable', 10000);
-            this.waitForElementNotPresent('@resultsTab', 100);
-            this.waitForElementNotPresent('@toBeConcludedTab', 100);
-            this.waitForElementNotPresent('@toBeConcludedTable', 100);
+            this.waitForElementVisible('@resultsTab', 10000);
+            this.waitForElementPresent('@toBeConcludedTab', 10000);
+            this.waitForElementPresent('@toBeConcludedTable', 10000);
+            this.waitForElementPresent('@loginWarning', 10000);
+            this.waitForElementNotPresent('@concludeButton', 100);
         }
 
         if (typeof callback === "function"){
@@ -47,6 +51,14 @@ module.exports = {
         },
         toBeConcludedTable: {
             selector: "//table[@id='to-be-concluded']",
+            locateStrategy: 'xpath'
+        },
+        loginWarning: {
+            selector: "//div[@id='warning-conclude']",
+            locateStrategy: 'xpath'
+        },
+        concludeButton: {
+            selector: "//button[contains(@class, 'btn-conclude')]",
             locateStrategy: 'xpath'
         }
     }

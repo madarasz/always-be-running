@@ -7,8 +7,7 @@
         {{--Results table--}}
         <div class="col-lg-9 push-lg-3 col-12" id="col-results">
             <div class="bracket">
-                {{--Result / to be concluded tabs for logged in users--}}
-                @if (@Auth::user())
+                {{--Result / to be concluded tabs--}}
                 <div class="modal-tabs">
                     <ul id="result-tabs" class="nav nav-tabs" role="tablist">
                         <li class="nav-item" id="t-results">
@@ -46,25 +45,19 @@
                     @include('tournaments.modals.conclude')
                     {{--To be concluded table--}}
                     <div class="tab-pane" id="tab-to-be-concluded" role="tabpanel">
+                        {{--Warning for not logged in users--}}
+                        @if (!@Auth::user())
+                            <div class="alert alert-warning text-xs-center" id="warning-conclude">
+                                <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                                Please <a href="/oauth2/redirect">login via NetrunnerDB</a> to conclude tournaments.
+                            </div>
+                        @endif
                         @include('tournaments.partials.tabledin',
                             ['columns' => ['title', 'date', 'location', 'cardpool', 'conclusion', 'regs'],
                             'skip_header' => true, 'id' => 'to-be-concluded', 'doublerow' => true, 'loader' => true,
                             'maxrows' => 50, 'pager_options' => [50,100,'all']])
                     </div>
                 </div>
-                @else
-                    <h5>
-                        <i class="fa fa-list-alt" aria-hidden="true"></i>
-                        Tournament results
-                        <br/>
-                        <small>concluded tournaments from the past</small>
-                    </h5>
-                    @include('tournaments.partials.tabledin',
-                            ['columns' => ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims' ],
-                            'skip_header' => true, 'id' => 'results', 'doublerow' => true, 'loader' => true, 'maxrows' => 50])
-                    <div class="loader hidden-xs-up" id="results-more-loader">loading more</div>
-                @endif
-
                 @include('tournaments.partials.icons')
             </div>
         </div>
@@ -165,7 +158,6 @@
             $('#results-more-loader').removeClass('hidden-xs-up');
             $('#results-controls').addClass('hidden-xs-up');
 
-            @if(@Auth::user())
             // load tournaments to be concluded
             getTournamentData("?concluded=0&recur=0&hide-non=1&desc=1&end={{ $nowdate }}", function(data) {
                 toBeConcludedAll = data;
@@ -177,8 +169,12 @@
                         'no tournaments waiting for conclusion', '', toBeConcludedFiltered);
                 updatePaging('to-be-concluded');
 
+                @if (!@Auth::user())
+                    // hide conclude buttons from logged out visitors
+                    $('.btn-conclude').replaceWith('<em>waiting</em>');
+                @endif
+
             });
-            @endif
 
             // load the rest
             getTournamentData('/results?offset=50', function(data) {
