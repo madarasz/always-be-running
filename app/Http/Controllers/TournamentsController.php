@@ -651,9 +651,40 @@ class TournamentsController extends Controller
             while (file_exists('tjsons/nrtm/import_'.$code.'.json')) {
                 $code = rand(100000, 999999);
             }
+
             // store file
             $request->file('jsonresults')->move('tjsons/nrtm', 'import_'.$code.'.json');
-            return response()->json(['code' => $code]);
+
+            // check for tournamentID
+            $json = json_decode(file_get_contents('tjsons/nrtm/import_'.$code. '.json'), true);
+            if (array_key_exists('abrTournamentId', $json)) {
+                $tournamentId = $json['abrTournamentId'];
+                $tournament = Tournament::find($tournamentId);
+
+                if (!is_null($tournament)) { // tournament found
+                    // move from temp
+                    rename('tjsons/nrtm/import_'.$code.'.json', 'tjsons/'.$tournamentId.'.json');
+                    // process file
+                    $errors = [];
+                    $this->processNRTMjson($json, $tournament, $errors, null);
+                    return response()->json([
+                        'url' => $tournament->seoUrl(),
+                        'status' => 'Results uploaded successfully.'
+                    ]);
+                } else {
+                    // error handling, tournament was not found
+                    return response()->json([
+                        'code' => $code,
+                        'status' => 'Tournament with ID '.$tournamentId.' not found.'
+                    ]);
+                }
+            } else {
+                // give back conclusion code
+                return response()->json([
+                    'code' => $code,
+                    'status' => 'JSON successfully stored.'
+                ]);
+            }
         } else {
             return response()->json(['error' => 'File upload failed.']);
         }

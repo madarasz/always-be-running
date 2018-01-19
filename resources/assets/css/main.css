@@ -389,6 +389,17 @@ img.id-medium {
     background-color: #8b4195;
     border-color: #8b4195;
 }
+/*button for managing tournaments*/
+.btn-manage {
+    color: #fff;
+    background-color: #5ca4b8;
+    border-color: #5ca4b8;
+}
+.btn-manage:hover {
+    color: #fff;
+    background-color: #4a8494;
+    border-color: #4a8494;
+}
 
 /*loader animation*/
 .loader {

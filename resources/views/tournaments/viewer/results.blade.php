@@ -14,10 +14,14 @@
             </div>
         @endif
         {{--Concluded by--}}
-        @if ($tournament->concluded_by)
+        @if ($tournament->concluded_by || $tournament->concluded_at)
             <div id="concluded-by" class="small-text m-b-1">
                 <strong>Concluded by:</strong>
-                <a href="/profile/{{ $tournament->concluded_by }}" class="{{ $tournament->concluder->linkClass() }}">{{ $tournament->concluder->displayUsername() }}</a>
+                @if ($tournament->concluded_by)
+                    <a href="/profile/{{ $tournament->concluded_by }}" class="{{ $tournament->concluder->linkClass() }}">{{ $tournament->concluder->displayUsername() }}</a>
+                @else
+                    <em>NRTM user</em>
+                @endif
                 @include('partials.popover', ['direction' => 'right', 'content' =>
                         'If the results / player number / top-cut is incorrect, ask the tournament creator or admins to
                          edit it.'])
@@ -97,18 +101,37 @@
         <div class="alert alert-warning" id="due-warning">
             <i class="fa fa-clock-o" aria-hidden="true"></i>
             This tournament is due for completion.<br/>
-            The tournament creator should set it to 'concluded', so players can make claims.
+            The organizer or a player should set it to 'concluded', so players can make claims.
         </div>
-        {{--Conclude modal, button--}}
-        @if ($user)
-            <div class="text-xs-center">
-                <button class="btn btn-conclude" data-toggle="modal" data-target="#concludeModal"
-                        data-tournament-id="{{$tournament->id}}"
-                        data-subtitle="{{$tournament->title.' - '.$tournament->date}}" id="button-conclude">
-                    <i class="fa fa-check" aria-hidden="true"></i> Conclude
-                </button>
-            </div>
-        @endif
+        {{--Manage and Conclude Buttons--}}
+        <table style="margin:  0 auto;">
+            <tbody>
+                <tr>
+                    <td>
+                        {{--Manage in NRTM--}}
+                        <a class="btn btn-manage" id="button-manage-nrtm" title="Download results from NRTM app"
+                           href="https://steffens.org/nrtm/conclude.html?id={{ $tournament->id }}">
+                            <i class="fa fa-cloud-download" aria-hidden="true"></i> NRTM results<br/>
+                        </a>
+                    </td>
+                    <td>
+                        {{--Conclude modal, button--}}
+                        @if ($user)
+                            <button class="btn btn-conclude" data-toggle="modal" data-target="#concludeModal"
+                                    data-tournament-id="{{$tournament->id}}"
+                                    data-subtitle="{{$tournament->title.' - '.$tournament->date}}" id="button-conclude">
+                                <i class="fa fa-check" aria-hidden="true"></i> Conclude
+                            </button>
+
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <td class="small-text text-xs-center">(iOS app)</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
         <hr/>
     @endif
     {{--Register--}}
