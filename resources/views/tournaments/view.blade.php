@@ -31,7 +31,7 @@
                 @include('tournaments.viewer.description')
             @endunless
             {{--Matches--}}
-            @if (file_exists('tjsons/'.$tournament->id.'.json'))
+            @if (file_exists('tjsons/'.$tournament->id.'.json') && $tournament->concluded)
                 @include('tournaments.viewer.matches')
             @endif
             {{--Photos and Videos--}}
