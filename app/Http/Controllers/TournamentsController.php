@@ -672,13 +672,14 @@ class TournamentsController extends Controller
                     return response()->json([
                         'url' => $tournament->seoUrl(),
                         'code' => 42,
-                        'status' => 'Results uploaded successfully.'
+                        'status' => 'Results uploaded successfully.',
+                        'error' => $errors
                     ]);
                 } else {
                     // error handling, tournament was not found
                     return response()->json([
                         'code' => $code,
-                        'status' => 'Tournament with ID '.$tournamentId.' not found.'
+                        'error' => 'Tournament with ID '.$tournamentId.' not found.'
                     ]);
                 }
             } else {
