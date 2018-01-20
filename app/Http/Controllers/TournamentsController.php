@@ -660,7 +660,7 @@ class TournamentsController extends Controller
             // check for tournamentID
             $json = json_decode(file_get_contents('tjsons/nrtm/import_'.$code. '.json'), true);
             if (array_key_exists('abrTournamentId', $json)) {
-                $tournamentId = $json['abrTournamentId'];
+                $tournamentId = intval($json['abrTournamentId']);
                 $tournament = Tournament::find($tournamentId);
 
                 if (!is_null($tournament)) { // tournament found
