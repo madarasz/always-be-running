@@ -671,7 +671,7 @@ class TournamentsController extends Controller
                     $this->processNRTMjson($json, $tournament, $errors, null);
                     return response()->json([
                         'url' => $tournament->seoUrl(),
-                        'code' => 0,
+                        'code' => 42,
                         'status' => 'Results uploaded successfully.'
                     ]);
                 } else {
