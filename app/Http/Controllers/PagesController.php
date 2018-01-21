@@ -74,7 +74,7 @@ class PagesController extends Controller
             ->pluck('location_country')->unique()->all();
         $tournament_formats = TournamentFormat::whereIn('id', $tournaments->pluck('tournament_format_id')->unique()->all())->pluck('format_name', 'id')->all();
         $featured = Tournament::where('featured', '>', 0)->where('concluded', 1)->where('approved', 1)
-            ->orderBy('date', 'desc')->get();
+            ->with('winner')->orderBy('date', 'desc')->get();
 
         // adding empty filters
         $tournament_types = [-1 => '---'] + $tournament_types;

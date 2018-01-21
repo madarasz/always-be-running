@@ -264,15 +264,25 @@ class TournamentsController extends Controller
     }
 
     public function resultTournamentJSON(Request $request) {
+        $startTime = microtime(true);
+
         $tournaments = Tournament::where('concluded', 1)->where(function($query){
             $query->where('approved', 1)->orWhereNull('approved');
         })->orderBy('date', 'desc');
 
         $this->applyLimitOffset($request, $tournaments);
 
-        $tournaments = $tournaments->get();
+        $tournaments = $tournaments
+            ->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])->get();
 
-        return response()->json($this->tournametDataFormat($tournaments));
+        $result = $this->tournametDataFormat($tournaments);
+
+        $endtime = microtime(true);
+        if (count($result)) {
+            $result[count($result) - 1]['rendered_in'] = $endtime-$startTime;
+        }
+
+        return response()->json($result);
     }
 
     private function applyLimitOffset(Request $request, &$tournaments) {
@@ -300,16 +310,21 @@ class TournamentsController extends Controller
     private function tournametDataFormat($data, $forUser = null) {
         $appUrl = env('APP_URL');
         $result = [];
+        $tournament_types = TournamentType::get()->pluck('type_name', 'id');
+        $tournament_formats = TournamentFormat::get()->pluck('format_name', 'id');
+        $cardpool_names = CardPack::get()->pluck('name', 'id');
 
         foreach($data as $tournament) {
+
+            $user = $tournament->user;
 
             $event_data = [
                 'id' => $tournament->id,
                 'title' => $tournament->title,
                 'creator_id' => $tournament->creator,
-                'creator_name' => $tournament->user()->first()->displayUsername(),
-                'creator_supporter' => $tournament->user->supporter,
-                'creator_class' => $tournament->user->linkClass(),
+                'creator_name' => $user->displayUsername(),
+                'creator_supporter' => $user->supporter,
+                'creator_class' => $user->linkClass(),
                 'created_at' => $tournament->created_at->format('Y.m.d. H:i:s'),
                 'location' => $tournament->location(),
                 'location_lat' => $tournament->location_lat,
@@ -321,18 +336,18 @@ class TournamentsController extends Controller
                 'place_id' => $tournament->location_place_id,
                 'contact' => $tournament->contact,
                 'approved' => $tournament->approved,
-                'registration_count' => $tournament->registration_number(),
-                'photos' => $tournament->photos->count(),
+                'registration_count' => $tournament->registrationCount, // ~ +0.1s
+                'photos' => $tournament->photosCount, // ~ +0.1s
                 'url' => $appUrl.$tournament->seoUrl(),
                 'link_facebook' => $tournament->link_facebook
             ];
 
             // if not recurring / recurring
             if (!$tournament->recur_weekly) {
-                $event_data['cardpool'] = $tournament->cardpool['name'];
+                $event_data['cardpool'] = $cardpool_names[$tournament->cardpool_id];
                 $event_data['date'] = $tournament->date;
-                $event_data['type'] = $tournament->tournament_type['type_name'];
-                $event_data['format'] = $tournament->tournament_format['format_name'];
+                $event_data['type'] = $tournament_types[$tournament->tournament_type_id];
+                $event_data['format'] = $tournament_formats[$tournament->tournament_format_id];
                 $event_data['concluded'] = $tournament->concluded == 1;
                 $event_data['charity'] = $tournament->charity == 1;
             } else {
@@ -348,17 +363,13 @@ class TournamentsController extends Controller
             if ($tournament->concluded) {
                 $event_data['players_count'] = $tournament->players_number;
                 $event_data['top_count'] = $tournament->top_number;
-                $event_data['claim_count'] = $tournament->claim_number();
+                $event_data['claim_count'] = $tournament->claimCount;
                 $event_data['claim_conflict'] = $tournament->conflict == 1;
                 $event_data['matchdata'] = $tournament->import == 1 || $tournament->import == 4;
-                $event_data['videos'] = $tournament->videos->count();
+                $event_data['videos'] = $tournament->videosCount; // ~ +0.1s
 
                 // winner IDs
-                if ($tournament->top_number) {
-                    $winner = Entry::where('tournament_id', $tournament->id)->where('rank_top', 1)->first(); // with top cut
-                } else {
-                    $winner = Entry::where('tournament_id', $tournament->id)->where('rank', 1)->first(); // without top cut
-                }
+                $winner = $tournament->winner;
                 if (!is_null($winner)) {
                     $event_data['winner_runner_identity'] = $winner['runner_deck_identity'];
                     $event_data['winner_corp_identity'] = $winner['corp_deck_identity'];

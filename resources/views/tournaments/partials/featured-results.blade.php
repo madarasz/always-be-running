@@ -52,22 +52,22 @@
                     </div>
                 </div>
                 {{--winner--}}
-                @if ($ft->winner())
+                @if ($ft->winner)
                 <table class="table table-striped small-text" style="margin-bottom: 0.5em">
                     <tr>
                         <td><i class="fa fa-trophy" aria-hidden="true"></i></td>
                         <td>
-                            @if ($ft->winner()->player)
-                                <a href="/profile/{{ $ft->winner()->player->id }}">{{ $ft->winner()->player->displayUsername() }}</a>
+                            @if ($ft->winner->player)
+                                <a href="/profile/{{ $ft->winner->player->id }}">{{ $ft->winner->player->displayUsername() }}</a>
                             @else
-                                {{  $ft->winner()->import_username }}
+                                {{  $ft->winner->import_username }}
                             @endif
                         </td>
                         <td class="text-xs-right cell-winner" nowrap="">
-                            @if ($ft->winner()->type == 3)
-                                <a href="{{ $ft->winner()->runner_deck_url() }}" title="{{ $ft->winner()->runner_deck_title }}"><img src="/img/ids/{{ $ft->winner()->runner_deck_identity }}.png"></a>&nbsp;<a href="{{ $ft->winner()->corp_deck_url() }}"><img src="/img/ids/{{ $ft->winner()->corp_deck_identity }}.png"></a>
+                            @if ($ft->winner->type == 3)
+                                <a href="{{ $ft->winner->runner_deck_url() }}" title="{{ $ft->winner->runner_deck_title }}"><img src="/img/ids/{{ $ft->winner->runner_deck_identity }}.png"></a>&nbsp;<a href="{{ $ft->winner->corp_deck_url() }}"><img src="/img/ids/{{ $ft->winner->corp_deck_identity }}.png"></a>
                             @else
-                                <img src="/img/ids/{{ $ft->winner()->runner_deck_identity }}.png">&nbsp;<img src="/img/ids/{{ $ft->winner()->corp_deck_identity }}.png">
+                                <img src="/img/ids/{{ $ft->winner->runner_deck_identity }}.png">&nbsp;<img src="/img/ids/{{ $ft->winner->corp_deck_identity }}.png">
                             @endif
                         </td>
                     </tr>

@@ -45,26 +45,86 @@ class Tournament extends Model
         return $this->hasMany(Video::class, 'tournament_id', 'id');
     }
 
+    // videos counting with optimized performance
+    public function videosCount() {
+        return $this->hasOne(Video::class)->selectRaw('tournament_id, count(*) as aggregate')->groupBy('tournament_id');
+    }
+    public function getVideosCountAttribute(){
+        // if relation is not loaded already, let's do it first
+        if ( !$this->relationLoaded('videosCount')) {
+            $this->load('videosCount');
+        }
+        $related = $this->getRelation('videosCount');
+        // then return the count directly
+        return ($related) ? (int) $related->aggregate : 0;
+    }
+
     public function photos() {
         return $this->hasMany(Photo::class, 'tournament_id', 'id')->where(function($q) {
             $q->where('approved', true)->orWhereNull('approved');
         });
     }
 
+    // photos counting with optimized performance
+    public function photosCount() {
+        return $this->hasOne(Photo::class)->selectRaw('tournament_id, count(*) as aggregate')->groupBy('tournament_id');
+    }
+    public function getPhotosCountAttribute(){
+        // if relation is not loaded already, let's do it first
+        if ( !$this->relationLoaded('photosCount')) {
+            $this->load('photosCount');
+        }
+        $related = $this->getRelation('photosCount');
+        // then return the count directly
+        return ($related) ? (int) $related->aggregate : 0;
+    }
+
     public function cardpool() {
         return $this->hasOne(CardPack::class, 'id', 'cardpool_id');
     }
 
+    // TODO: replace with registrationCount
     public function registration_number() {
         return $this->entries()->where('user', '>', '0')->count();
     }
 
+    // registered users counting with optimized performance
+    public function registrationCount() {
+        return $this->hasOne(Entry::class)->selectRaw('tournament_id, count(*) as aggregate')
+            ->where('user', '>', 0)->groupBy('tournament_id');
+    }
+    public function getRegistrationCountAttribute(){
+        // if relation is not loaded already, let's do it first
+        if ( !$this->relationLoaded('registrationCount')) {
+            $this->load('registrationCount');
+        }
+        $related = $this->getRelation('registrationCount');
+        // then return the count directly
+        return ($related) ? (int) $related->aggregate : 0;
+    }
+
+    // TODO: replace with claimCount
     public function claim_number() {
         return $this->entries()->whereNotNull('runner_deck_id')->count();
     }
 
     public function getClaimNumberAttribute() {
         return $this->claim_number();
+    }
+
+    // registered users counting with optimized performance
+    public function claimCount() {
+        return $this->hasOne(Entry::class)->selectRaw('tournament_id, count(*) as aggregate')
+            ->whereNotNull('runner_deck_id')->groupBy('tournament_id');
+    }
+    public function getClaimCountAttribute(){
+        // if relation is not loaded already, let's do it first
+        if ( !$this->relationLoaded('claimCount')) {
+            $this->load('claimCount');
+        }
+        $related = $this->getRelation('claimCount');
+        // then return the count directly
+        return ($related) ? (int) $related->aggregate : 0;
     }
 
     /**
@@ -120,10 +180,17 @@ class Tournament extends Model
 
     public function winner() {
         if ($this->top_number) {
-            return $this->entries()->where('rank_top', 1)->first();
+            return $this->hasOne(Entry::class)->where('rank_top', 1);
         } else {
-            return $this->entries()->where('rank', 1)->first();
+            return $this->hasOne(Entry::class)->where('rank', 1);
         }
+    }
+    public function getWinnerAttribute(){
+        // if relation is not loaded already, let's do it first
+        if ( !$this->relationLoaded('winner')) {
+            $this->load('winner');
+        }
+        return $this->getRelation('winner');
     }
 
     public function location() {
