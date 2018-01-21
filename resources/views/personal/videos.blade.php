@@ -51,7 +51,7 @@
                                         <span id="tags-{{ $video->video_id }}">
                                             @foreach($video->videoTags as $key => $tag)
                                                 {{--display IDs--}}
-                                                @if ($video->tournament->registration_number() && $tag->user)
+                                                @if ($video->tournament->registrationCount && $tag->user)
                                                     <?php if (is_null(@$entries)) $entries = $video->tournament->entries; ?>
                                                     @for ($u = 0; $u < count($entries); $u++)
                                                         @if($entries[$u]->user == $tag->user_id)

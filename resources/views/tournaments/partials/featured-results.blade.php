@@ -103,7 +103,7 @@
                 {{--numbers--}}
                 <div class="small-text text-xs-center featured-footer">
                     {{ $ft->players_number }} <i class="fa fa-user" title="players"></i>
-                    {{ $ft->claim_number() }} <i class="fa fa-address-card" title="claims"></i>
+                    {{ $ft->claimCount }} <i class="fa fa-address-card" title="claims"></i>
                     @if (count($ft->photos))
                         {{ count($ft->photos) }} <i title="photo" class="fa fa-camera"></i>
                     @endif

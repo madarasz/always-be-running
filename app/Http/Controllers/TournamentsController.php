@@ -157,7 +157,7 @@ class TournamentsController extends Controller
         $entries = $tournament->entries;
         $registeredIds = Entry::where('tournament_id', $id)->where('user', '>', 0)->pluck('user');
         $registered = User::whereIn('id', $registeredIds)->get()->sortBy('displayUsernameLower');
-        $regcount = $tournament->registration_number();
+        $regcount = $tournament->registrationCount;
 
         // tournament entries
         $entries_swiss = [];

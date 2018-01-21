@@ -15,7 +15,7 @@ class Tournament extends Model
         'recur_weekly', 'incomplete', 'link_facebook', 'tournament_format_id', 'end_date', 'concluded_by', 'concluded_at'];
     protected $dates = ['created_at', 'updated_at', 'deleted_at', 'concluded_at'];
     protected $hidden = ['tournament_type_id', 'tournament_format_id', 'cardpool_id'];
-    protected $appends = ['claimNumber', 'seoUrl'];
+    protected $appends = ['seoUrl'];
 
     public function tournament_type() {
         return $this->hasOne(TournamentType::class, 'id', 'tournament_type_id');
@@ -83,11 +83,6 @@ class Tournament extends Model
         return $this->hasOne(CardPack::class, 'id', 'cardpool_id');
     }
 
-    // TODO: replace with registrationCount
-    public function registration_number() {
-        return $this->entries()->where('user', '>', '0')->count();
-    }
-
     // registered users counting with optimized performance
     public function registrationCount() {
         return $this->hasOne(Entry::class)->selectRaw('tournament_id, count(*) as aggregate')
@@ -101,15 +96,6 @@ class Tournament extends Model
         $related = $this->getRelation('registrationCount');
         // then return the count directly
         return ($related) ? (int) $related->aggregate : 0;
-    }
-
-    // TODO: replace with claimCount
-    public function claim_number() {
-        return $this->entries()->whereNotNull('runner_deck_id')->count();
-    }
-
-    public function getClaimNumberAttribute() {
-        return $this->claim_number();
     }
 
     // registered users counting with optimized performance

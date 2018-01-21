@@ -44,7 +44,7 @@
                                onclick="return confirm('Are you sure you want to untag user?')"><i class="fa fa-trash" title="untag"></i></a>
                         @endif
                         {{--display IDs--}}
-                        @if ($videos[$i]->tournament->registration_number() && $tag->user)
+                        @if ($videos[$i]->tournament->registrationCount && $tag->user)
                             <?php if (is_null(@$entries)) $entries = $videos[$i]->tournament->entries; ?>
                             @for ($u = 0; $u < count($entries); $u++)
                                 @if($entries[$u]->user == $tag->user_id)
