@@ -1016,3 +1016,10 @@ img.badge {
         font-size: 20px;
     }
 }
+
+/* patreon */
+.img-patron-o {
+    content: url(/img/logo_patreon_o.png);
+    height: 1em;
+    max-height: 1em;
+}
