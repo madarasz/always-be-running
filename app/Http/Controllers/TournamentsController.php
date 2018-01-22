@@ -497,7 +497,8 @@ class TournamentsController extends Controller
             });
         }
 
-        $tournaments = $tournaments->select()->get();
+        $tournaments = $tournaments
+            ->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])->get();
 
         // flatten result
         $userId = null;
