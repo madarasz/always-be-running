@@ -127,7 +127,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="small-text text-xs-center">(iOS app)</td>
+                    <td class="small-text text-xs-center">(iOS app, <a href="/faq#import">help</a>)</td>
                     <td></td>
                 </tr>
             </tbody>

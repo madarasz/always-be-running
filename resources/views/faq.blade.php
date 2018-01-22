@@ -118,41 +118,63 @@
                             <a href="https://itunes.apple.com/us/app/nrtm/id695468874?mt=8">NRTM</a> is a Netrunner tournament
                             manager app for iOS.</p>
                         <p>
-                            First, download the identity names
-                            from NetrunnerDB by going to <strong>Settings</strong> >> <strong>Edit Names</strong> >>
-                            <strong>Download from NetrunnerDB.com</strong>. Assign those identity names to your players.
-                            After the tournament finishes, you can proceed with exporting the results:
+                            First, download the identity names in the NRTM app
+                            by going to <strong>Settings</strong> >> <strong>Edit Names</strong> >>
+                            <strong>Download from NetrunnerDB.com</strong>. Assign those identity names
+                            <strong>to all of your players</strong>.
                         </p>
-                        <ul>
+                        <ol>
                             <li>
-                                <div class="bracket-mini">
-                                    <img src="img/faq-nrtm1.png"/>
-                                </div>
-                                <br/>
-                                After the tournament is finished, go to tab <strong>More...</strong> >> <strong>Export</strong>.
-                                Click upload icon on top.<br/>
-                                <div class="bracket-mini">
-                                    <img src="img/faq-nrtm2.png"/>
-                                </div>
-                                <br/>
-                                Select <strong>Upload to alwaysberunning.net</strong>.<br/>
-                                <div class="bracket-mini">
-                                    <img src="img/faq-nrtm3.png"/>
-                                </div>
-                                <br/>
-                                After NRTM uploads the results, you will receive a <strong>conclusion code.</strong><br/>
-                                <div class="bracket-mini">
-                                    <img src="img/faq-nrtm4.png"/>
-                                </div>
-                                <br/>
-                                When you are concluding the tournament on AlwaysBeRunning.net, provide this code.
-
+                                Manage your tournament in NRTM. Once the tournament finishes, keep the results in the NRTM app.
                             </li>
-                        </ul>
+                            <li>
+                                Open the AlwaysBeRunning.net page of the tournament in your <strong>Safari</strong> browser.
+                                Click the "NRTM results" button.
+                                <div class="bracket-mini">
+                                    <img src="img/faq-nrtm-new1.png"/>
+                                </div>
+                            </li>
+                            <li>
+                                The NRTM app will open and it will prompt to upload results. Tap "Yes".<br/>
+                                <div class="bracket-mini">
+                                    <img src="img/faq-nrtm-new2.png"/>
+                                </div>
+                            </li>
+                            <li>
+                                Go back to the AlwaysBeRunning.net page, refresh. Your results should be there.
+                            </li>
+                        </ol>
                         <p class="p-t-1">
-                            Alternatively you can upload the NRTM.json results file. <br/>
-                            <em>(JSON export can be enabled by <strong>Settings</strong> >> <strong>Data Export</strong> >>
-                            switch on <strong>Add JSON Data to Export</strong>.)</em>
+                            Alternatively you can:
+                            <ul>
+                                <li>
+                                    Upload results via conclusion code:
+                                    <ol>
+                                        <li>
+                                            After the tournament is finished, go to tab <strong>More... >> Export</strong>.
+                                            Click upload icon (cloud) on top.
+                                        </li>
+                                        <li>
+                                            Select <strong>Upload to alwaysberunning.net</strong>.
+                                            After NRTM uploads the results, you will receive a <strong>conclusion code.</strong><br/>
+                                            <div class="bracket-mini">
+                                                <img src="img/faq-nrtm3.png"/>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            When you are concluding the tournament on AlwaysBeRunning.net, provide this code.<br/>
+                                            <div class="bracket-mini">
+                                                <img src="img/faq-nrtm4.png"/>
+                                            </div>
+                                        </li>
+                                    </ol>
+                                </li>
+                                <li>
+                                    Upload the NRTM.json results file:
+                                    <em>JSON export can be enabled by <strong>Settings</strong> >> <strong>Data Export</strong> >>
+                                        switch on <strong>Add JSON Data to Export</strong>.</em>
+                                </li>
+                            </ul>
                         </p>
                     </li>
                     <li>
