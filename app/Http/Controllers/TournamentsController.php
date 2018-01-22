@@ -246,18 +246,25 @@ class TournamentsController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function upcomingTournamentJSON(Request $request) {
+        $startTime = microtime(true);
+
         $yesterday = date('Y.m.d.', time() - 86400); // to be on the safe side
         $tournaments = Tournament::where('date', '>=', $yesterday)->where('concluded', 0)
             ->where(function($query){
                 $query->where('approved', 1)->orWhereNull('approved');
-            })->orderBy('date', 'asc')->get();
+            })->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])
+            ->orderBy('date', 'asc')->get();
         $recurring = Tournament::whereNotNull('recur_weekly')->where(function($query){
-            $query->where('approved', 1)->orWhereNull('approved');
-        })->orderBy('recur_weekly')->get();
+                $query->where('approved', 1)->orWhereNull('approved');
+            })->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])
+            ->orderBy('recur_weekly')->get();
+
+        $endtime = microtime(true);
 
         $result = [
             'tournaments' => $this->tournametDataFormat($tournaments),
-            'recurring_events' => $this->tournametDataFormat($recurring)
+            'recurring_events' => $this->tournametDataFormat($recurring),
+            'rendered_in' => $endtime - $startTime
         ];
 
         return response()->json($result);
