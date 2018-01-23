@@ -509,7 +509,7 @@ class TournamentsController extends Controller
 
         // insert time measurement on last element
         if (count($result)) {
-            $result[count($result) - 1]['rendered_in'] = date("i:s:u", microtime(true) - $startTime);
+            $result[count($result) - 1]['rendered_in'] = microtime(true) - $startTime;
         }
 
         return response()->json($result);
