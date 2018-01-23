@@ -266,7 +266,9 @@ class PagesController extends Controller
 
     public function api()
     {
-        return view('api');
+        $types = TournamentType::get()->pluck('type_name', 'id');
+        $formats = TournamentFormat::get()->pluck('format_name', 'id');
+        return view('api', compact('types', 'formats'));
 
     }
     public function birthdayFirst()
