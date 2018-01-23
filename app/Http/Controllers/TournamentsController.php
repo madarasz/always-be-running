@@ -275,7 +275,7 @@ class TournamentsController extends Controller
 
         $tournaments = Tournament::where('concluded', 1)->where(function($query){
             $query->where('approved', 1)->orWhereNull('approved');
-        })->orderBy('date', 'desc');
+        })->where('incomplete', 0)->orderBy('date', 'desc');
 
         $this->applyLimitOffset($request, $tournaments);
 
