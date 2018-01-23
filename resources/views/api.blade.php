@@ -69,6 +69,21 @@
                         ]
                     </blockquote>
                 </p>
+                <p>
+                    <strong>Videos</strong>:
+                    <a href="<?php env('APP_URL')?>/api/videos">https://alwaysberunning.net/api/videos</a>
+                    <br/>
+                    <em>Returns all videos of approved tournaments.</em>
+                <blockquote class="help-markdown m-b-3">
+                    [<br/>
+                    &nbsp;&nbsp;<em>tournament with videos objects</em>: {<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<em>video objects</em>: [<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>video tag objects</em><br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;]<br/>
+                    &nbsp;&nbsp;}<br/>
+                    ]
+                </blockquote>
+                </p>
                 <hr/>
                 <h5 class="p-b-2">Returned objects</h5>
                 <p>
@@ -399,6 +414,173 @@
                         <td>faction of corporation identity</td>
                     </tr>
                 </table>
+                <p class="p-t-2">
+                    <strong>Tournaments with videos objects</strong>
+                </p>
+                <table class="table table-sm table-striped abr-table">
+                    <tr>
+                        <th>property</th>
+                        <th>type</th>
+                        <th>description</th>
+                    </tr>
+                    <tr class="row-worlds">
+                        <td colspan="3" class="text-xs-center"><em>tournament related properties</em></td>
+                    </tr>
+                    <tr>
+                        <td>cardpool.id</td>
+                        <td>string</td>
+                        <td>card pack ID of legal cardpool</td>
+                    </tr>
+                    <tr>
+                        <td>cardpool.name</td>
+                        <td>string</td>
+                        <td>card pack name of legal cardpool</td>
+                    </tr>
+                    <tr>
+                        <td>charity</td>
+                        <td>int</td>
+                        <td>=1 if tournament is a charity</td>
+                    </tr>
+                    <tr>
+                        <td>date</td>
+                        <td>string (YYYY.MM.DD.)</td>
+                        <td>tournament date</td>
+                    </tr>
+                    <tr>
+                        <td>id</td>
+                        <td>int</td>
+                        <td>ABR tournament ID</td>
+                    </tr>
+                    <tr>
+                        <td>location_county</td>
+                        <td>string</td>
+                        <td>country where tournament was held</td>
+                    </tr>
+                    <tr>
+                        <td>players_number</td>
+                        <td>int</td>
+                        <td>number of players on the tournament</td>
+                    </tr>
+                    <tr>
+                        <td>seoUrl</td>
+                        <td>string</td>
+                        <td>ABR URL of tournament, prepend "https://alwaysberunning.net"</td>
+                    </tr>
+                    <tr>
+                        <td>title</td>
+                        <td>string</td>
+                        <td>title of tournament</td>
+                    </tr>
+                    <tr>
+                        <td>tournament_format.format_name</td>
+                        <td>string</td>
+                        <td>tournament format</td>
+                    </tr>
+                    <tr>
+                        <td>tournament_type.type_name</td>
+                        <td>string</td>
+                        <td>tournament type</td>
+                    </tr>
+                    <tr class="row-worlds">
+                        <td colspan="3" class="text-xs-center"><em>.video array, video related properties</em></td>
+                    </tr>
+                    <tr>
+                        <td>channel_name</td>
+                        <td>string</td>
+                        <td>name of youtube/twitch channel</td>
+                    </tr>
+                    <tr>
+                        <td>flag_removed</td>
+                        <td>int</td>
+                        <td>if =1, flagged as removed, probably unavailable, don't use this video</td>
+                    </tr>
+                    <tr>
+                        <td>id</td>
+                        <td>int</td>
+                        <td>ABR video ID</td>
+                    </tr>
+                    <tr>
+                        <td>length</td>
+                        <td>string</td>
+                        <td>video lenght in HH:MM:SS or MM:SS format</td>
+                    </tr>
+                    <tr>
+                        <td>thumbnail_url</td>
+                        <td>string</td>
+                        <td>URL for video thumbnail</td>
+                    </tr>
+                    <tr>
+                        <td>type</td>
+                        <td>int</td>
+                        <td>
+                            <strong>1</strong>: youtube<br/>
+                            <strong>2</strong>: twitch
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>video_id</td>
+                        <td>string</td>
+                        <td>
+                            video ID, to get the video URL on the platform:<br>
+                            <strong>youtube</strong>: https://www.youtube.com/watch?v=<em>video_id</em><br/>
+                            <strong>twitch</strong>: https://www.twitch.tv/v/<em>video_id</em>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>video_title</td>
+                        <td>string</td>
+                        <td>
+                            title of the video
+                        </td>
+                    </tr>
+                    <tr class="row-worlds">
+                        <td colspan="3" class="text-xs-center"><em>.video.video_tags array, video tag properties</em></td>
+                    </tr>
+                    <tr>
+                        <td>entry</td>
+                        <td>object</td>
+                        <td>
+                            entry related to the tag
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>id</td>
+                        <td>int</td>
+                        <td>
+                            ABR tag ID
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>import_player_name</td>
+                        <td>string</td>
+                        <td>
+                            player name if user is not tagged, but only a name is provided
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>is_runner</td>
+                        <td>boolean</td>
+                        <td>
+                            <strong>true</strong>: runner<br/>
+                            <strong>false</strong>: corporation<br/>
+                            <strong>null</strong>: playing both or undefined
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>tagged_by_user_id</td>
+                        <td>int</td>
+                        <td>
+                            NetrunnerDB user ID of the user who made the tag
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>user</td>
+                        <td>object</td>
+                        <td>
+                            user tagged in the video
+                        </td>
+                    </tr>
+                </table>
                 <hr/>
                 <a name="filters" class="anchor"></a>
                 <h5 class="p-b-2">Filter list</h5>
@@ -435,6 +617,15 @@
                                 <br/>
                                 <strong>{{ $key }}</strong>: {{ $type }}
                             @endforeach
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>cardpool</td>
+                        <td>string</td>
+                        <td>
+                            Filter tournaments for legal cardpool. Use
+                            <a href="https://netrunnerdb.com/api/2.0/public/packs">card pack "code"</a>
+                            used by NetrunnerDB. Example: <em>cardpool=core2</em>
                         </td>
                     </tr>
                     <tr>
