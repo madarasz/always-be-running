@@ -120,13 +120,43 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
         }
         // location, small devices see only country
         if ($.inArray('location', columns) > -1) {
-            newrow.append($('<td>').append($('<span>', {
-                text: element.location,
-                class: 'hidden-sm-down'
-            }), $('<span>', {
-                text: element.location_country,
-                class: 'hidden-md-up'
-            })));
+            var cell = $('<td>').appendTo(newrow),
+                sublocation = element.location.substr(element.location.indexOf(', ')+2);
+
+            if (element.location == "online") {
+                // online
+                cell.append($('<i>', {
+                    class: 'fa fa-laptop',
+                    title: 'online'
+                }), $('<span>', {
+                    text: ' online',
+                    class: 'hidden-sm-down'
+                }));
+            } else {
+                if ($.inArray(element.location_country, countryFlags) && countryFlags[element.location_country] != null) {
+                    // flag available
+                    cell.append($('<img>', {
+                        class: 'country-flag switch-flag',
+                        src: '/img/flags/' + countryFlags[element.location_country],
+                        title: element.location_country
+                    }), $('<span>', {
+                        text: element.location_country+', ',
+                        class: 'switch-text hidden-xs-up'
+                    }), $('<span>', {
+                        text: sublocation,
+                        class: 'hidden-sm-down'
+                    }));
+                } else {
+                    // flag not available
+                    cell.append($('<span>', {
+                        text: element.location,
+                        class: 'hidden-sm-down'
+                    }), $('<span>', {
+                        text: element.location_country,
+                        class: 'hidden-md-up'
+                    }));
+                }
+            }
         }
         // recurring day
         if ($.inArray('recurday', columns) > -1) {
@@ -279,7 +309,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
         // winner
         if ($.inArray('winner', columns) > -1) {
             cell = $('<td>', {
-                'class': 'text-xs-center cell-winner'
+                'class': 'text-xs-center cell-winner-v'
             }).appendTo(newrow);
             if (element.winner_runner_identity) {
                 cell.append($('<img>', {
@@ -287,7 +317,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 }))
             }
             if (element.winner_corp_identity) {
-                cell.append('&nbsp;').append($('<img>', {
+                cell.append($('<img>', {
                     src: '/img/ids/'+element.winner_corp_identity+'.png'
                 }))
             }

@@ -23,7 +23,10 @@
             <th>date</th>
         @endif
         @if( in_array('location', $columns) )
-            <th>location</th>
+            <th class="hidden-sm-down">location</th>
+            <th class="text-xs-center hidden-xs-down hidden-md-up">
+                <i class="fa fa-globe" title="location"></i>
+            </th>
         @endif
         @if( in_array('recurday', $columns) )
             <th>day of the week</th>

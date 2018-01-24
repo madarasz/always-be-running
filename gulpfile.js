@@ -39,6 +39,7 @@ elixir(function(mix) {
             "abr-main.js",
             "abr-stats.js",
             "abr-matches.js",
+            "abr-flags.js",
             "bootstrap.min.js",
             "jquery.calendario.js",
             "bootstrap-datepicker.js",

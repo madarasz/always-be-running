@@ -77,6 +77,7 @@ Route::get('/api/getdeckdata', 'NetrunnerDBController@getDeckData');
 Route::get('/api/fb/event-title', 'FBController@getEventTitle');
 Route::post('/api/fb/import', 'FBController@importViaFB');
 Route::get('/api/videos', 'VideosController@lister');
+Route::get('/api/country-mapping', 'PagesController@CountryToCodeMapping');
 
 // iframe for double elimination
 Route::get('/elimination', function () { return view('layout.bracket'); });

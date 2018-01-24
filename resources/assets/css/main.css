@@ -260,6 +260,17 @@ input[type="checkbox"] {
     width: 20px;
     height: 20px;
 }
+.cell-winner-v {
+    max-width: 40px;
+}
+.cell-winner-v img {
+    width: 26px;
+    height: 26px;
+}
+.cell-winner-v img:first-of-type {
+    margin-bottom: 2px;
+}
+
 
 /* id images */
 img.id-small {
@@ -1022,4 +1033,9 @@ img.badge {
     content: url(/img/logo_patreon_o.png);
     height: 1em;
     max-height: 1em;
+}
+
+.country-flag {
+    vertical-align: sub;
+    margin-right: 0.2em;
 }

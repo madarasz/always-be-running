@@ -452,7 +452,7 @@
                         <td>ABR tournament ID</td>
                     </tr>
                     <tr>
-                        <td>location_county</td>
+                        <td>location_country</td>
                         <td>string</td>
                         <td>country where tournament was held</td>
                     </tr>

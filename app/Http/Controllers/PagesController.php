@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Country;
 use App\Entry;
 use App\Photo;
 use App\TournamentFormat;
@@ -285,5 +286,19 @@ class PagesController extends Controller
         $badges = Badge::count();
         return view('birthday', compact('tournaments', 'weekly', 'countries', 'users', 'claims', 'decks',
             'videos', 'photos', 'badges', 'supporters'));
+    }
+
+    /**
+     * Lists available countries in common name => flag JSON object format
+     * Adds list of countries where DB is not matching with Google Maps country names as '_mapping_problems'
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function CountryToCodeMapping() {
+        $results = Country::orderBy('name')->pluck('flag', 'name');
+        $googleMappingProblems = Tournament::select('location_country')->distinct()
+            ->leftJoin('countries', 'tournaments.location_country', '=', 'countries.name')
+            ->where('location_country', '!=', '')->whereNull('countries.name')->pluck('location_country');
+        $results['_mapping_problems'] = $googleMappingProblems;
+        return response()->json($results);
     }
 }
