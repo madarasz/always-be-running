@@ -125,12 +125,16 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
 
             if (element.location == "online") {
                 // online
-                cell.append($('<i>', {
-                    class: 'fa fa-laptop',
+                cell.append($('<img>', {
+                    class: 'country-flag switch-flag',
+                    src: '/img/flags/online.png',
                     title: 'online'
                 }), $('<span>', {
-                    text: ' online',
-                    class: 'hidden-sm-down'
+                    text: 'online',
+                    class: 'switch-flag hidden-sm-down'
+                }), $('<span>', {
+                    text: 'online',
+                    class: 'switch-text hidden-xs-up'
                 }));
             } else {
                 if ($.inArray(element.location_country, countryFlags) && countryFlags[element.location_country] != null) {

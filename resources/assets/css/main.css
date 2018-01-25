@@ -1038,4 +1038,6 @@ img.badge {
 .country-flag {
     vertical-align: sub;
     margin-right: 0.2em;
+    width: 30px;
+    height: 20px;
 }
