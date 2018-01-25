@@ -13,10 +13,16 @@
         data-selected="{{ @$pager_options[0] }}">
     @if (count(@$pager_options)>0)
         @foreach($pager_options as $key=>$option)
-            <span class="label {{ $key==0 ? 'label-active':'label-inactive' }}"
+            <span class="label control-paging {{ $key==0 ? 'label-active':'label-inactive' }}"
                   onclick="changePageOptions('{{$id}}', '{{ $option }}')">
                 {{ $option }}
             </span>
         @endforeach
+    @endif
+    {{--country flag / text switcher--}}
+    @if (@$flag_switcher)
+        <span> - </span>
+        <span class="label control-flag label-active" onclick="changeFlagOption(true)">flag</span>
+        <span class="label control-text label-inactive" onclick="changeFlagOption(false)">text</span>
     @endif
 </div>

@@ -120,7 +120,7 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
         }
         // location, small devices see only country
         if ($.inArray('location', columns) > -1) {
-            var cell = $('<td>').appendTo(newrow),
+            var cell = $('<td>', {class:'text-center text-md-left'}).appendTo(newrow),
                 sublocation = element.location.substr(element.location.indexOf(', ')+2);
 
             if (element.location == "online") {
@@ -469,6 +469,10 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
             changePageOptions(elementID.substr(1), savedOption);
         }
     }
+
+    // apply country/text preference
+    var flagPref = getCookie('count-want-flag');
+    changeFlagOption(flagPref == "" || flagPref);   // true by default
 }
 
 // update paging data
@@ -548,7 +552,7 @@ function changePageOptions(elementId, rowsPerPage) {
         setCookie('pager-'+elementId+'-option', rowsPerPage, 30);
 
         // set button states
-        $('#' + elementId + '-options span').each(function () {
+        $('#' + elementId + '-options span.control-paging').each(function () {
             if ($(this).text().trim() == rowsPerPage) {
                 $(this).addClass('label-active').removeClass('label-inactive');
             } else {
@@ -559,4 +563,20 @@ function changePageOptions(elementId, rowsPerPage) {
         // update row visibility
         doTournamentPaging(elementId, null);
     }
+}
+
+// switch between flag or text representation of countries
+function changeFlagOption(wantFlag) {
+    if (wantFlag) {
+        $('.control-flag').addClass('label-active').removeClass('label-inactive');
+        $('.control-text').addClass('label-inactive').removeClass('label-active');
+        $('.switch-flag').removeClass('hidden-xs-up');
+        $('.switch-text').addClass('hidden-xs-up');
+    } else {
+        $('.control-flag').addClass('label-inactive').removeClass('label-active');
+        $('.control-text').addClass('label-active').removeClass('label-inactive');
+        $('.switch-flag').addClass('hidden-xs-up');
+        $('.switch-text').removeClass('hidden-xs-up');
+    }
+    setCookie('count-want-flag', wantFlag, 30);
 }

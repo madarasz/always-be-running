@@ -24,7 +24,7 @@
         @endif
         @if( in_array('location', $columns) )
             <th class="hidden-sm-down">location</th>
-            <th class="text-xs-center hidden-xs-down hidden-md-up">
+            <th class="text-xs-center hidden-md-up">
                 <i class="fa fa-globe" title="location"></i>
             </th>
         @endif
@@ -100,4 +100,5 @@
     </thead>
     <tbody></tbody>
 </table>
-@include('tournaments.partials.pager', ['id' => $id, 'maxrows' => @$maxrows])
+@include('tournaments.partials.pager',
+    ['id' => $id, 'maxrows' => @$maxrows, 'flag_switcher' => in_array('location', $columns)])
