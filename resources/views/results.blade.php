@@ -216,10 +216,7 @@
 
         // position filter bracket based on screen width
         function positionFilters() {
-            console.log($(window).width());
-            console.log(window.matchMedia( "(min-width: 992px)").matches);
             if (window.matchMedia( "(min-width: 992px)").matches) {
-//            if ($(window).width() >= 977) {
                 // lg-size
                 $('#col-other').prepend($('#bracket-filters'));
             } else {
