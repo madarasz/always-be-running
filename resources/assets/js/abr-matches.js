@@ -325,7 +325,7 @@ function displayMatches(id, show) {
                         roundMargin: 20
                     });
                     addIdsToTree(tree, eliminationDecks);
-                    matchIframeHeight();
+                    setTimeout(matchIframeHeight, 200); // Firefox fix
                     $('#header-top').removeClass('hidden-xs-up');
                     //$('#table-matches-top').removeClass('hidden-xs-up');    // keep top-cut table hidden, tree is better
                 }
