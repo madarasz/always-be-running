@@ -510,7 +510,7 @@ function doTournamentPaging(elementId, direction) {
     }
 
     // hide all rows
-    $('[id^='+elementId+'-row-').addClass('hidden-xs-up');
+    $('[id^='+elementId+'-row-]').addClass('hidden-xs-up');
 
     updatePageControls(elementId);
 
