@@ -228,13 +228,16 @@ class AdminController extends Controller
     public function adminStats(Request $request) {
         $this->authorize('admin', Tournament::class, $request->user());
         $entries = $this->getWeekNumber(DB::table('entries')->select('created_at as week', DB::raw('count(*) as total'))
-            ->where('user', '>', 0)->whereNotNull('created_at')->groupBy(DB::raw('WEEK(created_at, 3)'))->get(), 'week');
+            ->where('user', '>', 0)->whereNotNull('created_at')
+            ->groupBy(DB::raw('CONCAT(YEAR(created_at), WEEK(created_at, 3))'))->get(), 'week');
         $tournaments = $this->getWeekNumber(DB::table('tournaments')->select('created_at as week', DB::raw('count(*) as total'))
-            ->where('approved', 1)->whereNotNull('created_at')->groupBy(DB::raw('WEEK(created_at, 3)'))->get(), 'week');
+            ->where('approved', 1)->whereNotNull('created_at')
+            ->groupBy(DB::raw('CONCAT(YEAR(created_at), WEEK(created_at, 3))'))->get(), 'week');
         $users = $this->getWeekNumber(DB::table('users')->select('created_at as week', DB::raw('count(*) as total'))
-            ->whereNotNull('created_at')->groupBy(DB::raw('WEEK(created_at, 3)'))->get(), 'week');
+            ->whereNotNull('created_at')
+            ->groupBy(DB::raw('CONCAT(YEAR(created_at), WEEK(created_at, 3))'))->get(), 'week');
         $countries = Tournament::where('approved', 1)->select('location_country', DB::raw('count(*) as total'))
-            ->groupBy('location_country')->get();
+            ->groupBy('location_country')->orderBy('total', 'desc')->get();
         $result = [
             'totalEntries' => Entry::where('user', '>', 0)->whereNotNull('created_at')->count(),
             'newEntriesByWeek' => $entries,
@@ -243,6 +246,34 @@ class AdminController extends Controller
             'totalUsers' => User::whereNotNull('created_at')->count(),
             'newUsersByWeek' => $users,
             'countries' => $countries
+        ];
+        return response()->json($result);
+    }
+
+    public function adminStatsPerCountry(Request $request, $country) {
+        $fromDate = '2017.10.06'; // constant, stats from this date
+
+        $this->authorize('admin', Tournament::class, $request->user());
+        $newTournaments = $this->getWeekNumber(DB::table('tournaments')->select('created_at as week', DB::raw('count(*) as total'))
+            ->where('approved', 1)->where('created_at', '>', $fromDate)->where('location_country', $country)
+            ->groupBy(DB::raw('CONCAT(YEAR(created_at), WEEK(created_at, 3))'))->get(), 'week');
+        $concludedTournaments = $this->getWeekNumber(DB::table('tournaments')->select('concluded_at as week', DB::raw('count(*) as total'))
+            ->where('approved', 1)->where('concluded_at', '>', $fromDate)->where('location_country', $country)
+            ->groupBy(DB::raw('CONCAT(YEAR(concluded_at), WEEK(concluded_at, 3))'))->get(), 'week');
+        $claims = $this->getWeekNumber(DB::table('entries')->select('entries.updated_at as week', DB::raw('count(*) as total'))
+            ->leftJoin('tournaments', 'entries.tournament_id', '=', 'tournaments.id')->where('location_country', $country)
+            ->whereIn('entries.type', [3, 4])->where('entries.updated_at', '>', $fromDate)
+            ->groupBy(DB::raw('CONCAT(YEAR(entries.updated_at), WEEK(entries.updated_at, 3))'))->get(), 'week');
+        $importedEntries = $this->getWeekNumber(DB::table('entries')->select('entries.updated_at as week', DB::raw('count(*) as total'))
+            ->leftJoin('tournaments', 'entries.tournament_id', '=', 'tournaments.id')->where('location_country', $country)
+            ->whereIn('entries.type', [11, 12, 13, 14])->where('entries.updated_at', '>', $fromDate)
+            ->groupBy(DB::raw('CONCAT(YEAR(entries.updated_at), WEEK(entries.updated_at, 3))'))->get(), 'week');
+
+        $result = [
+            'newTournaments' => $newTournaments,
+            'concludedTournaments' => $concludedTournaments,
+            'claims' => $claims,
+            'importedEntries' => $importedEntries
         ];
         return response()->json($result);
     }

@@ -257,7 +257,9 @@ function drawAdminChart(entryTypes) {
             document.getElementById("stat-total-users").innerHTML = data.totalUsers;
             document.getElementById("stat-total-tournaments").innerHTML = data.totalTournaments;
             document.getElementById("stat-total-entries").innerHTML = data.totalEntries;
-            var chartData = google.visualization.arrayToDataTable(transformForAdminCharts(data)),
+            var resultColumns = ['week', 'new entries', 'new tournaments', 'new users'],
+                dataColumns = ['newEntriesByWeek', 'newTournamentsByWeek', 'newUsersByWeek'],
+                chartData = google.visualization.arrayToDataTable(transformForAdminCharts(data, resultColumns, dataColumns)),
                 geoData = google.visualization.arrayToDataTable(transformForAdminGeoCharts(data.countries)),
                 options = {
                     curveType: 'function',
@@ -275,22 +277,73 @@ function drawAdminChart(entryTypes) {
 
             weekChart.draw(chartData, options);
             geoChart.draw(geoData, geoOptions);
+            fillCountrySelector(data.countries);
+        }
+    });
+}
+
+// fills country selector options on Admin page, Stats tab
+function fillCountrySelector(countries) {
+    for (var i = 0; i < countries.length; i++) {
+        $('#selector-country-stats').append($('<option>', {
+            value: countries[i].location_country,
+            text: countries[i].location_country + '(' + countries[i].total + ')'
+        }));
+    }
+    getCountryStats();
+}
+
+// gets country statistics for Admin page, Stats tab
+function getCountryStats() {
+    var  selector = document.getElementById ("selector-country-stats"),
+        country = selector.options[selector.selectedIndex].value;
+    $.ajax({
+        url: '/api/adminstats/' + country,
+        dataType: "json",
+        async: true,
+        success: function (data) {
+            var resultColumns1 = ['week', 'new', 'concluded'],
+                resultColumns2 = ['week', 'imported', 'claims'],
+                dataColums1 = ['newTournaments', 'concludedTournaments'],
+                dataColums2 = ['importedEntries', 'claims'],
+                chartData1 = google.visualization.arrayToDataTable(transformForAdminCharts(data, resultColumns1, dataColums1)),
+                chartData2 = google.visualization.arrayToDataTable(transformForAdminCharts(data, resultColumns2, dataColums2)),
+                options = {
+                    legend: { position: 'top' },
+                    width: 450,
+                    height: 300,
+                    chartArea: { width: 450, height: 250 },
+                    vAxis: { viewWindowMode:'explicit', viewWindow: {min: 0}},
+                    hAxis: { title: 'weeks'}
+                },
+                countryChart1 = new google.visualization.LineChart(document.getElementById ("chart3")),
+                countryChart2 = new google.visualization.LineChart(document.getElementById ("chart4"));
+            countryChart1.draw(chartData1, options);
+            countryChart2.draw(chartData2, options);
         }
     });
 }
 
 // transforms data for drawing admin charts
-function transformForAdminCharts(data) {
-    var weeks = { firstweek: 999999, lastweek: 0}, result = [['week', 'new entries', 'new tournaments', 'new users']];
-    getStatRange(data.newEntriesByWeek, weeks);
-    getStatRange(data.newTournamentsByWeek, weeks);
-    getStatRange(data.newUsersByWeek, weeks);
+function transformForAdminCharts(data, resultColumns, dataColumns) {
+    var weeks = { firstweek: 999999, lastweek: 0}, result = [resultColumns];
+
+    for (var u = 0; u < dataColumns.length; u++) {
+        getStatRange(data[dataColumns[u]], weeks);
+    }
+
     for (var i = weeks.firstweek; i <= weeks.lastweek; i++) {
-        var newEntries = getStatData(data.newEntriesByWeek, i),
-            newTournaments = getStatData(data.newTournamentsByWeek, i),
-            newUsers = getStatData(data.newUsersByWeek, i);
-        if (newEntries && newTournaments && newUsers) {
-            result.push([formatWeekNumber(i), newEntries, newTournaments, newUsers]);
+        var resultrow = [formatWeekNumber(i)],
+            sum = 0;
+
+        for (var u = 0; u < dataColumns.length; u++) {
+            var element = getStatData(data[dataColumns[u]], i);
+            resultrow.push(element);
+            sum += element;
+        }
+
+        if (sum > 0) {
+            result.push(resultrow);
         }
     }
     return result;

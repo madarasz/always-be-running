@@ -73,6 +73,7 @@ Route::get('/api/useralert', 'PagesController@getAlertCount');
 Route::get('/api/as/{id}', 'ASController@index');
 Route::post('/api/badgesseen/{id}', 'BadgeController@changeBadgesToSeen');
 Route::get('/api/adminstats', 'AdminController@adminStats');
+Route::get('/api/adminstats/{country}', 'AdminController@adminStatsPerCountry');
 Route::get('/api/getdeckdata', 'NetrunnerDBController@getDeckData');
 Route::get('/api/fb/event-title', 'FBController@getEventTitle');
 Route::post('/api/fb/import', 'FBController@importViaFB');
