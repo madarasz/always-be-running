@@ -378,9 +378,6 @@ class TournamentsController extends Controller
                 // winner IDs
                 $winner = $tournament->winner;
                 if (!is_null($winner)) {
-                    if ($tournament->top_number > 0) { // hacky fix, $tournament->winner is not working while eager loading
-                        $winner = $tournament->entries->where('rank_top', 1)->first();
-                    }
                     $event_data['winner_runner_identity'] = $winner['runner_deck_identity'];
                     $event_data['winner_corp_identity'] = $winner['corp_deck_identity'];
                 }
