@@ -73,6 +73,13 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                     'class': 'fa fa-handshake-o'
                 }));
             }
+            // top cut
+            if (element.top_count > 0) {
+                tInfo.append(' ', $('<i>', {
+                    'title': 'top cut',
+                    'class': 'fa fa-scissors'
+                }));
+            }
             // photos
             if (element.photos) {
                 tInfo.append(' ');

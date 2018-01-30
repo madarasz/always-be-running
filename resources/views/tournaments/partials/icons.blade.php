@@ -13,6 +13,8 @@
             patreon T.O. |
             <i title="match data" class="fa fa-handshake-o"></i>
             match data, points available |
+            <i title="top cut" class="fa fa-scissors"></i>
+            top cut |
             <i title="video" class="fa fa-camera"></i>
             has photo |
             <i title="video" class="fa fa-video-camera"></i>
