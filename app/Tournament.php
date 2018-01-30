@@ -165,7 +165,9 @@ class Tournament extends Model
     }
 
     public function winner() {
-        return $this->hasOne(Entry::class)->where('rank_top', 1)->orWhere('rank', 1)->orderBy('rank_top');
+        return $this->hasOne(Entry::class)
+            ->select(['*', \DB::raw('IF(`rank_top` = 0, 1000000, `rank_top`) `rank_zero_top`')])
+            ->where('rank_top', 1)->orWhere('rank', 1)->orderBy('rank_zero_top');
     }
     public function getWinnerAttribute(){
         // if relation is not loaded already, let's do it first
