@@ -342,7 +342,7 @@ function transformForAdminCharts(data, resultColumns, dataColumns) {
             sum += element;
         }
 
-        if (sum > 0) {
+        if (sum > 0 || i % 100 < 53) {
             result.push(resultrow);
         }
     }
