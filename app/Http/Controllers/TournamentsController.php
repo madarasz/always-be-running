@@ -762,9 +762,9 @@ class TournamentsController extends Controller
 
             foreach ($json['players'] as $swiss) {
 
-                // get identities
-                $corp = CardIdentity::where('title', 'LIKE', '%' . $swiss['corpIdentity'] . '%')->first();
-                $runner = CardIdentity::where('title', 'LIKE', '%' . $swiss['runnerIdentity'] . '%')->first();
+                // get identities, newer versions first
+                $corp = CardIdentity::where('title', 'LIKE', '%' . $swiss['corpIdentity'] . '%')->orderBy('id', 'desc')->first();
+                $runner = CardIdentity::where('title', 'LIKE', '%' . $swiss['runnerIdentity'] . '%')->orderBy('id', 'desc')->first();
                 $existing = Entry::where('tournament_id', $tournament->id)->where('rank', $swiss['rank'])->first();
 
                 // error handling
