@@ -99,9 +99,9 @@
 
 **TODO**
 
-- Conclude by NRTM
 - Conclude by CSV
-- with top-cut / without top-cut
+
+*concluding is also tested in **"008 Claiming"***
 
 ### 008 Claiming
 
@@ -118,7 +118,7 @@
 * Go to Personal page, validate claim button
 * Click unregister on Personal page, validate tournament missing on Personal page
 
-##### Claiming with published decks
+##### Claiming with published decks, no top-cut, conflicts
 * Login with NRDB (regular user)
 * Navigate to Organize page, create from results
 * Fill out form with multi-day, concluded, online tournament data
@@ -132,6 +132,17 @@
 * Remove conflicting imported entry, validate conflict is gone
 * Go to Personal page, validate tournament entry with claimed status
 
+##### Claiming with published decks, top-cut, no conflicts
+* Login with NRDB (regular user)
+* Navigate to Organize page, create from results
+* Fill out form with multi-day, concluded, online tournament data
+* Save tournament
+* Click claim, validate claim modal, add claim of published decklists
+* Validate tournament details page, validate claim
+* Import Cobra results (no-confilect), validate absence of conflicts
+* Remove user claim, remove imported claims
+* Import Cobra results, add claim of published decklist, validate absence of conflict
+     
 **TODO**
 - Claiming with other's deck
 - Claiming with private deck
@@ -140,8 +151,8 @@
 - Merges (import + user claim)
    - user claim then NRTM import
    - NRTM import then user claim
-- Delete own
-- Delete all manually imported
+- Admin: delete other user's claim
+- Check winner is topcut-winner, not swiss winner in Results table and Featured box
 
 
 ----------
@@ -183,8 +194,5 @@
 - other user cannot delete imported entry
 - user cannot hard delete tournament
 - other user cannot edit tournament
-- browsing as a non-user visitor
-- access denied: create tournament form, admin page
-- logged out: cannot conclude, cannot see tournaments to be concluded
 
-+ click tournament on Results page
+- click tournament on Results page

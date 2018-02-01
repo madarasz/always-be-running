@@ -109,6 +109,38 @@ var tournamentNrtmJsonWithoutTopCut = {
         ]
     }
 };
+//  nrtm-without-topcut.json values
+var tournamentCobraJsonWithTopCut = {
+    old_title: 'Gamescape store champs',
+    title: formatDate(new Date()) + ' - Test Cobra.json with top-cut',
+    type: 'online event',
+    tournament_type_id: '7',
+    cardpool: 'Sovereign Sight',
+    cardpool_id: 'ss',
+    players_number: '16',
+    top: 'top 4',
+    top_number: '4',
+    date: '2018.01.01.',
+    concluded: true,
+    imported_results: {
+        swiss: [
+            { rank: 1, player: 'Jörg', corp_title: 'Skorpios Defense Systems', runner_title: 'Hayley Kaplan' },
+            { rank: 2, player: 'Dominik', corp_title: 'Controlling the Message', runner_title: 'Armand "Geist" Walker' },
+            { rank: 3, player: 'Jan', corp_title: 'Gagarin Deep Space', runner_title: 'Armand "Geist" Walker' },
+            { rank: 4, player: 'René', corp_title: 'Controlling the Message', runner_title: 'Hayley Kaplan' },
+            { rank: 5, player: 'Volker', corp_title: 'Personal Evolution', runner_title: 'Steve Cambridge' },
+            { rank: 6, player: 'Luis', corp_title: 'Near-Earth Hub', runner_title: 'Hayley Kaplan' },
+            { rank: 7, player: 'Fabian', corp_title: 'Cerebral Imaging', runner_title: 'Sunny Lebeau' },
+            { rank: 8, player: 'Tim', corp_title: 'AgInfusion', runner_title: 'Rielle "Kit" Peddler' },
+            { rank: 9, player: 'Gereon', corp_title: 'Spark Agency', runner_title: 'Ele "Smoke" Scovak' }
+        ],
+        swiss_rounds: 4,
+        bye: true,
+        points: [
+            { player: 'Jörg', points: '18', sos: '3.250', esos: '3.479' }
+        ]
+    }
+};
 
 function formatDate(date) {
     var year = date.getFullYear(),
@@ -128,5 +160,6 @@ module.exports = {
     tournamentSingleDay: tournamentSingleDay,
     tournamentRecurring: tournamentRecurring,
     tournamentOnlineConcluded: tournamentOnlineConcluded,
-    tournamentNrtmJsonWithoutTopCut: tournamentNrtmJsonWithoutTopCut
+    tournamentNrtmJsonWithoutTopCut: tournamentNrtmJsonWithoutTopCut,
+    tournamentCobraJsonWithTopCut: tournamentCobraJsonWithTopCut
 };
