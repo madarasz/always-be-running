@@ -88,12 +88,15 @@ class EntriesController extends Controller
         }
 
 	    // merging with import entry
-        if (!is_null($import_entry) &&     // if there is an import entry
-            ($import_entry->runner_deck_identity == $runner_deck['identity'] || strlen($import_entry->runner_deck_identity) < 1) &&   // and IDs match
-            ($import_entry->corp_deck_identity == $corp_deck['identity'] || strlen($import_entry->corp_deck_identity) < 1) &&
-            $import_entry->rank == $request->rank && (!$tournament->top_number || $import_entry->rank_top == $request->rank_top)) // and rank, top_rank match
-        {
-            Entry::destroy($import_entry->id);    // delete import entry
+        $runner_identity_title = CardIdentity::find($runner_deck['identity']);
+        $runner_identity_title = is_null($runner_identity_title) ? "" : $runner_identity_title->title;
+        $corp_identity_title = CardIdentity::find($corp_deck['identity']);
+        $corp_identity_title = is_null($corp_identity_title) ? "" : $corp_identity_title->title;
+
+        if ($this->assessMergeNeed($import_entry, $runner_identity_title, $corp_identity_title,
+                                    $request->rank, $request->rank_top, !$tournament->top_number)) {
+            // delete import entry
+            Entry::destroy($import_entry->id);
             $merge_name = $import_entry->import_username;
         } else {
             $merge_name = null;
@@ -168,12 +171,15 @@ class EntriesController extends Controller
         }
 
         // merging with import entry
-        if (!is_null($import_entry) &&     // if there is an import entry
-            ($import_entry->runner_deck_identity == $request['runner_deck_identity'] || strlen($import_entry->runner_deck_identity) < 1) &&   // and IDs match
-            ($import_entry->corp_deck_identity == $request['corp_deck_identity'] || strlen($import_entry->corp_deck_identity) < 1) &&
-            $import_entry->rank == $request->rank_nodeck && (!$tournament->top_number || $import_entry->rank_top == $request->rank_top_nodeck)) // and rank, top_rank match
-        {
-            Entry::destroy($import_entry->id);    // delete import entry
+        $runner_identity_title = CardIdentity::find($request['runner_deck_identity']);
+        $runner_identity_title = is_null($runner_identity_title) ? "" : $runner_identity_title->title;
+        $corp_identity_title = CardIdentity::find($request['corp_deck_identity']);
+        $corp_identity_title = is_null($corp_identity_title) ? "" : $corp_identity_title->title;
+
+        if ($this->assessMergeNeed($import_entry, $runner_identity_title, $corp_identity_title,
+                                    $request->rank_nodeck, $request->rank_top_nodeck, !$tournament->top_number)) {
+            // delete import entry
+            Entry::destroy($import_entry->id);
             $merge_name = $import_entry->import_username;
         } else {
             $merge_name = null;
@@ -215,6 +221,26 @@ class EntriesController extends Controller
         App('App\Http\Controllers\BadgeController')->addCommunityBuilder($tournament->creator);
 
         return redirect()->back()->with('message', 'You have claimed a spot on the tournament.');
+    }
+
+    /**
+     * Checks if merge needed with imported entry while claiming
+     * @param $import_entry
+     * @param $runner_identity_title
+     * @param $corp_identity_title
+     * @param $request_rank
+     * @param $request_rank_top
+     * @param $top_cut
+     * @return bool
+     */
+    private function assessMergeNeed($import_entry, $runner_identity_title, $corp_identity_title,
+                                     $request_rank, $request_rank_top, $top_cut) {
+        return (
+            !is_null($import_entry) && // if there is an import entry
+            (strcmp($import_entry->runnerIdentity->title, $runner_identity_title) == 0 || strlen($import_entry->runner_deck_identity) < 1) &&
+            (strcmp($import_entry->corpIdentity->title, $corp_identity_title) == 0 || strlen($import_entry->corp_deck_identity) < 1) &&
+            $import_entry->rank == $request_rank && (!$top_cut || $import_entry->rank_top == $request_rank_top)
+        );
     }
 
     /**

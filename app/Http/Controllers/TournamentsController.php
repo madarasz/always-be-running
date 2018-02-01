@@ -884,9 +884,9 @@ class TournamentsController extends Controller
     }
 
     private function assessNewClaimNeed($corp, $runner, $existing) {
-        return !is_null($corp) && !is_null($runner) && // identities are found
-            (is_null($existing) || strcmp($runner->id, $existing->runner_deck_identity) != 0 ||
-                strcmp($corp->id, $existing->corp_deck_identity) != 0);
+        return !is_null($corp) && !is_null($runner) && // identities are found, matching base on ID title(!)
+            (is_null($existing) || strcmp($runner->title, $existing->runnerIdentity->title) != 0 ||
+                strcmp($corp->title, $existing->corpIdentity->title) != 0);
     }
 
     /**

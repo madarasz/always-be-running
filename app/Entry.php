@@ -23,6 +23,15 @@ class Entry extends Model
         return $this->hasOne(User::class, 'id', 'user');
     }
 
+    public function corpIdentity() {
+        return $this->hasOne(CardIdentity::class, 'id', 'corp_deck_identity');
+    }
+
+    public function runnerIdentity() {
+        return $this->hasOne(CardIdentity::class, 'id', 'runner_deck_identity');
+    }
+
+
     public function rank() {
         if ($this->rank_top) {
             return $this->rank_top;
