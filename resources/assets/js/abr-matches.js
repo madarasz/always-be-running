@@ -495,8 +495,8 @@ function displayScores(id) {
                 $('#entries-swiss tbody tr:eq(' + i + ')').append(
                     '<td class="cell-points"><span class="legal-bullshit">points:&nbsp;</span><strong>'
                     + data.players[i].matchPoints + '</strong><br/>' +
-                    '<span class="legal-bullshit">SoS:&nbsp;' + data.players[i].strengthOfSchedule.toFixed(3) + '<br/>' +
-                    'eSoS:&nbsp;' + data.players[i].extendedStrengthOfSchedule.toFixed(3) + '</span></td>');
+                    '<span class="legal-bullshit">SoS:&nbsp;' + parseFloat(data.players[i].strengthOfSchedule).toFixed(3) + '<br/>' +
+                    'eSoS:&nbsp;' + parseFloat(data.players[i].extendedStrengthOfSchedule).toFixed(3) + '</span></td>');
             }
         }
     });
