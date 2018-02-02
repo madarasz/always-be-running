@@ -33,10 +33,20 @@ var tournamentViewCommands = {
 
         var util = require('util');
 
+        // validate swiss
         for (var i = 0; i < data.swiss.length; i++) {
             this.api.useXpath().verify.elementPresent(
                 util.format(this.elements.verifyImportedEntry.selector, 'entries-swiss',
                     data.swiss[i].rank, data.swiss[i].player, data.swiss[i].corp_title, data.swiss[i].runner_title));
+        }
+
+        // validate top cut
+        if (data.hasOwnProperty('topcut')) {
+            for (var i = 0; i < data.topcut.length; i++) {
+                this.api.useXpath().verify.elementPresent(
+                    util.format(this.elements.verifyImportedEntry.selector, 'entries-top',
+                        data.topcut[i].rank, data.topcut[i].player, data.topcut[i].corp_title, data.topcut[i].runner_title));
+            }
         }
 
         if (typeof callback === "function"){
@@ -132,13 +142,13 @@ var tournamentViewCommands = {
         // verify swiss
         var swissClass = conflictRank ? 'danger' : 'info';
         this.api.useXpath().verify.elementPresent(
-            util.format(this.elements.verifySwissEntry.selector, swissClass, rank, username, runnerDeck, corpDeck));
+            util.format(this.elements.verifyEntry.selector, 'entries-swiss', swissClass, rank, username, runnerDeck, corpDeck));
 
         // verify top
         if (topRank > 0) {
             var topClass = conflictTop ? 'danger' : 'info';
             this.api.useXpath().verify.elementPresent(
-                util.format(this.elements.verifyTopEntry.selector, topClass, topRank, username, runnerDeck, corpDeck));
+                util.format(this.elements.verifyEntry.selector, 'entries-top', topClass, topRank, username, runnerDeck, corpDeck));
         }
 
         if (typeof callback === "function"){
@@ -233,8 +243,7 @@ module.exports = {
         address: "//span[@id='address' and contains(., '%s')]",
         contact: "//span[@id='contact' and contains(., '%s')]",
         registeredPlayer: "//ul[@id='registered-players']/li[contains(., '%s')]",
-        verifySwissEntry: "//table[@id='entries-swiss']/tbody/tr[contains(@class,'%s')]/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
-        verifyTopEntry: "//table[@id='entries-top']/tbody/tr[contains(@class,'%s')]/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
+        verifyEntry: "//table[@id='%s']/tbody/tr[contains(@class,'%s')]/td[contains(.,'#%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
         verifyImportedEntry: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]",
         entryRemoveButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'%s')]",
         concludedBy: "//div[@id='concluded-by' and contains(.,'%s')]",

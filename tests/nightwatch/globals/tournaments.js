@@ -124,20 +124,33 @@ var tournamentCobraJsonWithTopCut = {
     concluded: true,
     imported_results: {
         swiss: [
-            { rank: 1, player: 'Jörg', corp_title: 'Skorpios Defense Systems', runner_title: 'Hayley Kaplan' },
-            { rank: 2, player: 'Dominik', corp_title: 'Controlling the Message', runner_title: 'Armand "Geist" Walker' },
-            { rank: 3, player: 'Jan', corp_title: 'Gagarin Deep Space', runner_title: 'Armand "Geist" Walker' },
-            { rank: 4, player: 'René', corp_title: 'Controlling the Message', runner_title: 'Hayley Kaplan' },
-            { rank: 5, player: 'Volker', corp_title: 'Personal Evolution', runner_title: 'Steve Cambridge' },
-            { rank: 6, player: 'Luis', corp_title: 'Near-Earth Hub', runner_title: 'Hayley Kaplan' },
-            { rank: 7, player: 'Fabian', corp_title: 'Cerebral Imaging', runner_title: 'Sunny Lebeau' },
-            { rank: 8, player: 'Tim', corp_title: 'AgInfusion', runner_title: 'Rielle "Kit" Peddler' },
-            { rank: 9, player: 'Gereon', corp_title: 'Spark Agency', runner_title: 'Ele "Smoke" Scovak' }
+            { rank: 1, player: 'Eric P', corp_title: 'Cerebral Imaging', runner_title: 'Apex' },
+            { rank: 2, player: 'Cory D', corp_title: 'Titan Transnational', runner_title: 'Alice Merchant' },
+            { rank: 3, player: 'John T', corp_title: 'Controlling the Message', runner_title: 'Smoke' },
+            { rank: 4, player: 'Kevin M', corp_title: 'Builder of Nations', runner_title: 'Apex' },
+            { rank: 5, player: 'Adam T', corp_title: 'Controlling the Message', runner_title: 'Adam' },
+            { rank: 6, player: 'Pete J', corp_title: 'Skorpios Defense Systems', runner_title: 'Geist' },
+            { rank: 7, player: 'Stephen L', corp_title: 'Personal Evolution', runner_title: 'Leela' },
+            { rank: 8, player: 'Kyle J', corp_title: 'Cerebral Imaging', runner_title: 'Valencia' },
+            { rank: 9, player: 'Jay R', corp_title: 'Cerebral Imaging', runner_title: 'Sunny Lebeau' },
+            { rank: 10, player: 'Kodie G', corp_title: 'Cerebral Imaging', runner_title: 'Alice Merchant' },
+            { rank: 11, player: 'Josh R', corp_title: 'Personal Evolution', runner_title: 'Reina Roja' },
+            { rank: 12, player: 'Jim G', corp_title: 'Cerebral Imaging', runner_title: 'MaxX' },
+            { rank: 13, player: 'Jmar A', corp_title: 'Pālanā Foods', runner_title: 'Valencia' },
+            { rank: 14, player: 'Isaac L', corp_title: 'Skorpios Defense Systems', runner_title: 'Smoke' },
+            { rank: 15, player: 'Brendan C', corp_title: 'Builder of Nations', runner_title: 'Kit' },
+            { rank: 16, player: 'Rose F', corp_title: 'Nisei Division', runner_title: 'Khan' }
+        ],
+        topcut: [
+            { rank: 2, player: 'Eric P', corp_title: 'Cerebral Imaging', runner_title: 'Apex' },
+            { rank: 1, player: 'Cory D', corp_title: 'Titan Transnational', runner_title: 'Alice Merchant' },
+            { rank: 3, player: 'John T', corp_title: 'Controlling the Message', runner_title: 'Smoke' },
+            { rank: 4, player: 'Kevin M', corp_title: 'Builder of Nations', runner_title: 'Apex' }
         ],
         swiss_rounds: 4,
-        bye: true,
+        bye: false,
         points: [
-            { player: 'Jörg', points: '18', sos: '3.250', esos: '3.479' }
+            { player: 'Eric P', points: '21', sos: '2.563', esos: '3.578' }
         ]
     }
 };

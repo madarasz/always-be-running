@@ -139,18 +139,32 @@
 * Save tournament
 * Click claim, validate claim modal, add claim of published decklists
 * Validate tournament details page, validate claim
-* Import Cobra results (no-confilect), validate absence of conflicts
+* Import Cobra results (no-conflict), validate absence of conflicts
 * Remove user claim, remove imported claims
 * Import Cobra results, add claim of published decklist, validate absence of conflict
+     
+##### Claiming with published decks, top-cut, conflicts
+* Login with NRDB (regular user)
+* Navigate to Organize page, create from results
+* Fill out form with multi-day, concluded, online tournament data
+* Save tournament
+* Add claim of published decklist, import Cobra results, validate tournament details, claim and conflict in swiss
+* Import Cobra results, validate conflict in swiss
+* Remove user claim, remove imported claims
+* Import Cobra results, add claim of published decklist, validate tournament details, claim and conflict in swiss
+* Remove user claim, remove imported claims
+* Add claim of published decklist, import Cobra results, validate tournament details, claim and conflict in top cut
+* Remove user claim, remove imported claims
+* Import Cobra results, add claim of published decklist, validate tournament detaild, claim and conflict in top cut
+* Remove user claim, validate imported entries and points
+* Add claim of published deck without conflict
+* Validate tournament details, user's claim, the absence of conflict
      
 **TODO**
 - Claiming with other's deck
 - Claiming with private deck
 - Claiming with IDs
 - Manual import
-- Merges (import + user claim)
-   - user claim then NRTM import
-   - NRTM import then user claim
 - Admin: delete other user's claim
 - Check winner is topcut-winner, not swiss winner in Results table and Featured box
 

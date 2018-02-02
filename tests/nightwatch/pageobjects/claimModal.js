@@ -36,13 +36,15 @@ var claimCommands = {
             .waitForElementVisible(this.elements.loadingFinished.selector, 20000);
 
         // set swiss rank
-        this.api.useXpath().click(this.elements.inputRank.selector)
-            .setValue(this.elements.inputRank.selector, data.rank);
+        this.api.useXpath()
+            .click(this.elements.inputRank.selector)
+            .click(util.format(this.elements.optionSelected.selector, 'rank', data.rank));
 
         // set top rank
         if (data.rank_top > 0) {
-            this.api.useXpath().click(this.elements.inputTopRank.selector)
-                .setValue(this.elements.inputTopRank.selector, data.rank_top);
+            this.api.useXpath()
+                .click(this.elements.inputTopRank.selector)
+                .click(util.format(this.elements.optionSelected.selector, 'rank_top', data.rank_top));
         }
 
         // set decks
@@ -70,6 +72,7 @@ module.exports = {
         validator: "//h4[@class='modal-title' and contains(.,'Claim spot on tournament')]/div[@class='modal-subtitle' and contains(.,'%s')]",
         swissOption: "//select[@id='rank']/option[%s]",
         topOption: "//select[@id='rank_top']/option[%s]",
+        optionSelected: "//select[@id='%s']/option[@value='%s']",
         submit: {
             selector: "//button[@type='submit' and contains(.,'Claim spot')]",
             locateStrategy: 'xpath'
