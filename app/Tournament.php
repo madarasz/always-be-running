@@ -12,9 +12,10 @@ class Tournament extends Model
     protected $fillable = ['title', 'date', 'location_country', 'location_state', 'location_city', 'location_store',
         'location_address', 'location_place_id', 'players_number', 'description', 'concluded', 'decklist', 'top_number', 'creator',
         'tournament_type_id', 'start_time', 'cardpool_id', 'conflict', 'contact', 'import', 'location_lat', 'location_long',
-        'recur_weekly', 'incomplete', 'link_facebook', 'tournament_format_id', 'end_date', 'concluded_by', 'concluded_at'];
+        'recur_weekly', 'incomplete', 'link_facebook', 'tournament_format_id', 'end_date', 'concluded_by', 'concluded_at',
+        'relax_conflicts'];
     protected $dates = ['created_at', 'updated_at', 'deleted_at', 'concluded_at'];
-    protected $hidden = ['tournament_type_id', 'tournament_format_id', 'cardpool_id'];
+    protected $hidden = ['tournament_type_id', 'tournament_format_id', 'cardpool_id', 'relax_conflicts'];
     protected $appends = ['seoUrl'];
 
     public function tournament_type() {
@@ -117,11 +118,15 @@ class Tournament extends Model
      * updates conflict flag according to conflicting claims
      */
     public function updateConflict() {
-        $conflict_rank = Entry::where('tournament_id', $this->id)
-            ->groupBy('rank')->havingRaw('count(rank) > 1')->first();
-        $conflict_rank_top = Entry::where('tournament_id', $this->id)->where('rank_top', '>', 0)
-            ->groupBy('rank_top')->havingRaw('count(rank_top) > 1')->first();
-        $this->update(['conflict' => is_null($conflict_rank) && is_null($conflict_rank_top) ? 0 : 1]);
+        if ($this->relax_conflicts) {
+            $this->update(['conflict' => 0]);
+        } else {
+            $conflict_rank = Entry::where('tournament_id', $this->id)
+                ->groupBy('rank')->havingRaw('count(rank) > 1')->first();
+            $conflict_rank_top = Entry::where('tournament_id', $this->id)->where('rank_top', '>', 0)
+                ->groupBy('rank_top')->havingRaw('count(rank_top) > 1')->first();
+            $this->update(['conflict' => is_null($conflict_rank) && is_null($conflict_rank_top) ? 0 : 1]);
+        }
     }
 
     public function recurDay() {

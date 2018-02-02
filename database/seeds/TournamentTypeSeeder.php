@@ -58,6 +58,11 @@ class TournamentTypeSeeder extends Seeder
                     'order' => 5,
                     'id' => 9
                 ),
+                array(
+                    'type_name' => 'team tournament',
+                    'order' => 10,
+                    'id' => 10
+                ),
             )
         );
     }

@@ -10,7 +10,7 @@
     <tbody>
     @for ($i = 0; $i < count($entries); $i++)
         @forelse ($entries[$i] as $entry)
-            @if (count($entries[$i])>1)
+            @if (count($entries[$i])>1 && !$relax)
                 <tr class="danger{{ $user_entry && count($entry) && $entry[$rank] == $user_entry[$rank] ? ' own-claim' : '' }}">
                     <td class="text-right"><i class="fa fa-exclamation-triangle text-danger" title="conflict"></i> #{{ $i+1 }}</td>
             @elseif ($user_entry && count($entry) && $entry[$rank] == $user_entry[$rank])

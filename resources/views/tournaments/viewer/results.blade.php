@@ -10,19 +10,30 @@
             <div class="alert alert-danger" id="conflict-warning">
                 <i class="fa fa-exclamation-triangle text-danger" title="conflict"></i>
                 This tournament has conflicting claims.<br/>
-                Claims can be removed by the tournament creator, admins or claim owners.
+                Claims or conflicts can be removed by the tournament creator, admins or claim owners.
             </div>
         @endif
+        {{--Player numbers--}}
+        <div id="player-numbers">
+            <strong>Number of players</strong>: {{ $tournament->players_number }}<br/>
+            @if ($tournament->top_number)
+                <span id="top-player-numbers">
+                                <strong>Top cut players</strong>: {{ $tournament->top_number }}
+                            </span><br/>
+            @else
+                <em>only swiss rounds, no top cut</em><br/>
+            @endif
+        </div>
         {{--Concluded by--}}
         @if ($tournament->concluded_by || $tournament->concluded_at)
-            <div id="concluded-by" class="small-text m-b-1">
-                <strong>Concluded by:</strong>
+            <div id="concluded-by" class="small-text m-t-1" style="line-height: 2">
+                <strong>concluded by:</strong>
                 @if ($tournament->concluded_by)
                     <a href="/profile/{{ $tournament->concluded_by }}" class="{{ $tournament->concluder->linkClass() }}">{{ $tournament->concluder->displayUsername() }}</a>
                 @else
                     <em>NRTM user</em>
                 @endif
-                @include('partials.popover', ['direction' => 'right', 'content' =>
+                @include('partials.popover', ['direction' => 'top', 'content' =>
                         'If the results / player number / top-cut is incorrect, ask the tournament creator or admins to
                          edit it.'])
                 {{--revert conclusion button--}}
@@ -33,6 +44,36 @@
                             'onclick' => "return confirm('Are you sure you want to reset this tournament to an unconcluded state? All claims and imported entries are kept and will be displayed after this tournament is concluded again.')")) !!}
                     {!! Form::close() !!}
                 @endif
+
+                {{--relax/strict mode--}}
+                <br/>
+                <strong>conflicts:</strong>
+                @if ($tournament->relax_conflicts)
+                    relaxed
+                    @include('partials.popover', ['direction' => 'bottom', 'content' =>
+                    'conflicts are hidden if there can be more than one entry on a rank'])
+                @else
+                    strict
+                    @include('partials.popover', ['direction' => 'bottom', 'content' =>
+                    'conflicts are displayed if there are more than one entry on a rank'])
+                @endif
+                {{--relax/strict button--}}
+                @if ($user && ($user->admin || $user->id == $tournament->creator || $user->id == $tournament->concluded_by))
+                    @if ($tournament->relax_conflicts)
+                        {!! Form::open(['method' => 'POST', 'url' => "/tournaments/$tournament->id/relax/0", 'style' => 'display: inline']) !!}
+                            {!! Form::button('<i class="fa fa-bell" aria-hidden="true"></i> enforce',
+                                array('type' => 'submit', 'class' => 'btn btn-warning btn-xs', 'id' => 'button-revert',
+                                'onclick' => "return confirm('Do you want to enforce conflicts?')")) !!}
+                        {!! Form::close() !!}
+                    @else
+                        {!! Form::open(['method' => 'POST', 'url' => "/tournaments/$tournament->id/relax/1", 'style' => 'display: inline; margin-top: 0.5em']) !!}
+                        {!! Form::button('<i class="fa fa-bell-slash" aria-hidden="true"></i> relax',
+                            array('type' => 'submit', 'class' => 'btn btn-info btn-xs', 'id' => 'button-revert',
+                            'onclick' => "return confirm('Do you want to relax conflicts?')")) !!}
+                        {!! Form::close() !!}
+                    @endif
+                @endif
+
                 {{--admin info--}}
                 @if ($user && ($user->admin))
                     <br/>
@@ -53,17 +94,6 @@
                 @endif
             </div>
         @endif
-        {{--Player numbers--}}
-        <div id="player-numbers">
-            <strong>Number of players</strong>: {{ $tournament->players_number }}<br/>
-            @if ($tournament->top_number)
-                <span id="top-player-numbers">
-                                <strong>Top cut players</strong>: {{ $tournament->top_number }}
-                            </span><br/>
-            @else
-                <em>only swiss rounds, no top cut</em><br/>
-            @endif
-        </div>
         {{--User claim--}}
         @include('tournaments.viewer.claim')
         <hr/>
@@ -74,7 +104,7 @@
             <h6>Top cut</h6>
             @include('tournaments.partials.entries',
                 ['entries' => $entries_top, 'user_entry' => $user_entry, 'rank' => 'rank_top',
-                'creator' => $tournament->creator, 'id' => 'entries-top'])
+                'creator' => $tournament->creator, 'id' => 'entries-top', 'relax' => $tournament->relax_conflicts])
             <hr/>
         @endif
         <h6>
@@ -90,7 +120,7 @@
         </h6>
         @include('tournaments.partials.entries',
             ['entries' => $entries_swiss, 'user_entry' => $user_entry, 'rank' => 'rank',
-            'creator' => $tournament->creator, 'id' => 'entries-swiss'])
+            'creator' => $tournament->creator, 'id' => 'entries-swiss', 'relax' => $tournament->relax_conflicts])
         <hr/>
         {{--Tournament is due and not non-tournament without results--}}
     @elseif($tournament->date <= $nowdate && $tournament->tournament_type_id != 8)

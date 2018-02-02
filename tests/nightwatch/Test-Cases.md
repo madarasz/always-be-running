@@ -167,6 +167,7 @@
 - Manual import
 - Admin: delete other user's claim
 - Check winner is topcut-winner, not swiss winner in Results table and Featured box
+- relaxed tournaments
 
 
 ----------

@@ -660,6 +660,27 @@ class TournamentsController extends Controller
             ->with('message', 'Tournament conclusion reverted.');
     }
 
+    public function relaxTournament($id, $relax, Request $request) {
+        $tournament = Tournament::findorFail($id);
+        $this->authorize('conclude', $tournament, $request->user());
+        $message = "";
+
+        if (intval($relax) == 1) {
+            // relax conflicts
+            $message = "Tournament conflicts relaxed";
+            $tournament->relax_conflicts = 1;
+        } else {
+            // enforce conflicts
+            $message = "Tournament conflicts enforced";
+            $tournament->relax_conflicts = 0;
+        }
+        $tournament->save();
+        $tournament->updateConflict();
+
+        return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
+            ->with('message', $message);
+    }
+
     /**
      * Endpoint for NRTM results upload. Stores JSON in a temporal file, provides conclusion code
      * @param Request $request

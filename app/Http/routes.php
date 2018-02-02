@@ -43,6 +43,7 @@ Route::post('entries/anonym', 'EntriesController@addAnonym');
 Route::delete('tournaments/{id}/clearanonym', 'TournamentsController@clearAnonym');
 Route::post('tournaments/{id}/conclude/manual', 'TournamentsController@concludeManual');
 Route::post('tournaments/{id}/conclude/revert', 'TournamentsController@revertConclusion');
+Route::post('tournaments/{id}/relax/{relax}', 'TournamentsController@relaxTournament');
 Route::post('tournaments/{id}/conclude/nrtm', 'TournamentsController@concludeNRTM');
 Route::get('tournaments/{id}/toggle-featured', 'AdminController@toggleFeatured');
 Route::get('tournaments/{id}/{slug}', 'TournamentsController@show')->name('tournaments.show.slug');

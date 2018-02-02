@@ -125,6 +125,12 @@ class TournamentRequest extends Request
             $input['recur_weekly'] = null;
         }
 
+        // team tournament
+        if ($input['tournament_type_id'] == 8)
+        {
+            $input['relax_conflicts'] = 1;
+        }
+
         // end date not necessary
         if ($input['end_date_selector'] != 'multiple') {
             $input['end_date'] = null;

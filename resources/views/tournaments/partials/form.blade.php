@@ -28,6 +28,7 @@
                                 <li><strong>online event:</strong> You are playing via Jinteki.net/OCTGN. No location is required.</li>
                                 <li><strong>non-tournament:</strong> This is not a tournament. Just play. <em>Weekly recurrence</em> is an option.</li>
                                 <li><strong>continental championship:</strong> North American / European championship</li>
+                                <li><strong>team:</strong> more than one players can claim a single rank, conflicts are relaxed</li>
                             </ul>'])
                         {!! Form::select('tournament_type_id', $tournament_types,
                             old('tournament_type_id', $tournament->tournament_type_id),
