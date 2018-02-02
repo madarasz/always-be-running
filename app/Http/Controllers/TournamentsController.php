@@ -775,19 +775,19 @@ class TournamentsController extends Controller
                     array_push($errors, 'Cannot find runner identity "' . $swiss['runnerIdentity'] . '". Be sure to download faction names in NRTM. See F.A.Q.');
                 }
 
-                // create claims with IDs, skipping this if there is a user claim on the same rank with same IDs
-                if ($this->assessNewClaimNeed($corp, $runner, $existing)) { // no entry or conflicting entry
-
-                    // checking top cut
-                    $ranktop = 0;
-                    if (array_key_exists('eliminationPlayers', $json)) {
-                        foreach ($json['eliminationPlayers'] as $topcut) {
-                            if ($topcut['id'] == $swiss['id']) {
-                                $ranktop = $topcut['rank'];
-                                break;
-                            }
+                // checking top cut
+                $ranktop = 0;
+                if (array_key_exists('eliminationPlayers', $json)) {
+                    foreach ($json['eliminationPlayers'] as $topcut) {
+                        if ($topcut['id'] == $swiss['id']) {
+                            $ranktop = $topcut['rank'];
+                            break;
                         }
                     }
+                }
+
+                // create claims with IDs, skipping this if there is a user claim on the same rank with same IDs
+                if ($this->assessNewClaimNeed($corp, $runner, $existing, $tournament->top_number > 0, $ranktop)) { // no entry or conflicting entry
 
                     // saving new claim
                     Entry::create([
@@ -858,7 +858,7 @@ class TournamentsController extends Controller
             }
 
             // create new claim if needed
-            if ($this->assessNewClaimNeed($corp, $runner, $existing)) {
+            if ($this->assessNewClaimNeed($corp, $runner, $existing, $tournament->top_number > 0, $row[2])) {
 
                 // saving new claim
                 Entry::create([
@@ -883,10 +883,11 @@ class TournamentsController extends Controller
         $tournament->updateConflict();
     }
 
-    private function assessNewClaimNeed($corp, $runner, $existing) {
-        return !is_null($corp) && !is_null($runner) && // identities are found, matching base on ID title(!)
-            (is_null($existing) || strcmp($runner->title, $existing->runnerIdentity->title) != 0 ||
-                strcmp($corp->title, $existing->corpIdentity->title) != 0);
+    private function assessNewClaimNeed($corp, $runner, $existing, $top_cut, $request_rank_top) {
+        return !is_null($corp) && !is_null($runner) && // identities are found
+        ((is_null($existing) || strcmp($runner->title, $existing->runnerIdentity->title) != 0 ||
+                strcmp($corp->title, $existing->corpIdentity->title) != 0) || // matching based on ID title(!)
+            (!$top_cut || is_null($existing) || $existing->rank_top != $request_rank_top));    // top cut rank matches
     }
 
     /**
