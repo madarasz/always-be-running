@@ -5,7 +5,7 @@
         [<a href="/apidoc">API</a>] -
         [<a href="/badges">Badges</a>] -
         [<a href="/support-me" class="supporter">Support Me</a>] -
-        [<a href="/birthday">Birthday</a>] -
+        {{--[<a href="/birthday">Birthday</a>] ---}}
         <a href="#" onclick="goToSlackChannel()"><i class="fa fa-slack contact-icon" aria-hidden="true"></i></a> -
         <a href="https://twitter.com/alwaysberunnin"><i class="fa fa-twitter contact-icon" aria-hidden="true"></i></a> -
         <a href="https://www.facebook.com/alwaysberunning"><i class="fa fa-facebook-official contact-icon" aria-hidden="true"></i></a> -
