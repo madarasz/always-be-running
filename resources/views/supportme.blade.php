@@ -41,8 +41,9 @@
                     @foreach($supporters as $key=>$supporter)
                         <a href="/profile/{{$supporter->id}}" class="{{ $supporter->linkClass() }}">
                             {{$supporter->displayUsername()}}
-                        </a>{{$key < $scount -1 ? ', ' : ''}}
+                        </a>,
                     @endforeach
+                    <a href="https://metagame.hu/" class="supporter">Metagame.hu</a>
                 </div>
             </div>
         </div>
