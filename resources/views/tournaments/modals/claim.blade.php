@@ -14,13 +14,15 @@
             <div class="modal-tabs">
                 <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#tab-with-decks" role="tab" onclick="$('.popover').popover('hide')">
+                        <a class="nav-link active" data-toggle="tab" href="#tab-with-decks" id="menu-decks"
+                           role="tab" onclick="$('.popover').popover('hide')">
                             <i class="fa fa-id-card-o" aria-hidden="true"></i>
                             With decks
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#tab-without-decks" role="tab" onclick="$('.popover').popover('hide')">
+                        <a class="nav-link" data-toggle="tab" href="#tab-without-decks" id="menu-ids"
+                           role="tab" onclick="$('.popover').popover('hide')">
                             <i class="fa fa-times-circle-o" aria-hidden="true"></i>
                             Without decks
                         </a>
@@ -241,7 +243,7 @@
                         </div>
                         {{--Sumbit claim without decklists--}}
                         <div class="text-xs-center p-t-1">
-                            <button type="submit" class="btn btn-danger" id="submit-claim">
+                            <button type="submit" class="btn btn-danger" id="submit-id-claim">
                                 Claim spot without decks
                             </button>
                             <div class="legal-bullshit p-t-1">

@@ -30,7 +30,7 @@
     <div class="p-b-1">
         Add photo
     </div>
-    {!! Form::open(['method' => 'POST', 'url' => "/photos", 'files' => true, 'class' => 'form-inline']) !!}
+    {!! Form::open(['method' => 'POST', 'url' => "/photos", 'files' => true, 'class' => 'form-inline', 'id' => 'form-photos']) !!}
     {!! Form::hidden('tournament_id', $tournament->id) !!}
     <div class="form-group">
         {!! Form::label('photo', 'photo', ['class' => 'small-text']) !!}

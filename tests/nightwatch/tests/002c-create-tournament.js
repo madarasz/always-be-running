@@ -96,6 +96,7 @@ module.exports = {
         browser.page.tournamentForm().getLocationInView('@submit_button').click('@submit_button');
         browser.page.tournamentView()
             .validate()
+            .removeJson()
             .assertView({
                 title: tournamentOnlineConcluded.title,
                 ttype: tournamentOnlineConcluded.type,
@@ -135,8 +136,6 @@ module.exports = {
                 noRegisteredPlayers: true,
                 unregisterButton: false,
                 registerButton: false,
-                showMatches: false,
-                showPoints: false,
                 chartRunnerIds: true,
                 chartCorpIds: true
             });

@@ -109,7 +109,7 @@
         @endif
         <h6>
             Swiss rounds
-            @if (file_exists('tjsons/'.$tournament->id.'.json'))
+            @if (file_exists('tjsons/'.$tournament->id.'.json') && $tournament->concluded)
             <div class="pull-right">
                 <button class="btn btn-primary btn-xs" id="button-showpoints" onclick="displayScores({{ $tournament->id }})">
                     <i class="fa fa-eye" aria-hidden="true"></i>

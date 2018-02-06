@@ -2,7 +2,9 @@ var claim1 = {
         rank: 2,
         rank_top: 0,
         runner_deck: 'Testing deck - Kim',
-        corp_deck: 'Testing deck - Chronos'
+        corp_deck: 'Testing deck - Chronos',
+        runner_id: "Edward Kim",
+        corp_id: 'Chronos Protocol'
     },
     claim2 = {
         rank: 11,

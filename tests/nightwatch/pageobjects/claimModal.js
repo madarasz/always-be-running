@@ -62,6 +62,46 @@ var claimCommands = {
 
         return this;
 
+    },
+
+    claimWithID: function (data, validateAuto, client) {
+
+        this.log('*** Claiming tournament spot with IDs ***');
+
+        var util = require('util');
+
+        // set swiss rank
+        this.api.useXpath()
+            .click(this.elements.inputRankID.selector)
+            .click(util.format(this.elements.optionSelected.selector, 'rank_nodeck', data.rank));
+
+        // set top rank
+        if (data.rank_top > 0) {
+            this.api.useXpath()
+                .click(this.elements.inputTopRankID.selector)
+                .click(util.format(this.elements.optionSelected.selector, 'rank_top_nodeck', data.rank_top));
+        }
+
+        if (validateAuto) {
+            // validate automatically selected IDs based on rank
+            // TODO
+        } else {
+            // set IDs
+            this.api.useXpath().click(this.elements.inputCorpID.selector)
+                .setValue(this.elements.inputCorpID.selector, data.corp_id);
+            this.api.useXpath().click(this.elements.inputRunnerID.selector)
+                .setValue(this.elements.inputRunnerID.selector, data.runner_id);
+        }
+
+        // submit claim
+        this.click(this.elements.submitID.selector);
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this;
+
     }
 
 };
@@ -74,7 +114,11 @@ module.exports = {
         topOption: "//select[@id='rank_top']/option[%s]",
         optionSelected: "//select[@id='%s']/option[@value='%s']",
         submit: {
-            selector: "//button[@type='submit' and contains(.,'Claim spot')]",
+            selector: "//button[@id='submit-claim']",
+            locateStrategy: 'xpath'
+        },
+        submitID: {
+            selector: "//button[@id='submit-id-claim']",
             locateStrategy: 'xpath'
         },
         inputRank: {
@@ -85,6 +129,14 @@ module.exports = {
             selector: "//select[@id='rank_top']",
             locateStrategy: 'xpath'
         },
+        inputRankID: {
+            selector: "//select[@id='rank_nodeck']",
+            locateStrategy: 'xpath'
+        },
+        inputTopRankID: {
+            selector: "//select[@id='rank_top_nodeck']",
+            locateStrategy: 'xpath'
+        },
         inputCorpDeck: {
             selector: "//select[@id='corp_deck']",
             locateStrategy: 'xpath'
@@ -93,8 +145,24 @@ module.exports = {
             selector: "//select[@id='runner_deck']",
             locateStrategy: 'xpath'
         },
+        inputCorpID: {
+            selector: "//select[@id='corp_deck_identity']",
+            locateStrategy: 'xpath'
+        },
+        inputRunnerID: {
+            selector: "//select[@id='runner_deck_identity']",
+            locateStrategy: 'xpath'
+        },
         loadingFinished: {
             selector: "//select[@id='runner_deck']//option",
+            locateStrategy: 'xpath'
+        },
+        menuIds: {
+            selector: "//a[@id='menu-ids']",
+            locateStrategy: 'xpath'
+        },
+        menuDecks: {
+            selector: "//a[@id='menu-decks']",
             locateStrategy: 'xpath'
         }
     }

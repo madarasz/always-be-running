@@ -26,7 +26,7 @@
             Add a video
         </div>
         {!! Form::open(['method' => 'POST', 'url' => "/videos",
-            'class' => 'form-inline']) !!}
+            'class' => 'form-inline', 'id' => 'form-videos']) !!}
         {!! Form::hidden('tournament_id', $tournament->id) !!}
         <div class="form-group">
             {!! Form::label('video_id', 'Video ID or URL', ['class' => 'small-text']) !!}

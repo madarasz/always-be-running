@@ -158,6 +158,34 @@ var tournamentViewCommands = {
         return this;
     },
 
+    assertIDClaim: function(username, rank, topRank, conflictRank, conflictTop, runnerID, corpID, client) {
+
+        this.log('*** Verifying ID claim for tournament ***');
+
+        var util = require('util');
+
+        this.api.useXpath().waitForElementVisible(this.elements.playerClaim.selector, 3000);
+
+        // verify swiss
+        var swissClass = conflictRank ? 'danger' : 'info';
+        this.api.useXpath().verify.elementPresent(
+            util.format(this.elements.verifyIDEntry.selector, 'entries-swiss', swissClass, rank, username, runnerID, corpID));
+
+        // verify top
+        if (topRank > 0) {
+            var topClass = conflictTop ? 'danger' : 'info';
+            this.api.useXpath().verify.elementPresent(
+                util.format(this.elements.verifyIDEntry.selector, 'entries-top', topClass, topRank, username, runnerID, corpID));
+        }
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this;
+    },
+
+
     assertClaimRemoveButton: function(topTable, username, present, text, client) {
 
         this.log('*** Verifying claim remove button for tournament ***');
@@ -209,6 +237,29 @@ var tournamentViewCommands = {
         return this;
     },
 
+    // removes pNRTM / Cobr.is JSON - improving test stability
+    removeJson: function(client) {
+        var fs = require('fs');
+
+        this.api.useXpath().getValue(this.elements.tournamentID.selector, (function(result) {
+            tournamentID = result.value;
+            filepath = __dirname + '/../../../public/tjsons/' + tournamentID + '.json';
+
+            if (fs.existsSync(filepath)) {
+                this.log("*** File: Deleting tournament JSON: " + tournamentID + " ***");
+                fs.unlink(filepath);
+            } else {
+                this.log("*** File: previous tournament JSON was not found: " + tournamentID + " ***");
+            }
+        }).bind(this));
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this;
+    },
+
     validate: function(client) {
 
         this.log('*** Validating tournament details page ***');
@@ -222,7 +273,7 @@ var tournamentViewCommands = {
         return this;
 
     }
-};
+}, tournamentID;
 
 
 module.exports = {
@@ -244,6 +295,7 @@ module.exports = {
         contact: "//span[@id='contact' and contains(., '%s')]",
         registeredPlayer: "//ul[@id='registered-players']/li[contains(., '%s')]",
         verifyEntry: "//table[@id='%s']/tbody/tr[contains(@class,'%s')]/td[contains(.,'#%s')]/../td[contains(.,'%s')]/../td/a[contains(.,'%s')]/../../td/a[contains(.,'%s')]",
+        verifyIDEntry: "//table[@id='%s']/tbody/tr[contains(@class,'%s')]/td[contains(.,'#%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]",
         verifyImportedEntry: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]/../td[contains(.,'%s')]",
         entryRemoveButton: "//table[@id='%s']/tbody/tr/td[contains(.,'%s')]/../td/form/button[contains(.,'%s')]",
         concludedBy: "//div[@id='concluded-by' and contains(.,'%s')]",
@@ -252,6 +304,7 @@ module.exports = {
         matchEntryBye: "//tbody[@id='%s']/tr/td[contains(.,'BYE')]",
         pointEntry: "//table[@id='entries-swiss']/tbody/tr/td[contains(.,'%s')]/../td[@class='cell-points' and contains(.,'%s') and contains(.,'%s') and contains(.,'%s')]",
         deleteAnonym: "//table[@id='%s']//td[contains(.,'#%s')]/../td[contains(.,'%s')]/../td/form/button[contains(@class,'delete-anonym')]",
+        tournamentID: "//form[@id='form-photos']/input[@name='tournament_id']",
         decklist: {
             selector: "//span[@id='decklist-mandatory']",
             locateStrategy: 'xpath'
