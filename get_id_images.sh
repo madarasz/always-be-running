@@ -44,4 +44,4 @@ do
 done
 
 # delete missing card images
-find public/img/ids/ -size -9k -delete
+find public/img/ids/ -name "*.png" -size -9k -delete
