@@ -70,6 +70,8 @@ var claimCommands = {
 
         var util = require('util');
 
+        this.click('@menuIds');
+
         // set swiss rank
         this.api.useXpath()
             .click(this.elements.inputRankID.selector)
