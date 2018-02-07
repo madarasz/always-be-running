@@ -533,6 +533,12 @@ class TournamentsController extends Controller
         // clear conflicts if exists and solved
         $tournament->updateConflict();
 
+        // delete result JSON if present
+        $filename = 'tjsons/'.$tournament->id.'.json';
+        if (file_exists($filename)) {
+            unlink($filename);
+        }
+
         return redirect()->back()->with('message', 'You have cleared all claims by NRTM import.');
 
     }
