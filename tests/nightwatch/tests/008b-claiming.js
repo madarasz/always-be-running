@@ -13,11 +13,24 @@ module.exports = {
      * Navigate to Organize page, create from results
      * Fill out form with multi-day, concluded, online tournament data
      * Save tournament
-     * Click claim, validate claim modal, add claim with published decklists
+     * Add claim with published decklists
      * Validate tournament details page, validate claim
      * Import nrtm results (conflicting), validate conflicts
-     * Remove claim, validate tournament page, conflict is gone
-     * Claim again, validate conflict
+     * Remove claim, remove imported entries
+     * Add claim with IDs
+     * Validate tournament details page, validate claim
+     * Import nrtm results (conflicting), validate conflicts
+     * Remove claim, remove imported entries
+     * Add claim with other user's deck
+     * Validate tournament details page, validate claim
+     * Import NRTM results (conflicting), validate conflicts
+     * Go to organize, validate conflict and match data icons
+     * Go to tournament details, remove claim, validate tournament page, conflict is gone
+     * Claim again with published decks, validate conflict
+     * Remove claim
+     * Add claim with IDs, validate conflict
+     * Remove claim
+     * Add claim with other user's deck, validate conflict
      * Remove conflicting imported entry, validate conflict is gone
      * Go to Personal page, validate tournament entry with claimed status
      */
@@ -191,7 +204,8 @@ module.exports = {
             .click('@buttonNRTMclear').api.acceptAlert();
 
         // Add claim with IDs
-        browser.log('* Add claim with IDs *');browser.page.tournamentView()
+        browser.log('* Add claim with IDs *');
+        browser.page.tournamentView()
             .validate()
             .click('@buttonClaim');
 
@@ -295,9 +309,115 @@ module.exports = {
             );
 
         // Remove claim, remove imported entries
+        browser.log('* Remove claim, remove imported entries *');
+        browser.page.tournamentView()
+            .click('@removeClaim')
+            .click('@buttonNRTMclear').api.acceptAlert();
 
         // Add claim with other user's deck
+        browser.log("* Add claim with other user's deck *");
+        browser.page.tournamentView()
+            .validate()
+            .click('@buttonClaim');
 
+        browser.page.claimModal()
+            .validate(tournamentNrtmJsonWithoutTopCut.title,
+            tournamentNrtmJsonWithoutTopCut.players_number, tournamentNrtmJsonWithoutTopCut.top_number)
+            .claimWithDeckID(claim1);
+
+        // Validate tournament details page, validate claim
+        browser.log('* Validate tournament details page, validate claim *');
+        browser.page.tournamentView()
+            .validate()
+            .assertView({
+                title: tournamentNrtmJsonWithoutTopCut.title,
+                ttype: tournamentNrtmJsonWithoutTopCut.type,
+                creator: regularLogin.username,
+                date: tournamentNrtmJsonWithoutTopCut.date,
+                cardpool: tournamentNrtmJsonWithoutTopCut.cardpool,
+                concludedBy: regularLogin.username,
+                map: false,
+                decklist: false,
+                approvalNeed: true,
+                editButton: true,
+                approveButton: false,
+                rejectButton: false,
+                deleteButton: true,
+                transferButton: true,
+                featureButton: false,
+                conflictWarning: false,
+                playerNumbers: true,
+                topPlayerNumbers: false,
+                suggestLogin: false,
+                buttonNRTMimport: true,
+                buttonNRTMclear: false,
+                buttonConclude: false,
+                playerClaim: true,
+                buttonClaim: false,
+                removeClaim: true,
+                claimError: false,
+                topEntriesTable: false,
+                swissEntriesTable: true,
+                ownClaimInTable: true,
+                conflictInTable: false,
+                dueWarning: false,
+                registeredPlayers: true,
+                noRegisteredPlayers: false,
+                unregisterButton: false,
+                registerButton: false,
+                revertButton: true,
+                showMatches: false,
+                showPoints: false,
+            })
+            .assertClaim(
+                regularLogin.username,
+                claim1.rank, claim1.rank_top,
+                false, false,
+                claim1.runner_deck, claim1.corp_deck
+            );
+
+        // Import nrtm results (conflicting), validate conflicts
+        browser.log('* Import nrtm results (conflicting), validate conflicts *');
+        browser.page.tournamentView()
+            .click('@buttonNRTMimport');
+
+        browser.page.concludeModal()
+            .validate(tournamentNrtmJsonWithoutTopCut.title)
+            .concludeNrtmJson('nrtm-without-topcut.json');
+
+        browser.page.tournamentView()
+            .validate()
+            .assertView({
+                conflictWarning: true,
+                playerNumbers: true,
+                topPlayerNumbers: false,
+                suggestLogin: false,
+                buttonNRTMimport: false,
+                buttonNRTMclear: true,
+                buttonConclude: false,
+                playerClaim: true,
+                buttonClaim: false,
+                removeClaim: true,
+                claimError: false,
+                topEntriesTable: false,
+                swissEntriesTable: true,
+                ownClaimInTable: true,
+                conflictInTable: true,
+                dueWarning: false,
+                registeredPlayers: true,
+                noRegisteredPlayers: false,
+                unregisterButton: false,
+                registerButton: false,
+                revertButton: true,
+                showMatches: true,
+                showPoints: true,
+            })
+            .assertClaim(
+                regularLogin.username,
+                claim1.rank, claim1.rank_top,
+                true, false,
+                claim1.runner_deck, claim1.corp_deck
+            );
 
         // Go to organize, validate conflict and match data icons
         browser.log('* Go to organize, validate conflict and match data icons *');
@@ -340,7 +460,7 @@ module.exports = {
                 showPoints: true,
             });
 
-        // Claim again with published decks
+        // Claim again with published decks, validate conflict
         browser.log('* Claim again with published decks, validate conflict *');
         browser.page.tournamentView()
             .validate()
@@ -429,9 +549,54 @@ module.exports = {
         );
 
         // Remove claim
+        browser.log('* Remove claim * ');
+        browser.page.tournamentView()
+            .click('@removeClaim');
 
         // Add claim with other user's deck, validate conflict
+        browser.log("* Add claim with other user's deck, validate conflict *");
+        browser.page.tournamentView()
+            .validate()
+            .click('@buttonClaim');
 
+        browser.page.claimModal()
+            .validate(tournamentNrtmJsonWithoutTopCut.title,
+            tournamentNrtmJsonWithoutTopCut.players_number, tournamentNrtmJsonWithoutTopCut.top_number)
+            .claimWithDeckID(claim1);
+
+        browser.page.tournamentView()
+            .validate()
+            .assertView({
+                conflictWarning: true,
+                playerNumbers: true,
+                topPlayerNumbers: false,
+                suggestLogin: false,
+                buttonNRTMimport: false,
+                buttonNRTMclear: true,
+                buttonConclude: false,
+                playerClaim: true,
+                buttonClaim: false,
+                removeClaim: true,
+                claimError: false,
+                topEntriesTable: false,
+                swissEntriesTable: true,
+                ownClaimInTable: true,
+                conflictInTable: true,
+                dueWarning: false,
+                registeredPlayers: true,
+                noRegisteredPlayers: false,
+                unregisterButton: false,
+                registerButton: false,
+                revertButton: true,
+                showMatches: true,
+                showPoints: true,
+            })
+            .assertClaim(
+                regularLogin.username,
+                claim1.rank, claim1.rank_top,
+                true, false,
+                claim1.runner_deck, claim1.corp_deck
+            );
 
         // Remove conflicting imported entry, validate conflict is gone
         browser.log('* Remove conflicting imported entry, validate conflict is gone *');

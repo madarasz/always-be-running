@@ -118,17 +118,29 @@
 * Go to Personal page, validate claim button
 * Click unregister on Personal page, validate tournament missing on Personal page
 
-##### Claiming with published decks, no top-cut, conflicts
+##### Claiming, no top-cut, NRTM import, conflicts
 * Login with NRDB (regular user)
 * Navigate to Organize page, create from results
 * Fill out form with multi-day, concluded, online tournament data
 * Save tournament
-* Click claim, validate claim modal, add claim of published decklists
+* **Add claim with published decklists**
+* Validate tournament details page, validate claim
+* Import nrtm results (conflicting), validate conflicts
+* Remove claim, remove imported entries
+* **Add claim with IDs**
+* Validate tournament details page, validate claim
+* Import nrtm results (conflicting), validate conflicts
+* Remove claim, remove imported entries
+* **Add claim with other user's deck**
 * Validate tournament details page, validate claim
 * Import NRTM results (conflicting), validate conflicts
 * Go to organize, validate conflict and match data icons
 * Go to tournament details, remove claim, validate tournament page, conflict is gone
-* Claim again, validate conflict
+* **Claim again with published decks**, validate conflict
+* Remove claim
+* **Add claim with IDs**, validate conflict
+* Remove claim
+* **Add claim with other user's deck**, validate conflict
 * Remove conflicting imported entry, validate conflict is gone
 * Go to Personal page, validate tournament entry with claimed status
 
@@ -159,7 +171,7 @@
 * Remove user claim, validate imported entries and points
 * Add claim of published deck without conflict
 * Validate tournament details, user's claim, the absence of conflict
-     
+
 **TODO**
 - Claiming with other's deck
 - Claiming with private deck

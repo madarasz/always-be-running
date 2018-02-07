@@ -104,6 +104,47 @@ var claimCommands = {
 
         return this;
 
+    },
+
+    claimWithDeckID: function (data, client) {
+
+        this.log('*** Claiming tournament spot with deck IDs ***');
+
+        var util = require('util');
+
+        this
+            .click('@menuDecks')
+            .click('@moreOptions');
+
+        // set swiss rank
+        this.api.useXpath()
+            .click(this.elements.inputRank.selector)
+            .click(util.format(this.elements.optionSelected.selector, 'rank', data.rank));
+
+        // set top rank
+        if (data.rank_top > 0) {
+            this.api.useXpath()
+                .click(this.elements.inputTopRank.selector)
+                .click(util.format(this.elements.optionSelected.selector, 'rank_top', data.rank_top));
+        }
+
+        // set decks IDs
+        this.api.useXpath()
+            .clearValue(this.elements.inputCorpDeckID.selector)
+            .setValue(this.elements.inputCorpDeckID.selector, data.corp_deck_id);
+        this.api.useXpath()
+            .clearValue(this.elements.inputRunnerDeckID.selector)
+            .setValue(this.elements.inputRunnerDeckID.selector, data.runner_deck_id);
+
+        // submit claim
+        this.click(this.elements.submit.selector);
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this;
+
     }
 
 };
@@ -147,6 +188,14 @@ module.exports = {
             selector: "//select[@id='runner_deck']",
             locateStrategy: 'xpath'
         },
+        inputCorpDeckID: {
+            selector: "//input[@id='other_corp_deck']",
+            locateStrategy: 'xpath'
+        },
+        inputRunnerDeckID: {
+            selector: "//input[@id='other_runner_deck']",
+            locateStrategy: 'xpath'
+        },
         inputCorpID: {
             selector: "//select[@id='corp_deck_identity']",
             locateStrategy: 'xpath'
@@ -165,6 +214,10 @@ module.exports = {
         },
         menuDecks: {
             selector: "//a[@id='menu-decks']",
+            locateStrategy: 'xpath'
+        },
+        moreOptions: {
+            selector: "//a[@id='collapser-options']",
             locateStrategy: 'xpath'
         }
     }

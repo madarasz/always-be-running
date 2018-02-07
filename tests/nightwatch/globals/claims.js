@@ -4,7 +4,9 @@ var claim1 = {
         runner_deck: 'Testing deck - Kim',
         corp_deck: 'Testing deck - Chronos',
         runner_id: "Edward Kim",
-        corp_id: 'Chronos Protocol'
+        corp_id: 'Chronos Protocol',
+        runner_deck_id: '47123',
+        corp_deck_id: '47124'
     },
     claim2 = {
         rank: 11,

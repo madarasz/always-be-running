@@ -110,7 +110,8 @@
                         {{--more options--}}
                         <div class="row">
                             <div class="col-xs-12 text-xs-right">
-                                <a data-toggle="collapse" href="#collapse-other-decks" aria-expanded="false" aria-controls="collapse-other-decks">
+                                <a data-toggle="collapse" href="#collapse-other-decks" aria-expanded="false"
+                                   aria-controls="collapse-other-decks" id="collapser-options">
                                     <i class="fa fa-caret-right" aria-hidden="true" id="caret-more"></i>
                                     <em id="text-more">more options</em>
                                 </a>
