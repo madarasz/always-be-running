@@ -86,9 +86,10 @@ var claimCommands = {
 
         if (validateAuto) {
             // validate automatically selected IDs based on rank
-            // TODO
+            this.api.useXpath().assert.value(this.elements.inputCorpID.selector, data.corp_id_id);
+            this.api.useXpath().assert.value(this.elements.inputRunnerID.selector, data.runner_id_id);
         } else {
-            // set IDs
+            // set IDs manually
             this.api.useXpath().click(this.elements.inputCorpID.selector)
                 .setValue(this.elements.inputCorpID.selector, data.corp_id);
             this.api.useXpath().click(this.elements.inputRunnerID.selector)

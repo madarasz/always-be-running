@@ -19,7 +19,7 @@ module.exports = {
      * Remove user claim, remove imported claims
      * Import Cobra results, add claim of published decklist, validate absence of conflict
      */
-    'Claiming with published decks, top-cut, no conflicts': function (browser) {
+    'Claiming, top-cut, no conflicts': function (browser) {
 
         var regularLogin = browser.globals.accounts.regularLogin,
             claim2 = browser.globals.claims.claim2,
@@ -76,8 +76,8 @@ module.exports = {
         browser.log('* Save tournament *');
         browser.page.tournamentForm().getLocationInView('@submit_button').click('@submit_button');
 
-        // Click claim, validate claim modal, add claim of published decklists
-        browser.log('* Click claim, validate claim modal, add claim of published decklists *');
+        // Claim with published decklists
+        browser.log('* Claim with published decklists *');
         browser.page.tournamentView()
             .validate()
             .removeJson()
@@ -177,10 +177,10 @@ module.exports = {
             })
             .assertClaim(
             regularLogin.username,
-            claim2.rank, claim2.rank_top,
-            false, false,
-            claim2.runner_deck, claim2.corp_deck
-        );
+                claim2.rank, claim2.rank_top,
+                false, false,
+                claim2.runner_deck, claim2.corp_deck
+            );
 
         // Remove user claim, remove imported claims
         browser.log('* Remove user claim, remove imported claims *');
@@ -188,8 +188,127 @@ module.exports = {
             .click('@removeClaim')
             .click('@buttonNRTMclear').api.acceptAlert();
 
-        // Import Cobra results, add claim of published decklist, validate absence of conflict
-        browser.log('* Import Cobra results, add claim of published decklist, validate absence of conflict *');
+        // Claim with IDs
+        browser.log('* Claim with IDs *');
+        browser.page.tournamentView()
+            .validate()
+            .removeJson()
+            .click('@buttonClaim');
+
+        browser.page.claimModal()
+            .validate(tournamentCobraJsonWithTopCut.title,
+            tournamentCobraJsonWithTopCut.players_number, tournamentCobraJsonWithTopCut.top_number)
+            .claimWithID(claim2, false);
+
+        // Import Cobra results (no-conflict), validate absence of conflicts
+        browser.log('* Import Cobra results (no-conflict), validate absence of conflicts *');
+        browser.page.tournamentView()
+            .click('@buttonNRTMimport');
+
+        browser.page.concludeModal()
+            .validate(tournamentCobraJsonWithTopCut.title)
+            .concludeNrtmJson('cobra-with-topcut.json');
+
+        browser.page.tournamentView()
+            .validate()
+            .assertView({
+                conflictWarning: false,
+                playerNumbers: true,
+                topPlayerNumbers: true,
+                suggestLogin: false,
+                buttonNRTMimport: false,
+                buttonNRTMclear: true,
+                buttonConclude: false,
+                playerClaim: true,
+                buttonClaim: false,
+                removeClaim: true,
+                claimError: false,
+                topEntriesTable: true,
+                swissEntriesTable: true,
+                ownClaimInTable: true,
+                conflictInTable: false,
+                dueWarning: false,
+                registeredPlayers: true,
+                noRegisteredPlayers: false,
+                unregisterButton: false,
+                registerButton: false,
+                revertButton: true,
+                showMatches: true,
+                showPoints: true
+            })
+            .assertIDClaim(
+                regularLogin.username,
+                claim2.rank, claim2.rank_top,
+                false, false,
+                claim2.runner_id, claim2.cord_id_validate
+            );
+
+        // Remove user claim, remove imported claims
+        browser.log('* Remove user claim, remove imported claims *');
+        browser.page.tournamentView()
+            .click('@removeClaim')
+            .click('@buttonNRTMclear').api.acceptAlert();
+
+        // Add claim with other user's deck
+        browser.log("* Add claim with other user's deck *");
+        browser.page.tournamentView()
+            .validate()
+            .click('@buttonClaim');
+
+        browser.page.claimModal()
+            .claimWithDeckID(claim2);
+
+        // Import Cobra results (no-conflict), validate absence of conflicts
+        browser.log('* Import Cobra results (no-conflict), validate absence of conflicts *');
+        browser.page.tournamentView()
+            .click('@buttonNRTMimport');
+
+        browser.page.concludeModal()
+            .validate(tournamentCobraJsonWithTopCut.title)
+            .concludeNrtmJson('cobra-with-topcut.json');
+
+        browser.page.tournamentView()
+            .validate()
+            .assertView({
+                conflictWarning: false,
+                playerNumbers: true,
+                topPlayerNumbers: true,
+                suggestLogin: false,
+                buttonNRTMimport: false,
+                buttonNRTMclear: true,
+                buttonConclude: false,
+                playerClaim: true,
+                buttonClaim: false,
+                removeClaim: true,
+                claimError: false,
+                topEntriesTable: true,
+                swissEntriesTable: true,
+                ownClaimInTable: true,
+                conflictInTable: false,
+                dueWarning: false,
+                registeredPlayers: true,
+                noRegisteredPlayers: false,
+                unregisterButton: false,
+                registerButton: false,
+                revertButton: true,
+                showMatches: true,
+                showPoints: true
+            })
+            .assertClaim(
+                regularLogin.username,
+                claim2.rank, claim2.rank_top,
+                false, false,
+                claim2.runner_deck, claim2.corp_deck
+            );
+
+        // Remove user claim, remove imported claims
+        browser.log('* Remove user claim, remove imported claims *');
+        browser.page.tournamentView()
+            .click('@removeClaim')
+            .click('@buttonNRTMclear').api.acceptAlert();
+
+        // Import Cobra results, add claim with published decklist, validate absence of conflict
+        browser.log('* Import Cobra results, add claim with published decklist, validate absence of conflict *');
         browser.page.tournamentView()
             .click('@buttonNRTMimport');
         browser.page.concludeModal()
@@ -199,8 +318,6 @@ module.exports = {
         browser.page.tournamentView()
             .click('@buttonClaim');
         browser.page.claimModal()
-            .validate(tournamentCobraJsonWithTopCut.title,
-            tournamentCobraJsonWithTopCut.players_number, tournamentCobraJsonWithTopCut.top_number)
             .claim(claim2);
 
         browser.page.tournamentView()
@@ -231,11 +348,119 @@ module.exports = {
                 showPoints: true
             })
             .assertClaim(
-            regularLogin.username,
-            claim2.rank, claim2.rank_top,
-            false, false,
-            claim2.runner_deck, claim2.corp_deck
-        );
+                regularLogin.username,
+                claim2.rank, claim2.rank_top,
+                false, false,
+                claim2.runner_deck, claim2.corp_deck
+            );
+
+        // Remove user claim, remove imported claims
+        browser.log('* Remove user claim, remove imported claims *');
+        browser.page.tournamentView()
+            .click('@removeClaim')
+            .click('@buttonNRTMclear').api.acceptAlert();
+
+        // Import Cobra results, add claim with IDs, validate absence of conflict
+        browser.log('* Import Cobra results, add claim with IDs, validate absence of conflict *');
+        browser.page.tournamentView()
+            .click('@buttonNRTMimport');
+        browser.page.concludeModal()
+            .validate(tournamentCobraJsonWithTopCut.title)
+            .concludeNrtmJson('cobra-with-topcut.json');
+
+        browser.page.tournamentView()
+            .click('@buttonClaim');
+        browser.page.claimModal()
+            .validate(tournamentCobraJsonWithTopCut.title,
+            tournamentCobraJsonWithTopCut.players_number, tournamentCobraJsonWithTopCut.top_number)
+            .claimWithID(claim2, true);
+
+        browser.page.tournamentView()
+            .validate()
+            .assertView({
+                conflictWarning: false,
+                playerNumbers: true,
+                topPlayerNumbers: true,
+                suggestLogin: false,
+                buttonNRTMimport: false,
+                buttonNRTMclear: true,
+                buttonConclude: false,
+                playerClaim: true,
+                buttonClaim: false,
+                removeClaim: true,
+                claimError: false,
+                topEntriesTable: true,
+                swissEntriesTable: true,
+                ownClaimInTable: true,
+                conflictInTable: false,
+                dueWarning: false,
+                registeredPlayers: true,
+                noRegisteredPlayers: false,
+                unregisterButton: false,
+                registerButton: false,
+                revertButton: true,
+                showMatches: true,
+                showPoints: true
+            })
+            .assertIDClaim(
+                regularLogin.username,
+                claim2.rank, claim2.rank_top,
+                false, false,
+                claim2.runner_id, claim2.cord_id_validate
+            );
+
+        // Remove user claim, remove imported claims
+        browser.log('* Remove user claim, remove imported claims *');
+        browser.page.tournamentView()
+            .click('@removeClaim')
+            .click('@buttonNRTMclear').api.acceptAlert();
+
+        // Import Cobra results, add claim with other user's deck, validate absence of conflict
+        browser.log("* Import Cobra results, add claim with other user's deck, validate absence of conflict *");
+        browser.page.tournamentView()
+            .click('@buttonNRTMimport');
+        browser.page.concludeModal()
+            .validate(tournamentCobraJsonWithTopCut.title)
+            .concludeNrtmJson('cobra-with-topcut.json');
+
+        browser.page.tournamentView()
+            .click('@buttonClaim');
+        browser.page.claimModal()
+            .claimWithDeckID(claim2);
+
+        browser.page.tournamentView()
+            .validate()
+            .assertView({
+                conflictWarning: false,
+                playerNumbers: true,
+                topPlayerNumbers: true,
+                suggestLogin: false,
+                buttonNRTMimport: false,
+                buttonNRTMclear: true,
+                buttonConclude: false,
+                playerClaim: true,
+                buttonClaim: false,
+                removeClaim: true,
+                claimError: false,
+                topEntriesTable: true,
+                swissEntriesTable: true,
+                ownClaimInTable: true,
+                conflictInTable: false,
+                dueWarning: false,
+                registeredPlayers: true,
+                noRegisteredPlayers: false,
+                unregisterButton: false,
+                registerButton: false,
+                revertButton: true,
+                showMatches: true,
+                showPoints: true
+            })
+            .assertClaim(
+                regularLogin.username,
+                claim2.rank, claim2.rank_top,
+                false, false,
+                claim2.runner_deck, claim2.corp_deck
+            );
 
         // data cleanup, delete tournament
         browser.sqlDeleteTournament(tournamentCobraJsonWithTopCut.title, browser.globals.database.connection);
