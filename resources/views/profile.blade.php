@@ -69,8 +69,12 @@
     <script type="text/javascript">
 
         // initializer pagers for claim and created list
-        updatePaging('list-claims');
-        updatePaging('list-created');
+        @if ($claim_count > 0)
+            updatePaging('list-claims');
+        @endif
+        @if ($created_count > 0)
+            updatePaging('list-created');
+        @endif
 
         // switch between edit and view profile
         function profileSwitchEdit() {
