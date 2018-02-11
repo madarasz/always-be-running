@@ -124,68 +124,82 @@
 * Fill out form with multi-day, concluded, online tournament data
 * Save tournament
 * **Add claim with published decklists**
-* Validate tournament details page, validate claim
-* Import nrtm results (conflicting), validate conflicts
-* Remove claim, remove imported entries
+  * Validate tournament details page, validate claim
+  * Import nrtm results (conflicting), validate conflicts
+  * Remove claim, remove imported entries
 * **Add claim with IDs**
-* Validate tournament details page, validate claim
-* Import nrtm results (conflicting), validate conflicts
-* Remove claim, remove imported entries
+  * Validate tournament details page, validate claim
+  * Import nrtm results (conflicting), validate conflicts
+  * Remove claim, remove imported entries
 * **Add claim with other user's deck**
-* Validate tournament details page, validate claim
-* Import NRTM results (conflicting), validate conflicts
+  * Validate tournament details page, validate claim
+  * Import NRTM results (conflicting), validate conflicts
 * Go to organize, validate conflict and match data icons
 * Go to tournament details, remove claim, validate tournament page, conflict is gone
-* **Claim again with published decks**, validate conflict
-* Remove claim
+* **Add Claim with published decks**, validate conflict
+  * Remove claim
 * **Add claim with IDs**, validate conflict
-* Remove claim
+  * Remove claim
 * **Add claim with other user's deck**, validate conflict
-* Remove conflicting imported entry, validate conflict is gone
+  * Remove conflicting imported entry, validate conflict is gone
 * Go to Personal page, validate tournament entry with claimed status
 
-##### Claiming, top-cut, no conflicts
+##### Claiming, import (Cobr.ai), top-cut, no conflicts
 * Login with NRDB (regular user)
 * Navigate to Organize page, create from results
 * Fill out form with multi-day, concluded, online tournament data
 * Save tournament
 * **Claim with published decklists**
-* Validate tournament details page, validate claim
-* Import Cobra results (no-conflict), validate absence of conflicts
-* Remove user claim, remove imported claims
+  * Validate tournament details page, validate claim
+  * Import Cobra results (no-conflict), validate absence of conflicts
+  * Remove user claim, remove imported claims
 * **Claim with IDs**
-* Import Cobra results (no-conflict), validate absence of conflicts
-* Remove user claim, remove imported claims
+  * Import Cobra results (no-conflict), validate absence of conflicts
+  * Remove user claim, remove imported claims
 * **Add claim with other user's deck**
-* Import Cobra results (no-conflict), validate absence of conflicts
-* Remove user claim, remove imported claims
+  * Import Cobra results (no-conflict), validate absence of conflicts
+  * Remove user claim, remove imported claims
 * Import Cobra results, **add claim with published decklist**, validate absence of conflict
-* Remove user claim, remove imported claims
+  * Remove user claim, remove imported claims
 * Import Cobra results, **add claim with IDs**, validate absence of conflict
-* Remove user claim, remove imported claims
+  * Remove user claim, remove imported claims
 * Import Cobra results, **add claim with other user's deck**, validate absence of conflict
      
-##### Claiming with published decks, top-cut, conflicts
+##### Claiming, import (Cobr.ai), top-cut, conflicts
 * Login with NRDB (regular user)
 * Navigate to Organize page, create from results
 * Fill out form with multi-day, concluded, online tournament data
 * Save tournament
-* Add claim of published decklist, import Cobra results, validate tournament details, claim and conflict in swiss
-* Import Cobra results, validate conflict in swiss
-* Remove user claim, remove imported claims
-* Import Cobra results, add claim of published decklist, validate tournament details, claim and conflict in swiss
-* Remove user claim, remove imported claims
-* Add claim of published decklist, import Cobra results, validate tournament details, claim and conflict in top cut
-* Remove user claim, remove imported claims
-* Import Cobra results, add claim of published decklist, validate tournament detaild, claim and conflict in top cut
-* Remove user claim, validate imported entries and points
-* Add claim of published deck without conflict
-* Validate tournament details, user's claim, the absence of conflict
+* **Add claim with published decklists**
+  * Import Cobra results, validate claim and conflict in swiss
+  * Remove user claim, remove imported claims
+* **Add claim with IDs**
+  * Import Cobra results, validate claim and conflict in swiss
+  * Remove user claim, remove imported claims
+* **Add claim with other user's deck**
+  * Import Cobra results, validate claim and conflict in swiss
+  * Remove user claim, remove imported claims
+* Import Cobra results 
+* Validate imported entries and points
+* **Add claim with published decklists**, validate conflict in top
+  * Remove user claim
+* **Add claim with IDs**, validate conflict in top cut
+  * Remove user claim
+* **Add claim with other user's decks**, validate conflict in top
+  * Remove user claim
+* **Add claim with published deck, no conflict**
+  * Validate tournament details, user's claim, the absence of conflict
+  * Remove user claim, remove imported claims
+  * Import Cobra results
+* **Add claim with IDs, no conflict**
+  * Validate tournament details, user's claim, the absence of conflict
+  * Remove user claim, remove imported claims
+  * Import Cobra results
+* **Add claim with other user's decks**
+  * Validate tournament details, user's claim, the absence of conflict
 
 **TODO**
-- Claiming with other's deck
 - Claiming with private deck
-- Claiming with IDs
 - Manual import
 - Admin: delete other user's claim
 - Check winner is topcut-winner, not swiss winner in Results table and Featured box

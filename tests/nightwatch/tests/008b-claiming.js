@@ -26,7 +26,7 @@ module.exports = {
      * Import NRTM results (conflicting), validate conflicts
      * Go to organize, validate conflict and match data icons
      * Go to tournament details, remove claim, validate tournament page, conflict is gone
-     * Claim again with published decks, validate conflict
+     * Add claim with published decks, validate conflict
      * Remove claim
      * Add claim with IDs, validate conflict
      * Remove claim
@@ -460,8 +460,8 @@ module.exports = {
                 showPoints: true,
             });
 
-        // Claim again with published decks, validate conflict
-        browser.log('* Claim again with published decks, validate conflict *');
+        // Add claim with published decks, validate conflict
+        browser.log('* Add claim with published decks, validate conflict *');
         browser.page.tournamentView()
             .validate()
             .click('@buttonClaim');

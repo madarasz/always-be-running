@@ -19,7 +19,7 @@ module.exports = {
      * Remove user claim, remove imported claims
      * Import Cobra results, add claim of published decklist, validate absence of conflict
      */
-    'Claiming, top-cut, no conflicts': function (browser) {
+    'Claiming, import (Cobr.ai), top-cut, no conflicts': function (browser) {
 
         var regularLogin = browser.globals.accounts.regularLogin,
             claim2 = browser.globals.claims.claim2,
