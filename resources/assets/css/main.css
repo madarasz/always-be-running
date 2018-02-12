@@ -37,6 +37,9 @@ table.abr-table tr td {
     background-color: #3894b7;
     background-image: linear-gradient(to bottom,#3894b7,#317f9e 100%);
 }
+.span-nav {
+    padding-top: 0.5em;
+}
 
 /*labels*/
 .label {
@@ -1020,6 +1023,26 @@ img.badge {
     img.image-30x30{
         width: auto;
         height: 1.5em;
+    }
+    .nav-main {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+    #navbar-collapse-1 {
+        padding-top: 0.5em;
+    }
+    nav li {
+        font-size: 120%;
+    }
+    .notif-badge[data-badge]:after {
+        font-size: 0.5em !important;
+    }
+    nav ul {
+        width: 100%
+    }
+    .span-nav {
+        padding-top: 0 !important;
     }
 }
 @media (max-width: 767px){
