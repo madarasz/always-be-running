@@ -20,6 +20,7 @@ elixir(function(mix) {
     var bootstrapPath = 'node_modules/bootstrap-sass/assets',
         bootstrap4Path = 'node_modules/bootstrap/dist',
         bracketPath = 'node_modules/jquery-bracket/dist',
+        timepickerPath = 'node_modules/timepicker',
         tetherPath = 'node_modules/tether/dist/js';
     mix.copy('resources/assets/fonts', 'public/fonts')
         .copy('resources/assets/img', 'public/img')
@@ -29,6 +30,8 @@ elixir(function(mix) {
         .copy(tetherPath + '/tether.js', 'resources/assets/js')
         .copy(bracketPath + '/jquery.bracket.min.js', 'resources/assets/js')
         .copy(bracketPath + '/jquery.bracket.min.css', 'public/css')
+        .copy(timepickerPath + '/jquery.timepicker.min.css', 'resources/assets/css')
+        .copy(timepickerPath + '/jquery.timepicker.min.js', 'resources/assets/js')
         .sass('app.scss')
         .scripts([
             "jquery-2.2.3.min.js",      // TODO: jquery from npm?
@@ -44,7 +47,9 @@ elixir(function(mix) {
             "jquery.calendario.js",
             "bootstrap-datepicker.js",
             "jquery.bracket.min.js",
-            "ekko-lightbox.min.js"
+            "ekko-lightbox.min.js",
+            "atc.min.js",
+            "jquery.timepicker.min.js"
         ])
         .styles([
             'font-awesome.css',
@@ -54,7 +59,8 @@ elixir(function(mix) {
             'bootstrap-datepicker.css',
             'netrunner.css',
             'main.css',
-            'ekko-lightbox.min.css'
+            'ekko-lightbox.min.css',
+            'jquery.timepicker.min.css'
         ])
         .version(['css/all.css', 'js/all.js']);
 

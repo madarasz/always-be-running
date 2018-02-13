@@ -296,6 +296,8 @@
         weekStart: 1 //TODO: custom
     });
 
+    $('#start_time').timepicker({ 'scrollDefault': '10:00AM', 'timeFormat': 'H:i', 'show2400': true });
+
     // clicking icon should also show datepicker
     $('#datepicker-icon').click(function(){
         $('#date').trigger('focus.datepicker.data-api');

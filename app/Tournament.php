@@ -193,4 +193,42 @@ class Tournament extends Model
             }
         }
     }
+
+
+    public function calendarEntry() {
+        $allday = $this->tournament_type_id == 7 || strlen($this->start_time) == 0;
+        if (is_null($this->recur_weekly)) {
+            // non recurring
+            $start_time = $allday ? "12:00 AM" : $this->start_time;
+            $start = date('m/d/Y h:i A', strtotime(str_replace(".", "-", substr($this->date, 0, 10)) . " " .
+                $start_time));
+            if (is_null($this->end_date)) {
+                $end = date('m/d/Y h:i A', strtotime(str_replace(".", "-", substr($this->date, 0, 10)) . " 23:59"));
+            } else {
+                $end = date('m/d/Y h:i A', strtotime(str_replace(".", "-", substr($this->end_date, 0, 10)) . " 23:59"));
+            }
+        } else {
+            // recurring
+            $start = date('m/d/Y h:i A', strtotime("next ". $this->recurDay() . " " . $this->start_time));
+            $end = date('m/d/Y h:i A', strtotime("next ". $this->recurDay() . " 23:59"));
+        }
+        $days = ['','MO','TU','WE','TH','FR','SA', 'SU'];
+
+        return [
+            'start' => $start,
+            'end' => $end,
+            'timezone' => '',   // frontend will query google maps api
+            'title' => $this->title,
+            'description' => strip_tags(\Markdown::convertToHtml($this->description)),
+            'location' => $this->location_address,
+            'facebook_event' => strpos($this->link_facebook, '/events/') ? $this->link_facebook : '',
+            'all_day_event' => $allday,
+            'date_format' => 'MM/DD/YYYY',
+            'alarm_reminder' => $allday ? 480 : 120,
+            'recurring' => is_null($this->recur_weekly) ? false : 'FREQ=WEEKLY;BYDAY='.$days[$this->recur_weekly].';INTERVAL=1',
+            'uid' => $this->id.'@alwaysberunning.net',
+            'status' => 'CONFIRMED',
+            'method' => 'PUBLISH'
+        ];
+    }
 }

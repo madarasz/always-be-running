@@ -179,9 +179,11 @@ class TournamentsController extends Controller
             $user_entry = Entry::where('tournament_id', $tournament->id)->where('user', $user->id)->first();
         }
 
+        $calendarEntry = $tournament->calendarEntry();
+
         return view('tournaments.view',
             compact('tournament', 'message', 'type', 'format', 'nowdate', 'user', 'entries', 'runnerIDs', 'corpIDs',
-                'user_entry', 'entries_swiss', 'entries_top', 'regcount', 'all_users', 'registered'));
+                'user_entry', 'entries_swiss', 'entries_top', 'regcount', 'all_users', 'registered', 'calendarEntry'));
     }
 
     /**
