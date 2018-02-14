@@ -48,6 +48,8 @@ Route::post('tournaments/{id}/conclude/nrtm', 'TournamentsController@concludeNRT
 Route::get('tournaments/{id}/toggle-featured', 'AdminController@toggleFeatured');
 Route::get('tournaments/{id}/{slug}', 'TournamentsController@show')->name('tournaments.show.slug');
 
+Route::get('calendar/event/{id}', 'CalendarController@getEventCalendar');
+
 Route::post('videos', 'VideosController@store');
 Route::delete('videos/{id}', 'VideosController@destroy');
 Route::post('videos/{id}/tag', 'VideosController@storeTag');

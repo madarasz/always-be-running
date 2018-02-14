@@ -13,9 +13,9 @@ class Tournament extends Model
         'location_address', 'location_place_id', 'players_number', 'description', 'concluded', 'decklist', 'top_number', 'creator',
         'tournament_type_id', 'start_time', 'cardpool_id', 'conflict', 'contact', 'import', 'location_lat', 'location_long',
         'recur_weekly', 'incomplete', 'link_facebook', 'tournament_format_id', 'end_date', 'concluded_by', 'concluded_at',
-        'relax_conflicts'];
+        'relax_conflicts', 'timezone'];
     protected $dates = ['created_at', 'updated_at', 'deleted_at', 'concluded_at'];
-    protected $hidden = ['tournament_type_id', 'tournament_format_id', 'cardpool_id', 'relax_conflicts'];
+    protected $hidden = ['tournament_type_id', 'tournament_format_id', 'cardpool_id', 'relax_conflicts', 'timezone'];
     protected $appends = ['seoUrl'];
 
     public function tournament_type() {
@@ -197,38 +197,38 @@ class Tournament extends Model
 
     public function calendarEntry() {
         $allday = $this->tournament_type_id == 7 || strlen($this->start_time) == 0;
+
         if (is_null($this->recur_weekly)) {
             // non recurring
             $start_time = $allday ? "12:00 AM" : $this->start_time;
-            $start = date('m/d/Y h:i A', strtotime(str_replace(".", "-", substr($this->date, 0, 10)) . " " .
-                $start_time));
+            $start = str_replace(".", "-", substr($this->date, 0, 10)) . " " . $start_time;
             if (is_null($this->end_date)) {
-                $end = date('m/d/Y h:i A', strtotime(str_replace(".", "-", substr($this->date, 0, 10)) . " 23:59"));
+                $end = str_replace(".", "-", substr($this->date, 0, 10)) . " 23:59";
             } else {
-                $end = date('m/d/Y h:i A', strtotime(str_replace(".", "-", substr($this->end_date, 0, 10)) . " 23:59"));
+                $end = str_replace(".", "-", substr($this->end_date, 0, 10)) . " 23:59";
             }
         } else {
             // recurring
-            $start = date('m/d/Y h:i A', strtotime("next ". $this->recurDay() . " " . $this->start_time));
-            $end = date('m/d/Y h:i A', strtotime("next ". $this->recurDay() . " 23:59"));
+            $start = $this->recurDay() . " " . $this->start_time;
+            $end = $this->recurDay() . " 23:59";
         }
         $days = ['','MO','TU','WE','TH','FR','SA', 'SU'];
 
         return [
             'start' => $start,
             'end' => $end,
-            'timezone' => '',   // frontend will query google maps api
+            'timezone' => $this->timezone,
             'title' => $this->title,
             'description' => strip_tags(\Markdown::convertToHtml($this->description)),
+            'description_html' => \Markdown::convertToHtml($this->description),
             'location' => $this->location_address,
             'facebook_event' => strpos($this->link_facebook, '/events/') ? $this->link_facebook : '',
             'all_day_event' => $allday,
-            'date_format' => 'MM/DD/YYYY',
-            'alarm_reminder' => $allday ? 480 : 120,
-            'recurring' => is_null($this->recur_weekly) ? false : 'FREQ=WEEKLY;BYDAY='.$days[$this->recur_weekly].';INTERVAL=1',
-            'uid' => $this->id.'@alwaysberunning.net',
-            'status' => 'CONFIRMED',
-            'method' => 'PUBLISH'
+            'alarm_reminder' => $allday ? '-PT480M' : '-PT120M',
+            'recurring' => is_null($this->recur_weekly) ? false : $days[$this->recur_weekly],
+            'uid' => $this->id.'alwaysberunningnet',
+            'url' => env('APP_URL').$this->seoUrl(),
+            'filename' => $this->seoTitle().'.ics'
         ];
     }
 }
