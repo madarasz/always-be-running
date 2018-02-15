@@ -62,7 +62,7 @@ class CalendarController extends Controller
             if (is_null($calendarEntry['timezone'])) {
                 // request from google maps api
                 $tzRequest = file_get_contents("https://maps.googleapis.com/maps/api/timezone/json?location=".$tournament->location_lat.','.
-                    $tournament->location_long.'&timestamp='.time($tournament->date).'&key='.ENV('GOOGLE_MAPS_API'));
+                    $tournament->location_long.'&timestamp='.time($tournament->date).'&key='.ENV('GOOGLE_BACKEND_API'));
                 $timezoneString = json_decode($tzRequest,true)['timeZoneId'];
                 // save to DB
                 $tournament->timezone = $timezoneString;

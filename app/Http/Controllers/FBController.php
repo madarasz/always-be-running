@@ -150,7 +150,7 @@ class FBController extends Controller
         // call google maps API
         $location_address = '';
         $location_place_id = '';
-        $du = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?language=en&key=".env('GOOGLE_MAPS_API').
+        $du = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?language=en&key=".env('GOOGLE_BACKEND_API').
             "&address=".urlencode($location_country.", ".$location_state.", ".$location_city.", ".$street.", ".$location_store));
         $djd = json_decode($du,true);
 
