@@ -15,27 +15,41 @@ class CalendarController extends Controller
     protected $refresh = 'P1D';
     protected $eventStatus = 'CONFIRMED';
 
+    /**
+     * Produces an .ics calendar file with the selected event.
+     * @param $id tournament ID
+     * @return mixed .ics iCal calendar file
+     */
     public function getEventCalendar($id) {
 
         $calendar = new Calendar('alwaysberunning.net-event-'.$id);
         $calendar->setMethod($this->method);
         $calendar->setPublishedTTL($this->refresh);
+        $tournament = Tournament::findOrFail($id);
 
-        $event = $this->getEvent($id);
+        $event = $this->getEvent($tournament);
         $calendar->addComponent($event);
 
         // construct HTTP response
-        $tournament = Tournament::findOrFail($id);
         $response = \Response::make($calendar->render(), 200);
         $response->header('Content-Type', 'text/plain');
-        $response->header('Content-Disposition', 'attachment;filename="'.$tournament->seoTitle().'.ics');
+        $response->header('Content-Disposition', 'attachment;filename="'.$tournament->seoTitle().'.ics"');
 
         return $response;
     }
 
-    public function getEvent($id) {
+    public function getUserCalendar($id) {
 
-        $tournament = Tournament::findOrFail($id);
+
+    }
+
+    /**
+     * Returns iCal event object for the tournament.
+     * @param $tournament Tournament object
+     * @return Event iCal event object
+     */
+    public function getEvent($tournament) {
+
         $calendarEntry = $tournament->calendarEntry();
         $event = new Event();
 
