@@ -1039,7 +1039,8 @@ img.badge {
         font-size: 0.5em !important;
     }
     nav ul {
-        width: 100%
+        width: 100%;
+        padding: 0 1em !important;
     }
     .span-nav {
         padding-top: 0 !important;
