@@ -1065,3 +1065,19 @@ img.badge {
     width: 30px;
     height: 20px;
 }
+
+/* subscribe to personal calendar */
+#info-subscribe {
+    left: 1rem;
+    top: 3rem;
+    position: absolute;
+    z-index: 999;
+    border: 1px solid #aaa;
+    padding: 0.5rem 1rem;
+    width: calc(100% - 2rem);
+    width: -moz-calc(100% - 2rem);
+    width: -webkit-calc(100% - 2rem);
+    background-color: #eee;
+    border-radius: 0.25rem;
+    overflow: hidden;
+}

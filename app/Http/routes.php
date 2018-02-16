@@ -49,6 +49,7 @@ Route::get('tournaments/{id}/toggle-featured', 'AdminController@toggleFeatured')
 Route::get('tournaments/{id}/{slug}', 'TournamentsController@show')->name('tournaments.show.slug');
 
 Route::get('calendar/event/{id}', 'CalendarController@getEventCalendar');
+Route::get('calendar/user/{secret_id}', 'CalendarController@getUserCalendar');
 
 Route::post('videos', 'VideosController@store');
 Route::delete('videos/{id}', 'VideosController@destroy');

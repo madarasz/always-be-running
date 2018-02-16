@@ -120,6 +120,7 @@ class PagesController extends Controller
         }
         $message = session()->has('message') ? session('message') : '';
         $user = $request->user();
+        $secret_id = $user->getSecretId();
         $created_count = Tournament::where('creator', $user->id)->count();
         $claim_count = Entry::where('user', $user->id)->whereNotNull('runner_deck_id')->count();
         $photo_count = Photo::where('user_id', $user->id)->count();
@@ -135,7 +136,7 @@ class PagesController extends Controller
         $corpIDs = app('App\Http\Controllers\TournamentsController')->categorizeIDs(CardIdentity::where('runner', 0)
             ->orderBy('faction_code')->orderBy('title')->get());
         return view('personal', compact('message', 'user', 'username', 'page_section', 'created_count', 'claim_count',
-            'runnerIDs', 'corpIDs', 'photo_count', 'photo_tournaments', 'video_count', 'video_tournaments'));
+            'runnerIDs', 'corpIDs', 'photo_count', 'photo_tournaments', 'video_count', 'video_tournaments', 'secret_id'));
     }
 
     public function about()

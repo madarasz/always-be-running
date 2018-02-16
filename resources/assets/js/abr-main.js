@@ -639,3 +639,10 @@ function preventPopup() {
     timeout = null;
     window.removeEventListener('pagehide', preventPopup);
 }
+// copies Personal calendar URL to clipboard
+function copySubscribe() {
+    var copyText = document.getElementById("url-subscribe");
+    copyText.select();
+    document.execCommand("Copy");
+    $('#confirm-copy').removeClass('hidden-xs-up');
+}

@@ -15,7 +15,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name', 'id', 'sharing', 'email', 'published_decks', 'private_decks', 'reputation', 'country_id', 'favorite_faction',
         'username_real', 'username_preferred', 'username_jinteki', 'username_stimhack', 'username_twitter', 'website',
-        'about', 'autofilter_upcoming', 'autofilter_results', 'username_slack', 'show_chart'
+        'about', 'autofilter_upcoming', 'autofilter_results', 'username_slack', 'show_chart', 'secret_id'
     ];
 
     /**
@@ -26,7 +26,8 @@ class User extends Authenticatable
     protected $hidden = [
         'remember_token', 'created_at', 'updated_at', 'admin', 'sharing', 'email', 'published_decks', 'private_decks',
         'username_real', 'username_jinteki', 'username_stimhack', 'username_twitter', 'website', 'about', 'reputation',
-        'country_id', 'favorite_faction', 'autofilter_upcoming', 'autofilter_results', 'username_slack', 'show_chart'
+        'country_id', 'favorite_faction', 'autofilter_upcoming', 'autofilter_results', 'username_slack', 'show_chart',
+        'secret_id'
     ];
 
     protected $primaryKey = 'id';
@@ -83,5 +84,13 @@ class User extends Authenticatable
     public function communityCount() {
         $tournament_ids = Tournament::where('creator', $this->id)->pluck('id');
         return Entry::whereIn('tournament_id', $tournament_ids)->whereIn('type', [3,4])->where('user', '!=', $this->id)->distinct('user')->count('user');
+    }
+
+    public function getSecretId() {
+        if (is_null($this->secret_id)) {
+            $this->secret_id = hash('md5', $this->id.env('APP_KEY'), false);
+            $this->save();
+        }
+        return $this->secret_id;
     }
 }

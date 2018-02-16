@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Entry;
 use App\Tournament;
+use App\User;
 use Eluceo\iCal\Component\Alarm;
 use Eluceo\iCal\Component\Calendar;
 use Eluceo\iCal\Property\Event\RecurrenceRule;
 use Eluceo\iCal\Component\Event;
 use App\Http\Requests;
+use Illuminate\Support\Facades\Log;
 
 class CalendarController extends Controller
 {
     protected $method = 'PUBLISH';
-    protected $refresh = 'P1D';
+    protected $refresh = 'P12H';
     protected $eventStatus = 'CONFIRMED';
 
     /**
@@ -38,9 +41,29 @@ class CalendarController extends Controller
         return $response;
     }
 
-    public function getUserCalendar($id) {
+    public function getUserCalendar($secret_id) {
+        $startTime = microtime(true);
 
+        $user = User::where('secret_id', $secret_id)->first();
+        if (is_null($user)) {
+            return response()->json(['error' => 'user not found']);
+        }
 
+        $calendar = new Calendar('alwaysberunning.net-user-'.$user->id);
+        $calendar->setMethod($this->method);
+        $calendar->setPublishedTTL($this->refresh);
+
+        $tournamentIds = Entry::where('user', $user->id)->pluck('tournament_id')->toArray();
+        $tournaments = Tournament::whereIn('id', $tournamentIds)->get();
+        foreach($tournaments as $tournament) {
+            $calendar->addComponent($this->getEvent($tournament));
+        }
+
+        // some logging
+        Log::info('Calendar rendered for user '
+            .$user->displayUsername().'('.$user->id.') in: '.(microtime(true)-$startTime));
+
+        return $calendar;
     }
 
     /**

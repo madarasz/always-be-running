@@ -23,11 +23,39 @@
         {{--My calendar--}}
         <div class="bracket">
             <h5>
+                <div class="pull-right">
+                    <button class="btn btn-secondary" onclick="$('#info-subscribe').toggleClass('hidden-xs-up');">
+                        <i class="fa fa-calendar-o"></i>
+                        Subscribe
+                    </button>
+                    <div id="info-subscribe" class="hidden-xs-up">
+                        <div class="small-text" style="padding-top: 0.2em; padding-bottom: 0.5em">
+                            subscription URL
+                            <span id="confirm-copy" class="hidden-xs-up">- <strong>copied</strong></span>
+                        </div>
+                        <div style="white-space: nowrap">
+                            <button class="btn btn-primary btn-xs" style="margin-top: -5px"
+                                    onclick="copySubscribe()">
+                                <i class="fa fa-copy" title="copy"></i>
+                            </button>
+                            <input id="url-subscribe" type="text" onclick="select()"
+                                   value="{{ env('APP_URL').'/calendar/user/'.$secret_id }}" size="60" readonly/>
+                        </div>
+                        <hr style="height: 1px"/>
+                        <div class="small-text">
+                            how to add to:<br/>
+                            <a href="http://visihow.com/Use_webcal_url_to_add_a_calendar_to_google_calendar" target="_blank">Google Calendar</a>
+                            - <a href="https://www.macobserver.com/tips/how-to/ios-add-shared-google-calendars-iphone/" target="_blank">iPhone/iPad</a>
+                            - <a href="https://support.apple.com/en-gb/guide/calendar/subscribe-to-calendars-icl1022/mac" target="_blank">Mac</a>
+                            - <a href="https://www.calendarwiz.com/knowledgebase/entry/71/" target="_blank">Outlook</a>
+                        </div>
+                    </div>
+                </div>
                 <i class="fa fa-calendar" aria-hidden="true"></i>
                 My calendar<br/>
                 <small>tournaments I registered to</small>
-                @include('partials.calendar')
             </h5>
+            @include('partials.calendar')
         </div>
         {{--My map--}}
         <div class="bracket">
