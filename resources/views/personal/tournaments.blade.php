@@ -24,7 +24,7 @@
         <div class="bracket">
             <h5>
                 <div class="pull-right">
-                    <button class="btn btn-secondary" onclick="$('#info-subscribe').toggleClass('hidden-xs-up');">
+                    <button class="btn btn-info" onclick="$('#info-subscribe').toggleClass('hidden-xs-up');">
                         <i class="fa fa-calendar-o"></i>
                         Subscribe
                     </button>
@@ -40,6 +40,11 @@
                             </button>
                             <input id="url-subscribe" type="text" onclick="select()"
                                    value="{{ env('APP_URL').'/calendar/user/'.$secret_id }}" size="60" readonly/>
+                        </div>
+                        <hr style="height: 1px"/>
+                        <div class="small-text">
+                            You can import these tournaments to the calendar of
+                            your device. The calendar will be updated automatically.
                         </div>
                         <hr style="height: 1px"/>
                         <div class="small-text">

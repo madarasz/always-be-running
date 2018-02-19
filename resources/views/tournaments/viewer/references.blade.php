@@ -16,7 +16,7 @@
         </div>
         {{--Calendar--}}
         <div class="text-xs-center">
-            <a href="/calendar/event/{{ $tournament->id }}" class="btn btn-secondary">
+            <a href="/calendar/event/{{ $tournament->id }}" class="btn btn-info">
                 <i class="fa fa-calendar-o"></i>
                 Download to Calendar
             </a>
