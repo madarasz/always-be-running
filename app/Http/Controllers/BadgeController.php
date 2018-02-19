@@ -409,7 +409,7 @@ class BadgeController extends Controller
     }
 
     private function addCOS($userid, &$badges) {
-        $tournaments = Tournament::whereIn('tournament_type_id', [1, 6, 7])->where('players_number', '>', 7)->where('approved', 1)->pluck('id');
+        $tournaments = Tournament::whereIn('tournament_type_id', [1, 6, 7, 10])->where('players_number', '>', 7)->where('approved', 1)->pluck('id');
         $entries = Entry::where('user', $userid)->whereIn('tournament_id', $tournaments)->where('type', 3)->get();
         foreach ($entries as $entry) {
             if ($entry->rank() == 1) {
