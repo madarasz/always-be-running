@@ -174,11 +174,11 @@
                 @if (@$default_country)
                     defaultCountry = '{{ $default_country }}';
                     $('#label-default-country').removeClass('hidden-xs-up');
-                    document.getElementById('location_country').value = '{{ $default_country_id }}';
                     $('#filter-country').addClass('active-filter');
                     $('#filter-online').removeClass('hidden-xs-up');
                     filterTournamentData(upcomingDataFiltered.tournaments, 'location_country', defaultCountry, true);
                     filterTournamentData(upcomingDataFiltered.recurring_events, 'location_country', defaultCountry);
+                    document.getElementById('location_country').value = '{{ $default_country_id }}';
                     setTimeout(displayUpcomingPageTournaments(upcomingDataFiltered), 300); //  Empty display fix
                 @endif
                 displayUpcomingPageTournaments(upcomingDataFiltered);
