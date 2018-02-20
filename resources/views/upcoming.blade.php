@@ -16,7 +16,7 @@
                         <div class="input-group">
                             {!! Form::label('tournament_type_id', 'Type:') !!}
                             {!! Form::select('tournament_type_id', array_combine($tournament_types, $tournament_types),
-                                null, ['class' => 'form-control filter', 'autocomplete' => 'off',
+                                null, ['class' => 'form-control filter', 'autocomplete' => 'none',
                                 'onchange' => "filterUpcoming()", 'disabled' => '']) !!}
                         </div>
                     </div>
@@ -24,7 +24,7 @@
                         <div class="input-group">
                             {!! Form::label('location_country', 'Country:') !!}
                             {!! Form::select('location_country', $countries, null,
-                                ['class' => 'form-control filter', 'autocomplete' => 'off',
+                                ['class' => 'form-control filter', 'autocomplete' => 'none',
                                 'onchange' => "filterUpcoming()", 'disabled' => '']) !!}
                         </div>
                         <div class="legal-bullshit text-xs-center">
@@ -42,7 +42,7 @@
                         <div class="input-group">
                             {!! Form::label('location_state', 'US State:') !!}
                             {!! Form::select('location_state', $states,
-                                        null, ['class' => 'form-control filter', 'autocomplete' => 'off',
+                                        null, ['class' => 'form-control filter', 'autocomplete' => 'none',
                                         'onchange'=>"filterUpcoming()", 'disabled' => '']) !!}
                         </div>
                     </div>
@@ -179,7 +179,6 @@
                     filterTournamentData(upcomingDataFiltered.tournaments, 'location_country', defaultCountry, true);
                     filterTournamentData(upcomingDataFiltered.recurring_events, 'location_country', defaultCountry);
                     document.getElementById('location_country').value = '{{ $default_country_id }}';
-                    setTimeout(displayUpcomingPageTournaments(upcomingDataFiltered), 300); //  Empty display fix
                 @endif
                 displayUpcomingPageTournaments(upcomingDataFiltered);
                 $('#button-show-weekly-map').prop("disabled", false);
