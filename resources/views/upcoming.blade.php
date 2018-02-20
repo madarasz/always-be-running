@@ -179,6 +179,7 @@
                     filterTournamentData(upcomingDataFiltered.tournaments, 'location_country', defaultCountry, true);
                     filterTournamentData(upcomingDataFiltered.recurring_events, 'location_country', defaultCountry);
                     document.getElementById('location_country').value = '{{ $default_country_id }}';
+                    setTimeout(displayUpcomingPageTournaments(upcomingDataFiltered), 300); //  Empty display fix
                 @endif
                 displayUpcomingPageTournaments(upcomingDataFiltered);
                 $('#button-show-weekly-map').prop("disabled", false);
