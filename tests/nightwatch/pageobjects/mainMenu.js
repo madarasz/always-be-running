@@ -40,35 +40,35 @@ module.exports = {
     commands: [menuCommands],
     elements: {
         organize: {
-            selector: "//a[contains(text(),'Organize')]",
+            selector: "//a[contains(.,'Organize')]",
             locateStrategy: 'xpath'
         },
         results: {
-            selector: "//a[contains(text(),'Results')]",
+            selector: "//a[contains(.,'Results')]",
             locateStrategy: 'xpath'
         },
         upcoming: {
-            selector: "//a[contains(text(),'Upcoming')]",
+            selector: "//a[contains(.,'Upcoming')]",
             locateStrategy: 'xpath'
         },
         admin: {
-            selector: "//a[contains(text(),'Admin')]",
+            selector: "//a[contains(.,'Admin')]",
             locateStrategy: 'xpath'
         },
         videos: {
-            selector: "//a[contains(text(),'Videos')]",
+            selector: "//a[contains(.,'Videos')]",
             locateStrategy: 'xpath'
         },
         personal: {
-            selector: "//a[contains(text(),'Personal')]",
+            selector: "//a[contains(.,'Personal')]",
             locateStrategy: 'xpath'
         },
         profile: {
-            selector: "//a[contains(text(),'Profile')]",
+            selector: "//a[contains(.,'Profile')]",
             locateStrategy: 'xpath'
         },
         login: {
-            selector: "//a[contains(text(),'Login via NetrunnerDB')]",
+            selector: "//a[contains(.,'Login via NetrunnerDB')]",
             locateStrategy: 'xpath'
         },
         logout: {

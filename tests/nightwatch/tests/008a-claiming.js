@@ -68,6 +68,7 @@ module.exports = {
         browser.page.tournamentForm().getLocationInView('@submit_button').click('@submit_button');
         browser.page.tournamentView()
             .validate()
+            .removeJson()
             .assertView({
                 conflictWarning: false,
                 playerNumbers: false,
