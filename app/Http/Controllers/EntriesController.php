@@ -94,7 +94,7 @@ class EntriesController extends Controller
         $corp_identity_title = is_null($corp_identity_title) ? "" : $corp_identity_title->title;
 
         if ($this->assessMergeNeed($import_entry, $runner_identity_title, $corp_identity_title,
-                                    $request->rank, $request->rank_top, !$tournament->top_number)) {
+                                    $request->rank, $request->rank_top, !intval($tournament->top_number))) {
             // delete import entry
             Entry::destroy($import_entry->id);
             $merge_name = $import_entry->import_username;
@@ -177,7 +177,7 @@ class EntriesController extends Controller
         $corp_identity_title = is_null($corp_identity_title) ? "" : $corp_identity_title->title;
 
         if ($this->assessMergeNeed($import_entry, $runner_identity_title, $corp_identity_title,
-                                    $request->rank_nodeck, $request->rank_top_nodeck, !$tournament->top_number)) {
+                                    $request->rank_nodeck, $request->rank_top_nodeck, !intval($tournament->top_number))) {
             // delete import entry
             Entry::destroy($import_entry->id);
             $merge_name = $import_entry->import_username;

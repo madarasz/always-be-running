@@ -816,7 +816,7 @@ class TournamentsController extends Controller
                 }
 
                 // create claims with IDs, skipping this if there is a user claim on the same rank with same IDs
-                if ($this->assessNewClaimNeed($corp, $runner, $existing, $tournament->top_number > 0, $ranktop)) { // no entry or conflicting entry
+                if ($this->assessNewClaimNeed($corp, $runner, $existing, intval($tournament->top_number) > 0, $ranktop)) { // no entry or conflicting entry
 
                     // saving new claim
                     Entry::create([
@@ -887,7 +887,7 @@ class TournamentsController extends Controller
             }
 
             // create new claim if needed
-            if ($this->assessNewClaimNeed($corp, $runner, $existing, $tournament->top_number > 0, $row[2])) {
+            if ($this->assessNewClaimNeed($corp, $runner, $existing, intval($tournament->top_number) > 0, $row[2])) {
 
                 // saving new claim
                 Entry::create([
