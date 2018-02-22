@@ -219,99 +219,106 @@ function displayMatches(id, show) {
                     // prepare tbody
                     var tbodyid;
 
-                    if (data['rounds'][index][0].eliminationGame) {
-                        // top cut
+                    if (data['rounds'][index].length > 0) {
+                        if (data['rounds'][index][0].eliminationGame) {
+                            // top cut
 
-                        tbodyid = 'tbody-matches-top-' + (index + 1);
-                        $('#table-matches-top').append($('<thead>').append($('<th>', {
-                            text: 'Top-cut bracket'
-                        })), $('<tbody>', {
-                            id: tbodyid
-                        }));
+                            tbodyid = 'tbody-matches-top-' + (index + 1);
+                            $('#table-matches-top').append($('<thead>').append($('<th>', {
+                                text: 'Top-cut bracket'
+                            })), $('<tbody>', {
+                                id: tbodyid
+                            }));
 
-                        doubleElimination.results[0].push([]); eliminationDecks[0].push([]);
-                        doubleElimination.results[1].push([]); eliminationDecks[1].push([]);
-                        doubleElimination.results[2].push([]); eliminationDecks[2].push([]);
-
-                    } else {
-
-                        // swiss
-                        tbodyid = 'tbody-matches-swiss-' + (index + 1);
-                        $('#table-matches-swiss').append($('<thead>').append($('<th>', {
-                            text: 'Round ' + (index + 1)
-                        })), $('<tbody>', {
-                            id: tbodyid
-                        }));
-                    }
-
-                    // process each match in round
-                    for (u = 0, len2 = data['rounds'][index].length; u < len2; u++) {
-                        var match = data['rounds'][index][u],
-                            player1 = null, player2 = null,
-                            matchId= 'match-'+index+'-'+u+'-',
-                            rowcClass = u % 2 ? '' : 'row-colored';
-
-                        if (match.player1.id) {
-                            player1 = chartData[data['players'][idToIndex[match.player1.id]].entry_id];
-                        }
-                        if (match.player2.id) {
-                            player2 = chartData[data['players'][idToIndex[match.player2.id]].entry_id];
-                        }
-
-                        // prepare row
-                        if (match.eliminationGame) {
-
-                            // switch players if needed to get right player order
-                            if (checkPlayerOrder(player1, player2, eliminationWinners, eliminationLosers, data.cutToTop)) {
-                                var playerm = match.player1; match.player1 = match.player2; match.player2 = playerm;
-                                player1 = chartData[data['players'][idToIndex[match.player1.id]].entry_id];
-                                player2 = chartData[data['players'][idToIndex[match.player2.id]].entry_id];
-                            }
-
-                            // get elimination data
-                            prepareEliminationData(player1, player2, match, doubleElimination.teams,
-                                doubleElimination.results, eliminationLosers, eliminationDecks, data.cutToTop);
-
-                            // build top-cut results table
-                            prepareMatchRow(tbodyid, true, rowcClass, matchId);
+                            doubleElimination.results[0].push([]);
+                            eliminationDecks[0].push([]);
+                            doubleElimination.results[1].push([]);
+                            eliminationDecks[1].push([]);
+                            doubleElimination.results[2].push([]);
+                            eliminationDecks[2].push([]);
 
                         } else {
 
-                            // build swiss results table
-                            prepareMatchRow(tbodyid, false, rowcClass, matchId);
+                            // swiss
+                            tbodyid = 'tbody-matches-swiss-' + (index + 1);
+                            $('#table-matches-swiss').append($('<thead>').append($('<th>', {
+                                text: 'Round ' + (index + 1)
+                            })), $('<tbody>', {
+                                id: tbodyid
+                            }));
                         }
 
-                        // fill row
-                        fillMatchRow(player1, player2, matchId, match);
-                    }
+                        // process each match in round
+                        for (u = 0, len2 = data['rounds'][index].length; u < len2; u++) {
+                            var match = data['rounds'][index][u],
+                                player1 = null, player2 = null,
+                                matchId = 'match-' + index + '-' + u + '-',
+                                rowcClass = u % 2 ? '' : 'row-colored';
 
-                    // adding winners, losers in a reverse order for proper player order in result array
-                    for (u = data['rounds'][index].length -1 ; u >= 0; u--) {
-                        var match = data['rounds'][index][u],
-                            player1, player2, loserName;
-                        if (match.eliminationGame) {
-                            player1 = chartData[data['players'][idToIndex[match.player1.id]].entry_id];
-                            player2 = chartData[data['players'][idToIndex[match.player2.id]].entry_id];
-                            if (match.player1.winner) {
-                                eliminationWinners.push(getPlayerName(player1));
-                                loserName = getPlayerName(player2);
+                            if (match.player1.id) {
+                                player1 = chartData[data['players'][idToIndex[match.player1.id]].entry_id];
+                            }
+                            if (match.player2.id) {
+                                player2 = chartData[data['players'][idToIndex[match.player2.id]].entry_id];
+                            }
+
+                            // prepare row
+                            if (match.eliminationGame) {
+
+                                // switch players if needed to get right player order
+                                if (checkPlayerOrder(player1, player2, eliminationWinners, eliminationLosers, data.cutToTop)) {
+                                    var playerm = match.player1;
+                                    match.player1 = match.player2;
+                                    match.player2 = playerm;
+                                    player1 = chartData[data['players'][idToIndex[match.player1.id]].entry_id];
+                                    player2 = chartData[data['players'][idToIndex[match.player2.id]].entry_id];
+                                }
+
+                                // get elimination data
+                                prepareEliminationData(player1, player2, match, doubleElimination.teams,
+                                    doubleElimination.results, eliminationLosers, eliminationDecks, data.cutToTop);
+
+                                // build top-cut results table
+                                prepareMatchRow(tbodyid, true, rowcClass, matchId);
+
                             } else {
-                                eliminationWinners.push(getPlayerName(player2));
-                                loserName = getPlayerName(player1);
-                            }
-                            if (eliminationLosers.indexOf(loserName) == -1) {
-                                eliminationLosers.push(loserName);
-                            }
-                        }
-                    }
 
-                    // empty unused rows
-                    for (u = 0; u < 3; u++) {
-                        if (match.eliminationGame && doubleElimination.results[u][doubleElimination.results[u].length - 1].length == 0) {
-                            doubleElimination.results[u].splice(doubleElimination.results[u].length - 1, 1);
+                                // build swiss results table
+                                prepareMatchRow(tbodyid, false, rowcClass, matchId);
+                            }
+
+                            // fill row
+                            fillMatchRow(player1, player2, matchId, match);
                         }
-                        if (match.eliminationGame && eliminationDecks[u][eliminationDecks[u].length -1].length == 0) {
-                            eliminationDecks[u].splice(eliminationDecks[u].length -1, 1);
+
+                        // adding winners, losers in a reverse order for proper player order in result array
+                        for (u = data['rounds'][index].length - 1; u >= 0; u--) {
+                            var match = data['rounds'][index][u],
+                                player1, player2, loserName;
+                            if (match.eliminationGame) {
+                                player1 = chartData[data['players'][idToIndex[match.player1.id]].entry_id];
+                                player2 = chartData[data['players'][idToIndex[match.player2.id]].entry_id];
+                                if (match.player1.winner) {
+                                    eliminationWinners.push(getPlayerName(player1));
+                                    loserName = getPlayerName(player2);
+                                } else {
+                                    eliminationWinners.push(getPlayerName(player2));
+                                    loserName = getPlayerName(player1);
+                                }
+                                if (eliminationLosers.indexOf(loserName) == -1) {
+                                    eliminationLosers.push(loserName);
+                                }
+                            }
+                        }
+
+                        // empty unused rows
+                        for (u = 0; u < 3; u++) {
+                            if (match.eliminationGame && doubleElimination.results[u][doubleElimination.results[u].length - 1].length == 0) {
+                                doubleElimination.results[u].splice(doubleElimination.results[u].length - 1, 1);
+                            }
+                            if (match.eliminationGame && eliminationDecks[u][eliminationDecks[u].length - 1].length == 0) {
+                                eliminationDecks[u].splice(eliminationDecks[u].length - 1, 1);
+                            }
                         }
                     }
                 }
