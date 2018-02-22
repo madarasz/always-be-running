@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -194,6 +195,22 @@ class Tournament extends Model
         }
     }
 
+    public function getTimezone() {
+        if (is_null($this->timezone) && $this->tournament_type_id != 7) { // not online tournament
+            // request timezone from google maps api
+            $tzRequest = file_get_contents("https://maps.googleapis.com/maps/api/timezone/json?location=".
+                $this->location_lat.','. $this->location_long.'&timestamp='.time($this->date).'&key='.ENV('GOOGLE_BACKEND_API'));
+            try {
+                $timezoneString = json_decode($tzRequest, true)['timeZoneId'];
+                // save to DB
+                $this->timezone = $timezoneString;
+                $this->save();
+            } catch (\Exception $ex) {
+                Log::error("Could not get timezone for event: ".$this->title." (".$this->id.")");
+            }
+        }
+        return $this->timezone;
+    }
 
     public function calendarEntry() {
         $allday = $this->tournament_type_id == 7 || strlen($this->start_time) == 0;
@@ -217,7 +234,7 @@ class Tournament extends Model
         return [
             'start' => $start,
             'end' => $end,
-            'timezone' => $this->timezone,
+            'timezone' => $this->getTimezone(),
             'title' => $this->title,
             'description' => strip_tags(\Markdown::convertToHtml($this->description)),
             'description_html' => \Markdown::convertToHtml($this->description),
