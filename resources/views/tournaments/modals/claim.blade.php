@@ -67,6 +67,9 @@
                                         <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                                         You don't have any decklist available on NetrunnerDB.
                                     </div>
+                                    <div id="warn_corp_deck_other" class="small-text hidden-xs-up">
+                                        using someone else's deck
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-xs-12 col-md-6">
@@ -79,12 +82,15 @@
                                         <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                                         You don't have any decklist available on NetrunnerDB.
                                     </div>
+                                    <div id="warn_runner_deck_other" class="small-text hidden-xs-up">
+                                        using someone else's deck
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         {{--Login prompt if user is not logged in--}}
                         <div class="text-xs-center hidden-xs-up m-b-1" id="claim-user-login">
-                            <div class="alert alert-warning" id="no-runner-deck">
+                            <div class="alert alert-warning">
                                 <i class="fa fa-refresh" aria-hidden="true"></i>
                                 There was a problem with reaching NetrunnerDB.<br/>
                                 Please try logging in again.
@@ -92,20 +98,13 @@
                             <a href="/oauth2/redirect">Login via NetrunnerDB</a> to claim spot.
                         </div>
                         {{--Publish private decks--}}
-                        <div class="alert alert-warning view-indicator text-xs-center">
-                            <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-                            Claiming with private decks is temporarily disabled.
-                            <a href="https://forum.stimhack.com/t/netrunnerdb-exploit-and-how-to-protect-yourself/9305" target="_blank">
-                                Read more.
-                            </a>
-                        </div>
-                        <div class="form-group text-xs-center m-b-0 hidden-xs-up">
-                            {!! Form::checkbox('auto_publish', null, true, ['id' => 'auto_publish']) !!}
-                            {!! Form::label('auto_publish', 'publish selected private decks') !!}
-                            {{-- <span class="text-danger legal-bullshit">(currently not working, sorry)</span> --}}
+                        <div class="alert alert-info view-indicator text-xs-center hidden-xs-up" id="alert-private">
+                            <input type="hidden" name="auto_publish" value="1"/>
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                            Your private decklist will be published.
                             @include('partials.popover', ['direction' => 'top', 'content' =>
-                                'Selecting this option will create a published copy of the private decks you
-                                used.'])
+                                'We will publish your private decklist and will reference
+                                that publised decklist.'])
                         </div>
                         {{--more options--}}
                         <div class="row">
@@ -442,11 +441,16 @@
     function switchDeck(idOwn, idOther) {
         setCheckBoxes();
 
-        // claim modal: disable own decks if other deck ID is provided
+        // claim modal: hide own decks if other deck ID is provided
         if (document.getElementById(idOther).value.length > 0) {
-            document.getElementById(idOwn).setAttribute('disabled','');
+            $('#'+idOwn).addClass('hidden-xs-up');
+            $('#warn_'+idOwn+'_other').removeClass('hidden-xs-up');
         } else {
-            document.getElementById(idOwn).removeAttribute('disabled');
+            // if you have decklists
+            if (document.getElementById(idOwn).length > 0) {
+                $('#'+idOwn).removeClass('hidden-xs-up');
+            }
+            $('#warn_'+idOwn+'_other').addClass('hidden-xs-up');
         }
     }
 
@@ -456,20 +460,21 @@
                 corpPublic = $('#corp_deck :selected').parent().prop("id") === 'corp_public',
                 otherCorpUsed = document.getElementById('other_corp_deck').value.length > 0,
                 otherRunnerUsed = document.getElementById('other_runner_deck').value.length > 0,
-                autoPublish = document.getElementById('auto_publish').checked;
+                runnerAvailable = document.getElementById("runner_deck").length > 0,
+                corpAvailable = document.getElementById("corp_deck").length > 0;
 
-        // auto-publish
-        if ((!runnerPublic && !otherRunnerUsed) || (!corpPublic && !otherCorpUsed)) {
-            $('#auto_publish').prop("disabled", false);
+        // auto-publish warning
+        if ((runnerPublic || otherRunnerUsed || !runnerAvailable) && (corpPublic || otherCorpUsed || !corpAvailable)) {
+            $('#alert-private').addClass("hidden-xs-up");
         } else {
-            $('#auto_publish').prop("disabled", true);
+            $('#alert-private').removeClass("hidden-xs-up");
         }
 
-        // Netrunner claim
-        if (runnerPublic || corpPublic || otherCorpUsed || otherRunnerUsed || autoPublish) {
-            $('#netrunnerdb_link').prop("disabled", false);
+        // enable submission
+        if ((otherRunnerUsed || runnerAvailable) && (otherCorpUsed || corpAvailable)) {
+            $('#submit-claim').removeClass('disabled').prop("disabled", false);
         } else {
-            $('#netrunnerdb_link').prop("disabled", true);
+            $('#submit-claim').addClass('disabled').prop("disabled", true);
         }
     }
 
