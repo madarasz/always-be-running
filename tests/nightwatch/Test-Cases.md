@@ -197,6 +197,18 @@
   * Import Cobra results
 * **Add claim with other user's decks**
   * Validate tournament details, user's claim, the absence of conflict
+  
+##### Claiming with user without decks
+* Login with NRDB (user without decks)
+* Navigate to Organize page, create from results
+* Fill out form with concluded, online tournament data
+* Save tournament
+* Open claim modal, validate modal
+* Add other user's runner deck ID, validate modal
+* Add other user's corp deck ID, validate modal
+* Clear deck IDs, validate modal
+* Add deck IDs again, validate modal, submit claim
+* Validate tournament page and claim
 
 **TODO**
 - Claiming with private deck

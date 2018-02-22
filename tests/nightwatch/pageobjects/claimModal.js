@@ -146,6 +146,34 @@ var claimCommands = {
 
         return this;
 
+    },
+
+    assertModal: function (data, client) {
+
+        this.log('*** Verifying claim modal ***');
+
+        var util = require('util');
+
+        this.api.useXpath().waitForElementVisible('//body', 1000);
+
+        for (var property in data) {
+            if (data.hasOwnProperty(property)) {
+                if (data[property] === true) {
+                    this.waitForElementVisible('@'+property, 1000);
+                } else if (data[property] === false) {
+                    this.waitForElementNotVisible('@'+property, 1000);
+                } else if (data[property] === 'not found') {
+                    this.verify.elementNotPresent('@'+property);
+                }
+            }
+        }
+
+
+        if (typeof callback === "function"){
+            callback.call(client);
+        }
+
+        return this;
     }
 
 };
@@ -158,7 +186,7 @@ module.exports = {
         topOption: "//select[@id='rank_top']/option[%s]",
         optionSelected: "//select[@id='%s']/option[@value='%s']",
         submit: {
-            selector: "//button[@id='submit-claim']",
+            selector: "//button[@id='submit-claim' and not(@disabled)]",
             locateStrategy: 'xpath'
         },
         submitID: {
@@ -219,6 +247,30 @@ module.exports = {
         },
         moreOptions: {
             selector: "//a[@id='collapser-options']",
+            locateStrategy: 'xpath'
+        },
+        warningNoRunnerDecks: {
+            selector: "//div[@id='no-runner-deck']",
+            locateStrategy: 'xpath'
+        },
+        warningNoCorpDecks: {
+            selector: "//div[@id='no-corp-deck']",
+            locateStrategy: 'xpath'
+        },
+        warningUsingOtherRunner: {
+            selector: "//div[@id='warn_runner_deck_other']",
+            locateStrategy: 'xpath'
+        },
+        warningUsingOtherCorp: {
+            selector: "//div[@id='warn_corp_deck_other']",
+            locateStrategy: 'xpath'
+        },
+        warningNetrunnerDB: {
+            selector: "//div[@id='claim-user-login']",
+            locateStrategy: 'xpath'
+        },
+        warningPublishing: {
+            selector: "//div[@id='alert-private']",
             locateStrategy: 'xpath'
         }
     }
