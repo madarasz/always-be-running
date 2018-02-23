@@ -75,9 +75,8 @@
                     </ul>
                 </p>
                 <p>
-                    For these reasons, I suggest you make claims with your <strong>published</strong> decklists. To make things
-                    easier, there is a <strong>publish selected private decks</strong> option when you create a claim. If you
-                    select it, AlwaysBeRunning.net will create a published version of the private decks you selected.
+                    You can claim with your <strong>private</strong> decks, but AlwaysBeRunning.net will publish these decks
+                    and will reference the published version.
                 </p>
                 <hr/>
 
