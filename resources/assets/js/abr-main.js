@@ -487,7 +487,7 @@ function updateNavBadges() {
                     $('#notif-profile').removeClass('hidden-xs-up');
                     document.getElementById('notif-profile').setAttribute("data-badge", data.profileAlerts);
                     // set badges to 'seen'
-                    if (document.getElementById('nav-profile').classList.contains('active')) {
+                    if (document.getElementById('nav-profile').parentElement.parentElement.classList.contains('active')) {
                         $.post('/api/badgesseen/' + window.location.href.split("/").pop(),
                             { '_token': document.getElementsByName('_token')[0].value});
                     }
