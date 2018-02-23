@@ -25,8 +25,8 @@ module.exports = {
             claim2 = browser.globals.claims.claim2,
             tournamentCobraJsonWithTopCut = JSON.parse(JSON.stringify(browser.globals.tournaments.tournamentCobraJsonWithTopCut)); // clone
 
-        tournamentCobraJsonWithTopCut.title = browser.currentTest.module.substring(0, 3) + "|" +
-            browser.currentTest.name.substring(0, 29) + "|" + tournamentCobraJsonWithTopCut.title.substring(0, 16);
+        tournamentCobraJsonWithTopCut.title = browser.currentTest.module.substring(0, 4) + "|" +
+            browser.currentTest.name.substring(0, 28) + "|" + tournamentCobraJsonWithTopCut.title.substring(0, 16);
 
         // Open browser
         browser.url(browser.launchUrl);

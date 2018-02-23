@@ -51,8 +51,8 @@ module.exports = {
                 corp_deck_id: claim3.corp_deck_id
             };
 
-        tournamentCobraJsonWithTopCut.title = browser.currentTest.module.substring(0, 3) + "|" +
-            browser.currentTest.name.substring(0, 29) + "|" + tournamentCobraJsonWithTopCut.title.substring(0, 16);
+        tournamentCobraJsonWithTopCut.title = browser.currentTest.module.substring(0, 4) + "|" +
+            browser.currentTest.name.substring(0, 28) + "|" + tournamentCobraJsonWithTopCut.title.substring(0, 16);
 
         // Open browser
         browser.url(browser.launchUrl);

@@ -40,8 +40,8 @@ module.exports = {
             claim1 = browser.globals.claims.claim1,
             tournamentNrtmJsonWithoutTopCut = JSON.parse(JSON.stringify(browser.globals.tournaments.tournamentNrtmJsonWithoutTopCut)); // clone
 
-        tournamentNrtmJsonWithoutTopCut.title = browser.currentTest.module.substring(0, 3) + "|" +
-            browser.currentTest.name.substring(0, 29) + "|" + tournamentNrtmJsonWithoutTopCut.title.substring(0, 16);
+        tournamentNrtmJsonWithoutTopCut.title = browser.currentTest.module.substring(0, 4) + "|" +
+            browser.currentTest.name.substring(0, 28) + "|" + tournamentNrtmJsonWithoutTopCut.title.substring(0, 16);
 
         // Open browser
         browser.url(browser.launchUrl);

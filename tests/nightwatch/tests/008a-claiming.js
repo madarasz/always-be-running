@@ -25,8 +25,8 @@ module.exports = {
         var regularLogin = browser.globals.accounts.regularLogin,
             tournamentOnlineConcluded = JSON.parse(JSON.stringify(browser.globals.tournaments.tournamentOnlineConcluded)); // clone
 
-        tournamentOnlineConcluded.title = browser.currentTest.module.substring(0,3) + "|" +
-            browser.currentTest.name.substring(0,29) + "|" + tournamentOnlineConcluded.title.substring(0, 16);
+        tournamentOnlineConcluded.title = browser.currentTest.module.substring(0,4) + "|" +
+            browser.currentTest.name.substring(0,28) + "|" + tournamentOnlineConcluded.title.substring(0, 16);
 
         // open browser
         browser.url(browser.launchUrl);

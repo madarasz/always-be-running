@@ -23,7 +23,6 @@ module.exports = {
      */
     'Claiming with user without decks': function (browser) {
 
-        var util = require('util');
         var emptyLogin = browser.globals.accounts.emptyLogin,
             claim1 = browser.globals.claims.claim1,
             tournamentNrtmJsonWithoutTopCut =
