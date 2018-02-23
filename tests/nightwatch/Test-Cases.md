@@ -210,8 +210,20 @@
 * Add deck IDs again, validate modal, submit claim
 * Validate tournament page and claim
 
+##### Claiming with private decks, publishing
+* Go to NetrunnerDB, login (regular login)
+* Go to My Decklists, delete all previously published decklist by this test case
+* Go to ABR, login with NRDB (regular user)
+* Create concluded tournament
+* Open claim modal, validate modal
+* Select private and published deck, validate modal
+* Select just published decks, validate modal
+* Select private and published deck, validate modal, submit claim
+* Validate tournament page and claim
+* Go to NetrunnerDB, verify that private deck was published
+* Delete published deck on NetrunnerDB
+
 **TODO**
-- Claiming with private deck
 - Manual import
 - Admin: delete other user's claim
 - Check winner is topcut-winner, not swiss winner in Results table and Featured box

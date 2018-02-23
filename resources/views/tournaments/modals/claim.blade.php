@@ -361,7 +361,7 @@
             } else {
 
                 // add optgroups
-                if (data.privateNetrunnerDB[side].length && data.publicNetrunnerDB[side].length) {
+//                if (data.privateNetrunnerDB[side].length && data.publicNetrunnerDB[side].length) {
                     modal.find(rootElement).append($('<optgroup>', {
                         label: '--- published decks ---',
                         id: side + '_public'
@@ -372,7 +372,7 @@
                     }));
                     publicRoot = modal.find('#' + side + '_public');
                     privateRoot = modal.find('#' + side + '_private');
-                }
+//                }
 
                 // add public decks
                 if (data.publicNetrunnerDB) {

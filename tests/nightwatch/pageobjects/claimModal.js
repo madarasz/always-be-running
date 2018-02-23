@@ -1,7 +1,7 @@
 var claimCommands = {
 
     validate: function(title, players_number, top_number, client) {
-        this.log('* Validating conclude tournament modal *');
+        this.log('* Validating claim tournament modal *');
 
         var util = require('util');
 

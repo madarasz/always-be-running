@@ -32,10 +32,17 @@ var claim1 = {
         corp_id: 'Titan Transnational',
         runner_deck_id: '48167',
         corp_deck_id: '48166'
+    },
+    claim4 = {
+        rank: '1',
+        rank_top: '0',
+        runner_deck: 'Testing Private Deck - Leela',
+        corp_deck: 'Testing deck - Titan'
     };
 
 module.exports = {
     claim1: claim1,
     claim2: claim2,
-    claim3: claim3
+    claim3: claim3,
+    claim4: claim4
 };
