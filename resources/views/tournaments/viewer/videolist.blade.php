@@ -45,7 +45,7 @@
                         @endif
                         {{--display IDs--}}
                         @if ($videos[$i]->tournament->registrationCount && $tag->user)
-                            <?php if (is_null(@$entries)) $entries = $videos[$i]->tournament->entries; ?>
+                            <?php if (@$profile) $entries = $videos[$i]->tournament->entries; ?>
                             @for ($u = 0; $u < count($entries); $u++)
                                 @if($entries[$u]->user == $tag->user_id)
                                     @if ($entries[$u]->type == 3)

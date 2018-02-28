@@ -6,7 +6,8 @@
         </h5>
 
         @include('tournaments.viewer.videolist',
-            ['id' => 'list-user-video', 'videos' => $user->videos()->orderBy('videos.created_at', 'desc')->get(), 'user' => \Illuminate\Support\Facades\Auth::user()])
+            ['id' => 'list-user-video', 'videos' => $user->videos()->orderBy('videos.created_at', 'desc')->get(),
+            'user' => \Illuminate\Support\Facades\Auth::user(), 'profile' => true])
 
         {{--viewer--}}
         <div id="section-watch-video" class="hidden-xs-up text-xs-center">
