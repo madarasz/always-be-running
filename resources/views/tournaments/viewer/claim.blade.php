@@ -64,7 +64,9 @@
                     data-players-number="{{$tournament->players_number}}"
                     data-top-number="{{$tournament->top_number}}"
                     data-target="#claimModal" data-tournament-id="{{$tournament->id}}"
-                    data-subtitle="{{$tournament->title.' - '.$tournament->date}}" id="button-claim">
+                    data-subtitle="{{$tournament->title.' - '.$tournament->date}}"
+                    data-swiss-rank="0" data-top-rank="0"
+                    id="button-claim">
                 <i class="fa fa-list-ol" aria-hidden="true"></i> Claim your spot
             </button>
         </div>

@@ -85,11 +85,24 @@
                     {{ $entry->runner_deck_title }}
                 @endif
             </td>
+            {{--Claim button--}}
+            <td class="text-right" style="white-space: nowrap;">
+            @if ((!$user_entry || $user_entry->type < 3) && $entry->type != 3 && $entry->type != 4)
+                <button class="btn btn-claim btn-xs" data-toggle="modal"
+                        data-players-number="{{$tournament->players_number}}"
+                        data-top-number="{{$tournament->top_number}}"
+                        data-target="#claimModal" data-tournament-id="{{$tournament->id}}"
+                        data-subtitle="{{$tournament->title.' - '.$tournament->date}}"
+                        data-swiss-rank="{{ $entry->rank }}"
+                        data-top-rank="{{  $entry->rank_top }}"
+                        id="button-claim">
+                    Claim
+                </button>
+            @endif
             {{--Remove button--}}
             @if (($entry->type == 3 || $entry->type == 4) && (($user && ($user->admin || $user->id == $creator))
                 || ($user_entry && count($entry) && $entry->user == $user_entry->user)))
-                <td class="text-right">
-                    {!! Form::open(['method' => 'DELETE', 'url' => "/entries/$entry->id"]) !!}
+                    {!! Form::open(['method' => 'DELETE', 'url' => "/entries/$entry->id", 'style' => 'display:inline']) !!}
                         @if ($user_entry && count($entry) && $entry->user == $user_entry->user)
                             {{--own entry--}}
                             {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove',
@@ -101,23 +114,32 @@
                                 'onclick' => "return confirm('Are you sure you want to delete the claim of ".$entry->player->displayUsername()."?')")) !!}
                         @endif
                     {!! Form::close() !!}
-                </td>
             @elseif ($user && $entry->type > 4 && ($user->admin || $user->id == $creator || $user->id == $tournament->concluded_by))
-                <td class="text-xs-right">
-                    {!! Form::open(['method' => 'DELETE', 'url' => "/entries/anonym/$entry->id"]) !!}
-                        {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i>', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs delete-anonym')) !!}
-                    {!! Form::close() !!}
-                </td>
-            @else
-                <td></td>
+                {!! Form::open(['method' => 'DELETE', 'url' => "/entries/anonym/$entry->id", 'style' => 'display:inline']) !!}
+                    {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i>', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs delete-anonym')) !!}
+                {!! Form::close() !!}
             @endif
+            </td>
         @empty
             <tr>
                 <td class="text-right">#{{ $i+1 }}</td>
                 <td></td>
                 <td colspan="2"><em><small>unclaimed</small></em></td>
                 <td colspan="2"><em><small>unclaimed</small></em></td>
-                <td></td>
+                <td>
+                    @if (!$user_entry || $user_entry->type < 3)
+                        <button class="btn btn-claim btn-xs" data-toggle="modal"
+                                data-players-number="{{$tournament->players_number}}"
+                                data-top-number="{{$tournament->top_number}}"
+                                data-target="#claimModal" data-tournament-id="{{$tournament->id}}"
+                                data-subtitle="{{$tournament->title.' - '.$tournament->date}}"
+                                data-swiss-rank="{{ $rank == 'rank' ? ($i+1) : 0}}"
+                                data-top-rank="{{ $rank == 'rank_top' ? ($i+1) : 0}}"
+                                id="button-claim">
+                            Claim
+                        </button>
+                    @endif
+                </td>
         @endforelse
         </tr>
     @endfor

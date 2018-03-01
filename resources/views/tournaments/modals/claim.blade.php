@@ -305,6 +305,9 @@
         // update identities according to rank
         setIdentities();
 
+        // set rank and top rank automatically
+        setRanks(button.data('swiss-rank'), button.data('top-rank'));
+
         // load deck via API
         if (!deckData) {
             loadDecks();
@@ -494,9 +497,9 @@
 
     function rankCheck() {
         var swissRankSelect = document.getElementById("rank"),
-                topRankSelect = document.getElementById("rank_top"),
-                selectedSwissRank = swissRankSelect.options[swissRankSelect.selectedIndex].value,
-                selectedTopRank = topRankSelect.options[topRankSelect.selectedIndex].value;
+            topRankSelect = document.getElementById("rank_top"),
+            selectedSwissRank = swissRankSelect.options[swissRankSelect.selectedIndex].value,
+            selectedTopRank = topRankSelect.options[topRankSelect.selectedIndex].value;
 
         // show warning if inconsistent
         if ((selectedSwissRank <= top_number && selectedTopRank == 0) ||
@@ -509,8 +512,23 @@
             $('#warning-inconsistent-nodeck').addClass('hidden-xs-up');
             $('.popover').popover('hide');
         }
+    }
 
-
+    function setRanks(swissRank, topRank) {
+        if (swissRank > 0) {
+            $('#rank').val(swissRank);
+            $('#rank_nodeck').val(swissRank);
+        }
+        if (topRank > -1) {
+            $('#rank_top').val(topRank);
+            $('#rank_top_nodeck').val(topRank);
+        }
+        if (topRank > -1 || swissRank > 0) {
+            if (top_number > 0) {
+                rankCheck();
+            }
+            setIdentities();
+        }
     }
 
 </script>
