@@ -40,5 +40,19 @@
     </div>
 
     @include('partials.analytics')
+
+    <script type="text/javascript">
+        // Javascript to enable selecting tab
+        var url = document.location.toString();
+        if (url.match('#')) {
+            $(".nav-tabs a[href='#"+url.split('#')[1]+"']").tab('show');
+        }
+
+        // Change URL hash for tab
+        $('.nav-tabs a').on('shown.bs.tab', function (e) {
+            window.location.hash = e.target.hash;
+            window.scrollTo(0,0);
+        });
+    </script>
 </body>
 </html>
