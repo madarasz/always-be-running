@@ -5,6 +5,8 @@ var shell = require("gulp-shell");
 var nightwatch = require('gulp-nightwatch');
 var clean = require('gulp-rimraf');
 
+require('laravel-elixir-vueify');
+
 /*
  |--------------------------------------------------------------------------
  | Elixir Asset Management
