@@ -51,7 +51,8 @@ elixir(function(mix) {
             "jquery.bracket.min.js",
             "ekko-lightbox.min.js",
             "atc.min.js",
-            "jquery.timepicker.min.js"
+            "jquery.timepicker.min.js",
+            "cookieconsent.min.js"
         ])
         .styles([
             'font-awesome.css',
