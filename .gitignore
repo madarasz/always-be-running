@@ -31,6 +31,7 @@ cards.json
 composer.phar
 resources/assets/js/bootstrap.min.js
 resources/assets/js/tether.js
+resources/assets/js/vue*
 phantomjsdriver.log
 app/Http/Controllers/ASController.php
 jquery.bracket.min.js

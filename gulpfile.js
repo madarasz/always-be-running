@@ -4,8 +4,8 @@ var gulp = require("gulp");
 var shell = require("gulp-shell");
 var nightwatch = require('gulp-nightwatch');
 var clean = require('gulp-rimraf');
-
-require('laravel-elixir-vueify');
+var vueFile = elixir.config.production ? "vue.min.js" : "vue.js";
+console.log(elixir.config.production);
 
 /*
  |--------------------------------------------------------------------------
@@ -23,7 +23,8 @@ elixir(function(mix) {
         bootstrap4Path = 'node_modules/bootstrap/dist',
         bracketPath = 'node_modules/jquery-bracket/dist',
         timepickerPath = 'node_modules/timepicker',
-        tetherPath = 'node_modules/tether/dist/js';
+        tetherPath = 'node_modules/tether/dist/js',
+        vuePath = 'node_modules/vue/dist/';
     mix.copy('resources/assets/fonts', 'public/fonts')
         .copy('resources/assets/img', 'public/img')
         .copy('resources/assets/favicons', 'public')
@@ -34,6 +35,7 @@ elixir(function(mix) {
         .copy(bracketPath + '/jquery.bracket.min.css', 'public/css')
         .copy(timepickerPath + '/jquery.timepicker.min.css', 'resources/assets/css')
         .copy(timepickerPath + '/jquery.timepicker.min.js', 'resources/assets/js')
+        .copy(vuePath + vueFile, 'resources/assets/js')
         .sass('app.scss')
         .scripts([
             "jquery-2.2.3.min.js",      // TODO: jquery from npm?
@@ -52,7 +54,8 @@ elixir(function(mix) {
             "ekko-lightbox.min.js",
             "atc.min.js",
             "jquery.timepicker.min.js",
-            "cookieconsent.min.js"
+            "cookieconsent.min.js",
+            vueFile
         ])
         .styles([
             'font-awesome.css',
