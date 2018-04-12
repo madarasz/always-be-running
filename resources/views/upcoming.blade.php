@@ -182,6 +182,7 @@
                     setTimeout(displayUpcomingPageTournaments(upcomingDataFiltered), 300); //  Empty display fix
                 @endif
                 displayUpcomingPageTournaments(upcomingDataFiltered);
+                setTimeout(displayUpcomingPageTournaments(upcomingDataFiltered), 1000); //  Empty display fix
                 $('#button-show-weekly-map').prop("disabled", false);
                 $('#button-show-weekly-calendar').prop("disabled", false);
             });
