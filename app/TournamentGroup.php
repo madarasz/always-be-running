@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class TournamentGroup extends Model
 {
     public $timestamps = true;
-    protected $fillable = ['title', 'date', 'location', 'creator'];
+    protected $fillable = ['title', 'date', 'location', 'creator', 'description'];
     protected $dates = ['created_at', 'updated_at'];
     protected $hidden = ['created_at', 'updated_at'];
     protected $appends = ['tournamentCount'];
