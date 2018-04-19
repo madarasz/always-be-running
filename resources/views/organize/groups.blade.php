@@ -251,6 +251,7 @@
                     .then(function(response) {
                         $("#modal-group").modal('hide');
                         toastr.info('Group updated successfully.', '', {timeOut: 2000});
+                        tournamentGroups.loadGroup(tournamentGroups.group.id);
                     }, function(response) {
                         // error handling
                         toastr.error('Something went wrong.', '', {timeOut: 2000});
