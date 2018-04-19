@@ -19,9 +19,14 @@
                     </div>
 
                     {{--Description--}}
-                    <div class="form-group">
+                    <div class="form-group m-b-3">
                         <label for="description">Description:</label>
-                        <textarea name="description" class="form-control" v-model="group.description"></textarea>
+                        <textarea name="description" class="form-control" v-model="group.description" rows="6"></textarea>
+                        <div class="pull-right">
+                            <small><a href="http://commonmark.org/help/" target="_blank" rel="nofollow"><img src="/img/markdown_icon.png"/></a> formatting is supported</small>
+                            @include('partials.popover', ['direction' => 'top', 'content' =>
+                                    '<a href="http://commonmark.org/help/" target="_blank">Markdown cheat sheet</a>'])
+                        </div>
                     </div>
 
                     {{--Location--}}

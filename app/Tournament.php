@@ -47,6 +47,11 @@ class Tournament extends Model
         return $this->hasMany(Video::class, 'tournament_id', 'id');
     }
 
+    public function groups() {
+        return $this->belongsToMany(TournamentGroup::class, 'tournament_tournament_groups',
+            'tournament_id', 'tournament_group_id');
+    }
+
     // videos counting with optimized performance
     public function videosCount() {
         return $this->hasOne(Video::class)->selectRaw('tournament_id, count(*) as aggregate')->groupBy('tournament_id');

@@ -34,6 +34,7 @@ resources/assets/js/tether.js
 resources/assets/js/vue*
 resources/assets/js/axios.min.js
 resources/assets/js/require.js
+resources/assets/js/marked.js
 resources/assets/*/toastr.min.*
 phantomjsdriver.log
 app/Http/Controllers/ASController.php

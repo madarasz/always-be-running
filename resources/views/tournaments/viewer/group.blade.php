@@ -37,4 +37,7 @@
             @endforeach
         </tbody>
     </table>
+    <div class="markdown-content">
+        {!! Markdown::convertToHtml(str_replace(["\r\n", "\r", "\n"], "  \r", $group->description)) !!}
+    </div>
 </div>

@@ -82,7 +82,8 @@
                 <div v-if="selectedGroup != ''" class="p-b-1">
                     <strong>title:</strong> @{{ selectedGroup.title }}<br/>
                     <strong>location:</strong> @{{ selectedGroup.location }}<br/>
-                    <strong>description:</strong> @{{ selectedGroup.description }}
+                    <strong>description:</strong>
+                    <div v-html="compiledMarkdown"></div>
                 </div>
             </div>
         </div>
@@ -161,6 +162,14 @@
         },
         components: {
 
+        },
+        computed: {
+            compiledMarkdown: function () {
+                if (this.selectedGroup == '') {
+                    return '';
+                }
+                return marked(this.selectedGroup.description, { sanitize: true })
+            }
         },
         mounted: function() {
             this.loadMyGroups();
