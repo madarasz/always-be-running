@@ -9,10 +9,23 @@
                 <h5>
                     <i class="fa fa-folder-open" aria-hidden="true"></i>
                     <span class="hidden-sm-down">Tournament</span> Groups created by me
-                    <a class="btn btn-success pull-right white-text" id="button-create-group"
-                       data-toggle="modal" data-target="#modal-group" @click="modalForCreate">
+                    <div class="pull-right">
+                        @if (@$admin)
+                            <a class="btn btn-primary white-text" @click="adminMode=true; loadMyGroups();" v-if="!adminMode">
+                                <i class="fa fa-eye"></i>
+                                Admin mode
+                            </a>
+                            <a class="btn btn-primary white-text" @click="adminMode=false; loadMyGroups();" v-if="adminMode">
+                                <i class="fa fa-eye-slash"></i>
+                                Normal mode
+                            </a>
+                        @endif
+                        <a class="btn btn-success white-text" id="button-create-group"
+                           data-toggle="modal" data-target="#modal-group" @click="modalForCreate">
                         Create Group
-                    </a>
+                        </a>
+                    </div>
+
                 </h5>
                 <div class="loader" id="my-groups-loader">&nbsp;</div>
                 <table class="table table-sm table-striped abr-table table-doublerow hover-row">
@@ -22,6 +35,7 @@
                             <span class="hidden-sm-down">#tournaments</span>
                             <span class="hidden-md-up">#</span>
                         </th>
+                        <th v-if="adminMode">creator</th>
                         <th>location</th>
                         <th></th>
                     </thead>
@@ -42,6 +56,11 @@
                                     @click="linkForm.location = group.location; modalForLink(group);">
                                     <i class="fa fa-link" aria-hidden="true"></i>
                                     link
+                                </a>
+                            </td>
+                            <td v-if="adminMode">
+                                <a :href="'/profile/'+group.creator.id" :class="group.creator.linkClass">
+                                    @{{ group.creator.displayUsername }}
                                 </a>
                             </td>
                             <td>@{{ group.location }}</td>
@@ -158,7 +177,8 @@
             linkForm: {
                 own: true,
                 tournaments: []
-            }
+            },
+            adminMode: false
         },
         components: {
 
@@ -177,7 +197,11 @@
         methods: {
             // load all my groups
             loadMyGroups: function() {
-                axios.get('/api/tournament-groups?user='+ '{{ $user }}' ).then(function (response) {
+                var requestUrl = '/api/tournament-groups';
+                if (!this.adminMode) {
+                    requestUrl += '?user='+ '{{ $user }}';
+                }
+                axios.get(requestUrl).then(function (response) {
                     tournamentGroups.myGroups = response.data;
                     $('#my-groups-loader').addClass('hidden-xs-up');
                 }, function(response) {

@@ -109,13 +109,14 @@ class PagesController extends Controller
         $this->authorize('logged_in', Tournament::class, $request->user());
 
         $user = $request->user()->id;
+        $admin = $request->user()->admin == 1;
         $countries = Country::orderBy('name')->pluck('name', 'name');
         $usedCountries = Tournament::where('location_country', '!=', '')->orderBy('location_country')
             ->groupBy('location_country')->pluck('location_country', 'location_country');
 
         $message = session()->has('message') ? session('message') : '';
         $page_section = 'organize';
-        return view('organize', compact('user', 'message', 'page_section', 'countries', 'usedCountries'));
+        return view('organize', compact('user', 'message', 'page_section', 'countries', 'usedCountries', 'admin'));
     }
 
     public function personal(Request $request)

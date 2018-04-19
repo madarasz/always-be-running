@@ -16,11 +16,13 @@ class TournamentGroupController extends Controller
      */
     public function getTournamentGroups(Request $request) {
 
-        if (is_null($request->input('user'))) {
-            $groups = TournamentGroup::get()->makeHidden(['tournaments']);
-        } else {
-            $groups = TournamentGroup::where('creator', $request->input('user'))->get()->makeHidden(['tournaments']);
+        $groups = TournamentGroup::with(['creator']);
+
+        if (!is_null($request->input('user'))) {
+            $groups = $groups->where('creator', $request->input('user'));
         }
+
+        $groups = $groups->get()->makeHidden(['tournaments']);
 
         return response()->json($groups);
     }

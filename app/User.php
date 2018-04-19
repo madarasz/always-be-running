@@ -30,6 +30,8 @@ class User extends Authenticatable
         'secret_id'
     ];
 
+    protected $appends = ['linkClass', 'displayUsername'];
+
     protected $primaryKey = 'id';
 
     public function displayUsername() {
@@ -79,6 +81,10 @@ class User extends Authenticatable
             return "supporter";
         }
         return "";
+    }
+
+    public function getLinkClassAttribute() {
+        return $this->linkClass();
     }
 
     public function communityCount() {
