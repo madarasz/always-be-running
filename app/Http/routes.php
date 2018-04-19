@@ -63,12 +63,21 @@ Route::get('photos/{id}/approve-all', 'PhotosController@approveAll');
 Route::get('photos/{id}/rotate/{dir}', 'PhotosController@rotate');
 Route::delete('photos/{id}', 'PhotosController@destroy');
 
+Route::get('/api/tournament-groups', 'TournamentGroupController@getTournamentGroups');
+Route::get('/api/tournament-groups/{id}', 'TournamentGroupController@getTournamentGroupDetails');
+Route::post('/api/tournament-groups', 'TournamentGroupController@createTournamentGroup');
+Route::delete('/api/tournament-groups/{id}', 'TournamentGroupController@deleteTournamentGroup');
+Route::put('/api/tournament-groups/{id}', 'TournamentGroupController@editTournamentGroup');
+Route::post('/api/tournament-groups/{groupId}/link/{tournamentId}', 'TournamentGroupController@linkTournamentToGroup');
+Route::post('/api/tournament-groups/{groupId}/unlink/{tournamentId}', 'TournamentGroupController@unlinkTournamentToGroup');
+
 Route::get('/oauth2/redirect', 'NetrunnerDBController@login');
 Route::get('/logout', 'NetrunnerDBController@logout');
 
 Route::get('/api/tournaments/upcoming', 'TournamentsController@upcomingTournamentJSON');
 Route::get('/api/tournaments/results', 'TournamentsController@resultTournamentJSON');
 Route::get('/api/tournaments', 'TournamentsController@tournamentJSON'); // for internal use
+Route::get('/api/tournaments/brief', 'TournamentsController@briefTournamentJSON'); // for internal use, list tournaments for groups
 
 Route::get('/api/userdecks', 'NetrunnerDBController@getUserDecksJSON');
 Route::get('/api/entries', 'EntriesController@entriesJSON');

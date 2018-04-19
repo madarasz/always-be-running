@@ -16,7 +16,7 @@ class Tournament extends Model
         'recur_weekly', 'incomplete', 'link_facebook', 'tournament_format_id', 'end_date', 'concluded_by', 'concluded_at',
         'relax_conflicts', 'timezone'];
     protected $dates = ['created_at', 'updated_at', 'deleted_at', 'concluded_at'];
-    protected $hidden = ['tournament_type_id', 'tournament_format_id', 'cardpool_id', 'relax_conflicts', 'timezone'];
+    protected $hidden = ['tournament_type_id', 'tournament_format_id', 'cardpool_id', 'relax_conflicts', 'timezone', 'pivot'];
     protected $appends = ['seoUrl'];
 
     public function tournament_type() {

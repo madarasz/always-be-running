@@ -5,7 +5,6 @@ var shell = require("gulp-shell");
 var nightwatch = require('gulp-nightwatch');
 var clean = require('gulp-rimraf');
 var vueFile = elixir.config.production ? "vue.min.js" : "vue.js";
-console.log(elixir.config.production);
 
 /*
  |--------------------------------------------------------------------------
@@ -24,10 +23,13 @@ elixir(function(mix) {
         bracketPath = 'node_modules/jquery-bracket/dist',
         timepickerPath = 'node_modules/timepicker',
         tetherPath = 'node_modules/tether/dist/js',
-        vuePath = 'node_modules/vue/dist/';
+        vuePath = 'node_modules/vue/dist/',
+        axiosPath = 'node_modules/axios/dist/axios.min.js',
+        toastrPath = 'node_modules/toastr/build/';
     mix.copy('resources/assets/fonts', 'public/fonts')
         .copy('resources/assets/img', 'public/img')
         .copy('resources/assets/favicons', 'public')
+        .copy('resources/assets/vue', 'public/vue')
         .copy(bootstrapPath + '/fonts', 'public/fonts')
         .copy(bootstrap4Path + '/js/bootstrap.min.js', 'resources/assets/js')
         .copy(tetherPath + '/tether.js', 'resources/assets/js')
@@ -36,6 +38,10 @@ elixir(function(mix) {
         .copy(timepickerPath + '/jquery.timepicker.min.css', 'resources/assets/css')
         .copy(timepickerPath + '/jquery.timepicker.min.js', 'resources/assets/js')
         .copy(vuePath + vueFile, 'resources/assets/js')
+        .copy(axiosPath, 'resources/assets/js')
+        .copy(toastrPath + '/toastr.min.css', 'resources/assets/css')
+        .copy(toastrPath + '/toastr.min.js', 'resources/assets/js')
+        .copy('node_modules/requirejs/require.js', 'resources/assets/js')
         .sass('app.scss')
         .scripts([
             "jquery-2.2.3.min.js",      // TODO: jquery from npm?
@@ -55,7 +61,11 @@ elixir(function(mix) {
             "atc.min.js",
             "jquery.timepicker.min.js",
             "cookieconsent.min.js",
-            vueFile
+            vueFile,
+            "axios.min.js",
+            "toastr.min.js",
+            "require.js",
+            "abr-vue.js"
         ])
         .styles([
             'font-awesome.css',
@@ -66,7 +76,8 @@ elixir(function(mix) {
             'netrunner.css',
             'main.css',
             'ekko-lightbox.min.css',
-            'jquery.timepicker.min.css'
+            'jquery.timepicker.min.css',
+            'toastr.min.css'
         ])
         .version(['css/all.css', 'js/all.js']);
 

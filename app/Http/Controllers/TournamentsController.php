@@ -294,6 +294,31 @@ class TournamentsController extends Controller
         return response()->json($result);
     }
 
+    /**
+     * List tournaments in a brief way (id, title, date).
+     * Can be filtered with 'user' and 'location' GET parameters.
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function briefTournamentJSON(Request $request) {
+        $tournaments = Tournament::where('incomplete', 0)->whereNotNull('date');
+        // filter for user
+        if (!is_null($request->input('user'))) {
+            $tournaments = $tournaments->where('creator', $request->input('user'));
+        }
+        // filter for country / online
+        if (!is_null($request->input('location'))) {
+            if ($request->input('location') == 'online') {
+                $tournaments = $tournaments->where('tournament_type_id', 7);
+            } else {
+                $tournaments = $tournaments->where('location_country', $request->input('location'));
+            }
+        }
+        $tournaments = $tournaments->select(['id', 'title', 'date'])->orderBy('date', 'desc')->get()->makeHidden(['seoUrl']);
+
+        return response()->json($tournaments);
+    }
+
     private function applyLimitOffset(Request $request, &$tournaments) {
         // applying limit
         if ($request->input('limit')) {

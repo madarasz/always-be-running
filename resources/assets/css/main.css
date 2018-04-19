@@ -1115,3 +1115,8 @@ img.badge {
     border-radius: 0.25rem;
     overflow: hidden;
 }
+
+table.hover-row > tbody > tr:hover > td {
+    background-color: #ccc;
+    cursor: pointer;
+}

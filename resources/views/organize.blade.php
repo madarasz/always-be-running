@@ -2,7 +2,7 @@
 
 @section('content')
     {{--Header, main buttons--}}
-    <h4 class="page-header p-b-1">
+    <h4 class="page-header p-b-1 m-b-0">
         <div class="pull-right">
             <a href="/tournaments/create" class="btn btn-primary">Create Tournament</a>
             <button class="btn btn-info" data-toggle="modal" data-target="#fbImportModal">
@@ -21,38 +21,34 @@
     @include('partials.message')
     @include('errors.list')
 
-    {{--Notifications for conclude, unknown cardpool incomplete--}}
-    <div class="alert alert-warning view-indicator notif-red notif-badge-page hidden-xs-up" id="notif-conclude" data-badge="">
-        <i class="fa fa-clock-o" aria-hidden="true"></i>
-        You have tournaments waiting for conclusion.
-    </div>
-    <div class="alert alert-warning view-indicator notif-red notif-badge-page hidden-xs-up" id="notif-cardpool" data-badge="">
-        <i class="fa fa-clock-o" aria-hidden="true"></i>
-        It's time to set the cardpool for some of your tournaments.
-    </div>
-    <div class="alert alert-warning view-indicator notif-red notif-badge-page hidden-xs-up" id="notif-incomplete" data-badge="">
-        <i class="fa fa-clock-o" aria-hidden="true"></i>
-        You have incomplete imports. Please update or delete.
+    {{--Tabs--}}
+    <div class="modal-tabs">
+        <ul id="admin-tabs" class="nav nav-tabs" role="tablist">
+            <li class="nav-item notif-red notif-badge" id="tabf-tournament">
+                <a class="nav-link active" data-toggle="tab" href="#tab-tournaments" role="tab">
+                    <i class="fa fa-list-alt" aria-hidden="true"></i>
+                    Tournaments
+                </a>
+            </li>
+            <li class="nav-item notif-red notif-badge" id="tabf-group">
+                <a class="nav-link" data-toggle="tab" href="#tab-groups" role="tab">
+                    <i class="fa fa-folder-open" aria-hidden="true"></i>
+                    Tournament Groups
+                </a>
+            </li>
+        </ul>
     </div>
 
-    {{--Table for tournaments created by me--}}
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="bracket">
-            @include('tournaments.partials.tabledin',
-                ['columns' => ['title', 'date', 'location', 'cardpool', 'approval', 'conclusion', 'players', 'claims',
-                    'action_edit', 'action_delete' ], 'doublerow' => true,
-                'title' => 'Tournaments created by me', 'id' => 'created', 'icon' => 'fa-list-alt', 'loader' => true])
-            </div>
-            <div class="bracket hidden-xs-up" id="bracket-incomplete">
-                @include('tournaments.partials.tabledin',
-                    ['columns' => ['title', 'date', 'location', 'cardpool', 'players',
-                        'created_at', 'action_edit', 'action_purge' ], 'doublerow' => true,
-                    'title' => 'Incomplete imports', 'subtitle' => 'please update or delete',
-                    'id' => 'incomplete', 'icon' => 'fa-exclamation-triangle'])
-            </div>
+    {{--Tab pages--}}
+    <div class="tab-content">
+        <div class="tab-pane active" id="tab-tournaments" role="tabpanel">
+            @include('organize.tournaments')
+        </div>
+        <div class="tab-pane" id="tab-groups" role="tabpanel">
+            @include('organize.groups')
         </div>
     </div>
+
 
     <script type="text/javascript">
         // Script to trigger tournament load
