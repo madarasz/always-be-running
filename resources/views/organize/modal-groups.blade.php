@@ -36,7 +36,7 @@
                             <select name="location" class="form-control" id="location" v-model="group.location">
                                 <optgroup label="non-country">
                                     <option value="online">- online -</option>
-                                    <option value="online">- multiple countries -</option>
+                                    <option value="multiple countries">- multiple countries -</option>
                                 </optgroup>
                                 <optgroup label="used countries">
                                     @foreach($usedCountries as $key => $country)
