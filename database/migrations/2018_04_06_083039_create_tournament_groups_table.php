@@ -15,7 +15,7 @@ class CreateTournamentGroupsTable extends Migration
         Schema::create('tournament_groups', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->string('location');
             $table->integer('creator')->unsigned();
             $table->timestamps();
