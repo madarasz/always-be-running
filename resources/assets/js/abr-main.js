@@ -573,6 +573,9 @@ function tournamentEmblem(target, type, format) {
         case 'worlds championship':
             target.append('<span class="tournament-type type-world" title="worlds championship">W</span> ');
             break;
+        case 'team tournament':
+            target.append('<span class="tournament-type type-team" title="team tournament">TT</span> ');
+            break;
     }
 
     // tournament formats

@@ -8,5 +8,6 @@
                     echo "<span class=\"".@$class." tournament-type type-recurring\"><i class=\"fa fa-repeat\" aria-hidden=\"true\"></i></span>";
                 } break;
         case 9: echo "<span class=\"".@$class." tournament-type type-continental\" title=\"continental championship\">C</span>"; break;
+        case 10: echo "<span class=\"".@$class." tournament-type type-team\" title=\"team tournament\">TT</span>"; break;
     }
 ?>

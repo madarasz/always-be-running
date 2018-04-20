@@ -27,6 +27,7 @@
         <span class="tournament-type type-national" title="national championship">N</span> national championship |
         <span class="tournament-type type-continental" title="continental championship">C</span> continental championship |
         <span class="tournament-type type-world" title="worlds championship">W</span> worlds championship
+        <span class="tournament-type type-team" title="team tournament">TT</span> team tournament
         <br/>
         <span class="tournament-format type-cache" title="cache refresh">CR</span> cache refresh |
         <span class="tournament-format type-onesies" title="1.1.1.1">1</span> 1.1.1.1 |
