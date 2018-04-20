@@ -46,14 +46,14 @@
                             </td>
                         </tr>
                         <tr v-for="group in myGroups" :class="group.id == selectedGroup.id ? 'row-selected': ''"
-                                @click.stop="loadGroup(group.id)">
+                                @click="loadGroup(group.id)">
                             <td>
                                 @{{ group.title }}
                             </td>
                             <td class="text-xs-center">
                                 @{{ group.tournamentCount }}
                                 <a class="btn btn-primary white-text btn-xs" id="button-link-group"
-                                    @click="linkForm.location = group.location; modalForLink(group);">
+                                    @click.stop="linkForm.location = group.location; modalForLink(group);">
                                     <i class="fa fa-link" aria-hidden="true"></i>
                                     link
                                 </a>
@@ -185,7 +185,7 @@
         },
         computed: {
             compiledMarkdown: function () {
-                if (this.selectedGroup == '') {
+                if (this.selectedGroup == '' || this.selectedGroup.description == null) {
                     return '';
                 }
                 return marked(this.selectedGroup.description, { sanitize: true })
