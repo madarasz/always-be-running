@@ -1,7 +1,7 @@
 {{--Tournament Group membership--}}
 <div class="bracket" id="{{ 'bracket-group-'.$group->id }}">
     <h5>
-        @if($user->id == $group->creator || $user->admin)
+        @if(@$user->id == $group->creator || @$user->admin)
             <a href="/organize#tab-groups" class="btn btn-xs btn-primary pull-right">
                 <i class="fa fa-pencil" aria-hidden="true"></i>
                 edit
