@@ -18,27 +18,22 @@ var vueFile = elixir.config.production ? "vue.min.js" : "vue.js";
  */
 
 elixir(function(mix) {
-    var bootstrapPath = 'node_modules/bootstrap-sass/assets',
-        bootstrap4Path = 'node_modules/bootstrap/dist',
-        bracketPath = 'node_modules/jquery-bracket/dist',
+    var bracketPath = 'node_modules/jquery-bracket/dist',
         timepickerPath = 'node_modules/timepicker',
-        tetherPath = 'node_modules/tether/dist/js',
-        vuePath = 'node_modules/vue/dist/',
-        axiosPath = 'node_modules/axios/dist/axios.min.js',
         toastrPath = 'node_modules/toastr/build/';
     mix.copy('resources/assets/fonts', 'public/fonts')
         .copy('resources/assets/img', 'public/img')
         .copy('resources/assets/favicons', 'public')
         .copy('resources/assets/vue', 'public/vue')
-        .copy(bootstrapPath + '/fonts', 'public/fonts')
-        .copy(bootstrap4Path + '/js/bootstrap.min.js', 'resources/assets/js')
-        .copy(tetherPath + '/tether.js', 'resources/assets/js')
+        .copy('node_modules/bootstrap-sass/assets/fonts', 'public/fonts')
+        .copy('node_modules/bootstrap/dist/js/bootstrap.min.js', 'resources/assets/js')
+        .copy('node_modules/tether/dist/js/tether.js', 'resources/assets/js')
         .copy(bracketPath + '/jquery.bracket.min.js', 'resources/assets/js')
         .copy(bracketPath + '/jquery.bracket.min.css', 'public/css')
         .copy(timepickerPath + '/jquery.timepicker.min.css', 'resources/assets/css')
         .copy(timepickerPath + '/jquery.timepicker.min.js', 'resources/assets/js')
-        .copy(vuePath + vueFile, 'resources/assets/js')
-        .copy(axiosPath, 'resources/assets/js')
+        .copy('node_modules/vue/dist/' + vueFile, 'resources/assets/js')
+        .copy('node_modules/axios/dist/axios.min.js', 'resources/assets/js')
         .copy(toastrPath + '/toastr.min.css', 'resources/assets/css')
         .copy(toastrPath + '/toastr.min.js', 'resources/assets/js')
         .copy('node_modules/marked/lib/marked.js', 'resources/assets/js')
@@ -77,7 +72,8 @@ elixir(function(mix) {
             'main.css',
             'ekko-lightbox.min.css',
             'jquery.timepicker.min.css',
-            'toastr.min.css'
+            'toastr.min.css',
+            'cookieconsent.min.css'
         ])
         .version(['css/all.css', 'js/all.js']);
 
