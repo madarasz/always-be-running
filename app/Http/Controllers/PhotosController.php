@@ -29,6 +29,11 @@ class PhotosController extends Controller
             // adding to the DB
             $created = Photo::create($request->all());
 
+            // if admin uploads it gets approved by default
+            if ($request->user()->admin) {
+                $created->update(['approved' => 1]);
+            }
+
             // saving photo and thumbnail
             $filename = $created->id.'.'.$request->photo->extension();
             $request->file('photo')->move('photo', $filename);
