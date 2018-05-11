@@ -617,6 +617,10 @@ function getCookie(cname) {
     return "";
 }
 
+function deleteCookie(name) {
+    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
 // tries to open Slack app with #abr channel. falls back to Slack web link
 // TODO: does not open app for iOS
 var timeout;

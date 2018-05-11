@@ -14,6 +14,7 @@ Route::get('support-me', 'PagesController@supportMe');
 Route::get('thank-you', 'PagesController@thankYou');
 Route::get('apidoc', 'PagesController@api');
 Route::get('birthday', 'PagesController@birthdayFirst');
+Route::get('privacy', 'PagesController@privacy');
 
 Route::get('admin', 'AdminController@lister')->name('admin');
 Route::get('admin/identities/update', 'NetrunnerDBController@requestIdentities');

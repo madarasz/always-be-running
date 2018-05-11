@@ -4,6 +4,7 @@
         &copy; Necro <?php echo date("Y"); ?> - [<a href="/faq">F.A.Q.</a>] - [<a href="/about">About</a>] -
         [<a href="/apidoc">API</a>] -
         [<a href="/badges">Badges</a>] -
+        [<a href="/privacy">Privacy</a>] -
         [<a href="/support-me" class="supporter">Support Me</a>] -
         {{--[<a href="/birthday">Birthday</a>] ---}}
         <a href="#" onclick="goToSlackChannel()"><i class="fa fa-slack contact-icon" aria-hidden="true"></i></a> -

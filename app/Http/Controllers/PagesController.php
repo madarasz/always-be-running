@@ -156,6 +156,12 @@ class PagesController extends Controller
         return view('faq');
     }
 
+    public function privacy(Request $request)
+    {
+        $user = $request->user();
+        return view('privacy', compact('user'));
+    }
+
     public function markdown()
     {
         return view('markdown');
