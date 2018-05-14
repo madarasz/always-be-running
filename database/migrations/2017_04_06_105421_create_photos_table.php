@@ -14,7 +14,7 @@ class CreatePhotosTable extends Migration
     {
         Schema::create('photos', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('tournament_id')->unsigned()->references('id')->on('tournaments');
+            $table->integer('tournament_id')->unsigned()->nullable()->default(null);
             $table->integer('user_id')->unsigned()->references('id')->on('users');
             $table->string('filename');
             $table->string('title');

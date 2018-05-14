@@ -7,11 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 class Photo extends Model
 {
     public $timestamps = true;
-    protected $fillable = ['title', 'tournament_id', 'user_id', 'filename', 'title', 'approved'];
+    protected $fillable = ['title', 'tournament_id', 'user_id', 'filename', 'title', 'approved',
+        'prize_id', 'prize_element_id'];
     protected $dates = ['created_at', 'updated_at'];
 
     public function tournament() {
         return $this->belongsTo(Tournament::class, 'tournament_id', 'id');
+    }
+
+    public function prize() {
+        return $this->belongsTo(Prize::class, 'prize_id', 'id');
+    }
+
+    public function prize_element() {
+        return $this->belongsTo(PrizeElement::class, 'prize_element_id', 'id');
     }
 
     public function user() {

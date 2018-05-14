@@ -34,6 +34,10 @@
             @unless($tournament->description === '')
                 @include('tournaments.viewer.description')
             @endunless
+            {{--Prizes--}}
+            @if(@$tournament->prize || $tournament->prize_additional !== '')
+                @include('tournaments.viewer.prizes')
+            @endif
             {{--Matches--}}
             @if (file_exists('tjsons/'.$tournament->id.'.json') && $tournament->concluded)
                 @include('tournaments.viewer.matches')

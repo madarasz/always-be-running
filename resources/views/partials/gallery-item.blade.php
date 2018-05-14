@@ -23,7 +23,7 @@
             </a>
         @endif
         {{--tournament button--}}
-        @if (@$button_tournament)
+        @if (@$button_tournament && @$photo->tournament->id)
             <a href="{{ '/tournaments/'.@$photo->tournament->id }}" class="btn btn-sm btn-info fade-in">
                 <i class="fa fa-list-alt" aria-hidden="true"></i>
             </a>
