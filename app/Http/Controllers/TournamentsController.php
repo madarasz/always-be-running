@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\CardPack;
 use App\Entry;
+use App\Prize;
 use App\TournamentFormat;
 use App\User;
 use App\Tournament;
@@ -50,6 +51,8 @@ class TournamentsController extends Controller
         $this->authorize('logged_in', Tournament::class, $request->user());
         $tournament_types = TournamentType::orderBy('order')->pluck('type_name', 'id')->all();
         $tournament_formats = TournamentFormat::orderBy('order')->pluck('format_name', 'id')->all();
+        $tournament_prizes = Prize::orderBy('order')
+            ->select(\DB::raw('CONCAT(year, " ", title) as display, id'))->pluck('display', 'id')->all();
         $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $tournament = new Tournament();
 
@@ -58,7 +61,7 @@ class TournamentsController extends Controller
 
         $page_section = 'organize';
         return view('tournaments.create', compact('tournament_types', 'tournament', 'cardpools', 'page_section',
-            'tournament_formats'));
+            'tournament_formats', 'tournament_prizes'));
     }
 
     /**
@@ -73,10 +76,12 @@ class TournamentsController extends Controller
         $this->authorize('own', $tournament, $request->user());
         $tournament_types = TournamentType::orderBy('order')->pluck('type_name', 'id')->all();
         $tournament_formats = TournamentFormat::orderBy('order')->pluck('format_name', 'id')->all();
+        $tournament_prizes = Prize::orderBy('order')
+            ->select(\DB::raw('CONCAT(year, " ", title) as display, id'))->pluck('display', 'id')->all();
         $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $page_section = 'organize';
         return view('tournaments.edit', compact('tournament', 'id', 'tournament_types', 'cardpools', 'page_section',
-            'tournament_formats'));
+            'tournament_formats', 'tournament_prizes'));
     }
 
     /**
@@ -225,7 +230,7 @@ class TournamentsController extends Controller
 
         Tournament::destroy($id);
         if (strpos($request->headers->get('referer'), 'tournaments') !== false && $tournament->creator == $user) {
-            return view('organize', ['user' => $user, 'page_section' => 'organize'])->with('message', 'Tournament deleted.');    // deleted from tournament details page
+            return redirect()->route('organize')->with('message', 'Tournament deleted.');    // deleted from tournament details page
         } else {
             return back()->with('message', 'Tournament deleted.');  // deleted from Organize or Admin page
         }
