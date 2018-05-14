@@ -103,6 +103,26 @@
                     ['rows' => 6, 'cols' => '', 'class' => 'form-control', 'placeholder' => 'additional information and rules, prizepool, etc.']) !!}
             </div>
         </div>
+        {{--Prizes--}}
+        <div class="bracket hide-nonrequired">
+            {{--Official prize kit--}}
+            <div class="row form-group">
+                {!! Form::label('prize_id', 'Official prize kit:', ['class' => 'col-md-3 col-form-label']) !!}
+                <div class="col-md-9 col-xs-12">
+                    {!! Form::select('prize_id', array_merge([0 => '--- none ---'], $tournament_prizes),
+                        old('prize_id', $tournament->prize_id), ['class' => 'form-control']) !!}
+                </div>
+            </div>
+            {{--Additional prizes--}}
+            <div class="form-group hide-nonrequired">
+                {!! Form::label('prize_additional', 'Additional prizes') !!}
+                <div class="pull-right">
+                    <small><a href="http://commonmark.org/help/" target="_blank" rel="nofollow"><img src="/img/markdown_icon.png"/></a> formatting is supported</small>
+                </div>
+                {!! Form::textarea('prize_additional', old('prize_additional', $tournament->prize_additional),
+                    ['rows' => 4, 'cols' => '', 'class' => 'form-control', 'placeholder' => 'anything in addition to the selected prize kit']) !!}
+            </div>
+        </div>
         {{--Conclusion--}}
         <div class="bracket hide-nonrequired">
             {{--Overlay--}}
