@@ -31,4 +31,9 @@ class Prize extends Model
     public function photos() {
         return $this->hasMany(Photo::class, 'prize_id', 'id');
     }
+
+    public function countPhotos() {
+        $elementIds = $this->elements()->pluck('id');
+        return $this->photos->count() + Photo::whereIn('prize_element_id', $elementIds)->count();
+    }
 }

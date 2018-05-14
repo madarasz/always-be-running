@@ -16,7 +16,8 @@
         {{--Photos of prizes--}}
 
         {{--image collapser--}}
-        @if ($tournament->prize->photos->count() + $tournament->prize->elements->count() > 3)
+        <?php $countPhotos = $tournament->prize->countPhotos(); ?>
+        @if ($countPhotos > 3)
             <div class="more-image-container collapse" id="more-prize-collapse" aria-expanded="false" style="max-height: 400px; height: 0px;">
                 <div class="more-image-overlay" id="more-prize-overlay"></div>
         @endif
@@ -52,7 +53,7 @@
         </div>
 
         {{--end of image collapser, show more button--}}
-        @if ($tournament->prize->photos->count() + $tournament->prize->elements->count() > 3)
+        @if ($countPhotos > 3)
             </div>
             <div class="text-xs-center p-b-1">
                 <a class="btn btn-xs btn-primary white-text" data-toggle="collapse" id="button-more-prize"
