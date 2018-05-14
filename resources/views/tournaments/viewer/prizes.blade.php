@@ -75,15 +75,6 @@
         </script>
     @endif
 
-    {{--Description--}}
-    <div id="prizes-description" class="markdown-content p-b-1">
-        {!! Markdown::convertToHtml(str_replace(["\r\n", "\r", "\n"], "  \r", $tournament->prize->description)) !!}
-        @if ($tournament->prize->ffg_url !== '')
-            <div class="text-xs-right">
-                <a href="{{ $tournament->prize->ffg_url }}">read more</a>
-            </div>
-        @endif
-    </div>
     {{--Prize list--}}
     <table class="table table-sm">
         <tbody>
@@ -119,11 +110,23 @@
         @endforeach
         </tbody>
     </table>
+
+    {{--Description--}}
+    <div id="prizes-description" class="markdown-content p-b-1">
+        {!! Markdown::convertToHtml(str_replace(["\r\n", "\r", "\n"], "  \r", $tournament->prize->description)) !!}
+        @if ($tournament->prize->ffg_url !== '')
+            <div class="text-xs-right">
+                <a href="{{ $tournament->prize->ffg_url }}">read more</a>
+            </div>
+        @endif
+    </div>
+
     {{--Additonal prizes--}}
     @if ($tournament->prize_additional !== '')
         <div id="markdown-additional" class="markdown-content">
             @if ($tournament->prizes)
-                <strong>Additional prizes:</strong><br/>
+                <hr/>
+                <strong>Additional prizes for this tournament:</strong><br/>
             @endif
             {!! Markdown::convertToHtml(str_replace(["\r\n", "\r", "\n"], "  \r", $tournament->prize_additional)) !!}
         </div>
