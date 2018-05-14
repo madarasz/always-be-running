@@ -26,7 +26,8 @@ var menuCommands = {
 
         this
             .waitForElementVisible('@acceptCookies', 10000)
-            .click('@acceptCookies');
+            .click('@acceptCookies')
+            .api.pause(1000);
 
         if (typeof callback === "function"){
             callback.call(client);
@@ -76,7 +77,7 @@ module.exports = {
             locateStrategy: 'xpath'
         },
         acceptCookies: {
-            selector: "//a[@class='cc_btn cc_btn_accept_all']",
+            selector: "//a[@class='cc-btn cc-dismiss']",
             locateStrategy: 'xpath'
         }
     }
