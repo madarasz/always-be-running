@@ -61,4 +61,11 @@
     @if($tournament->tournament_type_id != 7)
         @include('tournaments.viewer.map')
     @endif
+    {{--Enable gallery--}}
+    <script type="application/javascript">
+        $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+            event.preventDefault();
+            $(this).ekkoLightbox({alwaysShowClose: true});
+        });
+    </script>
 @stop
