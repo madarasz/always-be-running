@@ -1,5 +1,6 @@
 {{--Tournament prize list--}}
 <div class="bracket">
+    <a name="more-prize-top" class="anchor"></a>
     <h5>
         <i class="fa fa-gift" aria-hidden="true"></i>
         Prizes
@@ -15,8 +16,6 @@
         @if ($tournament->prize->photos->count() + $tournament->prize->elements->count() > 3)
             <div class="more-image-container collapse" id="more-prize-collapse" aria-expanded="false" style="max-height: 400px; height: 0px;">
                 <div class="more-image-overlay" id="more-prize-overlay"></div>
-                <a name="more-prize-top">
-                </a>
         @endif
 
         <div class="row">
@@ -71,7 +70,7 @@
                 });
                 $('#more-prize-overlay').removeClass('hidden-xs-up');
                 $('#button-more-prize').text('show more');
-                location.hash = "#more-prize-top"; location.hash = "#";
+                location.hash = "#more-prize-top";
             })
         </script>
     @endif
