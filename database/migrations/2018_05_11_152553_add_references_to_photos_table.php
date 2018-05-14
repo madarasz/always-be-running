@@ -14,7 +14,7 @@ class AddReferencesToPhotosTable extends Migration
     {
         Schema::table('photos', function (Blueprint $table) {
             $table->integer('prize_id')->unsigned()->nullable()->default(null);
-            $table->integer('')->unsigned()->nullable()->default(null);
+            $table->integer('prize_element_id')->unsigned()->nullable()->default(null);
         });
     }
 
