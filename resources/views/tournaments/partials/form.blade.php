@@ -109,7 +109,7 @@
             <div class="row form-group">
                 {!! Form::label('prize_id', 'Official prize kit:', ['class' => 'col-md-3 col-form-label']) !!}
                 <div class="col-md-9 col-xs-12">
-                    {!! Form::select('prize_id', array_merge([0 => '--- none ---'], $tournament_prizes),
+                    {!! Form::select('prize_id', array_replace([0 => '--- none ---'], $tournament_prizes),
                         old('prize_id', $tournament->prize_id), ['class' => 'form-control']) !!}
                 </div>
             </div>
