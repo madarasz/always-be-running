@@ -149,6 +149,7 @@ table.abr-table tr td {
     position: relative;
     padding: 0.5em 1em 1em 1em;
     margin: 1em 0em;
+    overflow: hidden;
 }
 :not(.jQBracket) > .bracket:before, :not(.jQBracket) > .bracket:after{
     content: '';
