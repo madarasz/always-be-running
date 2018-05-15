@@ -10,6 +10,7 @@ class Photo extends Model
     protected $fillable = ['title', 'tournament_id', 'user_id', 'filename', 'title', 'approved',
         'prize_id', 'prize_element_id'];
     protected $dates = ['created_at', 'updated_at'];
+    protected $appends = ['url', 'urlThumb'];
 
     public function tournament() {
         return $this->belongsTo(Tournament::class, 'tournament_id', 'id');
@@ -33,5 +34,13 @@ class Photo extends Model
 
     public function urlThumb() {
         return '/photo/thumb_'.$this->filename;
+    }
+
+    public function getUrlAttribute() {
+        return $this->url();
+    }
+
+    public function getUrlThumbAttribute() {
+        return $this->urlThumb();
     }
 }

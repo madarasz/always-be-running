@@ -10,6 +10,7 @@ class Prize extends Model
     protected $fillable = ['year', 'type', 'tournament_type_id', 'description', 'ffg_url', 'creator',
         'order'];
     protected $dates = ['created_at', 'updated_at'];
+    protected $appends = ['pictureCount', 'tournamentCount'];
 
     public function tournament_type() {
         return $this->belongsTo(TournamentType::class, 'tournament_type_id', 'id');
@@ -28,6 +29,11 @@ class Prize extends Model
             ->orderByRaw('CAST(sort_order AS DECIMAL(10,2)) DESC'); // null first, string later, int last
     }
 
+    public function tournaments()
+    {
+        return $this->hasMany(Tournament::class, 'prize_id', 'id');
+    }
+
     public function photos() {
         return $this->hasMany(Photo::class, 'prize_id', 'id');
     }
@@ -35,5 +41,13 @@ class Prize extends Model
     public function countPhotos() {
         $elementIds = $this->elements()->pluck('id');
         return $this->photos->count() + Photo::whereIn('prize_element_id', $elementIds)->count();
+    }
+
+    public function getPictureCountAttribute() {
+        return $this->countPhotos();
+    }
+
+    public function getTournamentCountAttribute() {
+        return $this->tournaments()->count();
     }
 }

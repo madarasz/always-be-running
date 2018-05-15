@@ -48,6 +48,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#tab-prizes" role="tab">
+                    <i class="fa fa-gift" aria-hidden="true"></i>
+                    Prizes
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#tab-stats" role="tab">
                     <i class="fa fa-line-chart" aria-hidden="true"></i>
                     Stats
@@ -78,6 +84,8 @@
         @include('admin.videos')
         {{--Stats--}}
         @include('admin.stats')
+        {{--Stats--}}
+        @include('admin.prizes')
         {{--VIP--}}
         @include('admin.vip')
     </div>
