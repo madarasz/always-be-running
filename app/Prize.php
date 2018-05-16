@@ -8,7 +8,7 @@ class Prize extends Model
 {
     public $timestamps = true;
     protected $fillable = ['year', 'type', 'tournament_type_id', 'description', 'ffg_url', 'creator',
-        'order'];
+        'order', 'title'];
     protected $dates = ['created_at', 'updated_at'];
     protected $appends = ['pictureCount', 'tournamentCount'];
 

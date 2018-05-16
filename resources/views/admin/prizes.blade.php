@@ -1,5 +1,7 @@
 {{--Prizes admin tab--}}
 <div class="tab-pane" id="tab-prizes" role="tabpanel">
+    @include('admin.modals.prize')
+    <confirm-modal :modal-body="confirmText" :callback="confirmCallback"></confirm-modal>
     <div class="row">
         {{--Prize kit list--}}
         <div class="col-xs-12">
@@ -7,6 +9,12 @@
                 <h5>
                     <i class="fa fa-gift" aria-hidden="true"></i>
                     Prize kits
+                    <div class="pull-right">
+                        <a class="btn btn-success white-text" id="button-create-group"
+                           data-toggle="modal" data-target="#modal-prize" @click="modalForCreatePrize">
+                        Create Prize Kit
+                        </a>
+                    </div>
                 </h5>
                 <div class="loader" id="prizes-loader">&nbsp;</div>
                 <table class="table table-sm table-striped abr-table table-doublerow hover-row">
@@ -46,7 +54,20 @@
                             <td class="text-xs-center">@{{ prize.elements.length }}</td>
                             <td class="text-xs-center">@{{ prize.pictureCount }}</td>
                             <td class="text-xs-center">@{{ prize.tournamentCount }}</td>
-                            <td></td>
+                            <td class="text-xs-right">
+                                {{--edit button--}}
+                                <a class="btn btn-primary btn-xs white-text" @click.stop="modalForEditPrize(prize)">
+                                    <i class="fa fa-pencil"></i> edit
+                                </a>
+                                {{--delete button--}}
+                                <form method="post" action="" style="display: inline" v-if="prize.tournamentCount == 0">
+                                    <input name="_method" type="hidden" value="DELETE"/>
+                                    <input name="_token" type="hidden" value="{{ csrf_token() }}">
+                                    <input name="delete_id" type="hidden" :value="prize.id">
+                                    <confirm-button button-text="delete" button-class="btn btn-danger btn-xs" button-icon="fa fa-trash"
+                                        @click="confirmCallback = function() { deletePrize(prize.id) }; confirmText = 'Delete prize kit?'" />
+                                </form>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -71,6 +92,7 @@
                         <strong>created by:</strong> @{{ selectedPrize.user.displayUsername }} - @{{ selectedPrize.created_at }}<br/>
                         <strong>last update:</strong> @{{ selectedPrize.updated_at }}<br/>
                     </em>
+                    <strong>type:</strong> @{{ selectedPrize.tournament_type.type_name }}<br/>
                     <strong>ordering number:</strong> @{{ selectedPrize.order }}<br/>
                     <strong>FFG article URL:</strong>
                     <a v-if="selectedPrize.ffg_url !=''" :href="selectedPrize.ffg_url" target="_blank">
@@ -196,6 +218,7 @@
         el: '#tab-prizes',
         data: {
             prizes: [],
+            prize: {},
             kitPhotoList: [],
             modalTitle: '',
             editMode: false,
@@ -220,10 +243,20 @@
         },
         methods: {
             // load all my groups
-            loadPrizes: function () {
+            loadPrizes: function (selectId = 0) {
                 axios.get('/api/prizes').then(function (response) {
+                    adminPrizes.selectedPrize = '';
                     adminPrizes.prizes = response.data;
                     $('#prizes-loader').addClass('hidden-xs-up');
+                    // select newly created ID, if any
+                    if (selectId > 0) {
+                        for (var i = 0; i < adminPrizes.prizes.length; i++) {
+                            if (adminPrizes.prizes[i].id == selectId) {
+                                adminPrizes.selectPrize(i);
+                                break;
+                            }
+                        }
+                    }
                 }, function (response) {
                     // error handling
                     toastr.error('Something went wrong while loading the prize kits.', '', {timeOut: 2000});
@@ -231,6 +264,7 @@
             },
             selectPrize: function(index) {
                 this.selectedPrize = this.prizes[index];
+                this.selectedItem = '';
                 // gather photos of items
                 this.kitPhotoList = [];
                 for (var i = 0; i < this.selectedPrize.elements.length; i++) {
@@ -241,6 +275,55 @@
             },
             selectItem: function(index) {
                 this.selectedItem = this.selectedPrize.elements[index];
+            },
+            modalForCreatePrize: function() {
+                this.prize = {};
+                this.modalTitle = 'Create Prize Kit';
+                this.modalButton = 'Create';
+                this.editMode = false;
+            },
+            modalForEditPrize: function(prize) {
+                adminPrizes.prize = prize;
+                this.modalTitle = 'Edit Prize Kit';
+                this.modalButton = 'Save';
+                this.editMode = true;
+                $("#modal-prize").modal('show');
+            },
+            createPrize: function() {
+                axios.post('/api/prizes', this.prize)
+                        .then(function(response) {
+                            adminPrizes.selectedItem = '';
+                            adminPrizes.loadPrizes(response.data.id);
+                            $("#modal-prize").modal('hide');
+                            toastr.info('Prize kit created successfully.', '', {timeOut: 2000});
+                        }, function(response) {
+                            // error handling
+                            toastr.error('Something went wrong.', '', {timeOut: 2000});
+                        }
+                );
+            },
+            deletePrize: function(prizeId) {
+                axios.delete('/api/prizes/' + prizeId).then(function (response) {
+                    adminPrizes.loadPrizes();
+                    toastr.info('Prize kit deleted.', '', {timeOut: 2000});
+                    adminPrizes.selectedPrize = '';
+                    adminPrizes.selectedItem = '';
+                }, function(response) {
+                    // error handling
+                    toastr.error('Something went wrong.', '', {timeOut: 2000});
+                });
+            },
+            updatePrize: function() {
+                axios.put('/api/prizes/' + this.prize.id, this.prize)
+                        .then(function(response) {
+                            $("#modal-prize").modal('hide');
+                            toastr.info('Prize kit updated successfully.', '', {timeOut: 2000});
+                            adminPrizes.loadPrizes(response.data.id);
+                        }, function(response) {
+                            // error handling
+                            toastr.error('Something went wrong.', '', {timeOut: 2000});
+                        }
+                );
             }
         }
     });

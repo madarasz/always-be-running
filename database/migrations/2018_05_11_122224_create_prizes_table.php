@@ -17,8 +17,8 @@ class CreatePrizesTable extends Migration
             $table->smallInteger('year');
             $table->string('title', 60);
             $table->integer('tournament_type_id')->unsigned();
-            $table->text('description');
-            $table->string('ffg_url');
+            $table->text('description')->nullable();
+            $table->string('ffg_url')->nullable();
             $table->integer('creator')->unsigned();
             $table->integer('order')->unsigned()->nullable();
             $table->timestamps();

@@ -3,18 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Prize;
+use App\Tournament;
 use Illuminate\Http\Request;
 
 class PrizeController extends Controller
 {
 
+    /**
+     * List all prize kits inluding their items and linked photos.
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getPrizeKits(Request $request) {
 
         $prizes = Prize::with(['tournament_type', 'user', 'elements', 'photos', 'elements.photos', 'elements.user'])
             ->orderBy('order', 'desc')->get();
 
         // hiding unimportant fields
-        $prizes = $prizes->makeHidden(['tournament_type_id', 'creator']);
+        $prizes = $prizes->makeHidden(['creator']);
         foreach ($prizes as $prize) {
             if ($prize->user) {
                 $prize->user->makeHidden(['name', 'username_preferred', 'supporter']);
@@ -40,6 +46,68 @@ class PrizeController extends Controller
 
 
         return response()->json($prizes);
+    }
+
+    /**
+     * Creates prize kit.
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createPrizeKit(Request $request) {
+        $this->authorize('admin', Tournament::class, $request->user());
+
+        $newPrize = Prize::create([
+            'year' => $request->input('year'),
+            'title' => $request->input('title'),
+            'tournament_type_id' => $request->input('tournament_type_id'),
+            'description' => $request->input('description'),
+            'ffg_url' => $request->input('ffg_url'),
+            'order' => $request->input('order'),
+            'creator' => $request->user()->id
+        ]);
+
+        return response()->json($newPrize);
+    }
+
+    /**
+     * Update prize kit.
+     * @param $id prize kit ID
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function editPrizeKit($id, Request $request) {
+        $prize = Prize::findOrFail($id);
+        $this->authorize('admin', Tournament::class, $request->user());
+
+        $prize->update([
+            'year' => $request->input('year'),
+            'title' => $request->input('title'),
+            'tournament_type_id' => $request->input('tournament_type_id'),
+            'description' => $request->input('description'),
+            'ffg_url' => $request->input('ffg_url'),
+            'order' => $request->input('order')
+        ]);
+
+        return response()->json($prize);
+    }
+
+    /**
+     * Delete prize kit.
+     * @param $id prize kit ID
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deletePrizeKit($id, Request $request) {
+        // auth, error checking
+        $this->authorize('admin', Tournament::class, $request->user());
+        if (Tournament::where('prize_id', $id)->count() > 0) {
+            abort(403, 'Prize kit is in use.');
+        }
+
+        $prize = Prize::findOrFail($id);
+        $prize->delete();
+
+        return response()->json('Prize kit deleted.');
     }
 
 }

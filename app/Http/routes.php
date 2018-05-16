@@ -73,6 +73,9 @@ Route::post('/api/tournament-groups/{groupId}/link/{tournamentId}', 'TournamentG
 Route::post('/api/tournament-groups/{groupId}/unlink/{tournamentId}', 'TournamentGroupController@unlinkTournamentToGroup');
 
 Route::get('/api/prizes', 'PrizeController@getPrizeKits');
+Route::post('/api/prizes', 'PrizeController@createPrizeKit');
+Route::delete('/api/prizes/{id}', 'PrizeController@deletePrizeKit');
+Route::put('/api/prizes/{id}', 'PrizeController@editPrizeKit');
 
 Route::get('/oauth2/redirect', 'NetrunnerDBController@login');
 Route::get('/logout', 'NetrunnerDBController@logout');

@@ -16,7 +16,7 @@ class CreatePrizeElementsTable extends Migration
             $table->increments('id');
             $table->integer('prize_id')->unsigned();
             $table->string('quantity',15)->nullable();
-            $table->string('title', 60);
+            $table->string('title', 60)->nullable();;
             $table->string('type', 30);
             $table->integer('creator')->unsigned();
             $table->timestamps();
