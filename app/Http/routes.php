@@ -63,6 +63,8 @@ Route::get('photos/{id}/approve', 'PhotosController@approve');
 Route::get('photos/{id}/approve-all', 'PhotosController@approveAll');
 Route::get('photos/{id}/rotate/{dir}', 'PhotosController@rotate');
 Route::delete('photos/{id}', 'PhotosController@destroy');
+Route::post('api/photos', 'PhotosController@storeApi');
+Route::delete('api/photos/{id}', 'PhotosController@destroyApi');
 
 Route::get('/api/tournament-groups', 'TournamentGroupController@getTournamentGroups');
 Route::get('/api/tournament-groups/{id}', 'TournamentGroupController@getTournamentGroupDetails');

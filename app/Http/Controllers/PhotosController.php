@@ -18,6 +18,7 @@ class PhotosController extends Controller
      * @param Request $request
      * @return $this|\Illuminate\Http\RedirectResponse
      */
+    // to be deprecated
     public function store(Request $request)
     {
         $tournament = Tournament::withTrashed()->findOrFail($request->get('tournament_id'));
@@ -42,7 +43,7 @@ class PhotosController extends Controller
             try {
                 // resizing image
                 $img = Image::make(public_path('photo/') . $filename);
-                $img->resize(1280, 1280, function ($constraint) {
+                $img->resize(2560, 2560, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 });
@@ -77,6 +78,66 @@ class PhotosController extends Controller
     }
 
     /**
+     * API endpoint for storing photos, returns JSON response.
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function storeApi(Request $request)
+    {
+        $this->authorize('logged_in', Tournament::class, $request->user());
+
+        // validating successful upload
+        if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
+
+            // adding to the DB
+            $created = Photo::create($request->all());
+
+            // if admin uploads it gets approved by default
+            if ($request->user()->admin) {
+                $created->update(['approved' => 1]);
+            }
+
+            // saving photo and thumbnail
+            $filename = $created->id.'.'.$request->photo->extension();
+            $request->file('photo')->move('photo', $filename);
+            File::copy('photo/' . $filename, 'photo/thumb_' . $filename);
+
+            try {
+                // resizing image
+                $img = Image::make(public_path('photo/') . $filename);
+                $img->resize(2560, 2560, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+                $img->save();
+
+                // trimming to square
+                $thumb = Image::make(public_path('photo/thumb_') . $filename);
+                $dim = min($thumb->height(), $thumb->width());
+                $thumb->resizeCanvas($dim, $dim, 'center');
+                // resize
+                $thumb->resize(200, 200, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+                $thumb->save();
+            } catch (NotReadableException $e) {
+                $created->delete();
+                return response()->json('There was a problem uploading your photo, was not readable.', 500);
+            }
+
+            // saving filename in DB
+            Photo::findOrFail($created->id)->update(['filename' => $filename, 'user_id' => $request->user()->id]);
+
+            // redirecting to tournament
+            return response()->json($created);
+        } else {
+            return response()->json('There was a problem uploading your photo, file missing or not valid.', 500);
+        }
+    }
+
+    /**
      * Approve photo
      * @param Request $request
      * @param $id
@@ -94,6 +155,7 @@ class PhotosController extends Controller
         return redirect()->back()->with('message', 'Photo approved');
     }
 
+    // to be deprecated
     public function destroy(Request $request, $id) {
         $photo = Photo::findOrFail($id);
         $this->authorize('delete', $photo, $request->user());
@@ -106,6 +168,20 @@ class PhotosController extends Controller
 
         // redirecting to tournament
         return redirect()->back()->with('message', 'Photo deleted');
+    }
+
+    public function destroyApi(Request $request, $id) {
+        $photo = Photo::findOrFail($id);
+        $this->authorize('delete', $photo, $request->user());
+
+        File::delete('photo/'.$photo->filename);
+        File::delete('photo/thumb_'.$photo->filename);
+        $photo->delete();
+
+        // TODO: remove badge
+
+        // redirecting to tournament
+        return response()->json('Photo deleted.');
     }
 
     /**

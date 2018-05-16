@@ -2,6 +2,7 @@
 <div class="tab-pane" id="tab-prizes" role="tabpanel">
     @include('admin.modals.prize')
     @include('admin.modals.prize-item')
+    @include('partials.modals.photo-upload')
     <confirm-modal :modal-body="confirmText" :callback="confirmCallback"></confirm-modal>
     <div class="row">
         {{--Prize kit list--}}
@@ -78,6 +79,15 @@
         <div class="col-xs-12">
             <div class="bracket">
                 <h5>
+                    {{--Add photo--}}
+                    <div class="pull-right" v-if="selectedPrize != ''">
+                        <a class="btn btn-primary white-text" id="button-create-group"
+                           data-toggle="modal" data-target="#modal-photo" @click="modalForPrizePhoto">
+                        Upload photo
+                        </a>
+                        <div class="small-text text-xs-center">for prize kit</div>
+                    </div>
+
                     <i class="fa fa-gift" aria-hidden="true"></i>
                     Prize kit details<span v-if="selectedPrize != ''">: @{{ selectedPrize.year + ' ' + selectedPrize.title }}</span>
                 </h5>
@@ -89,6 +99,7 @@
                     </em>
                 </div>
                 <div v-if="selectedPrize != ''">
+                    {{--Details--}}
                     <em>
                         <strong>created by:</strong> @{{ selectedPrize.user.displayUsername }} - @{{ selectedPrize.created_at }}<br/>
                         <strong>last update:</strong> @{{ selectedPrize.updated_at }}<br/>
@@ -111,6 +122,15 @@
                                    :data-title="selectedPrize.year + ' ' + selectedPrize.title">
                                     <img :src="photo.urlThumb"/>
                                 </a>
+                                {{--delete button--}}
+                                <div class="abs-top-left">
+                                    <form method="post" action="" style="display: inline">
+                                        <input name="_method" type="hidden" value="DELETE"/>
+                                        <input name="_token" type="hidden" value="{{ csrf_token() }}">
+                                        <confirm-button button-class="btn btn-danger btn-xs" button-icon="fa fa-trash"
+                                            @click="confirmCallback = function() { deletePhoto(photo.id) }; confirmText = 'Delete photo?'" />
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -126,6 +146,15 @@
                                    :data-footer="'<em>'+selectedItem.quantity +':</em> <strong>'+selectedItem.title+'</strong> '+selectedItem.type">
                                     <img :src="photo.urlThumb"/>
                                 </a>
+                                {{--delete button--}}
+                                <div class="abs-top-left">
+                                    <form method="post" action="" style="display: inline">
+                                        <input name="_method" type="hidden" value="DELETE"/>
+                                        <input name="_token" type="hidden" value="{{ csrf_token() }}">
+                                        <confirm-button button-class="btn btn-danger btn-xs" button-icon="fa fa-trash"
+                                        @click="confirmCallback = function() { deletePhoto(photo.id) }; confirmText = 'Delete photo?'" />
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -222,10 +251,26 @@
                                 <a :href="photo.url" data-toggle="lightbox" data-gallery="prize-gallery"
                                     :data-title="selectedPrize.year + ' ' + selectedPrize.title"
                                     :data-footer="'<em>'+selectedItem.quantity +':</em> <strong>'+selectedItem.title+'</strong> '+selectedItem.type">
-                                <img :src="photo.urlThumb"/>
+                                    <img :src="photo.urlThumb"/>
                                 </a>
+                                {{--delete button--}}
+                                <div class="abs-top-left">
+                                    <form method="post" action="" style="display: inline">
+                                        <input name="_method" type="hidden" value="DELETE"/>
+                                        <input name="_token" type="hidden" value="{{ csrf_token() }}">
+                                        <confirm-button button-class="btn btn-danger btn-xs" button-icon="fa fa-trash"
+                                        @click="confirmCallback = function() { deletePhoto(photo.id) }; confirmText = 'Delete photo?'" />
+                                    </form>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                    {{--Add photo--}}
+                    <div class="text-xs-center p-t-1">
+                        <a class="btn btn-primary white-text" id="button-create-group"
+                           data-toggle="modal" data-target="#modal-photo" @click="modalForItemPhoto">
+                            Upload photo
+                        </a>
                     </div>
                 </div>
             </div>
@@ -241,6 +286,10 @@
             itemTypes: [],
             prize: {},
             item: {},
+            photo: {
+                showTitleField: false,
+                tournament_id: null
+            },
             kitPhotoList: [],
             modalTitle: '',
             editMode: false,
@@ -324,6 +373,14 @@
                 this.modalButton = 'Update';
                 this.editMode = true;
                 $("#modal-prize-item").modal('show');
+            },
+            modalForPrizePhoto: function() {
+                this.photo.prize_id = this.selectedPrize.id;
+                this.photo.prize_element_id = null;
+            },
+            modalForItemPhoto: function() {
+                this.photo.prize_id = null;
+                this.photo.prize_element_id = this.selectedItem.id;
             },
             createPrize: function() {
                 axios.post('/api/prizes', this.prize)
@@ -422,6 +479,36 @@
                         break;
                     }
                 }
+            },
+            uploadPhoto: function() {
+                // prepare data
+                var data = new FormData();
+                data.append('photo', document.getElementById('photo-to-upload').files[0]);
+                data.append('prize_id', this.photo.prize_id);
+                data.append('prize_element_id', this.photo.prize_element_id);
+
+                // post data
+                axios.post('/api/photos', data)
+                        .then(function(response) {
+                            var prizeItemId = response.data.prize_element_id == 'null' ? 0 : response.data.prize_element_id;
+                            adminPrizes.loadPrizes(adminPrizes.selectedPrize.id, prizeItemId);
+                            $("#modal-photo").modal('hide');
+                            toastr.info('Photo uploaded successfully.', '', {timeOut: 2000});
+                        }, function(response) {
+                            // error handling
+                            toastr.error('Something went wrong.', '', {timeOut: 2000});
+                        }
+                );
+            },
+            deletePhoto: function(photoId) {
+                axios.delete('/api/photos/' + photoId).then(function (response) {
+                    var itemId = adminPrizes.selectedItem == '' ? 0 : adminPrizes.selectedItem.id;
+                    adminPrizes.loadPrizes(adminPrizes.selectedPrize.id, itemId);
+                    toastr.info('Photo deleted.', '', {timeOut: 2000});
+                }, function(response) {
+                    // error handling
+                    toastr.error('Something went wrong.', '', {timeOut: 2000});
+                });
             }
         }
     });
