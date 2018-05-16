@@ -1,6 +1,7 @@
 {{--Prizes admin tab--}}
 <div class="tab-pane" id="tab-prizes" role="tabpanel">
     @include('admin.modals.prize')
+    @include('admin.modals.prize-item')
     <confirm-modal :modal-body="confirmText" :callback="confirmCallback"></confirm-modal>
     <div class="row">
         {{--Prize kit list--}}
@@ -12,7 +13,7 @@
                     <div class="pull-right">
                         <a class="btn btn-success white-text" id="button-create-group"
                            data-toggle="modal" data-target="#modal-prize" @click="modalForCreatePrize">
-                        Create Prize Kit
+                        Create Prize kit
                         </a>
                     </div>
                 </h5>
@@ -48,13 +49,13 @@
                             </td>
                         </tr>
                         <tr v-for="(prize, index) in prizes" :class="prize.id == selectedPrize.id ? 'row-selected': ''"
-                                @click="selectPrize(index)">
+                                @click="selectPrizeByIndex(index)">
                             <td>@{{ prize.year }}</td>
                             <td>@{{ prize.title }}</td>
                             <td class="text-xs-center">@{{ prize.elements.length }}</td>
                             <td class="text-xs-center">@{{ prize.pictureCount }}</td>
                             <td class="text-xs-center">@{{ prize.tournamentCount }}</td>
-                            <td class="text-xs-right">
+                            <td class="text-xs-left">
                                 {{--edit button--}}
                                 <a class="btn btn-primary btn-xs white-text" @click.stop="modalForEditPrize(prize)">
                                     <i class="fa fa-pencil"></i> edit
@@ -137,6 +138,12 @@
                 <h5>
                     <i class="fa fa-file" aria-hidden="true"></i>
                     Items
+                    <div class="pull-right">
+                        <a class="btn btn-success white-text" id="button-create-group" v-if="selectedPrize != ''"
+                           data-toggle="modal" data-target="#modal-prize-item" @click="modalForCreateItem">
+                        Create Prize item
+                        </a>
+                    </div>
                 </h5>
                 <table class="table table-sm table-striped abr-table table-doublerow hover-row">
                     <thead>
@@ -155,9 +162,22 @@
                             </td>
                             <td>@{{ element.title }}</td>
                             <td>@{{ element.type }}</td>
-                            <td></td>
                             <td>
                                 <i class="fa fa-camera" title="picture available" v-if="element.photos.length > 0"></i>
+                            </td>
+                            <td class="text-xs-right">
+                                {{--edit button--}}
+                                <a class="btn btn-primary btn-xs white-text" @click.stop="modalForEditItem(element)">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                                {{--delete button--}}
+                                <form method="post" action="" style="display: inline">
+                                    <input name="_method" type="hidden" value="DELETE"/>
+                                    <input name="_token" type="hidden" value="{{ csrf_token() }}">
+                                    <input name="delete_id" type="hidden" :value="element.id">
+                                    <confirm-button button-class="btn btn-danger btn-xs" button-icon="fa fa-trash"
+                                    @click="confirmCallback = function() { deleteItem(element.id) }; confirmText = 'Delete prize item?'" />
+                                </form>
                             </td>
                         </tr>
                     </tbody>
@@ -218,7 +238,9 @@
         el: '#tab-prizes',
         data: {
             prizes: [],
+            itemTypes: [],
             prize: {},
+            item: {},
             kitPhotoList: [],
             modalTitle: '',
             editMode: false,
@@ -243,26 +265,26 @@
         },
         methods: {
             // load all my groups
-            loadPrizes: function (selectId = 0) {
+            loadPrizes: function (selectPrizeId = 0, selectItemId = 0) {
                 axios.get('/api/prizes').then(function (response) {
                     adminPrizes.selectedPrize = '';
                     adminPrizes.prizes = response.data;
                     $('#prizes-loader').addClass('hidden-xs-up');
-                    // select newly created ID, if any
-                    if (selectId > 0) {
-                        for (var i = 0; i < adminPrizes.prizes.length; i++) {
-                            if (adminPrizes.prizes[i].id == selectId) {
-                                adminPrizes.selectPrize(i);
-                                break;
-                            }
-                        }
+                    adminPrizes.gatherItemTypes();
+
+                    // select newly created prize kit, prize item, if any
+                    if (selectPrizeId > 0) {
+                        adminPrizes.selectPrizeById(selectPrizeId);
+                    }
+                    if (selectItemId > 0) {
+                        adminPrizes.selectItemById(selectItemId);
                     }
                 }, function (response) {
                     // error handling
                     toastr.error('Something went wrong while loading the prize kits.', '', {timeOut: 2000});
                 });
             },
-            selectPrize: function(index) {
+            selectPrizeByIndex: function(index) {
                 this.selectedPrize = this.prizes[index];
                 this.selectedItem = '';
                 // gather photos of items
@@ -278,16 +300,30 @@
             },
             modalForCreatePrize: function() {
                 this.prize = {};
-                this.modalTitle = 'Create Prize Kit';
+                this.modalTitle = 'Create Prize kit';
                 this.modalButton = 'Create';
                 this.editMode = false;
             },
             modalForEditPrize: function(prize) {
-                adminPrizes.prize = prize;
-                this.modalTitle = 'Edit Prize Kit';
-                this.modalButton = 'Save';
+                this.prize = prize;
+                this.modalTitle = 'Edit Prize kit';
+                this.modalButton = 'Update';
                 this.editMode = true;
                 $("#modal-prize").modal('show');
+            },
+            modalForCreateItem: function() {
+                this.item = { prize_id: this.selectedPrize.id };
+                this.modalTitle = 'Create Prize kit';
+                this.modalButton = 'Create';
+                this.editMode = false;
+            },
+            modalForEditItem: function(item) {
+                this.item = item;
+                this.item.typeHelper = this.item.type;
+                this.modalTitle = 'Edit Prize item';
+                this.modalButton = 'Update';
+                this.editMode = true;
+                $("#modal-prize-item").modal('show');
             },
             createPrize: function() {
                 axios.post('/api/prizes', this.prize)
@@ -324,6 +360,68 @@
                             toastr.error('Something went wrong.', '', {timeOut: 2000});
                         }
                 );
+            },
+            createItem: function() {
+                axios.post('/api/prize-items', this.item)
+                        .then(function(response) {
+                            adminPrizes.loadPrizes(response.data.prize_id, response.data.id);
+                            $("#modal-prize-item").modal('hide');
+                            toastr.info('Prize item created successfully.', '', {timeOut: 2000});
+                        }, function(response) {
+                            // error handling
+                            toastr.error('Something went wrong.', '', {timeOut: 2000});
+                        }
+                );
+            },
+            updateItem: function() {
+                axios.put('/api/prize-items/' + this.item.id, this.item)
+                        .then(function(response) {
+                            $("#modal-prize-item").modal('hide');
+                            toastr.info('Prize item updated successfully.', '', {timeOut: 2000});
+                            adminPrizes.loadPrizes(response.data.prize_id, response.data.id);
+                        }, function(response) {
+                            // error handling
+                            toastr.error('Something went wrong.', '', {timeOut: 2000});
+                        }
+                );
+            },
+            deleteItem: function(itemId) {
+                axios.delete('/api/prize-items/' + itemId).then(function (response) {
+                    adminPrizes.loadPrizes(adminPrizes.selectedPrize.id);
+                    adminPrizes.selectedItem = '';
+                    toastr.info('Prize item deleted.', '', {timeOut: 2000});
+                }, function(response) {
+                    // error handling
+                    toastr.error('Something went wrong.', '', {timeOut: 2000});
+                });
+            },
+            // gathers all previously existing prize item types
+            gatherItemTypes: function() {
+                this.itemTypes = [];
+                for (var i = 0; i < this.prizes.length; i++) {
+                    for (var u = 0; u < this.prizes[i].elements.length; u++) {
+                        if (this.itemTypes.indexOf(this.prizes[i].elements[u].type) == -1) {
+                            this.itemTypes.push(this.prizes[i].elements[u].type);
+                        }
+                    }
+                }
+            },
+            selectPrizeById: function(prizeId) {
+                for (var i = 0; i < this.prizes.length; i++) {
+                    if (this.prizes[i].id == prizeId) {
+                        this.selectPrizeByIndex(i);
+                        break;
+                    }
+                }
+            },
+            // selects item by id
+            selectItemById: function(itemId) {
+                for (var i = 0; i < this.selectedPrize.elements.length; i++) {
+                    if (this.selectedPrize.elements[i].id == itemId) {
+                        this.selectedItem = this.selectedPrize.elements[i];
+                        break;
+                    }
+                }
             }
         }
     });

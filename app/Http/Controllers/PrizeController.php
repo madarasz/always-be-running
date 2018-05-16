@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Prize;
+use App\PrizeElement;
 use App\Tournament;
 use Illuminate\Http\Request;
 
@@ -108,6 +109,47 @@ class PrizeController extends Controller
         $prize->delete();
 
         return response()->json('Prize kit deleted.');
+    }
+
+    /**
+     * Creates prize item.
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createPrizeItem(Request $request) {
+        $this->authorize('admin', Tournament::class, $request->user());
+
+        $newItem = PrizeElement::create([
+            'prize_id' => $request->input('prize_id'),
+            'quantity' => $request->input('quantity'),
+            'title' => $request->input('title'),
+            'type' => $request->input('type'),
+            'creator' => $request->user()->id
+        ]);
+
+        return response()->json($newItem);
+    }
+
+    public function editPrizeItem($id, Request $request) {
+        $item = PrizeElement::findOrFail($id);
+        $this->authorize('admin', Tournament::class, $request->user());
+
+        $item->update([
+            'quantity' => $request->input('quantity'),
+            'title' => $request->input('title'),
+            'type' => $request->input('type')
+        ]);
+
+        return response()->json($item);
+    }
+
+    public function deletePrizeItem($id, Request $request) {
+        // auth, error checking
+        $this->authorize('admin', Tournament::class, $request->user());
+        $item = PrizeElement::findOrFail($id);
+        $item->delete();
+
+        return response()->json('Prize item deleted.');
     }
 
 }

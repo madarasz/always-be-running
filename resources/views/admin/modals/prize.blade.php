@@ -30,7 +30,7 @@
                     <div class="form-group row">
                         <label for="tournament_type_id" class="col-sm-3 col-form-label">Type:</label>
                         <div class="col-sm-9">
-                            <select name="tournament_type_id" class="form-control" id="location"
+                            <select name="tournament_type_id" class="form-control"
                                     v-model="prize.tournament_type_id" required>
                                 @foreach($tournament_types as $key => $type)
                                     <option value="{{ $key }}">{{ $type }}</option>
@@ -54,7 +54,8 @@
                     <div class="form-group row">
                         <label for="ffg_url" class="col-sm-3 col-form-label">FFG article URL:</label>
                         <div class="col-sm-9">
-                            <input type="text" name="ffg_url" class="form-control" v-model="prize.ffg_url" />
+                            <input type="text" name="ffg_url" class="form-control" v-model="prize.ffg_url"
+                                    placeholder="https://"/>
                         </div>
                     </div>
 

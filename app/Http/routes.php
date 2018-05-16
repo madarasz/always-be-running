@@ -76,6 +76,9 @@ Route::get('/api/prizes', 'PrizeController@getPrizeKits');
 Route::post('/api/prizes', 'PrizeController@createPrizeKit');
 Route::delete('/api/prizes/{id}', 'PrizeController@deletePrizeKit');
 Route::put('/api/prizes/{id}', 'PrizeController@editPrizeKit');
+Route::post('/api/prize-items', 'PrizeController@createPrizeItem');
+Route::delete('/api/prize-items/{id}', 'PrizeController@deletePrizeItem');
+Route::put('/api/prize-items/{id}', 'PrizeController@editPrizeItem');
 
 Route::get('/oauth2/redirect', 'NetrunnerDBController@login');
 Route::get('/logout', 'NetrunnerDBController@logout');
