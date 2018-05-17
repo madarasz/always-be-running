@@ -105,7 +105,7 @@
                         <strong>last update:</strong> @{{ selectedPrize.updated_at }}<br/>
                     </em>
                     <strong>type:</strong> @{{ selectedPrize.tournament_type.type_name }}<br/>
-                    <strong>ordering number:</strong> @{{ selectedPrize.order }}<br/>
+                    {{--<strong>ordering number:</strong> @{{ selectedPrize.order }}<br/>--}}
                     <strong>FFG article URL:</strong>
                     <a v-if="selectedPrize.ffg_url !=''" :href="selectedPrize.ffg_url" target="_blank">
                         @{{ selectedPrize.ffg_url }}

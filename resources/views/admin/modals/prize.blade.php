@@ -60,14 +60,14 @@
                     </div>
 
                     {{--Order--}}
-                    <div class="form-group row">
+                    <div class="form-group row hidden-xs-up">
                         <label for="order" class="col-sm-3 col-form-label">
                             Ordering number:@include('partials.popover', ['direction' => 'bottom', 'content' =>
                                     'Prize kits are ordered by this number descending.'])
                         </label>
                         <div class="col-sm-9">
                             <input type="number" name="order" class="form-control" v-model="prize.order"
-                                    placeholder="YYYYMM"/>
+                                    placeholder="YYYYTX" value="0"/>
                         </div>
                     </div>
 
