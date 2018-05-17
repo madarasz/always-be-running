@@ -27,7 +27,7 @@ class PrizeController extends Controller
                 $prize->user->makeHidden(['name', 'username_preferred', 'supporter']);
             }
             if ($prize->elements) {
-                $prize->elements->makeHidden(['prize_id', 'sort_order', 'creator']);
+                $prize->elements->makeHidden(['prize_id', 'sort_order', 'creator', 'quantity']);
                 foreach ($prize->elements as $element) {
                     if ($element->photos) {
                         $element->photos->makeHidden(['tournament_id', 'user_id', 'title', 'approved', 'created_at',

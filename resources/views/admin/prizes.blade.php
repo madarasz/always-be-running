@@ -185,8 +185,7 @@
                         <tr v-for="(element, index) in selectedPrize.elements" :class="element.id == selectedItem.id ? 'row-selected': ''"
                                 @click="selectItem(index)">
                             <td class="text-xs-right">
-                                @{{ element.quantity }}
-                                <em v-if="element.quantity == null">participation</em>
+                                @{{ element.quantityString }}
                             </td>
                             <td>@{{ element.title }}</td>
                             <td>@{{ element.type }}</td>
@@ -238,8 +237,7 @@
                         <strong>created by:</strong> @{{ selectedItem.user.displayUsername }} - @{{ selectedItem.created_at }}<br/>
                         <strong>last update:</strong> @{{ selectedItem.updated_at }}<br/>
                     </em>
-                    <strong>quantity:</strong> @{{ selectedItem.quantity }}
-                    <em v-if="selectedItem.quantity == null">participation</em><br/>
+                    <strong>quantity:</strong> @{{ selectedItem.quantityString }}<br/>
                     <strong>title:</strong> @{{ selectedItem.title }}<br/>
                     <strong>type:</strong> @{{ selectedItem.type }}<br/>
                     <strong>pictures of item (@{{ selectedItem.photos.length }})</strong>
@@ -249,7 +247,7 @@
                                 {{--image thumpnail--}}
                                 <a :href="photo.url" data-toggle="lightbox" data-gallery="prize-gallery"
                                     :data-title="selectedPrize.year + ' ' + selectedPrize.title"
-                                    :data-footer="'<em>'+selectedItem.quantity +':</em> <strong>'+selectedItem.title+'</strong> '+selectedItem.type">
+                                    :data-footer="'<em>'+selectedItem.quantityString +':</em> <strong>'+selectedItem.title+'</strong> '+selectedItem.type">
                                     <img :src="photo.urlThumb"/>
                                 </a>
                                 {{--delete button--}}
@@ -340,7 +338,7 @@
                 for (var i = 0; i < this.selectedPrize.elements.length; i++) {
                     for (var u = 0; u < this.selectedPrize.elements[i].photos.length; u++) {
                         var photoItem = this.selectedPrize.elements[i].photos[u];
-                        photoItem.footer = '<em>'+this.selectedPrize.elements[i].quantity +
+                        photoItem.footer = '<em>'+this.selectedPrize.elements[i].quantityString +
                                 ':</em> <strong>'+this.selectedPrize.elements[i].title+'</strong> ' +
                                 this.selectedPrize.elements[i].type;
                         this.kitPhotoList.push(photoItem);

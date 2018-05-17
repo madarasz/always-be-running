@@ -9,6 +9,7 @@ class PrizeElement extends Model
     public $timestamps = true;
     protected $fillable = ['prize_id', 'quantity', 'title', 'type', 'creator'];
     protected $dates = ['created_at', 'updated_at'];
+    protected $appends = ['quantityString'];
 
     public function prize() {
         return $this->belongsTo(Prize::class, 'prize_id', 'id');
@@ -23,7 +24,7 @@ class PrizeElement extends Model
     }
 
     public function quantityToString() {
-        if (is_null($this->quantity)) {
+        if (is_null($this->quantity) || $this->quantity == '') {
             return 'participation';
         } else if (intval($this->quantity) == 1) {
             return 'champion';
@@ -32,5 +33,9 @@ class PrizeElement extends Model
         }  else {
             return $this->quantity;
         }
+    }
+
+    public function getQuantityStringAttribute() {
+        return $this->quantityToString();
     }
 }
