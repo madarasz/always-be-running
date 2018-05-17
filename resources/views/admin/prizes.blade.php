@@ -79,6 +79,8 @@
         <div class="col-xs-12">
             <div class="bracket">
                 <h5>
+                    <i class="fa fa-gift" aria-hidden="true"></i>
+                    Prize kit details<span v-if="selectedPrize != ''">: @{{ selectedPrize.year + ' ' + selectedPrize.title }}</span>
                     {{--Add photo--}}
                     <div class="pull-right" v-if="selectedPrize != ''">
                         <a class="btn btn-primary white-text" id="button-create-group"
@@ -87,9 +89,6 @@
                         </a>
                         <div class="small-text text-xs-center">for prize kit</div>
                     </div>
-
-                    <i class="fa fa-gift" aria-hidden="true"></i>
-                    Prize kit details<span v-if="selectedPrize != ''">: @{{ selectedPrize.year + ' ' + selectedPrize.title }}</span>
                 </h5>
                 <div class="text-xs-center" v-if="selectedPrize == ''">
                     <em>
@@ -143,7 +142,7 @@
                                 {{--image thumpnail--}}
                                 <a :href="photo.url" data-toggle="lightbox" data-gallery="prize-gallery"
                                    :data-title="selectedPrize.year + ' ' + selectedPrize.title"
-                                   :data-footer="'<em>'+selectedItem.quantity +':</em> <strong>'+selectedItem.title+'</strong> '+selectedItem.type">
+                                   :data-footer="photo.footer">
                                     <img :src="photo.urlThumb"/>
                                 </a>
                                 {{--delete button--}}
@@ -340,7 +339,11 @@
                 this.kitPhotoList = [];
                 for (var i = 0; i < this.selectedPrize.elements.length; i++) {
                     for (var u = 0; u < this.selectedPrize.elements[i].photos.length; u++) {
-                        this.kitPhotoList.push(this.selectedPrize.elements[i].photos[u]);
+                        var photoItem = this.selectedPrize.elements[i].photos[u];
+                        photoItem.footer = '<em>'+this.selectedPrize.elements[i].quantity +
+                                ':</em> <strong>'+this.selectedPrize.elements[i].title+'</strong> ' +
+                                this.selectedPrize.elements[i].type;
+                        this.kitPhotoList.push(photoItem);
                     }
                 }
             },
