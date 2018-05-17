@@ -66,7 +66,8 @@
                                     'Prize kits are ordered by this number descending.'])
                         </label>
                         <div class="col-sm-9">
-                            <input type="number" name="order" class="form-control" v-model="prize.order"/>
+                            <input type="number" name="order" class="form-control" v-model="prize.order"
+                                    placeholder="YYYYMM"/>
                         </div>
                     </div>
 
