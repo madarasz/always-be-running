@@ -19,60 +19,73 @@
                     </div>
                 </h5>
                 <div class="loader" id="prizes-loader">&nbsp;</div>
-                <table class="table table-sm table-striped abr-table table-doublerow hover-row">
-                    <thead>
-                        <th>year</th>
-                        <th>title</th>
-                        <th class="text-xs-center">
-                            <span class="hidden-sm-down">#items</span>
-                            <span class="hidden-md-up">
-                                <i class="fa fa-list-alt" title="tournaments"></i>
-                            </span>
-                        </th>
-                        <th class="text-xs-center">
-                            <span class="hidden-sm-down">#pictures</span>
-                            <span class="hidden-md-up">
-                                <i class="fa fa-camera" title="pictures"></i>
-                            </span>
-                        </th>
-                        <th class="text-xs-center">
-                            <span class="hidden-sm-down">#tournaments</span>
-                            <span class="hidden-md-up">
-                                <i class="fa fa-file" title="items"></i>
-                            </span>
-                        </th>
-                        <th></th>
-                    </thead>
-                    <tbody>
-                        <tr v-if="prizes.length == 0">
-                            <td colspan="6" class="text-xs-center">
-                                <em>you have no prizes created yet</em>
-                            </td>
-                        </tr>
-                        <tr v-for="(prize, index) in prizes" :class="prize.id == selectedPrize.id ? 'row-selected': ''"
-                                @click="selectPrizeByIndex(index)">
-                            <td>@{{ prize.year }}</td>
-                            <td>@{{ prize.title }}</td>
-                            <td class="text-xs-center">@{{ prize.elements.length }}</td>
-                            <td class="text-xs-center">@{{ prize.pictureCount }}</td>
-                            <td class="text-xs-center">@{{ prize.tournamentCount }}</td>
-                            <td class="text-xs-left">
-                                {{--edit button--}}
-                                <a class="btn btn-primary btn-xs white-text" @click.stop="modalForEditPrize(prize)">
-                                    <i class="fa fa-pencil"></i> edit
-                                </a>
-                                {{--delete button--}}
-                                <form method="post" action="" style="display: inline" v-if="prize.tournamentCount == 0">
-                                    <input name="_method" type="hidden" value="DELETE"/>
-                                    <input name="_token" type="hidden" value="{{ csrf_token() }}">
-                                    <input name="delete_id" type="hidden" :value="prize.id">
-                                    <confirm-button button-text="delete" button-class="btn btn-danger btn-xs" button-icon="fa fa-trash"
-                                        @click="confirmCallback = function() { deletePrize(prize.id) }; confirmText = 'Delete prize kit?'" />
-                                </form>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <local-table v-model="prizes" :selectedid="selectedPrize.id"></local-table>
+                <script type="text/x-template" id="tableDrag">
+                    <table class="table table-sm table-striped abr-table table-doublerow hover-row">
+                        <thead>
+                            <th></th>
+                            <th>year</th>
+                            <th>title</th>
+                            <th class="text-xs-center">
+                                <span class="hidden-sm-down">#items</span>
+                                <span class="hidden-md-up">
+                                    <i class="fa fa-list-alt" title="tournaments"></i>
+                                </span>
+                            </th>
+                            <th class="text-xs-center">
+                                <span class="hidden-sm-down">#pictures</span>
+                                <span class="hidden-md-up">
+                                    <i class="fa fa-camera" title="pictures"></i>
+                                </span>
+                            </th>
+                            <th class="text-xs-center">
+                                <span class="hidden-sm-down">#tournaments</span>
+                                <span class="hidden-md-up">
+                                    <i class="fa fa-file" title="items"></i>
+                                </span>
+                            </th>
+                            <th></th>
+                        </thead>
+                        <tbody v-if="list.length == 0">
+                            <tr :key="0">
+                                <td colspan="6" class="text-xs-center">
+                                    <em>you have no prizes created yet</em>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <draggable :list="list" :element="'tbody'" v-if="list.length > 0">
+                            <tr v-for="(prize, index) in list" :class="prize.id == selectedid ? 'row-selected': ''"
+                                :key="prize.id" @click="$emit(selectPrizeByIndex(index))">
+                                <local-td :item="prize"></local-td>
+                                <td>@{{ prize.year }}</td>
+                                <td>@{{ prize.title }}</td>
+                                <td class="text-xs-center">@{{ prize.tournamentCount }}</td>
+                                <td class="text-xs-center">@{{ prize.pictureCount }}</td>
+{{--                                <td class="text-xs-center">@{{ prize.elements.length }}</td>--}}
+
+                                {{--<td class="text-xs-left">--}}
+                                    {{--edit button--}}
+                                    {{--<a class="btn btn-primary btn-xs white-text" @click.stop="modalForEditPrize(prize)">--}}
+                                        {{--<i class="fa fa-pencil"></i> edit--}}
+                                    {{--</a>--}}
+                                    {{--delete button--}}
+                                    {{--<form method="post" action="" style="display: inline" v-if="prize.tournamentCount == 0">--}}
+                                        {{--<input name="_method" type="hidden" value="DELETE"/>--}}
+                                        {{--<input name="_token" type="hidden" value="{{ csrf_token() }}">--}}
+                                        {{--<input name="delete_id" type="hidden" :value="prize.id">--}}
+                                        {{--<confirm-button button-text="delete" button-class="btn btn-danger btn-xs" button-icon="fa fa-trash"--}}
+                                        {{--@click="confirmCallback = function() { deletePrize(prize.id) }; confirmText = 'Delete prize kit?'" />--}}
+                                    {{--</form>--}}
+                                {{--</td>--}}
+                            </tr>
+                        </draggable>
+                    </table>
+                </script>
+                <script type="text/x-template" id="trDrag">
+                    <td @click.stop="" style="background-color: #ccc; width: 1%; white-space: nowrap;">
+                        <i class="fa fa-arrows" aria-hidden="true"></i>
+                    </td>
+                </script>
             </div>
         </div>
         {{--Prize kit details--}}
@@ -279,6 +292,31 @@
 
 </div>
 <script type="text/javascript">
+    // components for draggable functionality
+    var localTd = {
+        template: '#trDrag',
+        props: ['item'],
+        name: 'local-td'
+    };
+    var localTable = {
+        components:{
+            localTd:localTd
+        },
+        template: '#tableDrag',
+        props: ['value', 'selectedid'],
+        name: 'local-table',
+        computed: {
+            list: {
+                get: function() {
+                    return this.value;
+                },
+                set: function(value) {
+                   this.$emit('input', value);
+                }
+            }
+        }
+    };
+
     var adminPrizes= new Vue({
         el: '#tab-prizes',
         data: {
@@ -300,7 +338,9 @@
             },
             confirmText: ''
         },
-        components: {},
+        components: {
+            localTable: localTable
+        },
         computed: {
             compiledMarkdownPrizeDescription: function () {
                 if (this.selectedPrize == '' || this.selectedPrize.description == null) {
@@ -509,6 +549,9 @@
                     // error handling
                     toastr.error('Something went wrong.', '', {timeOut: 2000});
                 });
+            },
+            checkDrag: function() {
+                console.log('dragged!');
             }
         }
     });

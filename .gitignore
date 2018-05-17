@@ -36,6 +36,7 @@ resources/assets/js/axios.min.js
 resources/assets/js/require.js
 resources/assets/js/marked.js
 resources/assets/*/toastr.min.*
+resources/assets/js/Sortable.min.js
 phantomjsdriver.log
 app/Http/Controllers/ASController.php
 jquery.bracket.min.js

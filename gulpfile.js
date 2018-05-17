@@ -37,6 +37,8 @@ elixir(function(mix) {
         .copy(toastrPath + '/toastr.min.css', 'resources/assets/css')
         .copy(toastrPath + '/toastr.min.js', 'resources/assets/js')
         .copy('node_modules/marked/lib/marked.js', 'resources/assets/js')
+        .copy('node_modules/vuedraggable/dist/vuedraggable.js', 'resources/assets/js')
+        .copy('node_modules/sortablejs/Sortable.min.js', 'resources/assets/js')
         .sass('app.scss')
         .scripts([
             "jquery-2.2.3.min.js",      // TODO: jquery from npm?
@@ -60,7 +62,9 @@ elixir(function(mix) {
             "axios.min.js",
             "toastr.min.js",
             "abr-vue.js",
-            "marked.js"
+            "marked.js",
+            "Sortable.min.js",
+            "vuedraggable.js"
         ])
         .styles([
             'font-awesome.css',
