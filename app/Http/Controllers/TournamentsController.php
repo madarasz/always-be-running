@@ -51,8 +51,10 @@ class TournamentsController extends Controller
         $this->authorize('logged_in', Tournament::class, $request->user());
         $tournament_types = TournamentType::orderBy('order')->pluck('type_name', 'id')->all();
         $tournament_formats = TournamentFormat::orderBy('order')->pluck('format_name', 'id')->all();
-        $tournament_prizes = Prize::orderBy('year', 'desc')->orderBy('tournament_type_id', 'desc')->orderBy('title', 'desc')
-            ->select(\DB::raw('CONCAT(year, " ", title) as display, id'))->pluck('display', 'id')->all();
+        $tournament_prizes = Prize::join('tournament_types', 'prizes.tournament_type_id', '=', 'tournament_types.id')
+            ->orderBy('year', 'desc')->orderBy('tournament_types.order', 'desc')->orderBy('title', 'desc')
+            ->select(\DB::raw('CONCAT(prizes.year, " ", prizes.title) as display, prizes.id'))
+            ->pluck('display', 'prizes.id')->all();
         $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $tournament = new Tournament();
 
@@ -76,8 +78,10 @@ class TournamentsController extends Controller
         $this->authorize('own', $tournament, $request->user());
         $tournament_types = TournamentType::orderBy('order')->pluck('type_name', 'id')->all();
         $tournament_formats = TournamentFormat::orderBy('order')->pluck('format_name', 'id')->all();
-        $tournament_prizes = Prize::orderBy('year', 'desc')->orderBy('tournament_type_id', 'desc')->orderBy('title', 'desc')
-            ->select(\DB::raw('CONCAT(year, " ", title) as display, id'))->pluck('display', 'id')->all();
+        $tournament_prizes = Prize::join('tournament_types', 'prizes.tournament_type_id', '=', 'tournament_types.id')
+            ->orderBy('year', 'desc')->orderBy('tournament_types.order', 'desc')->orderBy('title', 'desc')
+            ->select(\DB::raw('CONCAT(prizes.year, " ", prizes.title) as display, prizes.id'))
+            ->pluck('display', 'prizes.id')->all();
         $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $page_section = 'organize';
         return view('tournaments.edit', compact('tournament', 'id', 'tournament_types', 'cardpools', 'page_section',
