@@ -59,18 +59,6 @@
                         </div>
                     </div>
 
-                    {{--Order--}}
-                    <div class="form-group row hidden-xs-up">
-                        <label for="order" class="col-sm-3 col-form-label">
-                            Ordering number:@include('partials.popover', ['direction' => 'bottom', 'content' =>
-                                    'Prize kits are ordered by this number descending.'])
-                        </label>
-                        <div class="col-sm-9">
-                            <input type="number" name="order" class="form-control" v-model="prize.order"
-                                    placeholder="YYYYTX" value="0"/>
-                        </div>
-                    </div>
-
                     <div class="form-group text-xs-center m-t-1">
                         <button type="submit" class="btn btn-success">@{{ modalButton }}</button>
                     </div>

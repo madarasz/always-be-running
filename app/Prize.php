@@ -3,13 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Prize extends Model
 {
+    use SoftDeletes;
     public $timestamps = true;
-    protected $fillable = ['year', 'type', 'tournament_type_id', 'description', 'ffg_url', 'creator',
-        'order', 'title'];
-    protected $dates = ['created_at', 'updated_at'];
+    protected $fillable = ['year', 'type', 'tournament_type_id', 'description', 'ffg_url', 'creator', 'title'];
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
     protected $appends = ['pictureCount', 'tournamentCount'];
 
     public function tournament_type() {

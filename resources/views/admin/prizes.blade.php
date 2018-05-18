@@ -12,6 +12,7 @@
                     <i class="fa fa-gift" aria-hidden="true"></i>
                     Prize kits
                     <div class="pull-right">
+                        {{--create button--}}
                         <a class="btn btn-success white-text" id="button-create-group"
                            data-toggle="modal" data-target="#modal-prize" @click="modalForCreatePrize">
                         Create Prize kit
@@ -19,7 +20,7 @@
                     </div>
                 </h5>
                 <div class="loader" id="prizes-loader">&nbsp;</div>
-                <table class="table table-sm table-striped abr-table table-doublerow hover-row">
+                <table class="table table-sm table-striped abr-table hover-row">
                     <thead>
                         <th>year</th>
                         <th>title</th>
@@ -104,7 +105,6 @@
                         <strong>last update:</strong> @{{ selectedPrize.updated_at }}<br/>
                     </em>
                     <strong>type:</strong> @{{ selectedPrize.tournament_type.type_name }}<br/>
-                    {{--<strong>ordering number:</strong> @{{ selectedPrize.order }}<br/>--}}
                     <strong>FFG article URL:</strong>
                     <a v-if="selectedPrize.ffg_url !=''" :href="selectedPrize.ffg_url" target="_blank">
                         @{{ selectedPrize.ffg_url }}
@@ -173,7 +173,7 @@
                         </a>
                     </div>
                 </h5>
-                <table class="table table-sm table-striped abr-table table-doublerow hover-row">
+                <table class="table table-sm table-striped abr-table hover-row">
                     <thead>
                         <th class="text-xs-right">quantity</th>
                         <th>title</th>
@@ -185,9 +185,11 @@
                         <tr v-for="(element, index) in selectedPrize.elements" :class="element.id == selectedItem.id ? 'row-selected': ''"
                                 @click="selectItem(index)">
                             <td class="text-xs-right">
-                                @{{ element.quantityString }}
+                                <em>@{{ element.quantityString }}</em>
                             </td>
-                            <td>@{{ element.title }}</td>
+                            <td>
+                                <strong>@{{ element.title }}</strong>
+                            </td>
                             <td>@{{ element.type }}</td>
                             <td>
                                 <i class="fa fa-camera" title="picture available" v-if="element.photos.length > 0"></i>
@@ -312,7 +314,7 @@
         methods: {
             // load all my groups
             loadPrizes: function (selectPrizeId = 0, selectItemId = 0) {
-                axios.get('/api/prizes').then(function (response) {
+                axios.get('/api/prizes?verbose=1').then(function (response) {
                     adminPrizes.selectedPrize = '';
                     adminPrizes.prizes = response.data;
                     $('#prizes-loader').addClass('hidden-xs-up');

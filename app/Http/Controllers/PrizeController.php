@@ -12,6 +12,7 @@ class PrizeController extends Controller
 
     /**
      * List all prize kits inluding their items and linked photos.
+     * Use verbose=1 GET parameter for additional details.
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -21,13 +22,21 @@ class PrizeController extends Controller
             ->orderBy('year', 'desc')->orderBy('tournament_type_id', 'desc')->orderBy('title', 'desc')->get();
 
         // hiding unimportant fields
-        $prizes = $prizes->makeHidden(['creator']);
+        $prizes = $prizes->makeHidden(['creator', 'order']);
+        if ($request->input('verbose') != 1) {
+            $prizes = $prizes->makeHidden(['created_at', 'updated_at', 'pictureCount', 'tournamentCount',
+                'tournament_type_id', 'user']);
+        }
+
         foreach ($prizes as $prize) {
             if ($prize->user) {
                 $prize->user->makeHidden(['name', 'username_preferred', 'supporter']);
             }
             if ($prize->elements) {
-                $prize->elements->makeHidden(['prize_id', 'sort_order', 'creator', 'quantity']);
+                $prize->elements->makeHidden(['prize_id', 'sort_order', 'creator']);
+                if ($request->input('verbose') != 1) {
+                    $prize->elements->makeHidden(['created_at', 'updated_at', 'user', 'quantity']);
+                }
                 foreach ($prize->elements as $element) {
                     if ($element->photos) {
                         $element->photos->makeHidden(['tournament_id', 'user_id', 'title', 'approved', 'created_at',
@@ -63,7 +72,6 @@ class PrizeController extends Controller
             'tournament_type_id' => $request->input('tournament_type_id'),
             'description' => $request->input('description'),
             'ffg_url' => $request->input('ffg_url'),
-            'order' => $request->input('order'),
             'creator' => $request->user()->id
         ]);
 
@@ -86,7 +94,6 @@ class PrizeController extends Controller
             'tournament_type_id' => $request->input('tournament_type_id'),
             'description' => $request->input('description'),
             'ffg_url' => $request->input('ffg_url'),
-            'order' => $request->input('order')
         ]);
 
         return response()->json($prize);
