@@ -10,7 +10,7 @@
             <div class="bracket">
                 <h5>
                     <i class="fa fa-gift" aria-hidden="true"></i>
-                    Prize kits
+                    Prize kits (<span>@{{ prizes.length }})</span>
                     <div class="pull-right">
                         {{--create button--}}
                         <a class="btn btn-success white-text" id="button-create-group"
