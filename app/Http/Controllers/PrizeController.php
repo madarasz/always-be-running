@@ -19,7 +19,8 @@ class PrizeController extends Controller
     public function getPrizeKits(Request $request) {
 
         $prizes = Prize::with(['tournament_type', 'user', 'elements', 'photos', 'elements.photos', 'elements.user'])
-            ->orderBy('year', 'desc')->orderBy('tournament_type_id', 'desc')->orderBy('title', 'desc')->get();
+            ->join('tournament_types', 'prizes.tournament_type_id', '=', 'tournament_types.id')
+            ->orderBy('year', 'desc')->orderBy('tournament_types.order', 'desc')->orderBy('title', 'desc')->get();
 
         // hiding unimportant fields
         $prizes = $prizes->makeHidden(['creator', 'order']);
