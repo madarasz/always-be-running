@@ -53,7 +53,13 @@
                         <tr v-for="(prize, index) in prizes" :class="prize.id == selectedPrize.id ? 'row-selected': ''"
                                 @click="selectPrizeByIndex(index)">
                             <td>@{{ prize.year }}</td>
-                            <td>@{{ prize.title }}</td>
+                            <td>
+                                <span v-if="prize.tournament_type_id > 1"
+                                      :class="'tournament-type type-' + prize.tournament_type.type_name.split(' ')[0]">
+                                    @{{ prize.tournament_type.type_name.charAt(0).toUpperCase() }}
+                                </span>
+                                @{{ prize.title }}
+                            </td>
                             <td class="text-xs-center">@{{ prize.elements.length }}</td>
                             <td class="text-xs-center">@{{ prize.pictureCount }}</td>
                             <td class="text-xs-center">@{{ prize.tournamentCount }}</td>

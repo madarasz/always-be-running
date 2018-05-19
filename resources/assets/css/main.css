@@ -859,6 +859,10 @@ a.admin:hover {
     background-color: #892222;
     padding: .25em .3em;
 }
+.type-worlds {
+    background-color: #892222;
+    padding: .25em .3em;
+}
 .type-team {
     background-color: rgba(51, 137, 230, 1);
     font-size: 70%;
