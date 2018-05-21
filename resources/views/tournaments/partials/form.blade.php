@@ -1,5 +1,5 @@
 {{--New/edit tournament form--}}
-<div class="row">
+<div class="row" id="form-tournament">
     <div class="col-xs-12 col-md-8">
         {{--General--}}
         <div class="bracket">
@@ -107,12 +107,21 @@
         <div class="bracket hide-nonrequired">
             {{--Official prize kit--}}
             <div class="row form-group">
-                {!! Form::label('prize_id', 'Official prize kit:', ['class' => 'col-md-3 col-form-label']) !!}
+                {!! Form::label('prize_id', 'Official prize kit:', ['class' => 'col-md-3 col-xs-12 col-form-label']) !!}
                 <div class="col-md-9 col-xs-12">
-                    {!! Form::select('prize_id', array_replace([0 => '--- none ---'], $tournament_prizes),
-                        old('prize_id', $tournament->prize_id), ['class' => 'form-control']) !!}
+                    {{--<div class="loader-chart" id="prizes-loader" v-if="prizes.length == 0">&nbsp;</div>--}}
+                    <select name="prize_id" v-model="prizeId" class="form-control" v-if="prizes.length > 0">
+                        <option value="0">--- none ---</option>
+                        <option v-for="prize in prizes" :value="prize.id">@{{ prize.year+' '+prize.title }}</option>
+                    </select>
                 </div>
+                <div class="col-md-3 col-xs-12" v-if="selectedPrizeIndex > -1">
+                    <img v-if="prizes[selectedPrizeIndex].photos.length > 0"
+                         :src="prizes[selectedPrizeIndex].photos[0].url" style="width: 100%"/>
+                </div>
+                <div class="col-md-9 col-xs-12 legal-bullshit" v-if="selectedPrizeIndex > -1" v-html="prizeSummary"></div>
             </div>
+
             {{--Additional prizes--}}
             <div class="form-group hide-nonrequired">
                 {!! Form::label('prize_additional', 'Additional prizes') !!}
@@ -377,5 +386,56 @@
             });
         }
     }
+
+    var formTournament= new Vue({
+        el: '#form-tournament',
+        data: {
+            prizes: [],
+            prizeId: '{{ old('prize_id', $tournament->prize_id) }}' || '0'
+        },
+        mounted: function () {
+            this.loadPrizes();
+        },
+        computed: {
+            selectedPrizeIndex: function() {
+                if (this.prizes.length > 0 && this.prizeId > 0) {
+                    for (var i = 0; i < this.prizes.length; i++) {
+                        if (this.prizes[i].id == this.prizeId) {
+                            return i;
+                        }
+                    }
+                }
+                return -1;
+            },
+            prizeSummary: function() {
+                if (this.selectedPrizeIndex > -1) {
+                    var selectedPrizeKit = this.prizes[this.selectedPrizeIndex], summary = '';
+                    for (var u = 0; u < selectedPrizeKit.elements.length; u++) {
+                        if (u == 0 || selectedPrizeKit.elements[u-1].quantityString != selectedPrizeKit.elements[u].quantityString) {
+                            summary += '<em>'+selectedPrizeKit.elements[u].quantityString+':</em> ';
+                        }
+                        summary += '<strong>'+selectedPrizeKit.elements[u].title+'</strong> ';
+                        summary += selectedPrizeKit.elements[u].type+', ';
+                    }
+                    return summary.substring(0, summary.length - 2);
+                } else {
+                    return '';
+                }
+            }
+        },
+        methods: {
+            // load all my groups
+            loadPrizes: function () {
+                axios.get('/api/prizes').then(function (response) {
+                    formTournament.prizes = response.data;
+                    $('#prizes-loader').addClass('hidden-xs-up');
+                }, function (response) {
+                    // error handling
+                    toastr.error('Something went wrong while loading the prize kits.', '', {timeOut: 2000});
+                });
+            }
+
+        }
+    });
 
 </script>
