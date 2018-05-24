@@ -16,6 +16,7 @@
                     <a href="#abr-data">What kind of data are you storing regarding users?</a><br>
                     <a href="#data-sharing">Do you share users' data with any third party?</a><br>
                     <a href="#delete">I want my data removed.</a><br>
+                    <a href="#history">What kind of changes were made to this Privacy Policy?</a><br/>
                     <a href="#more-questions">I have more questions, suggestions or ideas.</a><br>
                 </p>
 
@@ -185,6 +186,16 @@
                 <p>
                     Please write a request to alwaysberunning (at) gmail.com from the email address you used for your
                     NetrunnerDB registration.
+                </p>
+
+                <hr/>
+                <p>
+                    <a name="history" class="anchor"></a><strong>What kind of changes were made to this Privacy Policy?</strong>
+                </p>
+                <p>
+                    You can track all changes to this Privacy Policy on its
+                    <a href="https://github.com/madarasz/always-be-running/commits/master/resources/views/privacy.blade.php">
+                        GitHub page</a>.
                 </p>
 
                 <hr/>
