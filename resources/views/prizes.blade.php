@@ -23,7 +23,7 @@
                                     {{--<div class="input-group-prepend">--}}
                                         <span class="input-group-addon"><i class="fa fa-gift" aria-hidden="true"></i></span>
                                     {{--</div>--}}
-                                    <select name="kit_id" class="custom-select" style="width: 100%" v-model="selectedPrizeId">
+                                    <select class="custom-select" style="width: 100%" v-model="selectedPrizeId">
                                         <option value="0">--- all ---</option>
                                         <option v-for="prize in prizes" value="prize.id">@{{ prize.year+' '+prize.title }}</option>
                                     </select>
@@ -33,7 +33,7 @@
                         <div class="col-xs-12 col-lg-4 col-md-8 offset-md-4 offset-lg-0">
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
-                                <input type="search" id="field-search" name="prize-search"
+                                <input type="search" name="prize-search"
                                        class="form-control" :disabled="selectedPrizeId != 0"/>
                             </div>
                         </div>
@@ -60,7 +60,7 @@
                         <div class="gallery-item col-xl-2 col-md-3 col-sm-4 col-xs-6" v-for="photo in prize.photos" :key="photo.url">
                             <div style="position: relative;">
                                 {{--image thumpnail--}}
-                                <a :href="photo.url" data-toggle="lightbox" :data-gallery="'prize-gallery' + prize-id"
+                                <a :href="photo.url" data-toggle="lightbox" :data-gallery="'prize-gallery' + prize.id"
                                    :data-title="prize.year + ' ' + prize.title">
                                     <img :src="photo.urlThumb" style="width: 150px; height: auto"/>
                                 </a>
@@ -70,8 +70,8 @@
                         <template v-for="item in prize.elements">
                             <div class="gallery-item col-xl-2 col-md-3 col-sm-4 col-xs-6" v-for="photo in item.photos" :key="photo.url">
                                 <div style="position: relative;">
-                                    {{--image thumpnail--}}
-                                    <a :href="photo.url" data-toggle="lightbox" :data-gallery="'prize-gallery' + prize-id"
+                                    image thumpnail
+                                    <a :href="photo.url" data-toggle="lightbox" :data-gallery="'prize-gallery' + prize.id"
                                        :data-title="prize.year + ' ' + prize.title"
                                        :data-footer="'<em>'+item.quantityString+':</em> <strong>'+item.title+'</strong> '+item.type">
                                         <img :src="photo.urlThumb" style="width: 150px; height: auto"/>
@@ -95,7 +95,7 @@
                                         </span>
                                 {{--has photo--}}
                                 <a v-if="item.photos.length > 0" :href="item.photos[0].url" data-toggle="lightbox"
-                                   :data-gallery="'prize-gallery' + prize-id"
+                                   :data-gallery="'prize-gallery' + prize.id"
                                    :data-title="prize.year + ' ' + prize.title"
                                    :data-footer="'<em>'+item.quantityString+':</em> <strong>'+item.title+'</strong> '+item.type">
                                     <strong>@{{ item.title }}</strong>
