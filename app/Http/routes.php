@@ -3,6 +3,7 @@
 Route::get('/', 'PagesController@upcoming');
 Route::get('results', 'PagesController@results');
 Route::get('organize', 'PagesController@organize')->name('organize');
+Route::get('prizes', 'PagesController@prizes');
 Route::get('personal', 'PagesController@personal');
 Route::get('profile/{id}', 'PagesController@profile')->name('profile.show');
 Route::post('profile/{id}', 'PagesController@updateProfile');

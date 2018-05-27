@@ -145,6 +145,11 @@ class PagesController extends Controller
             'runnerIDs', 'corpIDs', 'photo_count', 'photo_tournaments', 'video_count', 'video_tournaments', 'secret_id'));
     }
 
+    public function prizes()
+    {
+        return view('prizes', ['page_section' => 'prizes']);
+    }
+
     public function about()
     {
         $helpers = Badge::where('id', 24)->first()->users()->get();

@@ -22,9 +22,9 @@ class PrizeController extends Controller
             ->orderBy('year', 'desc')->orderBy('tournament_type_id', 'desc')->orderBy('title', 'desc')->get();
 
         // hiding unimportant fields
-        $prizes = $prizes->makeHidden(['creator', 'order']);
+        $prizes = $prizes->makeHidden(['creator', 'order', 'deleted_at']);
         if ($request->input('verbose') != 1) {
-            $prizes = $prizes->makeHidden(['created_at', 'updated_at', 'pictureCount', 'tournamentCount',
+            $prizes = $prizes->makeHidden(['created_at', 'updated_at', 'tournamentCount',
                 'tournament_type_id', 'user']);
         }
 
