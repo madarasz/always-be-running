@@ -134,7 +134,7 @@
             },
             filters: {
               searchHighlight: function(value) {
-                  if (prizeBrowser.searchText.length < 3) {
+                  if (prizeBrowser.searchText.length < 3 || !value) {
                       return value;
                   } else {
                       var iQuery = new RegExp(prizeBrowser.searchText, "ig");
@@ -178,7 +178,7 @@
                                 // prize item title / type matches
                                 for (var u = 0; u < this.prizes[i].elements.length; u++) {
                                     var prizeItem = this.prizes[i].elements[u];
-                                    if (prizeItem.title.toUpperCase().indexOf(this.searchText.toUpperCase()) > -1 ||
+                                    if ((prizeItem.title && prizeItem.title.toUpperCase().indexOf(this.searchText.toUpperCase()) > -1) ||
                                             prizeItem.type.toUpperCase().indexOf(this.searchText.toUpperCase()) > -1) {
                                         this.prizeVisibility[i] = true;
                                     }
