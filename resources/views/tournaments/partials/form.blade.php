@@ -310,43 +310,48 @@
     changeTournamentType();
     hideNonRequired();
 
-    $('#date').datepicker({
-        autoclose: true,
-        format: 'yyyy.mm.dd.',
-        orientation: 'bottom',
-        todayHighlight: true,
-        weekStart: 1 //TODO: custom
-    });
-    $('#end_date').datepicker({
-        autoclose: true,
-        format: 'yyyy.mm.dd.',
-        orientation: 'bottom',
-        todayHighlight: true,
-        weekStart: 1 //TODO: custom
-    });
+    function initDatePicker() {
+        $('#date').datepicker({
+            autoclose: true,
+            format: 'yyyy.mm.dd.',
+            orientation: 'bottom',
+            todayHighlight: true,
+            weekStart: 1 //TODO: custom
+        });
+        $('#end_date').datepicker({
+            autoclose: true,
+            format: 'yyyy.mm.dd.',
+            orientation: 'bottom',
+            todayHighlight: true,
+            weekStart: 1 //TODO: custom
+        });
 
-    $('#start_time').timepicker({ 'scrollDefault': '10:00AM', 'timeFormat': 'H:i', 'show2400': true });
+        $('#start_time').timepicker({ 'scrollDefault': '10:00AM', 'timeFormat': 'H:i', 'show2400': true });
 
-    // clicking icon should also show datepicker
-    $('#datepicker-icon').click(function(){
-        $('#date').trigger('focus.datepicker.data-api');
-    });
-    $('#datepicker-icon-end').click(function(){
-        document.getElementById('end-date-multiple').checked = true;
-        $('#end_date').trigger('focus.datepicker.data-api');
-    });
-    $('#end_date').click(function(){
-        document.getElementById('end-date-multiple').checked = true;
-    });
-    $('#recur_weekly').click(function(){
-        document.getElementById('end-date-recur').checked = true;
-        recurCheck();
-    });
-    $('.end-date').click(function() {
-        recurCheck();
-    });
+        // clicking icon should also show datepicker
+        $('#datepicker-icon').click(function(){
+            $('#date').trigger('focus.datepicker.data-api');
+        });
+        $('#datepicker-icon-end').click(function(){
+            document.getElementById('end-date-multiple').checked = true;
+            $('#end_date').trigger('focus.datepicker.data-api');
+        });
+        $('#end_date').click(function(){
+            document.getElementById('end-date-multiple').checked = true;
+        });
+        $('#recur_weekly').click(function(){
+            document.getElementById('end-date-recur').checked = true;
+            recurCheck();
+        });
+        $('.end-date').click(function() {
+            recurCheck();
+        });
+    }
 
     function initializeMap() {
+
+        initDatePicker();
+
         map = new google.maps.Map(document.getElementById('map'), {
             zoom: 1,
             center: {lat: 40.157053, lng: 19.329297},
