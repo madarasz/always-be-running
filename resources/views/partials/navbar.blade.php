@@ -31,6 +31,11 @@
                         <span id="nav-organize" class="notif-red notif-badge span-nav">Organize</span>
                     </a>
                 </li>
+                <li class="nav-item{{ @$page_section == 'prizes' ? ' active' : '' }}">
+                    <a class="nav-link" href="/prizes">
+                        Prizes
+                    </a>
+                </li>
                 @if (Auth::check() && Auth::user()->admin == 1)
                     <li class="nav-item{{ @$page_section == 'admin' ? ' active' : '' }}">
                         <a class="nav-link" href="/admin">
