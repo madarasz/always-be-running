@@ -116,6 +116,9 @@
                 </div>
             </div>
         </div>
+        <div class="text-xs-center" v-if="!foundKit">
+            <em>no such prize kit found</em>
+        </div>
     </div>
 
     <script type="text/javascript">
@@ -125,7 +128,8 @@
                 prizes: [],
                 prizeVisibility: [],
                 selectedPrizeId: 0,
-                searchText: ''
+                searchText: '',
+                foundKit: true
             },
             components: {},
             computed: {},
@@ -157,6 +161,7 @@
                 },
                 updateFilter: function() {
                     var defaultValue = this.selectedPrizeId == 0 && this.searchText.length <= 2;
+                    this.foundKit = defaultValue;
                     this.prizeVisibility = [];
                     for (var i = 0; i < this.prizes.length; i++) {
                         this.prizeVisibility.push(defaultValue);
@@ -166,6 +171,7 @@
                         for (var i = 0; i < this.prizes.length; i++) {
                             if (this.prizes[i].id == this.selectedPrizeId) {
                                 this.prizeVisibility[i] = true;
+                                this.foundKit = true;
                                 return true;
                             }
                         }
@@ -174,6 +180,7 @@
                             // prize kit year / title matches
                             if ((this.prizes[i].year+this.prizes[i].title.toUpperCase()).indexOf(this.searchText.toUpperCase()) > -1) {
                                 this.prizeVisibility[i] = true;
+                                this.foundKit = true;
                             } else {
                                 // prize item title / type matches
                                 for (var u = 0; u < this.prizes[i].elements.length; u++) {
@@ -181,6 +188,7 @@
                                     if ((prizeItem.title && prizeItem.title.toUpperCase().indexOf(this.searchText.toUpperCase()) > -1) ||
                                             prizeItem.type.toUpperCase().indexOf(this.searchText.toUpperCase()) > -1) {
                                         this.prizeVisibility[i] = true;
+                                        this.foundKit = true;
                                     }
                                 }
                             }
