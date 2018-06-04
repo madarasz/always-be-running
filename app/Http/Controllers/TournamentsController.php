@@ -801,14 +801,14 @@ class TournamentsController extends Controller
                     array_push($errors, 'JSON is missing identities. NRTM app needs updating or identities are not set.');
                     return false;
             }
-            foreach ($json['players'] as $swiss) {
-                if (!array_key_exists('corpIdentity', $swiss)) {
-                    array_push($errors, "Player '" . $swiss['name'] . "' has no corp identity.");
-                    return false;
+            foreach ($json['players'] as &$swiss) {
+                if (!array_key_exists('corpIdentity', $swiss) || is_null($swiss['corpIdentity'])) {
+                    array_push($errors, "Player '" . $swiss['name'] . "' has no corp identity - using 'The Shadow' instead");
+                    $swiss['corpIdentity'] = 'The Shadow: Pulling the Strings';
                 }
-                if (!array_key_exists('runnerIdentity', $swiss)) {
-                    array_push($errors, "Player '" . $swiss['name'] . "' has no runner identity.");
-                    return false;
+                if (!array_key_exists('runnerIdentity', $swiss) || is_null($swiss['runnerIdentity'])) {
+                    array_push($errors, "Player '" . $swiss['name'] . "' has no runner identity - using 'The Masque' instead");
+                    $swiss['runnerIdentity'] = 'The Masque';
                 }
             }
 
