@@ -27,9 +27,9 @@ class BadgeController extends Controller
         $badges_worlds_winner = Badge::where('tournament_type_id', 5)->where('winlevel', 1)->orderBy('order','desc');
         $badges_worlds_top16 = Badge::where('tournament_type_id', 5)->where('winlevel', 2)->orderBy('order','desc');
         $badges_worlds_player = Badge::where('tournament_type_id', 5)->where('winlevel', 5)->orderBy('order','desc');
-        $europe_winner = Badge::where('id', 65);
-        $europe_top16 = Badge::where('id', 66);
-        $europe_player = Badge::where('id', 67);
+        $europe_winner = Badge::where('tournament_type_id', 9)->where('winlevel', 1)->orderBy('order','desc');
+        $europe_top16 = Badge::where('tournament_type_id', 9)->where('winlevel', 2)->orderBy('order','desc');
+        $europe_player = Badge::where('tournament_type_id', 9)->where('winlevel', 5)->orderBy('order','desc');
         $namerica_winner = Badge::where('id', 69);
         $namerica_top16 = Badge::where('id', 70);
         $namerica_player = Badge::where('id', 71);
@@ -95,6 +95,7 @@ class BadgeController extends Controller
         }
         $this->addChampionshipBadges($userid, null, 2, $badges);    // store champion
         $this->addChampionshipBadges($userid, 2017, 9, $badges, [82]);    // 2017 european championship
+        $this->addChampionshipBadges($userid, 2018, 9, $badges, [998]);    // 2018 european championship
         $this->addChampionshipBadges($userid, 2017, 10, $badges, [617]);    // 2017 north american championship, tournament_type_id is a hack
         $this->addPlayerLevelBadges($userid, $badges);
         $this->addFactionBadges($userid, $badges);
