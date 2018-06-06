@@ -1,88 +1,121 @@
 @extends('layout.general')
 
 @section('content')
-    <h4 class="page-header">
+<div id="prize-browser">
+    <h4 class="page-header p-b-1">
         Official prize kits
+        {{--Edit/Save/Cancel button--}}
+        <div class="pull-right p-b-1" v-if="userId">
+            <a class="white-text btn btn-primary" v-if="!editMode" @click="editMode = true">
+                <i aria-hidden="true" class="fa fa-pencil"></i>
+                Edit collection
+            </a>
+            <a class="btn btn-secondary" v-if="editMode" @click="loadCollection();">
+                <i aria-hidden="true" class="fa fa-times"></i>
+                Cancel
+            </a>
+            <a class="white-text btn btn-info" v-if="editMode" @click="saveCollection()">
+                <i aria-hidden="true" class="fa fa-check"></i>
+                Save collection
+            </a>
+        </div>
     </h4>
-    <div id="prize-browser">
-        {{--Filters--}}
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="bracket">
-                    <div class="row">
-                        {{--filter title--}}
-                        <div class="col-xs-12 col-lg-2 col-md-4">
-                            <h5 class="h5-filter">
-                                <i class="fa fa-filter" aria-hidden="true"></i>
-                                Filter
-                            </h5>
-                        </div>
-                        {{--select kit--}}
-                        <div class="col-xs-12 col-lg-6 col-md-8" style="padding-bottom:0.5em">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-gift" aria-hidden="true"></i></span>
-                                <select class="custom-select" style="width: 100%" v-model="selectedPrizeId"
-                                        :disabled="searchText.length > 0" @change="updateFilter()">
-                                    <option value="0">--- all ---</option>
-                                    <option v-for="prize in prizes" :value="prize.id">@{{ prize.year+' '+prize.title }}</option>
-                                </select>
-                            </div>
-                        </div>
-                        {{--search--}}
-                        <div class="col-xs-12 col-lg-4 col-md-8 offset-md-4 offset-lg-0">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
-                                <input type="search" name="prize-search" v-model="searchText"
-                                       class="form-control" :disabled="selectedPrizeId != 0" @input="updateFilter()"/>
-                            </div>
+
+    {{--Filters--}}
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="bracket">
+                <div class="row">
+                    {{--filter title--}}
+                    <div class="col-xs-12 col-lg-2 col-md-4">
+                        <h5 class="h5-filter">
+                            <i class="fa fa-filter" aria-hidden="true"></i>
+                            Filter
+                        </h5>
+                    </div>
+                    {{--select kit--}}
+                    <div class="col-xs-12 col-lg-6 col-md-8" style="padding-bottom:0.5em">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-gift" aria-hidden="true"></i></span>
+                            <select class="custom-select" style="width: 100%" v-model="selectedPrizeId"
+                                    :disabled="searchText.length > 0" @change="updateFilter()">
+                                <option value="0">--- all ---</option>
+                                <option v-for="prize in prizes" :value="prize.id">@{{ prize.year+' '+prize.title }}</option>
+                            </select>
                         </div>
                     </div>
-
-
+                    {{--search--}}
+                    <div class="col-xs-12 col-lg-4 col-md-8 offset-md-4 offset-lg-0">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                            <input type="search" name="prize-search" v-model="searchText"
+                                   class="form-control" :disabled="selectedPrizeId != 0" @input="updateFilter()"/>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="loader" id="prizes-loader" v-if="prizes.length == 0">&nbsp;</div>
+        {{--loader--}}
+        <div class="col-xs-12 p-b-3" v-if="prizes.length == 0">
+            <div class="loader" id="prizes-loader">&nbsp;</div>
+        </div>
+    </div>
 
-        {{--Prize kit brackets--}}
-        <div class="row" v-for="(prize, index) in prizes">
-            <div :class="prizeVisibility[index] ? 'col-xs-12':'col-xs-12 hidden-xs-up'">
-                <div class="bracket">
-                    {{--Photos--}}
-                    <h5>
-                        <i aria-hidden="true" class="fa fa-gift"></i>
-                        {{--@{{ prize.year + ' ' + prize.title | searchHighlight }}--}}
-                        <span :inner-html.prop="prize.year + ' ' + prize.title | searchHighlight"></span>
-                    </h5>
-                    {{--Photos--}}
-                    <div class="row">
-                        {{--Photos of prize--}}
-                        <div class="gallery-item col-xl-2 col-md-3 col-sm-4 col-xs-6" v-for="photo in prize.photos" :key="photo.url">
+    {{--Prize kit brackets--}}
+    <div class="row" v-for="(prize, index) in prizes">
+        <div :class="prizeVisibility[index] ? 'col-xs-12':'col-xs-12 hidden-xs-up'">
+            <div class="bracket">
+                {{--Photos--}}
+                <h5>
+                    <i aria-hidden="true" class="fa fa-gift"></i>
+                    {{--@{{ prize.year + ' ' + prize.title | searchHighlight }}--}}
+                    <span :inner-html.prop="prize.year + ' ' + prize.title | searchHighlight"></span>
+                </h5>
+                {{--Photos--}}
+                <div class="row">
+                    {{--Photos of prize--}}
+                    <div class="gallery-item col-xl-2 col-md-3 col-sm-4 col-xs-6" v-for="photo in prize.photos" :key="photo.url">
+                        <div style="position: relative;">
+                            {{--image thumpnail--}}
+                            <a :href="photo.url" data-toggle="lightbox" :data-gallery="'prize-gallery' + prize.id"
+                               :data-title="prize.year + ' ' + prize.title">
+                                <img :src="photo.urlThumb" style="width: 150px; height: auto"/>
+                            </a>
+                        </div>
+                    </div>
+                    {{--Photos of prize elements--}}
+                    <template v-for="item in prize.elements">
+                        <div class="gallery-item col-xl-2 col-md-3 col-sm-4 col-xs-6" v-for="photo in item.photos" :key="photo.url">
                             <div style="position: relative;">
                                 {{--image thumpnail--}}
                                 <a :href="photo.url" data-toggle="lightbox" :data-gallery="'prize-gallery' + prize.id"
-                                   :data-title="prize.year + ' ' + prize.title">
+                                   :data-title="prize.year + ' ' + prize.title"
+                                   :data-footer="'<em>'+item.quantityString+':</em> <strong>'+item.title+'</strong> '+item.type">
                                     <img :src="photo.urlThumb" style="width: 150px; height: auto"/>
                                 </a>
                             </div>
                         </div>
-                        {{--Photos of prize elements--}}
-                        <template v-for="item in prize.elements">
-                            <div class="gallery-item col-xl-2 col-md-3 col-sm-4 col-xs-6" v-for="photo in item.photos" :key="photo.url">
-                                <div style="position: relative;">
-                                    {{--image thumpnail--}}
-                                    <a :href="photo.url" data-toggle="lightbox" :data-gallery="'prize-gallery' + prize.id"
-                                       :data-title="prize.year + ' ' + prize.title"
-                                       :data-footer="'<em>'+item.quantityString+':</em> <strong>'+item.title+'</strong> '+item.type">
-                                        <img :src="photo.urlThumb" style="width: 150px; height: auto"/>
-                                    </a>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-                    {{--Prize table--}}
-                    <table class="table table-sm">
-                        <tbody>
+                    </template>
+                </div>
+                {{--Prize table--}}
+                <table class="table table-sm">
+                    <thead>
+                        <th class="text-xs-right">quantity</th>
+                        <th>prize</th>
+                        <th v-if="userId" style="width: 1%" class="text-xs-center">
+                            <i title="owning" class="fa fa-inbox hidden-xl-up"></i>
+                            <span class="hidden-lg-down">owning</span>
+                        </th>
+                        <th v-if="userId" style="width: 1%" class="text-xs-center">
+                            <i title="wanting" class="fa fa-download hidden-xl-up"></i>
+                            <span class="hidden-lg-down">wanting</span>
+                        </th>
+                        <th v-if="userId" style="width: 1%" class="text-xs-center">
+                            <i title="trading" class="fa fa-upload hidden-xl-up"></i>
+                            <span class="hidden-lg-down">trading</span>
+                        </th>
+                    </thead>
+                    <tbody>
                         <tr v-for="item in prize.elements">
                             <td class="text-xs-right">
                                 <em>@{{ item.quantityString }}:</em>
@@ -102,24 +135,72 @@
                                     <span :inner-html.prop="item.type | searchHighlight"></span>
                                 </a>
                             </td>
+                            {{--owning--}}
+                            <td class="text-xs-center text-nowrap">
+                                <span v-if="collectionLoaded && prizeCollection[item.id].owning > 0 && !editMode">
+                                    @{{ prizeCollection[item.id].owning }}
+                                </span>
+                                <span v-if="collectionLoaded && editMode">
+                                    <button class="btn btn-xs btn-primary"
+                                            @click="modifyCollection(item.id, 'owning', -1)"
+                                            :disabled="prizeCollection[item.id].owning == 0">-</button
+                                    ><input type="tel"  class="input-collection"
+                                           v-model="prizeCollection[item.id].owning" maxlength="2"
+                                    /><button class="btn btn-xs btn-primary"
+                                            @click="modifyCollection(item.id, 'owning', 1)"
+                                            :disabled="prizeCollection[item.id].owning == 99">+</button>
+                                </span>
+                            </td>
+                            {{--wanting--}}
+                            <td class="text-xs-center text-nowrap">
+                                <span v-if="collectionLoaded && prizeCollection[item.id].wanting > 0 && !editMode">
+                                    @{{ prizeCollection[item.id].wanting }}
+                                </span>
+                                <span v-if="collectionLoaded && editMode">
+                                    <button class="btn btn-xs btn-primary"
+                                    @click="modifyCollection(item.id, 'wanting', -1)"
+                                            :disabled="prizeCollection[item.id].wanting == 0">-</button
+                                    ><input type="tel"  class="input-collection"
+                                            v-model="prizeCollection[item.id].wanting" maxlength="2"
+                                            /><button class="btn btn-xs btn-primary"
+                                    @click="modifyCollection(item.id, 'wanting', 1)"
+                                            :disabled="prizeCollection[item.id].wanting == 99">+</button>
+                                </span>
+                            </td>
+                            {{--trading--}}
+                            <td class="text-xs-center text-nowrap">
+                                <span v-if="collectionLoaded && prizeCollection[item.id].trading > 0 && !editMode">
+                                    @{{ prizeCollection[item.id].trading }}
+                                </span>
+                                <span v-if="collectionLoaded && editMode">
+                                    <button class="btn btn-xs btn-primary"
+                                    @click="modifyCollection(item.id, 'trading', -1)"
+                                            :disabled="prizeCollection[item.id].trading == 0">-</button
+                                    ><input type="tel"  class="input-collection"
+                                            v-model="prizeCollection[item.id].trading" maxlength="2"
+                                            /><button class="btn btn-xs btn-primary"
+                                    @click="modifyCollection(item.id, 'trading', 1)"
+                                            :disabled="prizeCollection[item.id].trading == 99">+</button>
+                                </span>
+                            </td>
                         </tr>
-                        </tbody>
-                    </table>
+                    </tbody>
+                </table>
 
-                    {{--Description--}}
-                    <div class="markdown-content">
-                        {{--{!! Markdown::convertToHtml(str_replace(["\r\n", "\r", "\n"], "  \r", $tournament->prize->description)) !!}--}}
-                    </div>
-                    <div class="text-xs-right" v-if="prize.ffg_url && prize.ffg_url.length > 0">
-                        <a :href="prize.ffg_url">read more</a>
-                    </div>
+                {{--Description--}}
+                <div class="markdown-content">
+                    {{--{!! Markdown::convertToHtml(str_replace(["\r\n", "\r", "\n"], "  \r", $tournament->prize->description)) !!}--}}
+                </div>
+                <div class="text-xs-right" v-if="prize.ffg_url && prize.ffg_url.length > 0">
+                    <a :href="prize.ffg_url">read more</a>
                 </div>
             </div>
         </div>
-        <div class="text-xs-center" v-if="!foundKit">
-            <em>no such prize kit found</em>
-        </div>
     </div>
+    <div class="text-xs-center" v-if="!foundKit">
+        <em>no such prize kit found</em>
+    </div>
+</div>
 
     <script type="text/javascript">
         var prizeBrowser= new Vue({
@@ -129,9 +210,15 @@
                 prizeVisibility: [],
                 selectedPrizeId: 0,
                 searchText: '',
-                foundKit: true
+                foundKit: true,
+                userId: {{ $user_id }},
+                prizeCollection: {},
+                editMode: false,
+                collectionLoaded: false,
+                collectionChange: false
             },
-            components: {},
+            components: {
+            },
             computed: {},
             mounted: function () {
                 this.loadPrizes();
@@ -154,11 +241,27 @@
                     axios.get('/api/prizes').then(function (response) {
                         prizeBrowser.prizes = response.data;
                         prizeBrowser.updateFilter();
+                        // filling up collection with blanks
+                        for (var i = 0; i < prizeBrowser.prizes.length; i++) {
+                            for (var u = 0; u < prizeBrowser.prizes[i].elements.length; u++) {
+                                // adding as new reactive element
+                                prizeBrowser.$set(prizeBrowser.prizeCollection, prizeBrowser.prizes[i].elements[u].id, {
+                                    owning: 0,
+                                    trading: 0,
+                                    wanting: 0
+                                });
+                            }
+                        }
+                        // load prize collection
+                        if (prizeBrowser.userId > 0) {
+                            prizeBrowser.loadCollection();
+                        }
                     }, function (response) {
                         // error handling
                         toastr.error('Something went wrong while loading the prize kits.', '', {timeOut: 2000});
                     });
                 },
+                // update search results
                 updateFilter: function() {
                     var defaultValue = this.selectedPrizeId == 0 && this.searchText.length <= 2;
                     this.foundKit = defaultValue;
@@ -194,6 +297,48 @@
                             }
                         }
                     }
+                },
+                // load all my groups
+                loadCollection: function () {
+                    axios.get('/api/prize-collections/'+this.userId).then(function (response) {
+                        for (var i = 0; i < response.data.length; i ++) {
+                            prizeBrowser.$set(
+                                    prizeBrowser.prizeCollection,
+                                    response.data[i].prize_element_id,
+                                    response.data[i]
+                            );
+                        }
+                        prizeBrowser.collectionLoaded = true;
+                        prizeBrowser.editMode = false;
+                    }, function (response) {
+                        // error handling
+                        toastr.error('Something went wrong while loading your collection.', '', {timeOut: 2000});
+                    });
+                },
+                modifyCollection: function(id, field, increment) {
+                    if (this.prizeCollection[id][field] + increment > -1 &&
+                            this.prizeCollection[id][field] + increment < 101) {
+                        this.prizeCollection[id][field] += increment;
+                        this.collectionChange = true;
+                    }
+                },
+                saveCollection: function() {
+                    if (this.collectionChange) {
+                        axios.put('/api/prize-collections/'+this.userId, this.prizeCollection)
+                                .then(function(response) {
+                                    toastr.info('Prize collection updated successfully.', '', {timeOut: 2000});
+                                    prizeBrowser.editMode = false;
+                                    prizeBrowser.collectionChange = false;
+                                }, function(response) {
+                                    // error handling
+                                    toastr.error('Something went wrong.', '', {timeOut: 2000});
+                                }
+                        );
+                    } else {
+                        toastr.info('There was no change made.', '', {timeOut: 2000});
+                        prizeBrowser.editMode = false;
+                    }
+
                 }
             }
         });

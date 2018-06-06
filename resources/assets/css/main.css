@@ -1155,3 +1155,14 @@ input[type="search"]::-webkit-search-cancel-button {
 .highlight {
     background-color: yellow;
 }
+
+/* number input on prize collection*/
+.input-collection {
+    width: 2em;
+    text-align: center
+}
+.input-collection::-webkit-inner-spin-button,
+.input-collection::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

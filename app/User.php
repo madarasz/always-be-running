@@ -70,6 +70,10 @@ class User extends Authenticatable
         return $this->hasMany(Tournament::class, 'creator', 'id');
     }
 
+    public function prizeElements() {
+        return $this->hasMany(PrizeUser::class, 'user_id', 'id');
+    }
+
     /**
      * Return CSS class for user's link
      */

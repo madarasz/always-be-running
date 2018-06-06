@@ -145,9 +145,10 @@ class PagesController extends Controller
             'runnerIDs', 'corpIDs', 'photo_count', 'photo_tournaments', 'video_count', 'video_tournaments', 'secret_id'));
     }
 
-    public function prizes()
+    public function prizes(Request $request)
     {
-        return view('prizes', ['page_section' => 'prizes']);
+        $user_id = is_null($request->user()) ? 0 : $request->user()->id;
+        return view('prizes', ['page_section' => 'prizes', 'user_id' => $user_id]);
     }
 
     public function about()
