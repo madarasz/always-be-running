@@ -2,22 +2,24 @@
 
 @section('content')
 <div id="prize-browser">
+    <confirm-modal :modal-body="confirmText" :callback="confirmCallback"></confirm-modal>
     <h4 class="page-header p-b-1">
         Official prize kits
         {{--Edit/Save/Cancel button--}}
         <div class="pull-right p-b-1" v-if="userId">
-            <a class="white-text btn btn-primary" v-if="!editMode" @click="editMode = true">
+            {{--Edit button--}}
+            <button class="btn btn-primary" v-if="!editMode" @click="editMode = true" :disabled="!collectionLoaded">
                 <i aria-hidden="true" class="fa fa-pencil"></i>
                 Edit collection
-            </a>
-            <a class="btn btn-secondary" v-if="editMode" @click="loadCollection();">
-                <i aria-hidden="true" class="fa fa-times"></i>
-                Cancel
-            </a>
-            <a class="white-text btn btn-info" v-if="editMode" @click="saveCollection()">
+            </button>
+            {{--Save button--}}
+            <button class="btn btn-info" v-if="editMode" @click="saveCollection()">
                 <i aria-hidden="true" class="fa fa-check"></i>
                 Save collection
-            </a>
+            </button>
+            {{--Cancel button--}}
+            <confirm-button button-class="btn btn-secondary" button-icon="fa fa-times" button-text="Cancel" v-if="editMode"
+                @click="confirmCallback = function() { loadCollection() }; confirmText = 'Cancel collection edits?'" />
         </div>
     </h4>
 
@@ -215,7 +217,9 @@
                 prizeCollection: {},
                 editMode: false,
                 collectionLoaded: false,
-                collectionChange: false
+                collectionChange: false,
+                confirmText: '',
+                confirmCallback: function () {}
             },
             components: {
             },
@@ -310,6 +314,7 @@
                         }
                         prizeBrowser.collectionLoaded = true;
                         prizeBrowser.editMode = false;
+                        window.onbeforeunload = null;
                     }, function (response) {
                         // error handling
                         toastr.error('Something went wrong while loading your collection.', '', {timeOut: 2000});
@@ -320,6 +325,10 @@
                             this.prizeCollection[id][field] + increment < 101) {
                         this.prizeCollection[id][field] += increment;
                         this.collectionChange = true;
+                        // sure you want to leave when navigating away
+                        window.onbeforeunload = function() {
+                            return true;
+                        };
                     }
                 },
                 saveCollection: function() {
@@ -329,6 +338,7 @@
                                     toastr.info('Prize collection updated successfully.', '', {timeOut: 2000});
                                     prizeBrowser.editMode = false;
                                     prizeBrowser.collectionChange = false;
+                                    window.onbeforeunload = null;
                                 }, function(response) {
                                     // error handling
                                     toastr.error('Something went wrong.', '', {timeOut: 2000});
