@@ -5,7 +5,8 @@
         <h4 class="page-header p-b-1 m-b-0">
             {{--Edit button--}}
             <div class="pull-right" v-if="userId == visitorId" v-cloak>
-                <button class="btn btn-primary" href="#" @click="editMode=true" id="button-edit" v-if="!editMode" v-cloak>
+                <button class="btn btn-primary" href="#" @click="editMode=true; confirmNavigatingAway(true);"
+                        id="button-edit" v-if="!editMode" v-cloak>
                     <i class="fa fa-pencil" aria-hidden="true"></i> Edit
                 </button>
                 <button class="btn btn-secondary" href="#" @click="cancelEdits()" id="button-cancel" v-if="editMode" v-cloak>
@@ -182,6 +183,7 @@
                 cancelEdits: function() {
                     this.user = JSON.parse(JSON.stringify(this.userOriginal)); // copy object
                     this.editMode = false;
+                    this.confirmNavigatingAway(false);
                 },
                 saveProfile: function() {
                     axios.post('/profile/' + this.userId, this.user)
@@ -192,7 +194,8 @@
                                 if (!pageProfile.userOriginal.show_chart && pageProfile.user.show_chart) {
                                     pageProfile.drawClaimChart();
                                 }
-                                this.userOriginal = JSON.parse(JSON.stringify(this.user)); // copy object
+                                pageProfile.userOriginal = JSON.parse(JSON.stringify(pageProfile.user)); // copy object
+                                pageProfile.confirmNavigatingAway(false);
                                 // update country
                                 var elt = document.getElementById('country_id');
                                 pageProfile.user.country.name = elt.options[elt.selectedIndex].text;
@@ -220,6 +223,15 @@
                             obj.text = factionCodeToFactionTitle(obj.value);
                         }
                     });
+                },
+                confirmNavigatingAway: function(confirmNeeded) {
+                    if (confirmNeeded) {
+                        window.onbeforeunload = function() {
+                            return true;
+                        };
+                    } else {
+                        window.onbeforeunload = null
+                    }
                 },
                 drawClaimChart: function() {
 
@@ -290,7 +302,9 @@
 
         //redraw graph when window resize is completed
         $(window).on('resizeEnd', function() {
-            chart.draw(chartDataTable, chartOptions);
+            if (pageProfile.userOriginal.show_chart && pageProfile.claimCount > 2) {
+                chart.draw(chartDataTable, chartOptions);
+            }
         });
 
     </script>
