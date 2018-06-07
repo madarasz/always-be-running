@@ -14,7 +14,7 @@ class AddAboutToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('website')->nullable();
-            $table->string('about')->nullable();
+            $table->text('about')->nullable();
         });
     }
 

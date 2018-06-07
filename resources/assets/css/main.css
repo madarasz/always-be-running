@@ -1166,3 +1166,5 @@ input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
+[v-cloak] { display: none; }

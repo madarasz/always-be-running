@@ -23,7 +23,7 @@
         User
     </h5>
     <div class="text-xs-center p-b-1">
-        <h6 class="{{ $user->linkClass() }}">{{ $user->displayUsername() }}</h6>
+        <h6 class="{{ $user->linkClass() }}" v-cloak>@{{ displayUserName }}</h6>
         <div class="user-counts">
             {{ $created_count }} tournament{{ $created_count > 1 ? 's' : '' }} created<br/>
             {{ $claim_count }} tournament claim{{ $claim_count > 1 ? 's' : '' }}<br/>

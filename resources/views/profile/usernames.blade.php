@@ -16,9 +16,9 @@
     <div class="form-group row">
         <label for="username_preferred" class="col-xs-3 col-form-label">displayed username:</label>
         <div class="col-xs-9">
-            <div class="col-form-label profile-text">{{ $user->username_preferred }}</div>
-            <input class="form-control profile-field hidden-xs-up" type="text" id="username_preferred" name="username_preferred"
-                   placeholder="leave empty to use NetrunnerDB" value="{{ $user->username_preferred }}">
+            <div class="col-form-label" v-if="!editMode" v-cloak>@{{ user.username_preferred }}</div>
+            <input class="form-control" type="text" id="username_preferred" name="username_preferred" v-cloak
+                   v-if="editMode" placeholder="leave empty to use NetrunnerDB" v-model="user.username_preferred">
         </div>
     </div>
     <hr/>
@@ -29,49 +29,51 @@
     <div class="form-group row">
         <label for="username_real" class="col-xs-3 col-form-label">real name:</label>
         <div class="col-xs-9">
-            <div class="col-form-label profile-text">{{ $user->username_real }}</div>
-            <input class="form-control profile-field hidden-xs-up" type="text" id="username_real"
-                   name="username_real" value="{{ $user->username_real }}">
+            <div class="col-form-label" v-if="!editMode" v-cloak>@{{ user.username_real }}</div>
+            <input class="form-control" type="text" id="username_real" v-if="editMode" v-cloak
+                   name="username_real" v-model="user.username_real">
         </div>
     </div>
     <div class="form-group row">
         <label for="username_jinteki" class="col-xs-3 col-form-label">Jinteki.net:</label>
         <div class="col-xs-9">
-            <div class="col-form-label profile-text">{{ $user->username_jinteki }}</div>
-            <input class="form-control profile-field hidden-xs-up" type="text" id="username_jinteki"
-                   name="username_jinteki" value="{{ $user->username_jinteki }}">
+            <div class="col-form-label" v-if="!editMode" v-cloak>@{{ user.username_jinteki }}</div>
+            <input class="form-control" type="text" id="username_jinteki" v-if="editMode" v-cloak
+                   name="username_jinteki" v-model="user.username_jinteki">
         </div>
     </div>
     <div class="form-group row">
         <label for="username_slack" class="col-xs-3 col-form-label">Stimhack.Slack:</label>
         <div class="col-xs-9">
-            <div class="col-form-label profile-text">
-                {{ $user->username_slack }}
+            <div class="col-form-label" v-if="!editMode" v-cloak>
+                @{{ user.username_slack }}
             </div>
-            <input class="form-control profile-field hidden-xs-up" type="text" id="username_slack"
-                   name="username_slack" value="{{ $user->username_slack }}">
+            <input class="form-control" type="text" id="username_slack" v-if="editMode" v-cloak
+                   name="username_slack" v-model="user.username_slack">
         </div>
     </div>
     <div class="form-group row">
         <label for="username_stimhack" class="col-xs-3 col-form-label">Stimhack forum:</label>
         <div class="col-xs-9">
-            <div class="col-form-label profile-text">
-                <a href="https://forum.stimhack.com/users/{{ $user->username_stimhack }}">{{ $user->username_stimhack }}</a>
+            <div class="col-form-label" v-if="!editMode">
+                <a :href="'https://forum.stimhack.com/users/' + user.username_stimhack" v-cloak>
+                    @{{ user.username_stimhack }}
+                </a>
             </div>
-            <input class="form-control profile-field hidden-xs-up" type="text" id="username_stimhack"
-                   name="username_stimhack" value="{{ $user->username_stimhack }}">
+            <input class="form-control" type="text" id="username_stimhack" v-if="editMode" v-cloak
+                   name="username_stimhack" v-model="user.username_stimhack">
         </div>
     </div>
     <div class="form-group row">
         <label for="username_twitter" class="col-xs-3 col-form-label">Twitter:</label>
         <div class="col-xs-9">
-            <div class="col-form-label profile-text">
-                <a href="https://twitter.com/{{ $user->username_twitter }}">
-                    {{ $user->username_twitter ? '@'.$user->username_twitter : '' }}
+            <div class="col-form-label" v-if="!editMode">
+                <a :href="'https://twitter.com/' + user.username_twitter" v-cloak>
+                    @{{ user.username_twitter ? '@'+user.username_twitter : '' }}
                 </a>
             </div>
-            <input class="form-control profile-field hidden-xs-up" type="text" id="username_twitter"
-                   name="username_twitter" placeholder="username without @" value="{{ $user->username_twitter }}">
+            <input class="form-control" type="text" id="username_twitter" v-if="editMode" v-cloak
+                   name="username_twitter" placeholder="username without @" v-model="user.username_twitter">
         </div>
     </div>
 </div>
