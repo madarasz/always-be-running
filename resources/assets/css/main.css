@@ -384,6 +384,10 @@ img.id-medium {
     align-items: center;
     height: 100%;
 }
+.overlay a {
+    color: #ccc;
+    font-weight: 800;
+}
 
 /*white transparency overlay, "more" */
 .more-overlay {
@@ -1168,3 +1172,11 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 
 [v-cloak] { display: none; }
+
+table.prize-collection {
+    width: 100%;
+}
+table.prize-collection td {
+    vertical-align: top;
+    padding: 0.2em;
+}

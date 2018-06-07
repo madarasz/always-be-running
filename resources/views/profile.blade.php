@@ -4,19 +4,17 @@
     <div id="page-profile">
         <h4 class="page-header p-b-1 m-b-0">
             {{--Edit button--}}
-            @if (Auth::check() && Auth::user()->id == $user->id)
-                <div class="pull-right">
-                    <a class="btn btn-primary" href="#" @click="editMode=true" id="button-edit" v-if="!editMode" v-cloak>
-                        <i class="fa fa-pencil" aria-hidden="true"></i> Edit
-                    </a>
-                    <a class="btn btn-secondary" href="#" @click="cancelEdits()" id="button-cancel" v-if="editMode" v-cloak>
-                        <i class="fa fa-times" aria-hidden="true"></i> Cancel
-                    </a>
-                    <a class="btn btn-info" href="#" id="button-save" @click="saveProfile()" v-if="editMode" v-cloak>
-                        <i class="fa fa-pencil" aria-hidden="true"></i> Save
-                    </a>
-                </div>
-            @endif
+            <div class="pull-right" v-if="userId == visitorId" v-cloak>
+                <button class="btn btn-primary" href="#" @click="editMode=true" id="button-edit" v-if="!editMode" v-cloak>
+                    <i class="fa fa-pencil" aria-hidden="true"></i> Edit
+                </button>
+                <button class="btn btn-secondary" href="#" @click="cancelEdits()" id="button-cancel" v-if="editMode" v-cloak>
+                    <i class="fa fa-times" aria-hidden="true"></i> Cancel
+                </button>
+                <button class="btn btn-info" href="#" id="button-save" @click="saveProfile()" v-if="editMode" v-cloak>
+                    <i class="fa fa-pencil" aria-hidden="true"></i> Save
+                </button>
+            </div>
             Profile - <span class="{{ $user->linkClass() }}" v-cloak>@{{ displayUserName }}</span>
         </h4>
 
@@ -54,8 +52,10 @@
         var pageProfile= new Vue({
             el: '#page-profile',
             data: {
-                prizes: [],
+                prizeKits: {},
+                prizeItems: {},
                 userId: {{ $user->id }},
+                visitorId: {{ Auth::check() ? Auth::user()->id : 0 }},
                 prizeCollection: {},
                 editMode: false,
                 collectionLoaded: false,
@@ -77,7 +77,13 @@
                     country: '{{ $user->country_id }}' == 0 ? {} : {
                         flag: '{{ @$user->country->flag }}',
                         name: '{{ @$user->country->name }}',
-                    }
+                    },
+                    prize_owning_public: {{ $user->prize_owning_public }},
+                    prize_trading_public: {{ $user->prize_trading_public }},
+                    prize_wanting_public: {{ $user->prize_wanting_public }},
+                    prize_owning_text: '{{ $user->prize_owning_text }}',
+                    prize_trading_text: '{{ $user->prize_trading_text }}',
+                    prize_wanting_text: '{{ $user->prize_wanting_text }}',
                 },
                 userOriginal: {},
                 countryMapping: {},
@@ -108,8 +114,62 @@
                 google.charts.setOnLoadCallback(this.drawClaimChart);
             },
             methods: {
+                // load prize DB
                 loadPrizes: function() {
-
+                    axios.get('/api/prizes').then(function (response) {
+                        for (var i = 0; i < response.data.length; i++) {
+                            // prize kits
+                            pageProfile.$set(
+                                    pageProfile.prizeKits,
+                                    response.data[i].id,
+                                    {
+                                        year: response.data[i].year,
+                                        title: response.data[i].title,
+                                        photoUrl: response.data[i].photos.length > 0
+                                                ? response.data[i].photos[0].url : null,
+                                        photoUrlThumb: response.data[i].photos.length > 0
+                                                ? response.data[i].photos[0].urlThum : null
+                                    }
+                            );
+                            // prize items
+                            for (var u = 0; u < response.data[i].elements.length; u++) {
+                                pageProfile.$set(
+                                        pageProfile.prizeItems,
+                                        response.data[i].elements[u].id,
+                                        {
+                                            prizeKitId: response.data[i].id,
+                                            title: response.data[i].elements[u].title,
+                                            type: response.data[i].elements[u].type,
+                                            photoUrl: response.data[i].elements[u].photos.length > 0
+                                                ? response.data[i].elements[u].photos[0].url : null,
+                                            photoUrlThumb: response.data[i].elements[u].photos.length > 0
+                                                    ? response.data[i].elements[u].photos[0].urlThumb : null,
+                                        }
+                                );
+                            }
+                        }
+                        // load prize collection
+                        pageProfile.loadCollection();
+                    }, function (response) {
+                        // error handling
+                        toastr.error('Something went wrong while loading the prize kits.', '', {timeOut: 2000});
+                    });
+                },
+                // load user's collection
+                loadCollection: function() {
+                    axios.get('/api/prize-collections/'+this.userId).then(function (response) {
+                        for (var i = 0; i < response.data.length; i ++) {
+                            pageProfile.$set(
+                                    pageProfile.prizeCollection,
+                                    response.data[i].prize_element_id,
+                                    response.data[i]
+                            );
+                        }
+                        pageProfile.collectionLoaded = true;
+                    }, function (response) {
+                        // error handling
+                        toastr.error('Something went wrong while loading the user\'s collection.', '', {timeOut: 2000});
+                    });
                 },
                 loadCountries: function() {
                     axios.get('/api/country-mapping').then(function (response) {
