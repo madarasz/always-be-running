@@ -3,23 +3,31 @@
 @section('content')
 <div id="prize-browser">
     <confirm-modal :modal-body="confirmText" :callback="confirmCallback"></confirm-modal>
-    <h4 class="page-header p-b-1">
+    <h4 class="page-header" :style="userId ? 'padding-bottom: 2.5em;' : ''">
         Official prize kits
         {{--Edit/Save/Cancel button--}}
         <div class="pull-right p-b-1" v-if="userId">
-            {{--Edit button--}}
-            <button class="btn btn-primary" v-if="!editMode" @click="editMode = true" :disabled="!collectionLoaded">
+            <div class="text-xs-center">
+                {{--Edit button--}}
+                <button class="btn btn-primary" v-if="!editMode" @click="editMode = true" :disabled="!collectionLoaded">
                 <i aria-hidden="true" class="fa fa-pencil"></i>
                 Edit collection
-            </button>
-            {{--Save button--}}
-            <button class="btn btn-info" v-if="editMode" @click="saveCollection()">
+                </button>
+                {{--Save button--}}
+                <button class="btn btn-info" v-if="editMode" @click="saveCollection()">
                 <i aria-hidden="true" class="fa fa-check"></i>
                 Save collection
-            </button>
-            {{--Cancel button--}}
-            <confirm-button button-class="btn btn-secondary" button-icon="fa fa-times" button-text="Cancel" v-if="editMode"
+                </button>
+                {{--Cancel button--}}
+                <confirm-button button-class="btn btn-secondary" button-icon="fa fa-times" button-text="Cancel" v-if="editMode"
                 @click="confirmCallback = function() { loadCollection() }; confirmText = 'Cancel collection edits?'" />
+            </div>
+            <div class="text-xs-center" style="font-size: 65%; padding-top: 0.5em">
+                <em>
+                    your collection may be <br/>
+                    listed on your <strong><a :href="'/profile/'+userId+'#tab-collection'">Profile</a></strong>
+                </em>
+            </div>
         </div>
     </h4>
 
