@@ -44,11 +44,36 @@
         </div>
     </div>
 
+    @include('profile.component-collection')
+
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <script type="text/javascript">
 
         var chart, chartOptions, chartDataTable;
+
+        var collectionPart = {
+            template: '#template-collection-part',
+            props: ['title', 'edit-mode', 'public', 'collection-loaded', 'prize-collection', 'part', 'prize-items',
+                'prize-kits', 'icon', 'own-data', 'extra-text'],
+            name: 'collection-part',
+            computed: {
+                hasData: function() {
+                    for (var k in this.prizeCollection) {
+                        if (this.prizeCollection.hasOwnProperty(k) && this.prizeCollection[k][this.part] > 0) {
+                            return true;
+                        }
+                    }
+                    return false;
+                },
+                markdownText: function () {
+                    if (this.extraText == '' || this.extraText == null) {
+                        return '';
+                    }
+                    return marked(this.extraText, { sanitize: true, gfm: true, breaks: true })
+                }
+            }
+        };
 
         var pageProfile= new Vue({
             el: '#page-profile',
@@ -82,15 +107,17 @@
                     prize_owning_public: {{ $user->prize_owning_public }},
                     prize_trading_public: {{ $user->prize_trading_public }},
                     prize_wanting_public: {{ $user->prize_wanting_public }},
-                    prize_owning_text: '{{ $user->prize_owning_text }}',
-                    prize_trading_text: '{{ $user->prize_trading_text }}',
-                    prize_wanting_text: '{{ $user->prize_wanting_text }}',
+                    prize_owning_text: `{{ $user->prize_owning_text }}`,
+                    prize_trading_text: `{{ $user->prize_trading_text }}`,
+                    prize_wanting_text: `{{ $user->prize_wanting_text }}`,
                 },
                 userOriginal: {},
                 countryMapping: {},
                 claimCount: '{{ $claim_count }}'
             },
-            components: {},
+            components: {
+                collectionPart : collectionPart
+            },
             computed: {
                 displayUserName: function() {
                     if (this.user.username_preferred.length > 0) {
@@ -102,7 +129,7 @@
                     if (this.user.about == '' || this.user.about == null) {
                         return '';
                     }
-                    return marked(this.user.about, { sanitize: true })
+                    return marked(this.user.about, { sanitize: true, gfm: true, breaks: true })
                 }
             },
             mounted: function () {
