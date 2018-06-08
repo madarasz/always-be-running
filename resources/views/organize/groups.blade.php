@@ -188,7 +188,7 @@
                 if (this.selectedGroup == '' || this.selectedGroup.description == null) {
                     return '';
                 }
-                return marked(this.selectedGroup.description, { sanitize: true })
+                return marked(this.selectedGroup.description, { sanitize: true, gfm: true, breaks: true })
             }
         },
         mounted: function() {

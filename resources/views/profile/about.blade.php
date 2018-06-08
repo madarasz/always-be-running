@@ -75,7 +75,7 @@
     <div class="form-group row">
         <label for="about" class="col-xs-3 col-form-label">about me:</label>
         <div class="col-xs-9">
-            <div class="col-form-label markdown-content" v-html="markdownAbout" v-if="!editMode"></div>
+            <div class="markdown-content" v-html="markdownAbout" v-if="!editMode"></div>
             <div v-if="editMode">
                 <textarea rows="6" cols="" name="about" class="form-control" v-model="user.about" v-cloak></textarea>
                 <div class="pull-right">
