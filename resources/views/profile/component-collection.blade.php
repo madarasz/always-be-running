@@ -53,12 +53,28 @@
                         <strong>@{{ item[part] }}x</strong>
                     </td>
                     <td>
-                        <span class="small-text"
-                                v-if="prizeItems[item.prize_element_id].title == '' || prizeItems[item.prize_element_id].title == null">
-                            @{{ prizeKits[prizeItems[item.prize_element_id].prizeKitId].year }}
-                            @{{ prizeKits[prizeItems[item.prize_element_id].prizeKitId].title }}
+                        {{--has photo--}}
+                        <a v-if="prizeItems[item.prize_element_id].photoUrl"
+                           :href="prizeItems[item.prize_element_id].photoUrl" data-toggle="lightbox"
+                           :data-gallery="'gallery-' + item.prize_element_id"
+                           :data-title="prizeKits[prizeItems[item.prize_element_id].prizeKitId].year + ' ' + prizeKits[prizeItems[item.prize_element_id].prizeKitId].title"
+                           :data-footer="'<strong>'+prizeKits[prizeItems[item.prize_element_id].prizeKitId].title+'</strong> '+prizeItems[item.prize_element_id].type">
+                            <span class="small-text"
+                                    v-if="prizeItems[item.prize_element_id].title == '' || prizeItems[item.prize_element_id].title == null">
+                                @{{ prizeKits[prizeItems[item.prize_element_id].prizeKitId].year }}
+                                @{{ prizeKits[prizeItems[item.prize_element_id].prizeKitId].title }}
+                            </span>
+                            <strong>@{{ prizeItems[item.prize_element_id].title }}</strong>
+                        </a>
+                        {{--doesn't have photo--}}
+                        <span v-if="!prizeItems[item.prize_element_id].photoUrl">
+                            <span class="small-text"
+                                  v-if="prizeItems[item.prize_element_id].title == '' || prizeItems[item.prize_element_id].title == null">
+                                @{{ prizeKits[prizeItems[item.prize_element_id].prizeKitId].year }}
+                                @{{ prizeKits[prizeItems[item.prize_element_id].prizeKitId].title }}
+                            </span>
+                            <strong>@{{ prizeItems[item.prize_element_id].title }}</strong>
                         </span>
-                        <strong>@{{ prizeItems[item.prize_element_id].title }}</strong>
                         @{{ prizeItems[item.prize_element_id].type }}
                     </td>
                 </tr>
@@ -70,7 +86,7 @@
             </div>
         </div>
         {{--Extra text--}}
-        <div v-if="editMode || extraText.length > 0" class="p-t-1" v-cloak>
+        <div v-if="(editMode || extraText.length > 0) && (ownData || public)" class="p-t-1" v-cloak>
             <strong>Additional items/info:</strong><br/>
             <div v-if="editMode" class="p-b-2">
                 <textarea rows="6" @input="$emit('set-text', $event.target.value)" style="width:100%">@{{ extraText }}</textarea>

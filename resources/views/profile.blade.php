@@ -137,6 +137,11 @@
                 this.initFactions();
                 this.loadCountries();
                 this.loadPrizes();
+                // Enable gallery
+                $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+                    event.preventDefault();
+                    $(this).ekkoLightbox({alwaysShowClose: true});
+                });
                 // tournament claims chart
                 google.charts.load('current', {'packages':['corechart']});
                 google.charts.setOnLoadCallback(this.drawClaimChart);
