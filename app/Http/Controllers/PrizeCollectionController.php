@@ -19,10 +19,7 @@ class PrizeCollectionController extends Controller
      */
     public function get(Request $request, $userId)
     {
-        if (is_null($request->user())) {
-            abort(404);
-        }
-        $currentUserId = $request->user()->id;
+        $currentUserId = $request->user() ? $request->user()->id : 0;
         $user = User::findOrFail($userId);
 
         $collection = PrizeCollection::where('user_id', $userId)->get();
