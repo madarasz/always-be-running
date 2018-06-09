@@ -56,11 +56,11 @@
                     <i class="fa fa-id-card" aria-hidden="true"></i>
                     with alt-art cards, goodies
                 </h5>
-                As any warm-blooded Netrunner player, I love alternate art cards. I'm looking for:
-                <ul>
-                    @include('partials.wanted-alt')
-                </ul>
-                <strong>Unofficial</strong> alternate art is also welcomed. Email me via <strong>alwaysberunning (at) gmail.com</strong>
+                As any warm-blooded Netrunner player, I love alternate art cards.
+                <div class="text-xs-center p-t-1 p-b-1">
+                    <a href="https://alwaysberunning.net/profile/1276#tab-collection">list of cards I'm looking for</a>
+                </div>
+                <strong>Unofficial</strong> alternate art, tokens, items are also welcomed. Email me via <strong>alwaysberunning (at) gmail.com</strong>
                 for my postal address.
             </div>
         </div>
