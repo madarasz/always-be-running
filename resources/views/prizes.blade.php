@@ -112,17 +112,17 @@
                     <thead>
                         <th class="text-xs-right">quantity</th>
                         <th>prize</th>
-                        <th v-if="userId" style="width: 1%" class="text-xs-center">
-                            <i title="owning" class="fa fa-inbox hidden-xl-up"></i>
-                            <span class="hidden-lg-down">owning</span>
+                        <th v-if="userId" style="width: 1%" class="text-xs-center text-nowrap">
+                            <i title="collection" class="fa fa-inbox hidden-xl-up"></i>
+                            <span class="hidden-lg-down">keeping</span>
                         </th>
-                        <th v-if="userId" style="width: 1%" class="text-xs-center">
+                        <th v-if="userId" style="width: 1%" class="text-xs-center text-nowrap">
                             <i title="wanting" class="fa fa-download hidden-xl-up"></i>
-                            <span class="hidden-lg-down">wanting</span>
+                            <span class="hidden-lg-down">wanted</span>
                         </th>
-                        <th v-if="userId" style="width: 1%" class="text-xs-center">
-                            <i title="trading" class="fa fa-upload hidden-xl-up"></i>
-                            <span class="hidden-lg-down">trading</span>
+                        <th v-if="userId" style="width: 1%" class="text-xs-center text-nowrap">
+                            <i title="for trade" class="fa fa-upload hidden-xl-up"></i>
+                            <span class="hidden-lg-down">for trade</span>
                         </th>
                     </thead>
                     <tbody>
