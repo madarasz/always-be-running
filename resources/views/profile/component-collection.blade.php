@@ -47,27 +47,30 @@
                     </span>
                 </div>
             </div>
-            <table class="prize-collection table-striped">
-                <tr v-for="item in prizeCollection" v-if="item[part] > 0">
-                    <td class="text-xs-right">
-                        <strong>@{{ item[part] }}x</strong>
-                    </td>
-                    <td>
-                        {{--has photo--}}
-                        <a v-if="prizeItems[item.prize_element_id].photoUrl"
-                           :href="prizeItems[item.prize_element_id].photoUrl" data-toggle="lightbox"
-                           :data-gallery="'gallery-' + item.prize_element_id"
-                           :data-title="prizeKits[prizeItems[item.prize_element_id].prizeKitId].year + ' ' + prizeKits[prizeItems[item.prize_element_id].prizeKitId].title"
-                           :data-footer="'<strong>'+prizeKits[prizeItems[item.prize_element_id].prizeKitId].title+'</strong> '+prizeItems[item.prize_element_id].type">
+
+            <div v-for="(itemType, index) in prizeCollection" class="p-b-1" v-if="hasDataIn(index)">
+                <span style="text-decoration: underline">@{{ index }}</span>
+                <table class="prize-collection table-striped">
+                    <tr v-for="item in itemType" v-if="item[part] > 0">
+                        <td class="text-xs-right" style="width: 1%">
+                            <strong>@{{ item[part] }}x</strong>
+                        </td>
+                        <td>
+                            {{--has photo--}}
+                            <a v-if="prizeItems[item.prize_element_id].photoUrl"
+                               :href="prizeItems[item.prize_element_id].photoUrl" data-toggle="lightbox"
+                               :data-gallery="'gallery-' + item.prize_element_id"
+                               :data-title="prizeKits[prizeItems[item.prize_element_id].prizeKitId].year + ' ' + prizeKits[prizeItems[item.prize_element_id].prizeKitId].title"
+                               :data-footer="'<strong>'+prizeKits[prizeItems[item.prize_element_id].prizeKitId].title+'</strong> '+prizeItems[item.prize_element_id].type">
                             <span class="small-text"
-                                    v-if="prizeItems[item.prize_element_id].title == '' || prizeItems[item.prize_element_id].title == null">
+                                  v-if="prizeItems[item.prize_element_id].title == '' || prizeItems[item.prize_element_id].title == null">
                                 @{{ prizeKits[prizeItems[item.prize_element_id].prizeKitId].year }}
                                 @{{ prizeKits[prizeItems[item.prize_element_id].prizeKitId].title }}
                             </span>
-                            <strong>@{{ prizeItems[item.prize_element_id].title }}</strong>
-                        </a>
-                        {{--doesn't have photo--}}
-                        <span v-if="!prizeItems[item.prize_element_id].photoUrl">
+                                <strong>@{{ prizeItems[item.prize_element_id].title }}</strong>
+                            </a>
+                            {{--doesn't have photo--}}
+                            <span v-if="!prizeItems[item.prize_element_id].photoUrl">
                             <span class="small-text"
                                   v-if="prizeItems[item.prize_element_id].title == '' || prizeItems[item.prize_element_id].title == null">
                                 @{{ prizeKits[prizeItems[item.prize_element_id].prizeKitId].year }}
@@ -75,10 +78,13 @@
                             </span>
                             <strong>@{{ prizeItems[item.prize_element_id].title }}</strong>
                         </span>
-                        @{{ prizeItems[item.prize_element_id].type }}
-                    </td>
-                </tr>
-            </table>
+{{--                            @{{ prizeItems[item.prize_element_id].type }}--}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+
             {{--No data--}}
             <div class="text-xs-center m-t-1" v-if="!hasData" v-cloak>
                 <em v-if="ownData || public">empty</em>

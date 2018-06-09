@@ -60,8 +60,12 @@
             computed: {
                 hasData: function() {
                     for (var k in this.prizeCollection) {
-                        if (this.prizeCollection.hasOwnProperty(k) && this.prizeCollection[k][this.part] > 0) {
-                            return true;
+                        if (this.prizeCollection.hasOwnProperty(k)) {
+                            for (var j in k) {
+                                if (this.prizeCollection[k].hasOwnProperty(j) && this.prizeCollection[k][j][this.part] > 0) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                     return false;
@@ -71,6 +75,16 @@
                         return '';
                     }
                     return marked(this.extraText, { sanitize: true, gfm: true, breaks: true })
+                }
+            },
+            methods: {
+                hasDataIn: function(key) {
+                    for (var k in this.prizeCollection[key]) {
+                        if (this.prizeCollection[key].hasOwnProperty(k) && this.prizeCollection[key][k][this.part] > 0) {
+                            return true;
+                        }
+                    }
+                    return false;
                 }
             }
         };
@@ -83,6 +97,7 @@
                 userId: {{ $user->id }},
                 visitorId: {{ Auth::check() ? Auth::user()->id : 0 }},
                 prizeCollection: {},
+                prizeCollectionByType: {},
                 editMode: false,
                 collectionLoaded: false,
                 user: {
@@ -192,11 +207,24 @@
                 loadCollection: function() {
                     axios.get('/api/prize-collections/'+this.userId).then(function (response) {
                         for (var i = 0; i < response.data.length; i ++) {
+                            // unordered collection
                             pageProfile.$set(
                                     pageProfile.prizeCollection,
                                     response.data[i].prize_element_id,
                                     response.data[i]
                             );
+
+                            // collection grouped by type
+                            if (!(pageProfile.prizeItems[response.data[i].prize_element_id].type
+                                    in pageProfile.prizeCollectionByType)) {
+                                pageProfile.$set(
+                                        pageProfile.prizeCollectionByType,
+                                        pageProfile.prizeItems[response.data[i].prize_element_id].type,
+                                        []
+                                )
+                            }
+                            pageProfile.prizeCollectionByType[pageProfile.prizeItems[response.data[i].prize_element_id].type].push(response.data[i]);
+
                         }
                         pageProfile.collectionLoaded = true;
                     }, function (response) {
