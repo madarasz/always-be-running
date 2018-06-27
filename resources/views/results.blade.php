@@ -108,10 +108,6 @@
                     </div>
                 {!! Form::close() !!}
             </div>
-            {{--Featured--}}
-            @if (count($featured))
-                @include('tournaments.partials.featured-results')
-            @endif
             {{--Stats--}}
             <div class="bracket">
                 <h5>
@@ -132,6 +128,10 @@
                     <div class="small-text">corp IDs</div>
                 </div>
             </div>
+            {{--Featured--}}
+            @if (count($featured))
+                @include('tournaments.partials.featured-results')
+            @endif
         </div>
     </div>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
