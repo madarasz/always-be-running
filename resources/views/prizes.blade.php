@@ -329,9 +329,9 @@
                     });
                 },
                 modifyCollection: function(id, field, increment) {
-                    if (this.prizeCollection[id][field] + increment > -1 &&
-                            this.prizeCollection[id][field] + increment < 101) {
-                        this.prizeCollection[id][field] += increment;
+                    if (parseInt(this.prizeCollection[id][field]) + increment > -1 &&
+                            parseInt(this.prizeCollection[id][field]) + increment < 101) {
+                        this.prizeCollection[id][field] = parseInt(this.prizeCollection[id][field])+ increment;
                         this.collectionChange = true;
                         // sure you want to leave when navigating away
                         window.onbeforeunload = function() {
