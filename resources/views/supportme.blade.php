@@ -50,7 +50,7 @@
     </div>
     <hr/>
     <div class="row">
-        <div class="col-md-4 col-xs-12">
+        <div class="col-md-3 col-xs-12">
             <div class="bracket">
                 <h5>
                     <i class="fa fa-id-card" aria-hidden="true"></i>
@@ -58,13 +58,29 @@
                 </h5>
                 As any warm-blooded Netrunner player, I love alternate art cards.
                 <div class="text-xs-center p-t-1 p-b-1">
-                    <a href="https://alwaysberunning.net/profile/1276#tab-collection">list of cards I'm looking for</a>
+                    <a href="https://alwaysberunning.net/profile/1276#tab-collection">list of stuff I'm looking for</a>
                 </div>
                 <strong>Unofficial</strong> alternate art, tokens, items are also welcomed. Email me via <strong>alwaysberunning (at) gmail.com</strong>
                 for my postal address.
             </div>
         </div>
-        <div class="col-md-4 col-xs-12">
+        <div class="col-md-3 col-xs-12">
+            <div class="bracket">
+                <h5>
+                    <i class="fa fa-beer" aria-hidden="true"></i>
+                    with a drink
+                </h5>
+                <p>
+                    If you have the opportunity to meet me in person then you are most welcomed to join me
+                    for a drink.
+                </p>
+                <p>
+                    I live in Hungary and mostly participate in events in Central Europe.
+                    Feel free to message me if you are attending a tournament near by.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-3 col-xs-12">
             <div class="bracket">
                 <h5>
                     <i class="fa fa-paypal" aria-hidden="true"></i>
@@ -82,10 +98,10 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col-xs-12">
+        <div class="col-md-3 col-xs-12">
             <div class="bracket">
                 <h5>
-                    <img class="img-patron"/>
+                    <img class="img-patron-o"/>
                     via Patreon
                 </h5>
                 You can support me on Patreon on a monthly basis. Check out the different reward levels here:
@@ -124,6 +140,14 @@
                         <h4>
                             Why do I need your support?
                         </h4>
+                    </div>
+                </div>
+                <div class="row p-t-2">
+                    <div class="col-xs-12 text-justify">
+                        <h5>UPDATE - end of official Netrunner</h5>
+                        As you know, FFG is discontinuing Netrunner. This makes me deeply sad.
+                        Probably there will be no major updates to my sites in the future as I'm putting my time into other projects.
+                        <strong>The servers will keep on running.</strong> Thank you so much for your past, present and future support.
                     </div>
                 </div>
                 <div class="row p-t-2">
@@ -169,6 +193,7 @@
                         I'm posting summaries of newly developed featues to
                         <a href="https://www.patreon.com/alwaysberunning/posts">my Patreon page</a>.
                         <ul>
+                            <li><a href="https://www.patreon.com/posts/last-development-19406883">Last Developer's report</a></li>
                             <li><a href="https://www.patreon.com/posts/18296319">Developer's report - March 2018</a></li>
                             <li><a href="https://www.patreon.com/posts/17292169">Developer's report - February 2018</a></li>
                             <li><a href="https://www.patreon.com/posts/16615706">Developer's report - January 2018</a></li>
