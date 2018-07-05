@@ -30,9 +30,9 @@ class BadgeController extends Controller
         $europe_winner = Badge::where('tournament_type_id', 9)->where('winlevel', 1)->orderBy('order','desc');
         $europe_top16 = Badge::where('tournament_type_id', 9)->where('winlevel', 2)->orderBy('order','desc');
         $europe_player = Badge::where('tournament_type_id', 9)->where('winlevel', 5)->orderBy('order','desc');
-        $namerica_winner = Badge::where('id', 69);
-        $namerica_top16 = Badge::where('id', 70);
-        $namerica_player = Badge::where('id', 71);
+        $namerica_winner = Badge::where('tournament_type_id', 10)->where('winlevel', 1)->orderBy('order','desc');
+        $namerica_top16 = Badge::where('tournament_type_id', 10)->where('winlevel', 2)->orderBy('order','desc');
+        $namerica_player = Badge::where('tournament_type_id', 10)->where('winlevel', 5)->orderBy('order','desc');
         $nationals_winner = Badge::where('tournament_type_id', 4)->where('winlevel', 1)->orderBy('order','desc');
         $nationals_top = Badge::where('tournament_type_id', 4)->where('winlevel', 2)->orderBy('order','desc');
         $regionals_winner = Badge::where('tournament_type_id', 3)->where('winlevel', 1)->orderBy('order','desc');
@@ -83,9 +83,9 @@ class BadgeController extends Controller
      */
     public function addClaimBadges($userid) {
         // prepare badges array
-        $fromYear = 2016; $toYear = 2017;
+        $fromYear = 2016; $toYear = 2018;
         $badges = Badge::where('year', '>=', $fromYear)->where('year', '<=', $toYear)->pluck('id')->all();
-        $badges = array_merge([13, 14, 15, 27, 28, 29, 30, 34, 35, 36, 49, 50, 51, 52, 53, 54, 55, 73, 74, 75, 76, 77, 78, 79, 80, 81], $badges);
+        $badges = array_merge([13, 14, 15, 93, 94, 27, 28, 29, 30, 34, 35, 36, 49, 50, 51, 52, 53, 54, 55, 73, 74, 75, 76, 77, 78, 79, 80, 81], $badges);
         $badges = array_combine($badges, array_fill(1, count($badges), false));
 
         for ($year = $fromYear; $year <= $toYear; $year++) {
@@ -97,6 +97,7 @@ class BadgeController extends Controller
         $this->addChampionshipBadges($userid, 2017, 9, $badges, [82]);    // 2017 european championship
         $this->addChampionshipBadges($userid, 2018, 9, $badges, [998]);    // 2018 european championship
         $this->addChampionshipBadges($userid, 2017, 10, $badges, [617]);    // 2017 north american championship, tournament_type_id is a hack
+        $this->addChampionshipBadges($userid, 2018, 10, $badges, [1542]);    // 2018 north american championship, tournament_type_id is a hack
         $this->addPlayerLevelBadges($userid, $badges);
         $this->addFactionBadges($userid, $badges);
         $this->addRecurringBadge($userid, $badges);
@@ -179,7 +180,9 @@ class BadgeController extends Controller
 
     private function addTOLevelBadges($userid, &$badges) {
         $count = Tournament::where('creator', $userid)->where('approved', 1)->count();
-        if ($count >= 20) {
+        if ($count >= 50) {
+            $badges[94] = true; // PLATINUM T.O.
+        } elseif ($count >= 20) {
             $badges[18] = true; // GOLD T.O.
         } elseif ($count >= 8) {
             $badges[17] = true;   // SILVER T.O.
@@ -190,7 +193,9 @@ class BadgeController extends Controller
 
     private function addPlayerLevelBadges($userid, &$badges) {
         $count = Entry::where('user', $userid)->where('type', 3)->where('type', 3)->count();
-        if ($count >= 20) {
+        if ($count >= 50) {
+            $badges[93] = true;   // PLATINUM player
+        } elseif ($count >= 20) {
             $badges[15] = true;   // GOLD player
         } elseif ($count >= 8) {
             $badges[14] = true;   // SILVER player
