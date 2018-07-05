@@ -74,7 +74,7 @@
                     If you have the opportunity to meet me in person then you are most welcomed to join me
                     for a drink.
                 </p>
-                <p>
+                <p class="m-b-0">
                     I live in Hungary and mostly participate in events in Central Europe.
                     Feel free to message me if you are attending a tournament near by.
                 </p>
