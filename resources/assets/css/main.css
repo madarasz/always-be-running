@@ -222,6 +222,21 @@ table.abr-table tr td {
     width: 100%;
 }
 
+.map-placeholder {
+    background-image: url("/img/blurred_map.png");
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-color: #ccc;
+    display: table;
+}
+.map-placeholder-cell {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
 #map {
     height: 100%;
     width: 100%;

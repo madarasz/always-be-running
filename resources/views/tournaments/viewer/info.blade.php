@@ -75,7 +75,15 @@
     </p>
     {{--Google map--}}
     @if($tournament->tournament_type_id != 7)
-        <div class="map-wrapper-small">
+        <div class="map-wrapper-small map-placeholder">
+            {{--Map placeholder--}}
+            <div class="map-placeholder-cell">
+                <button id="button-show-map" class="btn btn-primary" onclick="initializeMap()" disabled>
+                    <i class="fa fa-eye" aria-hidden="true"></i>
+                    Show map
+                </button>
+            </div>
+            {{--Map--}}
             <div id="map"></div>
         </div>
     @endif

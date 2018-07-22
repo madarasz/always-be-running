@@ -1,12 +1,22 @@
 {{--Draw location map--}}
 <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_FRONTEND_API')}}&libraries=places&callback=initializeMap">
+        src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_FRONTEND_API')}}&libraries=places&callback=mapIsReady">
 </script>
 {{--Scripts for google maps--}}
 <script type="text/javascript">
     var map, marker;
 
+    function mapIsReady() {
+        $('#button-show-map').removeAttr('disabled');
+    }
+
     function initializeMap() {
+
+        // hide placeholder
+        $('#button-show-map').addClass('hidden-xs-up');
+        $('.map-wrapper-small').removeClass('map-placeholder');
+
+        // init map
         map = new google.maps.Map(document.getElementById('map'), {
             zoom: 1,
             center: {lat: 40.157053, lng: 19.329297},
@@ -20,6 +30,7 @@
             anchorPoint: new google.maps.Point(0, -29)
         });
 
+        // place marker
         var service = new google.maps.places.PlacesService(map);
         service.getDetails({placeId: '{{ $tournament->location_place_id }}'}, function(place, status){
             if (status === google.maps.places.PlacesServiceStatus.OK) {
