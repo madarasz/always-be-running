@@ -114,7 +114,15 @@
                         </button>
                     </div>
                 </h4>
-                <div class="map-wrapper">
+                <div class="map-wrapper map-placeholder">
+                    {{--Map placeholder--}}
+                    <div class="map-placeholder-cell">
+                        <button id="button-show-map" class="btn btn-primary" onclick="initializeMap()" disabled>
+                            <i class="fa fa-eye" aria-hidden="true"></i>
+                            Show map
+                        </button>
+                    </div>
+                    {{--Map--}}
                     <div id="map"></div>
                 </div>
                 <div class="text-xs-center">
@@ -151,18 +159,29 @@
             defaultCountry = '',
             userLocation = null,
             showWeeklyOnMap = false, showWeeklyOnCalendar = false,
+            displayMap = false,
             shortestDistance = 1000.0; // set possible maximum distance while locating user here
 
         function initializeMap() {
+            displayMap = true;
+            // hide placeholder
+            $('#button-show-map').addClass('hidden-xs-up');
+            $('.map-wrapper').removeClass('map-placeholder');
             map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 1,
                 center: {lat: 40.157053, lng: 19.329297}
             });
             infowindow = new google.maps.InfoWindow();
             bounds = new google.maps.LatLngBounds();
-
-            $('.filter').prop("disabled", false);
             clearMapMarkers(map);
+            displayUpcomingPageTournaments(upcomingDataFiltered);
+            $('#button-show-weekly-map').prop("disabled", false);
+            $('#button-show-weekly-calendar').prop("disabled", false);
+            $('#button-near-me').prop("disabled", false);
+        }
+
+        function initializeUpcoming() {
+            $('.filter').prop("disabled", false);
             $('#discover-table-loader').removeClass('hidden-xs-up');
             $('#revur-table-loader').removeClass('hidden-xs-up');
 
@@ -183,8 +202,7 @@
                 @endif
                 displayUpcomingPageTournaments(upcomingDataFiltered);
                 setTimeout(displayUpcomingPageTournaments(upcomingDataFiltered), 1000); //  Empty display fix
-                $('#button-show-weekly-map').prop("disabled", false);
-                $('#button-show-weekly-calendar').prop("disabled", false);
+                $('#button-show-map').removeAttr('disabled');
             });
         }
 
@@ -216,7 +234,7 @@
 
     </script>
     <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_FRONTEND_API')}}&callback=initializeMap&libraries=geometry">
+            src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_FRONTEND_API')}}&callback=initializeUpcoming&libraries=geometry">
     </script>
 @stop
 

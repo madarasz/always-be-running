@@ -156,8 +156,10 @@ function displayUpcomingPageTournaments(data) {
     $('#discover-table').find('tbody').empty();
     $('#recur-table').find('tbody').empty();
     // empty map
-    clearMapMarkers(map);
-    var bounds = new google.maps.LatLngBounds();
+    if (displayMap) {
+        clearMapMarkers(map);
+        var bounds = new google.maps.LatLngBounds();
+    }
     // empty calendar
     calendardata = {};
 
@@ -165,7 +167,9 @@ function displayUpcomingPageTournaments(data) {
     updateTournamentTable('#discover-table', ['title', 'date', 'type', 'location', 'cardpool', 'players'],
         'no tournaments to show', '', data.tournaments);
     updateTournamentCalendar(data.tournaments);
-    codeAddress(data.tournaments, map, bounds, infowindow);
+    if (displayMap) {
+        codeAddress(data.tournaments, map, bounds, infowindow);
+    }
     // recurring events
     updateTournamentTable('#recur-table', ['title', 'location', 'recurday'],
         'no tournaments to show', '', data.recurring_events);
@@ -174,16 +178,16 @@ function displayUpcomingPageTournaments(data) {
     if (showWeeklyOnCalendar) {
         updateTournamentCalendar(data.recurring_events);
     }
-    if (showWeeklyOnMap) {
+    if (showWeeklyOnMap && displayMap) {
         codeAddress(data.recurring_events, map, bounds, infowindow);
     }
     hideRecurring();
-    hideRecurringMap(map);
+    if (displayMap) {
+        hideRecurringMap(map);
+    }
 
     // draw calendar
     drawCalendar(calendardata);
-    // enable filters
-    $('#button-near-me').prop("disabled", false);
     // update paging
     updatePaging('discover-table');
     updatePaging('recur-table');
