@@ -15,14 +15,15 @@
             @endif
         </div>
         <div class="col-md-8 col-xs-12">
-            {!! Form::open(['url' => '/profile/'.$user->id, 'id' => 'profile-form']) !!}
+            {!! Form::open(['id' => 'profile-form']) !!}
             {{--Usernames--}}
             @include('profile.usernames')
             {{--About--}}
             @include('profile.about')
             {{--second save button--}}
             <div class="text-xs-center">
-                <button class="btn btn-info" href="#" id="button-save2" v-if="editMode" v-cloak @click="saveProfile()">
+                <button type="button" class="btn btn-info" href="#" id="button-save2" v-if="editMode" v-cloak
+                        @click="saveProfile()">
                     <i class="fa fa-pencil" aria-hidden="true"></i> Save
                 </button>
             </div>
