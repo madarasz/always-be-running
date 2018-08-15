@@ -60,7 +60,7 @@
                                             {{--Conclusion code--}}
                                             <div class="form-group text-xs-left">
                                                 {!! Html::decode(Form::label('conclusion_code', 'Conclusion code')) !!}
-                                                {!! Form::text('conclusion_code', null, ['class' => 'form-control', 'placeholder' => 'provided by NRTM']) !!}
+                                                {!! Form::text('conclusion_code', null, ['class' => 'form-control', 'placeholder' => 'provided by NRTM or Cobr.ai']) !!}
                                             </div>
                                             <div><strong>OR</strong></div>
                                             {{--JSON--}}
