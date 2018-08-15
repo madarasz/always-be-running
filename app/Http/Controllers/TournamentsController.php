@@ -666,10 +666,11 @@ class TournamentsController extends Controller
         if ($id == -1) {    // new tournament via import
             // there was a failure, do not accept
             if (count($errors)) {
-                $tournament->entries()->delete();
-                $tournament->forceDelete();
-                array_unshift($errors, 'Problem(s) occured during import. Please fix these issues first:');
-                return redirect()->route('organize', $tournament->id)
+                // Error restrictions removed
+//                $tournament->entries()->delete();
+//                $tournament->forceDelete();
+//                array_unshift($errors, 'Problem(s) occured during import. Please fix these issues first:');
+                return redirect()->route('tournaments.edit', $tournament->id)
                     ->withErrors($errors);
             } else {
                 return redirect()->route('tournaments.edit', $tournament->id);
