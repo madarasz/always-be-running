@@ -9,6 +9,7 @@ Homestead.json
 .env
 .live.env
 .idea
+.DS_Store
 node_modules
 public/js
 public/css
