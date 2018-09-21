@@ -304,8 +304,8 @@
                         chartDataTable.addColumn({type: 'string', role: 'style'});
                         chartDataTable.addColumn({type: 'string', role: 'tooltip', 'p': {'html': true}});
 
-                        // polinomial constants for size calculation
-                        var poly1 = -0.00084, poly2 = 0.2789, poly3 = 2.8224;
+                        // constants for logarithmic size calculation: const1 * log(const2 * X + const3)
+                        var const1 = 15, const2 = 0.2, const3 = 1;
 
                         @foreach($claims->reverse() as $claim)
 
@@ -322,7 +322,7 @@
                                             {{ substr($claim->tournament->date, 8, 2) }}),
                                     {{ ($claim->rank() - $claim->tournament->players_number) / (-$claim->tournament->players_number+1)}},
                                     'point { fill-color: ' + tournamentTypeToColor({{$claim->tournament->tournament_type_id}}) +
-                                    '; size: ' + Math.round(poly1 * {{ $claim->tournament->players_number }}  * {{ $claim->tournament->players_number }} +poly2 * {{ $claim->tournament->players_number }} +poly3) +
+                                    '; size: ' + Math.round(const1 * Math.log10(const2 * {{ $claim->tournament->players_number }} + const3)) +
                                     '; stroke-color: #fff }',
                                     '{!! $tooltip !!}'
                                 ]);
