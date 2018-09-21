@@ -307,7 +307,7 @@
                         // constants for logarithmic size calculation: const1 * log(const2 * X + const3)
                         var const1 = 15, const2 = 0.2, const3 = 1;
 
-                        @foreach($claims->reverse() as $claim)
+                        @foreach($claims_by_size as $claim)
 
                             <?php
                                 $tooltip = '<div style="padding: 0.5em"><strong>'.addslashes($claim->tournament->title).
