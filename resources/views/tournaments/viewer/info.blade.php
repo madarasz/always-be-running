@@ -62,8 +62,11 @@
         <p><em id="decklist-not-mandatory">decklist is not required</em></p>
     @endif
     <p>
+        @unless($tournament->reg_time === '')
+            <strong>Registration starts</strong>: <span id="reg-time">{{ $tournament->reg_time }}</span> (local time)<br/>
+        @endunless
         @unless($tournament->start_time === '')
-            <strong>Starting time</strong>: <span id="start-time">{{ $tournament->start_time }}</span> (local time)<br/>
+            <strong>Tournament starts</strong>: <span id="start-time">{{ $tournament->start_time }}</span> (local time)<br/>
         @endunless
         @unless($tournament->location_store === '')
             <strong>Store/venue</strong>: <span id="store">{{ $tournament->location_store }}</span><br/>

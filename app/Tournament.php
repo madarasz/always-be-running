@@ -12,7 +12,7 @@ class Tournament extends Model
     public $timestamps = true;
     protected $fillable = ['title', 'date', 'location_country', 'location_state', 'location_city', 'location_store',
         'location_address', 'location_place_id', 'players_number', 'description', 'concluded', 'decklist', 'top_number', 'creator',
-        'tournament_type_id', 'start_time', 'cardpool_id', 'conflict', 'contact', 'import', 'location_lat', 'location_long',
+        'tournament_type_id', 'start_time', 'reg_time', 'cardpool_id', 'conflict', 'contact', 'import', 'location_lat', 'location_long',
         'recur_weekly', 'incomplete', 'link_facebook', 'tournament_format_id', 'end_date', 'concluded_by', 'concluded_at',
         'relax_conflicts', 'timezone', 'prize_id', 'prize_additional'];
     protected $dates = ['created_at', 'updated_at', 'deleted_at', 'concluded_at'];

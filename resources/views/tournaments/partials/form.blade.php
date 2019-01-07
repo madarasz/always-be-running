@@ -191,9 +191,14 @@
                     </div>
                 </div>
             </div>
+            {{--Registration time--}}
+            <div class="form-group hide-nonrequired">
+                {!! Form::label('reg_time', 'Registration starts') !!}
+                {!! Form::text('reg_time', old('reg_time', $tournament->reg_time), ['class' => 'form-control', 'placeholder' => 'HH:MM']) !!}
+            </div>
             {{--Starting time--}}
             <div class="form-group hide-nonrequired">
-                {!! Form::label('start_time', 'Starting time') !!}
+                {!! Form::label('start_time', 'Tournaments starts') !!}
                 {!! Form::text('start_time', old('start_time', $tournament->start_time), ['class' => 'form-control', 'placeholder' => 'HH:MM']) !!}
             </div>
             {{--Weekly reoccurance--}}
@@ -328,6 +333,7 @@
             weekStart: 1 //TODO: custom
         });
 
+        $('#reg_time').timepicker({ 'scrollDefault': '9:30AM', 'timeFormat': 'H:i', 'show2400': true });
         $('#start_time').timepicker({ 'scrollDefault': '10:00AM', 'timeFormat': 'H:i', 'show2400': true });
 
         // clicking icon should also show datepicker
