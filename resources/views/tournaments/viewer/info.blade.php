@@ -58,6 +58,8 @@
     @endif
     @if($tournament->decklist == 1)
         <p><strong><u><span id="decklist-mandatory">decklist is mandatory!</span></u></strong></p>
+    @else
+        <p><em id="decklist-not-mandatory">decklist is not required</em></p>
     @endif
     <p>
         @unless($tournament->start_time === '')
