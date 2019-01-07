@@ -44,8 +44,9 @@
                                 <div>recurring event has no cardpool</div>
                             </div>
                         {!! Form::select('cardpool_id', $cardpools,
-                                    old('cardpool_id', $tournament->cardpool_id == "unknown" ? 'mo' : $tournament->cardpool_id ),
-                                    ['class' => 'form-control']) !!}
+                                    old('cardpool_id', 
+                                        $tournament->cardpool_id == "unknown" ? array_keys(array_slice($cardpools, 1, 1, TRUE))[0] : $tournament->cardpool_id ),
+                                        ['class' => 'form-control']) !!}
                         </div>
                     </div>
                 </div>
