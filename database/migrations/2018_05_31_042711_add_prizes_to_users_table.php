@@ -30,7 +30,12 @@ class AddPrizesToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->dropColumn('prize_owning_public');
+            $table->dropColumn('prize_trading_public');
+            $table->dropColumn('prize_wanting_public');
+            $table->dropColumn('prize_owning_text');
+            $table->dropColumn('prize_trading_text');
+            $table->dropColumn('prize_wanting_text');
         });
     }
 }
