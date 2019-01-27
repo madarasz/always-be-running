@@ -485,6 +485,7 @@ class BadgeController extends Controller
             ['tournament_id' => 69, 'badges' => ['winner_badge_id' => 78, 'participant_badge_id' => 79]],    // UK 2016
             ['tournament_id' => 1026, 'badges' => ['winner_badge_id' => 76, 'participant_badge_id' => 77]],    // UK 2017
             ['tournament_id' => 782, 'badges' => ['winner_badge_id' => 80, 'participant_badge_id' => 81]],    // HU 2017
+            ['tournament_id' => 1823, 'badges' => ['winner_badge_id' => 98, 'participant_badge_id' => 99]],    // HU 2017
         ];
 
         foreach($badge_list as $tournament) {
