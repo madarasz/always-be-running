@@ -50,6 +50,7 @@
                         <ul>
                             <li><a href="/profile/6966" class="admin">lpoulter</a></li>
                             <li><a href="/profile/1221" class="admin">johno</a></li>
+                            <li><a href="/profile/28653" class="admin">Blue Haired Hacker Girl</a> (NISEI)</li>
                         </ul>
                     </li>
                     <li>
@@ -58,12 +59,14 @@
                             <li><a href="/profile/9571" class="admin">Murphy</a></li>
                             <li><a href="/profile/6075" class="admin">jase2224</a></li>
                             <li><a href="/profile/16051" class="admin">JDC_Wolfpack</a></li>
+                            <li><a href="/profile/3527" class="admin">icecoldjazz</a> (NISEI)</li>
                         </ul>
                     </li>
                     <li>
                         <strong>New Zealand / Australia:</strong>
                         <ul>
                             <li><a href="/profile/491" class="admin">Guv_bubbs</a></li>
+                            <li><a href="/profile/7806" class="admin">Inactivist</a> (NISEI)</li>
                         </ul>
                     </li>
                     <li>
@@ -84,6 +87,12 @@
                         <strong>Benelux region + Greece</strong>
                         <ul>
                             <li><a href="/profile/14808" class="admin">Kelfecil</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Spain</strong>
+                        <ul>
+                            <li><a href="/profile/1139" class="admin">vesper</a> (NISEI)</li>
                         </ul>
                     </li>
                     <li>
