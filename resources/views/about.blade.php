@@ -51,6 +51,7 @@
                             <li><a href="/profile/6966" class="admin">lpoulter</a></li>
                             <li><a href="/profile/1221" class="admin">johno</a></li>
                             <li><a href="/profile/28653" class="admin">Blue Haired Hacker Girl</a> (NISEI)</li>
+                            <li><a href="/profile/25602" class="admin">3N1GM4</a> (NISEI)</li>
                         </ul>
                     </li>
                     <li>
