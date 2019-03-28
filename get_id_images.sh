@@ -31,12 +31,24 @@ do
                 curl $imageurl > "public/img/ids/$card.png"
             fi
             # crop and resize
-            if [ ${sides[$i]} == "corp" ]; then
-                echo corp
-                mogrify -crop 224x224+38+67 -resize 80x80 "public/img/ids/$card.png"
+            if [ $card -lt 26000 ]; then
+                # old images
+                if [ ${sides[$i]} == "corp" ]; then
+                    echo corp
+                    mogrify -crop 224x224+38+67 -resize 80x80 "public/img/ids/$card.png"
+                else
+                    echo runner
+                    mogrify -crop 238x238+31+51 -resize 80x80 "public/img/ids/$card.png"
+                fi
             else
-                echo runner
-                mogrify -crop 238x238+31+51 -resize 80x80 "public/img/ids/$card.png"
+                # NISEI images
+                if [ ${sides[$i]} == "corp" ]; then
+                    echo corp
+                    mogrify -crop 355x355+48+75 -resize 80x80 "public/img/ids/$card.png"
+                else
+                    echo runner
+                    mogrify -crop 330x330+62+88 -resize 80x80 "public/img/ids/$card.png"
+                fi
             fi
         fi
     fi
