@@ -169,7 +169,7 @@
                 <div class="col-md-6 col-xs-12">
                     <div class="form-group">
                         {!! Form::label('top_number', 'Number of players in top cut') !!}
-                        {!! Form::select('top_number', ['0' => '- no elimination rounds -', '4' => 'top 4', '8' => 'top 8', '16' => 'top 16'],
+                        {!! Form::select('top_number', ['0' => '- no elimination rounds -', '3' => 'top 3', '4' => 'top 4', '8' => 'top 8', '16' => 'top 16'],
                             old('top_number', $tournament->top_number),
                             ['class' => 'form-control', 'disabled' => '']) !!}
                     </div>

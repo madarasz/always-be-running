@@ -32,7 +32,7 @@
                                             <div class="form-group">
                                                 {!! Form::label('top_number', 'Number of players in top cut') !!}
                                                 {!! Form::select('top_number',
-                                                    ['0' => '- no elimination rounds -', '4' => 'top 4', '8' => 'top 8', '16' => 'top 16'],
+                                                    ['0' => '- no elimination rounds -', '3' => 'top 3', '4' => 'top 4', '8' => 'top 8', '16' => 'top 16'],
                                                     '', ['class' => 'form-control']) !!}
                                             </div>
                                         </div>
