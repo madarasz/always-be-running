@@ -5,7 +5,7 @@
     <h4 class="page-header p-b-1 m-b-0">
         <div class="pull-right">
             <a href="/tournaments/create" class="btn btn-primary">Create Tournament</a>
-            <button class="btn btn-info disabled" data-toggle="modal" data-target="#fbImportModal">
+            <button class="btn btn-info disabled hidden-xs-up" data-toggle="modal" data-target="#fbImportModal">
                 Create from <img src="https://en.facebookbrand.com/wp-content/uploads/2016/05/FB-fLogo-Blue-broadcast-2.png" style="height: 1em;"/> event
             </button>
             <button class="btn btn-conclude" data-toggle="modal" data-target="#concludeModal" data-hide-manual="true"
