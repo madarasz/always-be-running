@@ -1,7 +1,7 @@
 // single day tournament (future date)
 var tournamentSingleDay = {
     title: formatDate(new Date()) + ' Test Single Day',
-    type: 'non-FFG tournament',
+    type: 'community tournament',
     tournament_type_id: '6',
     cardpool: 'Business First',
     cardpool_id: 'bf',

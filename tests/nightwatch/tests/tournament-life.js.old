@@ -1,6 +1,6 @@
 var tournamentA = {
     title: 'Test A - ' + formatDate(new Date()),
-    type: 'non-FFG tournament',
+    type: 'community tournament',
     type_id: '6',
     cardpool: 'Business First',
     cardpool_id: 'bf',

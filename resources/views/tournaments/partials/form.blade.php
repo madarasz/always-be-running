@@ -24,7 +24,7 @@
                             <br/><br/>
                             Additional tournament types:
                             <ul>
-                                <li><strong>non-FFG tournament:</strong> a tournament not supported by FFG or its prize pack / casual</li>
+                                <li><strong>community tournament:</strong> a tournament not supported by FFG/NISEI or its prize pack</li>
                                 <li><strong>online event:</strong> You are playing via Jinteki.net/OCTGN. No location is required.</li>
                                 <li><strong>non-tournament:</strong> This is not a tournament. Just play. <em>Weekly recurrence</em> is an option.</li>
                                 <li><strong>continental championship:</strong> North American / European championship</li>

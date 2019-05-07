@@ -39,7 +39,7 @@ class TournamentTypeSeeder extends Seeder
                     'id' => 5
                 ),
                 array(
-                    'type_name' => 'non-FFG tournament',
+                    'type_name' => 'community tournament',
                     'order' => 7,
                     'id' => 6
                 ),
