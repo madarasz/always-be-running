@@ -53,6 +53,7 @@ class TournamentsController extends Controller
         $tournament_types = TournamentType::orderBy('order')->pluck('type_name', 'id')->all();
         $tournament_formats = TournamentFormat::orderBy('order')->pluck('format_name', 'id')->all();
         $mwls = Mwl::orderBy('date', 'desc')->pluck('name', 'id')->all();
+        $mwl_dates = Mwl::orderBy('date', 'desc')->pluck('date')->all();
         $tournament_prizes = Prize::join('tournament_types', 'prizes.tournament_type_id', '=', 'tournament_types.id')
             ->orderBy('year', 'desc')->orderBy('tournament_types.order', 'desc')->orderBy('title', 'desc')
             ->select(\DB::raw('CONCAT(prizes.year, " ", prizes.title) as display, prizes.id'))
@@ -65,7 +66,7 @@ class TournamentsController extends Controller
 
         $page_section = 'organize';
         return view('tournaments.create', compact('tournament_types', 'tournament', 'cardpools', 'page_section',
-            'tournament_formats', 'tournament_prizes', 'mwls'));
+            'tournament_formats', 'tournament_prizes', 'mwls', 'mwl_dates'));
     }
 
     /**
