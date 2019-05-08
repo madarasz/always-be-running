@@ -11,6 +11,7 @@ use App\Tournament;
 use App\TournamentType;
 use App\CardIdentity;
 use App\Video;
+use App\Mwl;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -51,6 +52,7 @@ class TournamentsController extends Controller
         $this->authorize('logged_in', Tournament::class, $request->user());
         $tournament_types = TournamentType::orderBy('order')->pluck('type_name', 'id')->all();
         $tournament_formats = TournamentFormat::orderBy('order')->pluck('format_name', 'id')->all();
+        $mwls = Mwl::orderBy('date', 'desc')->pluck('name', 'id')->all();
         $tournament_prizes = Prize::join('tournament_types', 'prizes.tournament_type_id', '=', 'tournament_types.id')
             ->orderBy('year', 'desc')->orderBy('tournament_types.order', 'desc')->orderBy('title', 'desc')
             ->select(\DB::raw('CONCAT(prizes.year, " ", prizes.title) as display, prizes.id'))
@@ -63,7 +65,7 @@ class TournamentsController extends Controller
 
         $page_section = 'organize';
         return view('tournaments.create', compact('tournament_types', 'tournament', 'cardpools', 'page_section',
-            'tournament_formats', 'tournament_prizes'));
+            'tournament_formats', 'tournament_prizes', 'mwls'));
     }
 
     /**
@@ -78,6 +80,8 @@ class TournamentsController extends Controller
         $this->authorize('own', $tournament, $request->user());
         $tournament_types = TournamentType::orderBy('order')->pluck('type_name', 'id')->all();
         $tournament_formats = TournamentFormat::orderBy('order')->pluck('format_name', 'id')->all();
+        $mwls = Mwl::orderBy('date', 'desc')->pluck('name', 'id')->all();
+        $mwl_dates = Mwl::orderBy('date', 'desc')->pluck('date')->all();
         $tournament_prizes = Prize::join('tournament_types', 'prizes.tournament_type_id', '=', 'tournament_types.id')
             ->orderBy('year', 'desc')->orderBy('tournament_types.order', 'desc')->orderBy('title', 'desc')
             ->select(\DB::raw('CONCAT(prizes.year, " ", prizes.title) as display, prizes.id'))
@@ -85,7 +89,7 @@ class TournamentsController extends Controller
         $cardpools = CardPack::where('usable', 1)->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $page_section = 'organize';
         return view('tournaments.edit', compact('tournament', 'id', 'tournament_types', 'cardpools', 'page_section',
-            'tournament_formats', 'tournament_prizes'));
+            'tournament_formats', 'tournament_prizes', 'mwls', 'mwl_dates'));
     }
 
     /**
@@ -360,6 +364,7 @@ class TournamentsController extends Controller
         $result = [];
         $tournament_types = TournamentType::get()->pluck('type_name', 'id');
         $tournament_formats = TournamentFormat::get()->pluck('format_name', 'id');
+        $mwls = Mwl::get()->pluck('name', 'id');
         $cardpool_names = CardPack::get()->pluck('name', 'id');
 
         foreach($data as $tournament) {
@@ -396,6 +401,7 @@ class TournamentsController extends Controller
                 $event_data['date'] = $tournament->date;
                 $event_data['type'] = $tournament_types[$tournament->tournament_type_id];
                 $event_data['format'] = $tournament_formats[$tournament->tournament_format_id];
+                $event_data['mwl'] = $mwls[$tournament->mwl_id];
                 $event_data['concluded'] = $tournament->concluded == 1;
                 $event_data['charity'] = $tournament->charity == 1;
             } else {

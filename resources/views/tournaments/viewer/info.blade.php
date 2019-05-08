@@ -44,6 +44,7 @@
     @if ($tournament->date)
         <p>
             <strong>Legal cardpool up to:</strong> <span id="cardpool"><em>{{ $tournament->cardpool->name }}</em></span><br/>
+            <strong>MWL:</strong> <span id="mwl"><em>{{ str_replace("-", "", $tournament->mwl->name) }}</em></span><br/>
             <strong>Format:</strong> <span id="tournament-format">{{ $format }}</span>
             @include('partials.popover', ['direction' => 'right', 'content' =>
                         '<ul>

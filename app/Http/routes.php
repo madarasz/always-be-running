@@ -21,6 +21,7 @@ Route::get('admin', 'AdminController@lister')->name('admin');
 Route::get('admin/identities/update', 'NetrunnerDBController@requestIdentities');
 Route::get('admin/cycles/update', 'NetrunnerDBController@requestCycles');
 Route::get('admin/packs/update', 'NetrunnerDBController@requestPacks');
+Route::get('admin/mwl/update', 'NetrunnerDBController@requestMWL');
 Route::get('admin/badges/refresh', 'BadgeController@refreshBadges');
 Route::get('admin/entries/refresh', 'AdminController@setEntryTypes');
 Route::get('admin/decks/broken', 'AdminController@detectBrokenDecks');

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\User;
 use App\Tournament;
 use App\Http\Requests;
+use App\Mwl;
 use Illuminate\Support\Facades\Auth;
 
 class NetrunnerDBController extends Controller
@@ -267,6 +268,18 @@ class NetrunnerDBController extends Controller
     }
 
     /**
+     * Downloads MWLfrom NetrunnerDB, stores them in DB.
+     * @param Request $request
+     * @return redirects to admin page
+     */
+    function requestMWL(Request $request)
+    {
+        $this->authorize('admin', Tournament::class, $request->user());
+        $added = $this->updateMWL();
+        return redirect()->action('AdminController@lister')->with('message', "$added new MWL items added.");
+    }
+
+    /**
      * Adds claim to NetrunnerDB.
      * @param $decklistID int published decklist ID
      * @param $tournamentName string tournament name
@@ -330,7 +343,6 @@ class NetrunnerDBController extends Controller
         }
     }
 
-    // not to be called from routes, no auth check, used directly by DB seeding
     private function updateIdentities()
     {
         $raw = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/public/cards'), true);
@@ -353,7 +365,6 @@ class NetrunnerDBController extends Controller
         return $added;
     }
 
-    // not to be called from routes, no auth check, used directly by DB seeding
     private function updateCycles()
     {
         $raw = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/public/cycles'), true);
@@ -372,7 +383,6 @@ class NetrunnerDBController extends Controller
         return $added;
     }
 
-    // not to be called from routes, no auth check, used directly by DB seeding
     private function updatePacks()
     {
         $raw = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/public/packs'), true);
@@ -386,6 +396,24 @@ class NetrunnerDBController extends Controller
             } else {
                 $exists->update($this->packToArray($pack, $nowdate));
             }
+        }
+        return $added;
+    }
+
+    private function updateMWL()
+    {
+        $raw = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/public/mwl'), true);
+        $added = 0;
+        foreach ($raw['data'] as $mwl) {
+            $exists = Mwl::find($mwl['id']);
+            if (is_null($exists)) {
+                $added++;
+                Mwl::create([
+                    'id' => $mwl['id'],
+                    'date' => str_replace('-', '.', $mwl['date_start']).'.',
+                    'name' => $mwl['name']
+                ]);
+            } 
         }
         return $added;
     }

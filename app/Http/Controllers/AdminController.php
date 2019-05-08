@@ -13,6 +13,7 @@ use App\Entry;
 use App\Video;
 use App\Tournament;
 use App\VideoTag;
+use App\Mwl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -38,6 +39,8 @@ class AdminController extends Controller
         $count_cycles = count($cycles);
         $last_cycle = $count_cycles > 1 ? $cycles[1]->name : '';
         $count_packs = CardPack::count();
+        $count_mwls = Mwl::count();
+        $last_mwl = $count_mwls > 0 ? Mwl::orderBy('id', 'desc')->first()->name : '';
         $approved_tournaments = Tournament::where('approved', 1)->whereNull('recur_weekly')->pluck('id')->all(); // + non-recurring
         $video_channels = Video::whereIn('tournament_id', $approved_tournaments)->where('flag_removed', false)
             ->select('channel_name', 'type', DB::raw('count(*) as total'))
@@ -109,7 +112,7 @@ class AdminController extends Controller
 
         $page_section = 'admin';
         return view('admin', compact('user', 'message', 'nowdate', 'badge_type_count', 'badge_count', 'unseen_badge_count',
-            'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'packs', 'cycles',
+            'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'count_mwls', 'last_mwl', 'packs', 'cycles',
             'page_section', 'video_channels', 'video_users', 'entry_types', 'published_count', 'private_count',
             'backlink_count', 'no_backlink_count', 'unexported_count', 'broken_count', 'broken_users', 'missing_videos',
             'ktm_update', 'ktm_packs', 'photos', 'photo_tournaments', 'photo_users', 'video_users_tagged', 'vips',

@@ -70,8 +70,23 @@
                         old('tournament_format_id', $tournament->tournament_format_id), ['class' => 'form-control']) !!}
                     </div>
                 </div>
+                {{--MWL--}}
+                <div class="col-md-6 col-xs-12">
+                    <div class="form-group hide-nonrequired">
+                    {!! Form::label('mwl_id', 'MWL') !!}
+                    @include('partials.popover', ['direction' => 'right', 'content' =>
+                            '<strong>Most Wanted List</strong> used on the tournament. 
+                            Defines <strong>retricted</strong> and <strong>removed</strong> cards in cardpool.'])
+                    {!! Form::select('mwl_id', $mwls, old('mwl_id', $tournament->mwl_id),
+                        ['class' => 'form-control']) !!}
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="row">
                 {{--Mandatory decklist--}}
                 <div class="col-md-6 col-xs-12">
+                    {{--MWL, Mandatory decklist--}}
                     <div class="form-group hide-nonrequired m-t-2">
                         {!! Form::checkbox('decklist', null, in_array(old('decklist', $tournament->decklist), [1, '1', 'on'], true), ['id' => 'decklist']) !!}
                         {!! Form::label('decklist', 'decklist is mandatory') !!}
@@ -185,7 +200,7 @@
                 {!! Html::decode(Form::label('date', 'Date<sup class="text-danger" id="req-date">*</sup>')) !!}
                 <div class="input-group">
                     {!! Form::text('date', old('date', $tournament->date),
-                                 ['class' => 'form-control', 'required' => '', 'placeholder' => 'YYYY.MM.DD.']) !!}
+                                 ['class' => 'form-control', 'required' => '', 'placeholder' => 'YYYY.MM.DD.', 'onchange' => 'mwlAdjust()']) !!}
                     <div class="input-group-addon" id="datepicker-icon">
                         <i class="fa fa-calendar" aria-hidden="true"></i>
                     </div>
@@ -311,11 +326,31 @@
 <script type="text/javascript">
 
     var map, marker,
-        old_place_id = '{{old('location_place_id', $tournament->location_place_id)}}';
+        old_place_id = '{{old('location_place_id', $tournament->location_place_id)}}',
+        mwl_dates = [
+            @foreach($mwl_dates as $mwl)
+                '{{ $mwl }}',
+            @endforeach
+    ];
 
     conclusionCheck();
     changeTournamentType();
     hideNonRequired();
+
+    // adjust MWL based on selected date
+    function mwlAdjust() {
+        var selectedDate = document.getElementById("date").value;
+        var mwl_index;
+        for (mwl_index = 0; mwl_index < mwl_dates.length; mwl_index++) {
+            if (mwl_dates[mwl_index].localeCompare(selectedDate) < 1) {
+                break;
+            }
+        }
+        var mwlSelector = $('select[name=mwl_id]');
+        var value = mwlSelector.find('option:eq('+mwl_index+')').val();
+        mwlSelector.val(value).change();
+        console.log(document.getElementById("date").value, mwl_index);
+    }
 
     function initDatePicker() {
         $('#date').datepicker({

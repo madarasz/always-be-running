@@ -16,5 +16,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CardCycleSeeder::class);
         $this->call(CardPackSeeder::class);
         $this->call(CountriesSeeder::class);
+        $this->call(MWLSeeder::class);
     }
 }

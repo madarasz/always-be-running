@@ -14,10 +14,14 @@ class Tournament extends Model
         'location_address', 'location_place_id', 'players_number', 'description', 'concluded', 'decklist', 'top_number', 'creator',
         'tournament_type_id', 'start_time', 'reg_time', 'cardpool_id', 'conflict', 'contact', 'import', 'location_lat', 'location_long',
         'recur_weekly', 'incomplete', 'link_facebook', 'tournament_format_id', 'end_date', 'concluded_by', 'concluded_at',
-        'relax_conflicts', 'timezone', 'prize_id', 'prize_additional'];
+        'relax_conflicts', 'timezone', 'prize_id', 'prize_additional', 'mwl_id'];
     protected $dates = ['created_at', 'updated_at', 'deleted_at', 'concluded_at'];
     protected $hidden = ['tournament_type_id', 'tournament_format_id', 'cardpool_id', 'relax_conflicts', 'timezone', 'pivot'];
     protected $appends = ['seoUrl'];
+
+    public function mwl() {
+        return $this->hasOne(Mwl::class, 'id', 'mwl_id');
+    }
 
     public function tournament_type() {
         return $this->hasOne(TournamentType::class, 'id', 'tournament_type_id');
