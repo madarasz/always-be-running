@@ -166,7 +166,7 @@ class BadgeController extends Controller
             $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('rank_top', '>', 0)->where('type', 3)->first();
             if ($year == 2019 && $type ==9) {
                 // Euro 2019 "day 2", not "top-cut"
-                $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('rank', '>', 14)->where('type', 3)->first();
+                $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('rank', '<', 14)->where('type', 3)->first();
             }
 
             if ($found) {
