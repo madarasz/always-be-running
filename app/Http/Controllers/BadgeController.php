@@ -96,6 +96,7 @@ class BadgeController extends Controller
         $this->addChampionshipBadges($userid, null, 2, $badges);    // store champion
         $this->addChampionshipBadges($userid, 2017, 9, $badges, [82]);    // 2017 european championship
         $this->addChampionshipBadges($userid, 2018, 9, $badges, [998]);    // 2018 european championship
+        $this->addChampionshipBadges($userid, 2019, 9, $badges, [2005]);    // 2019 european championship
         $this->addChampionshipBadges($userid, 2017, 10, $badges, [617]);    // 2017 north american championship, tournament_type_id is a hack
         $this->addChampionshipBadges($userid, 2018, 10, $badges, [1542]);    // 2018 north american championship, tournament_type_id is a hack
         $this->addPlayerLevelBadges($userid, $badges);
@@ -163,6 +164,10 @@ class BadgeController extends Controller
 
             // top 16
             $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('rank_top', '>', 0)->where('type', 3)->first();
+            if ($year == 2019 && $type ==9) {
+                // Euro 2019 "day 2", not "top-cut"
+                $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('rank', '>', 14)->where('type', 3)->first();
+            }
 
             if ($found) {
                 $badgeid = Badge::where('tournament_type_id', $type)->where('year', $year)->where('winlevel', 2)->first()->id;

@@ -349,7 +349,6 @@
         var mwlSelector = $('select[name=mwl_id]');
         var value = mwlSelector.find('option:eq('+mwl_index+')').val();
         mwlSelector.val(value).change();
-        console.log(document.getElementById("date").value, mwl_index);
     }
 
     function initDatePicker() {
