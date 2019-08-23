@@ -201,7 +201,7 @@
             };
 
             // load the rest
-            getTournamentData('/results?limit=500&offset='+offset, dataloader);
+            getTournamentData('/results?limit=1000&offset='+offset, dataloader);
         });
 
         // statistics charts
