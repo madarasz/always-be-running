@@ -140,7 +140,7 @@
                 packlist = [],
                 defaultCountry = "",
                 currentPack = "",
-                runnerIDs = [], corpIDs = [];
+                runnerIDs = [], corpIDs = [], offset = 50;
 
         positionFilters();
 
@@ -176,24 +176,32 @@
 
             });
 
+            var dataloader = function(data) {
+                if (data.length > 0) {
+                    // we have more results to add
+                    resultsDataAll = resultsDataAll.concat(data);
+                    resultsDataFiltered = resultsDataAll.slice();
+
+                    // load next chunk
+                    offset += 1000;
+                    getTournamentData('/results?limit=500&offset='+offset, dataloader);
+                } else {
+                    // all is loaded, display all
+                    // apply filters in URL
+                    applyInitialResultsFilters();
+                    $('#results').find('tbody').empty();
+                    updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', resultsDataFiltered);
+                    updatePaging('results');
+
+                    $('#results-more-loader').addClass('hidden-xs-up');
+                    $('#filter-loader').addClass('hidden-xs-up');
+                    $('#results-controls').removeClass('hidden-xs-up');
+                    $('.filter').prop("disabled", false);
+                }                
+            };
+
             // load the rest
-            getTournamentData('/results?offset=50', function(data) {
-                resultsDataAll = resultsDataAll.concat(data);
-                resultsDataFiltered = resultsDataAll.slice();
-
-                // apply filters in URL
-                applyInitialResultsFilters();
-
-                // display all tournaments
-                $('#results').find('tbody').empty();
-                updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', resultsDataFiltered);
-
-                $('#results-more-loader').addClass('hidden-xs-up');
-                $('#filter-loader').addClass('hidden-xs-up');
-                $('#results-controls').removeClass('hidden-xs-up');
-                $('.filter').prop("disabled", false);
-                updatePaging('results');
-            });
+            getTournamentData('/results?limit=500&offset='+offset, dataloader);
         });
 
         // statistics charts
