@@ -184,7 +184,7 @@
 
                     // load next chunk
                     offset += 1000;
-                    getTournamentData('/results?limit=500&offset='+offset, dataloader);
+                    getTournamentData('/results?limit=1000&offset='+offset, dataloader);
                 } else {
                     // all is loaded, display all
                     // apply filters in URL
