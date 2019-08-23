@@ -29,9 +29,10 @@
                 </p>
                 <p>
                     <strong>Concluded tournamets</strong> (tournaments with results):
-                    <a href="<?php env('APP_URL')?>/api/tournaments/results">https://alwaysberunning.net/api/tournaments/results</a>
+                    <a href="<?php env('APP_URL')?>/api/tournaments/results?limit=500">https://alwaysberunning.net/api/tournaments/results?limit=500</a>
                     <br/>
                     <em>Only concluded tournaments are displayed. Rejected tournaments are filtered out.</em><br/>
+                    <strong>Do not query more than 500 elemets, server memory will run out.</strong><br/>
                     Supports <strong>limit</strong> and <strong>offset</strong> parameters, example:
                     <a href="<?php env('APP_URL')?>/api/tournaments/results?offset=20&limit=10">https://alwaysberunning.net/api/tournaments/results?offset=20&limit=10</a>
                     <blockquote class="help-markdown m-b-3">
