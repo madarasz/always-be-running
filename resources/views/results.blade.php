@@ -140,7 +140,7 @@
                 packlist = [],
                 defaultCountry = "",
                 currentPack = "",
-                runnerIDs = [], corpIDs = [], offset = 50;
+                runnerIDs = [], corpIDs = [], offset = 50, offsetIterator = 1000;
 
         positionFilters();
 
@@ -176,15 +176,14 @@
 
             });
 
-            var dataloader = function(data) {
-                if (data.length > 0) {
-                    // we have more results to add
-                    resultsDataAll = resultsDataAll.concat(data);
-                    resultsDataFiltered = resultsDataAll.slice();
+            var resultDataUpdater = function(data) {
+                resultsDataAll = resultsDataAll.concat(data);
+                resultsDataFiltered = resultsDataAll.slice();
 
-                    // load next chunk
-                    offset += 1000;
-                    getTournamentData('/results?limit=1000&offset='+offset, dataloader);
+                if (data.length == offsetIterator) {
+                    // we have more results to add, load next chunk
+                    offset += offsetIterator;
+                    getTournamentData('/results?limit='+offsetIterator+'&offset='+offset, resultDataUpdater);
                 } else {
                     // all is loaded, display all
                     // apply filters in URL
@@ -201,7 +200,7 @@
             };
 
             // load the rest
-            getTournamentData('/results?limit=1000&offset='+offset, dataloader);
+            getTournamentData('/results?limit='+offsetIterator+'&offset='+offset, resultDataUpdater);
         });
 
         // statistics charts
