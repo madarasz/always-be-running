@@ -270,14 +270,9 @@ class TournamentsController extends Controller
         $startTime = microtime(true);
 
         $yesterday = date('Y.m.d.', time() - 86400); // to be on the safe side
-        $tournaments = Tournament::where('date', '>=', $yesterday)->where('concluded', 0)
-            ->where(function($query){
-                $query->where('approved', 1)->orWhereNull('approved');
-            })->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])
-            ->orderBy('date', 'asc')->get();
-        $recurring = Tournament::whereNotNull('recur_weekly')->where(function($query){
-                $query->where('approved', 1)->orWhereNull('approved');
-            })->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])
+        $tournaments = Tournament::where('date', '>=', $yesterday)->where('concluded', 0)->where('approved', '!=', 0)
+            ->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])->orderBy('date', 'asc')->get();
+        $recurring = Tournament::whereNotNull('recur_weekly')->where('approved', '!=', 0)->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])
             ->orderBy('recur_weekly')->get();
 
         $endtime = microtime(true);
@@ -294,9 +289,7 @@ class TournamentsController extends Controller
     public function resultTournamentJSON(Request $request) {
         $startTime = microtime(true);
 
-        $tournaments = Tournament::where('concluded', 1)->where(function($query){
-            $query->where('approved', 1)->orWhereNull('approved');
-        })->where('incomplete', 0)->orderBy('date', 'desc');
+        $tournaments = Tournament::where('concluded', 1)->where('approved', '!=', 0)->where('incomplete', 0)->orderBy('date', 'desc');
 
         $this->applyLimitOffset($request, $tournaments);
 
@@ -368,7 +361,7 @@ class TournamentsController extends Controller
         $mwls = Mwl::get()->pluck('name', 'id');
         $cardpool_names = CardPack::get()->pluck('name', 'id');
 
-        foreach($data as $tournament) {
+        foreach($data as &$tournament) {
 
             $user = $tournament->user;
 
@@ -376,9 +369,9 @@ class TournamentsController extends Controller
                 'id' => $tournament->id,
                 'title' => $tournament->title,
                 'creator_id' => $tournament->creator,
-                'creator_name' => $user->displayUsername(),
+                'creator_name' => $user->displayUsername,
                 'creator_supporter' => $user->supporter,
-                'creator_class' => $user->linkClass(),
+                'creator_class' => $user->linkClass,
                 'created_at' => $tournament->created_at->format('Y.m.d. H:i:s'),
                 'location' => $tournament->location(),
                 'location_lat' => $tournament->location_lat,
@@ -392,7 +385,7 @@ class TournamentsController extends Controller
                 'approved' => $tournament->approved,
                 'registration_count' => $tournament->registrationCount, // ~ +0.1s
                 'photos' => $tournament->photosCount, // ~ +0.1s
-                'url' => $appUrl.$tournament->seoUrl(),
+                'url' => $appUrl.$tournament->seoUrl,
                 'link_facebook' => $tournament->link_facebook
             ];
 
@@ -406,7 +399,7 @@ class TournamentsController extends Controller
                 $event_data['concluded'] = $tournament->concluded == 1;
                 $event_data['charity'] = $tournament->charity == 1;
             } else {
-                $event_data['recurring_day'] = $tournament->recurDay();
+                $event_data['recurring_day'] = $tournament->recurDay;
             }
 
             // if multiple days
@@ -442,7 +435,7 @@ class TournamentsController extends Controller
                 }
             }
 
-            array_push($result, $event_data);
+            $result[] = $event_data; // push to array
         }
 
         return $result;
