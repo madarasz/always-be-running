@@ -399,7 +399,7 @@ class TournamentsController extends Controller
                 $event_data['concluded'] = $tournament->concluded == 1;
                 $event_data['charity'] = $tournament->charity == 1;
             } else {
-                $event_data['recurring_day'] = $tournament->recurDay;
+                $event_data['recurring_day'] = $tournament->recurDay();
             }
 
             // if multiple days
