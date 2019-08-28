@@ -145,7 +145,7 @@
         positionFilters();
 
         // load tournaments, first 50 for quick display
-        getTournamentData('/results?limit=50', function(data) {
+        getTournamentData('/results?limit='+offset, function(data) {
             // duplicate arrays
             resultsDataAll = data.slice();
             resultsDataFiltered = data.slice();
