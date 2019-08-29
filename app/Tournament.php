@@ -75,7 +75,7 @@ class Tournament extends Model
     }
 
     public function photos() {
-        return $this->hasMany(Photo::class, 'tournament_id', 'id')->where('approved', '!=', 1);
+        return $this->hasMany(Photo::class, 'tournament_id', 'id')->where('approved', '!=', 0);
     }
 
     // photos counting with optimized performance
