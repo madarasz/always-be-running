@@ -72,6 +72,7 @@ class AdminController extends Controller
             ->groupBy('user_id')->orderBy('total', 'desc')->pluck('total', 'user_id');
         $missing_videos = Video::where('flag_removed', true)->get();
         $tournament_types = TournamentType::where('order', '<', 7)->orderBy('order')->pluck('type_name', 'id');
+        $tournament_types->put(0,'other'); // adding 'other' to prize types
         // VIP information
         $vips = [];
         $vip_ids = DB::select('SELECT DISTINCT user_id FROM badge_user WHERE badge_id IN (1,2,8,9,10,11,14,15,17,18,31,39,48,56,57,59,60,61,62)');
