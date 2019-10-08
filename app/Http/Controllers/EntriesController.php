@@ -369,7 +369,7 @@ class EntriesController extends Controller
         foreach($entries as $entry) {
 
             if ($entry['user']) {
-                $user_name = User::where('id', $entry['user'])->first()['name'];
+                $user_name = User::where('id', $entry['user'])->first()->displayUsername();
             } else {
                 $user_name = null;
             }
