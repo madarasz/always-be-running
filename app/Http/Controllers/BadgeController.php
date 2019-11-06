@@ -116,10 +116,11 @@ class BadgeController extends Controller
      * @param $userid
      */
     public function addTOBadges($userid) {
-        $badges = [16 => false, 17 => false, 18 => false, 26 => false, 20 => false, 37 => false];
+        $badges = [16 => false, 17 => false, 18 => false, 26 => false, 20 => false, 37 => false, 111 => false];
 
         $this->addTOLevelBadges($userid, $badges);
         $this->addNRTMBadge($userid, $badges);
+        $this->addCobraiBadge($userid, $badges);
         $this->addFancyTOBadge($userid, $badges);
         $this->addTOChampion($userid, $badges);
         $this->addFeaturedBadge($userid);
@@ -370,7 +371,7 @@ class BadgeController extends Controller
         }
 
         // ABR birthday badge
-        if ($user->created_at->format('Y-m-d') <= (date('Y')-1).date('-m-d')) {
+        if ((!is_null($user->created_at)) && ($user->created_at->format('Y-m-d') <= (date('Y')-1).date('-m-d'))) {
             $badges[72] = true;
         }
 
@@ -397,6 +398,13 @@ class BadgeController extends Controller
         $count = Tournament::where('creator', $userid)->where('approved', 1)->where('import', 1)->count();
         if ($count >= 3) {
             $badges[26] = true; // NRTM preacher
+        }
+    }
+
+    private function addCobraiBadge($userid, &$badges) {
+        $count = Tournament::where('creator', $userid)->where('approved', 1)->where('import', 4)->count();
+        if ($count >= 3) {
+            $badges[111] = true; // Snek Majesty
         }
     }
 
