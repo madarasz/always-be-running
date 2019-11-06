@@ -35,15 +35,17 @@ Google API keys, you can create yourself.
         php artisan migrate
         php artisan db:seed
 
-8. Run the webapp. It should be available at [http://localhost:8000](http://localhost:8000) afterwards.
+8. Add Badges data to your database by importing `badges.sql`
+
+9. Run the webapp. It should be available at [http://localhost:8000](http://localhost:8000) afterwards.
 
         php artisan serve
 
-9. Make yourself an admin. Go to the webapp in your browser. Login via NetrunnerDB to enter your user in the DB. Check your DB (use phpMyAdmin), in table **users** set the **admin** value of your user to 1. If you reload the webapp you should see the **Admin** section in the top menu.
+10. Make yourself an admin. Go to the webapp in your browser. Login via NetrunnerDB to enter your user in the DB. Check your DB (use phpMyAdmin), in table **users** set the **admin** value of your user to 1. If you reload the webapp you should see the **Admin** section in the top menu.
 
-10. Download all the data required from NetrunnerDB. Go to [Admin section](http://localhost:8000/admin) and click the **Update Card cycles**, **Update Card packs** and **Update Identities** buttons to get the data. Do this every time a new pack comes out.
+12. Download all the data required from NetrunnerDB. Go to [Admin section](http://localhost:8000/admin) and click the **Update Card cycles**, **Update Card packs** and **Update Identities** buttons to get the data. Do this every time a new pack comes out.
 
-11. You are done :)
+13. You are done :)
 
 ### Automated tests
 
