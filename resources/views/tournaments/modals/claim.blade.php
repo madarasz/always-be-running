@@ -148,8 +148,8 @@
                                     </div>
                                 </div>
                                 {{--NetrunnerDB claim checkbox--}}
-                                <hr/>
-                                <div class="row">
+                                <hr class="hidden-xs-up"/>
+                                <div class="row hidden-xs-up">
                                     <div class="col-xs-12 text-xs-center">
                                         {!! Form::checkbox('netrunnerdb_link', null, env('DEFAULT_NETRUNNERDB_CLAIM'), ['id' => 'netrunnerdb_link', 'disabled' => '', 'class' => 'hidden-xs-up']) !!}
                                         {!! Form::label('netrunnerdb_link', 'add claim to decklists on NetrunnerDB', ['class' => 'm-b-0 hidden-xs-up']) !!}
