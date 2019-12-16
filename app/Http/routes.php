@@ -84,6 +84,11 @@ Route::post('/api/prize-items', 'PrizeController@createPrizeItem');
 Route::delete('/api/prize-items/{id}', 'PrizeController@deletePrizeItem');
 Route::put('/api/prize-items/{id}', 'PrizeController@editPrizeItem');
 
+Route::get('/api/artists', 'ArtistController@getArtists');
+Route::post('/api/artists', 'ArtistController@createArtist');
+Route::put('/api/artists/{id}', 'ArtistController@editArtist');
+Route::delete('/api/artists/{id}', 'ArtistController@deleteArtist');
+
 Route::get('/api/prize-collections/{id}', 'PrizeCollectionController@get');
 Route::put('/api/prize-collections/{id}', 'PrizeCollectionController@update');
 
