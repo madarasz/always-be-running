@@ -294,7 +294,10 @@ class TournamentsController extends Controller
     public function resultTournamentJSON(Request $request) {
         $startTime = microtime(true);
 
-        $tournaments = Tournament::where('concluded', 1)->where('approved', '!=', 0)->where('incomplete', 0)->orderBy('date', 'desc');
+        $tournaments = Tournament::where('concluded', 1)
+            ->where(function($query) {
+                $query->whereNull('approved')->orWhere('approved', 1);
+            })->where('incomplete', 0)->orderBy('date', 'desc');
 
         $this->applyLimitOffset($request, $tournaments);
 
