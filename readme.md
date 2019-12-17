@@ -70,3 +70,9 @@ Run Nightwatch tests on **Chrome** by command:
         
 There are currently problems with running tests on **PhantomJS** and **Safari**
 Safari browser must be enabled for automation, [https://webkit.org/blog/6900/webdriver-support-in-safari-10/](read more)
+
+To delete test data (substitute current year):
+```
+DELETE FROM entries WHERE tournament_id IN (SELECT id FROM tournaments WHERE title LIKE '%|2019%')
+DELETE FROM tournaments WHERE title LIKE '%|2019%'
+```

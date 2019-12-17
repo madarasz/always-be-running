@@ -110,6 +110,7 @@ var netrunnerDBCommands = {
                 .click(util.format(browser.elements.deckListLink.selector, decklistTitle));
             browser
                 .waitForElementVisible('@validator', 3000)
+                .waitForElementVisible('@buttonDeleteDecklist', 3000)
                 .click('@buttonDeleteDecklist')
                 .waitForElementVisible('@buttonSubmitDelete', 3000)
                 .click('@buttonSubmitDelete');
