@@ -118,6 +118,7 @@ var tableCommands = {
             this.api.assert.elementNotPresent(util.format(this.elements.row.selector, table_id, title));
         } else {
             var selector = util.format(this.elements.button.selector, table_id, title, action);
+            if (action == 'unregister') selector += '/a';
             this.api
                 .getLocationInView(selector)
                 .click(selector);
