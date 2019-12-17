@@ -126,12 +126,11 @@ var tournamentFromCommands = {
             client
                 .log('--- Adding location ---')
                 .api.useXpath().clearValue(client.elements.location_search.selector)
-                .keys(data)
+                .click(client.elements.location_search.selector)
+                .keys(unescape(encodeURIComponent(data)))
                 .pause(500)
                 .waitForElementVisible(client.elements.map_suggestion.selector, 5000)
-                .sendKeys(client.elements.location_search.selector, client.api.Keys.DOWN_ARROW)
-                .pause(1000)
-                .sendKeys(client.elements.location_search.selector, client.api.Keys.TAB)
+                .click(client.elements.map_suggestion.selector)
         }
 
         function fillFormInputs(client, data) {
@@ -278,7 +277,7 @@ module.exports = {
             locateStrategy: 'xpath'
         },
         map_suggestion: {
-            selector: "//span[@class='pac-matched']",
+            selector: "//div[@class='pac-item']",
             locateStrategy: 'xpath'
         },
         submit: {
