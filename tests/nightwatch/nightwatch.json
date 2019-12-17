@@ -1,4 +1,7 @@
 {
+  "webdriver": {
+    "start_process": false
+  },
   "src_folders": [
     "./tests/nightwatch/tests"
   ],
@@ -18,7 +21,7 @@
     "host": "127.0.0.1",
     "port": 4444,
     "cli_args": {
-      "webdriver.chrome.driver": "./node_modules/chromedriver/bin/chromedriver",
+      "webdriver.chrome.driver": "./tests/nightwatch/bin/chromedriver",
       "webdriver.gecko.driver" : "./node_modules/geckodriver/bin/geckodriver",
       "webdriver.edge.driver" : ""
     }
@@ -41,10 +44,14 @@
       }
     },
     "chrome": {
+      "extends": "selenium",
       "desiredCapabilities" : {
         "browserName" : "chrome",
         "javascriptEnabled" : true,
-        "acceptSslCerts" : true
+        "acceptSslCerts" : true,
+        "chromeOptions" : {
+          "args" : ["start-fullscreen"]
+        }
       }
     },
     "firefox": {

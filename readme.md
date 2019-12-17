@@ -51,6 +51,19 @@ Google API keys, you can create yourself.
 
 There are Nightwatch automated integration tests in the *tests/nightwatch* directory.
 
+Install globally nightwatch and webdriver-manager
+```
+npm install -g nightwatch
+npm install -g webdriver-manager
+```
+
+Update webdriver-manager: `webdriver-manager update`
+
+Start webdriver-manager process in seperate terminal
+```
+webdriver-manager start
+```
+
 Run Nightwatch tests on **Chrome** by command:
 
         gulp nightwatch:chrome
