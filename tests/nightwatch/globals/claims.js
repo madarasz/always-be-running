@@ -16,8 +16,8 @@ var claim1 = {
         runner_id: 'Reina Roja',
         corp_id: 'Jinteki: Personal Evolution',
         cord_id_validate: 'Personal Evolution',
-        runner_id_id: '20001',
-        corp_id_id: '20093',
+        runner_id_id: '25001',
+        corp_id_id: '25084',
         runner_deck_id: '48157',
         corp_deck_id: '48158'
     },
