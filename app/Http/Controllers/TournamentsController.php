@@ -270,9 +270,14 @@ class TournamentsController extends Controller
         $startTime = microtime(true);
 
         $yesterday = date('Y.m.d.', time() - 86400); // to be on the safe side
-        $tournaments = Tournament::where('date', '>=', $yesterday)->where('concluded', 0)->where('approved', '!=', 0)
-            ->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])->orderBy('date', 'asc')->get();
-        $recurring = Tournament::whereNotNull('recur_weekly')->where('approved', '!=', 0)->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])
+        $tournaments = Tournament::where('date', '>=', $yesterday)->where('concluded', 0)
+            ->where(function($query) {
+                $query->whereNull('approved')->orWhere('approved', 1);
+            })->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])->orderBy('date', 'asc')->get();
+        $recurring = Tournament::whereNotNull('recur_weekly')
+            ->where(function($query) {
+                $query->whereNull('approved')->orWhere('approved', 1);
+            })->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])
             ->orderBy('recur_weekly')->get();
 
         $endtime = microtime(true);
