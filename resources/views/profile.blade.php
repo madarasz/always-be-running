@@ -34,6 +34,12 @@
                         Prize collection
                     </a>
                 </li>
+                <li class="nav-item" id="tabf-my-art" v-if="user.artist">
+                    <a class="nav-link" data-toggle="tab" href="#tab-my-art" role="tab">
+                        <i class="fa fa-paint-brush" aria-hidden="true"></i>
+                        My art
+                    </a>
+                </li>
             </ul>
         </div>
 
@@ -41,6 +47,7 @@
         <div class="tab-content">
             @include('profile.tab-info')
             @include('profile.tab-collection')
+            @include('profile.tab-my-art')
         </div>
     </div>
 
@@ -125,6 +132,7 @@
                     prize_owning_text: `{{ $user->prize_owning_text }}`,
                     prize_trading_text: `{{ $user->prize_trading_text }}`,
                     prize_wanting_text: `{{ $user->prize_wanting_text }}`,
+                    artist: '{{ $user->artist }}' == 1
                 },
                 userOriginal: {},
                 countryMapping: {},
@@ -292,6 +300,24 @@
                     } else {
                         window.onbeforeunload = null
                     }
+                },
+                registerArtist: function() {
+                    axios.post('/api/artists/register').then(function(response) {
+                        toastr.info('Registered as artist successfully.', '', {timeOut: 2000});
+                        pageProfile.user.artist = true;
+                    }, function (response) {
+                        // error handling
+                        toastr.error('Something went wrong.', '', {timeOut: 2000});
+                    });
+                },
+                unregisterArtist: function() {
+                    axios.post('/api/artists/unregister').then(function(response) {
+                        toastr.info('Unregistered as artist successfully.', '', {timeOut: 2000});
+                        pageProfile.user.artist = false;
+                    }, function (response) {
+                        // error handling
+                        toastr.error('Something went wrong.', '', {timeOut: 2000});
+                    });
                 },
                 drawClaimChart: function() {
 

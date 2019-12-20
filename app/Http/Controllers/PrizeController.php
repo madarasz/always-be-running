@@ -131,6 +131,7 @@ class PrizeController extends Controller
             'quantity' => $request->input('quantity'),
             'title' => $request->input('title'),
             'type' => $request->input('type'),
+            'artist_id' => $request->input('artist_id'),
             'creator' => $request->user()->id
         ]);
 
@@ -144,7 +145,8 @@ class PrizeController extends Controller
         $item->update([
             'quantity' => $request->input('quantity'),
             'title' => $request->input('title'),
-            'type' => $request->input('type')
+            'type' => $request->input('type'),
+            'artist_id' => $request->input('artist_id'),
         ]);
 
         return response()->json($item);

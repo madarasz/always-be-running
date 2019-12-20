@@ -2,7 +2,7 @@
     @include('admin.modals.artist')
     <confirm-modal :modal-body="confirmText" :callback="confirmCallback" id="-art"></confirm-modal>
     <div class="row">
-        {{--Prize kit list--}}
+        {{--Artist list--}}
         <div class="col-xs-12">
             <div class="bracket">
                 <h5>
@@ -55,6 +55,59 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        {{--Artist details--}}
+        <div class="col-xs-12">
+            <div class="bracket">
+                <h5>
+                    <i class="fa fa-user-circle" aria-hidden="true"></i>
+                    Artist details
+                    <div class="pull-right" v-if="selectedArtist.id != 0">
+                        {{--create button--}}
+                        <a class="btn btn-primary white-text" @click.stop="modalForEditArtist(selectedArtist)">
+                            Edit
+                        </a>
+                    </div>
+                </h5>
+                <div class="text-xs-center" v-if="selectedArtist.id == 0">
+                    <em>
+                        <i class="fa fa-chevron-up" aria-hidden="true"></i>
+                        select a artist to view details
+                        <i class="fa fa-chevron-up" aria-hidden="true"></i>
+                    </em>
+                </div>
+                <div v-if="selectedArtist.id != 0">
+                    <strong>name:</strong> @{{ selectedArtist.name }}<br/>
+                    <strong>homepage:</strong> <a :href="selectedArtist.url">@{{ selectedArtist.url }}</a><br/>
+                    <div v-html="compiledMarkdownArtistDescription"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        {{-- Art list --}}
+        <div class="col-xs-12 col-lg-6">
+            <div class="bracket">
+                <h5>
+                    <i class="fa fa-picture-o" aria-hidden="true"></i>
+                    Art list
+                    <div class="pull-right" v-if="selectedArtist.id != 0">
+                        {{--create button--}}
+                        <a class="btn btn-primary btn-sm white-text" @click.stop="modalForAddItem">
+                            Add
+                        </a>
+                    </div>
+                </h5>
+                <div class="text-xs-center" v-if="selectedArtist.id == 0">
+                    <em>
+                        <i class="fa fa-chevron-up" aria-hidden="true"></i>
+                        select a artist to view details
+                        <i class="fa fa-chevron-up" aria-hidden="true"></i>
+                    </em>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script type="text/javascript">
     var adminArt= new Vue({
@@ -62,6 +115,7 @@
         data: {
             artists: [],
             selectedArtist: { id: 0 },
+            selectedArt: { id: 0},
             modalTitle: '',
             modalButton: '',
             editMode: false,
@@ -71,6 +125,14 @@
         },
         mounted: function () {
             this.loadArtists();
+        },
+        computed: {
+            compiledMarkdownArtistDescription: function () {
+                if (this.selectedArtist.id == 0 || this.selectedArtist.description == null) {
+                    return '';
+                }
+                return marked(this.selectedArtist.description, {sanitize: true, gfm: true, breaks: true})
+            }
         },
         methods: {
             loadArtists: function() {
@@ -83,7 +145,7 @@
                 });
             },
             selectArtistByIndex: function(index) {
-                this.selectedArtist = this.artist[index];
+                this.selectedArtist = this.artists[index];
             },
             modalForAddArtist: function() {
                 this.editMode = false;
@@ -96,6 +158,12 @@
                 this.modalTitle = 'Edit Artist';
                 this.modalButton = 'Save';
                 $("#modal-artist").modal('show');
+            },
+            modalForAddItem: function() {
+
+            },
+            modalForEditItem: function() {
+
             },
             addArtist: function() {
                 axios.post('/api/artists', this.selectedArtist)

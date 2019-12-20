@@ -16,9 +16,10 @@ class CreateArtistsTable extends Migration
             $table->increments('id');
             $table->integer('creator_id')->unsigned();
             $table->integer('user_id')->unsigned()->nullable();
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->string('url')->nullable();
             $table->text('description')->nullable();
+            $table->boolean('endorsed')->default(false);
             $table->timestamps();
         });
     }

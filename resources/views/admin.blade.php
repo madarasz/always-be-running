@@ -56,7 +56,7 @@
             <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#tab-art" role="tab">
                     <i class="fa fa-paint-brush" aria-hidden="true"></i>
-                    Art
+                    Unofficial Art
                 </a>
             </li>
             <li class="nav-item">

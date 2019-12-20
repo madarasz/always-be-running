@@ -88,6 +88,8 @@ Route::get('/api/artists', 'ArtistController@getArtists');
 Route::post('/api/artists', 'ArtistController@createArtist');
 Route::put('/api/artists/{id}', 'ArtistController@editArtist');
 Route::delete('/api/artists/{id}', 'ArtistController@deleteArtist');
+Route::post('/api/artists/register', 'UserController@registerAsArtist');
+Route::post('/api/artists/unregister', 'UserController@unregisterAsArtist');
 
 Route::get('/api/prize-collections/{id}', 'PrizeCollectionController@get');
 Route::put('/api/prize-collections/{id}', 'PrizeCollectionController@update');

@@ -39,7 +39,7 @@
 
                     {{--URL--}}
                     <div class="form-group row">
-                        <label for="url" class="col-sm-3 col-form-label">Artist URL:</label>
+                        <label for="url" class="col-sm-3 col-form-label">Artist homepage:</label>
                         <div class="col-sm-9">
                             <input type="text" name="ffg_url" class="form-control" v-model="selectedArtist.url"
                                     placeholder="https://"/>

@@ -8,6 +8,7 @@ use App\Photo;
 use App\Tournament;
 use App\User;
 use App\Video;
+use App\Artist;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -120,5 +121,33 @@ class UserController extends Controller
         }
 
         return response()->json($result);
+    }
+
+    public function registerAsArtist(Request $request) {
+        if (!Auth::user()) {
+            abort(403);
+        }
+
+        $user_id = $request->user()->id;
+        $request->user()->update(['artist' => true]); // add artist flag
+        $artist = Artist::where('user_id', $user_id)->first();
+
+        // add Artist entry if missing
+        if (is_null($artist)) {    
+            $artist = Artist::create([
+                'user_id' => $user_id,
+                'creator_id' => $user_id
+            ]);
+        }
+        return response()->json($artist);
+    }
+
+    public function unregisterAsArtist(Request $request) {
+        if (!Auth::user()) {
+            abort(403);
+        }
+
+        $request->user()->update(['artist' => false]); // remove artist flag, artist entry unchanged
+        return response()->json('unregistered as artist');
     }
 }
