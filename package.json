@@ -16,7 +16,7 @@
     "gulp-shell": "^0.5.2",
     "jquery-bracket": "^0.11.0",
     "laravel-elixir": "^5.0.0",
-    "marked": "^0.5.0",
+    "marked": "^0.6.1",
     "mysql": "^2.15.0",
     "natives": "^1.1.6",
     "phantomjs": "2.1.7",
