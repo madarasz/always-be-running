@@ -1,5 +1,6 @@
 <div class="tab-pane" id="tab-my-art" role="tabpanel">
     @include('profile.modal-art-item')
+    @include('profile.modal-art-upload')
     <confirm-modal :modal-body="confirmText" :callback="confirmCallback"></confirm-modal>
     <div class="row">
         {{-- Artist details --}}
@@ -79,13 +80,15 @@
                                                     <input name="_method" type="hidden" value="DELETE"/>
                                                     <input name="_token" type="hidden" value="{{ csrf_token() }}">
                                                     <confirm-button button-class="btn btn-danger btn-xs" button-icon="fa fa-trash"
-                                                        @click="confirmCallback = function() { deletePhoto(photo.id) }; confirmText = 'Delete photo?'" />
+                                                        @click="confirmCallback = function() { deleteArtPhoto(photo.id) }; confirmText = 'Delete photo?'" />
                                                 </form>
                                             </div>
                                         </div>
                                     </div>     
                                     <div v-if="editMode && item.photos.length < maxArtPhotos" class="size100x100 flex-center">
-                                        <i class="fa fa-plus-circle text-primary" aria-hidden="true"></i>
+                                        <a class="btn btn-primary btn-xs white-text" v-if="editMode" @click="modallForAddPhoto(index)">
+                                            <i class="fa fa-plus"></i> <i class="fa fa-camera"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </td>

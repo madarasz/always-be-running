@@ -10,9 +10,6 @@
 
                 <form method="POST" enctype="multipart/form-data" @submit.prevent="(editItemMode ? updateArtItem() : createArtItem())">
 
-                    {{--Artist ID--}}
-                    <input type="hidden" name="artist_id" v-model="art_item.artist_id"/>
-
                     {{--Title--}}
                     <div class="form-group row">
                         <label for="title" class="col-sm-3 col-form-label">Title:</label>
@@ -39,7 +36,10 @@
                     <div class="form-group row" v-if="!editItemMode">
                         <label for="photo" class="col-sm-3 col-form-label">Photo:</label>
                         <div class="col-sm-9">
-                            <input type="file" name="photo" class="form-control" id="photo-to-upload"/>
+                            <input type="file" name="photo" class="form-control" id="photo-to-upload" @change="uploadArtPhoto()"/>
+                            {{-- photo preview --}}
+                            <img id="photo-preview" v-if="art_item.photoThumbUrl != null" :src="art_item.photoThumbUrl"
+                                class="shrink100x100"/>
                         </div>
                     </div>
 
@@ -70,7 +70,8 @@
                     </div>
 
                     <div class="form-group text-xs-center m-t-1">
-                        <button type="submit" class="btn btn-success">@{{ modalButton }}</button>
+                        <button type="submit" class="btn btn-success" v-if="!imageUploading">@{{ modalButton }}</button>
+                        <em v-if="imageUploading">image uploading...</em>
                     </div>
 
                 </form>

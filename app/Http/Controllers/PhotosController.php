@@ -129,6 +129,7 @@ class PhotosController extends Controller
 
             // saving filename in DB
             Photo::findOrFail($created->id)->update(['filename' => $filename, 'user_id' => $request->user()->id]);
+            $created = Photo::findOrFail($created->id);
 
             // redirecting to tournament
             return response()->json($created);
@@ -267,6 +268,15 @@ class PhotosController extends Controller
 
         // redirecting to tournament
         return redirect()->back()->with('message', 'All photos are approved.');
+    }
+
+    public function update($id, Request $request) {
+        $photo = Photo::findOrFail($id);
+        $this->authorize('delete', $photo, $request->user());
+
+        $photo->update($request->all());
+
+        return response()->json($photo);
     }
 
 }
