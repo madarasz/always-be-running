@@ -20,6 +20,11 @@ class ArtistController extends Controller
         return response()->json($artists);
     }
 
+    public function getArtistDetails($id) {
+        $artist = Artist::where('id', $id)->with(['items', 'user', 'items.photos'])->first();
+        return response()->json($artist);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -50,26 +55,9 @@ class ArtistController extends Controller
         $artist = Artist::findOrFail($id);
         $this->authorize('admin', Tournament::class, $request->user());
 
-        $artist->update([
-            'name' => $request->input('name'),
-            'user_id' => $request->input('user_id'),
-            'description' => $request->input('description'),
-            'url' => $request->input('url')
-        ]);
+        $artist->update($request->all());
 
         return response()->json($artist);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     /**

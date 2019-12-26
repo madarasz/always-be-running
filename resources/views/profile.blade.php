@@ -28,16 +28,16 @@
                         Info
                     </a>
                 </li>
-                <li class="nav-item" id="tabf-collection">
-                    <a class="nav-link" data-toggle="tab" href="#tab-collection" role="tab">
-                        <i class="fa fa-gift" aria-hidden="true"></i>
-                        Prize collection
-                    </a>
-                </li>
                 <li class="nav-item" id="tabf-my-art" v-if="user.artist">
                     <a class="nav-link" data-toggle="tab" href="#tab-my-art" role="tab">
                         <i class="fa fa-paint-brush" aria-hidden="true"></i>
                         My art
+                    </a>
+                </li>
+                <li class="nav-item" id="tabf-collection">
+                    <a class="nav-link" data-toggle="tab" href="#tab-collection" role="tab">
+                        <i class="fa fa-gift" aria-hidden="true"></i>
+                        Prize collection
                     </a>
                 </li>
             </ul>
@@ -46,8 +46,8 @@
         {{--Tab panes--}}
         <div class="tab-content">
             @include('profile.tab-info')
-            @include('profile.tab-collection')
             @include('profile.tab-my-art')
+            @include('profile.tab-collection')
         </div>
     </div>
 
@@ -132,11 +132,20 @@
                     prize_owning_text: `{{ $user->prize_owning_text }}`,
                     prize_trading_text: `{{ $user->prize_trading_text }}`,
                     prize_wanting_text: `{{ $user->prize_wanting_text }}`,
-                    artist: '{{ $user->artist }}' == 1
+                    artist: '{{ $user->artist_id !== NULL }}' == 1
                 },
+                artist: {},
+                art_item: {},
+                art_types: {!! json_encode($art_types) !!},
+                maxArtPhotos: 3,
                 userOriginal: {},
                 countryMapping: {},
-                claimCount: '{{ $claim_count }}'
+                claimCount: '{{ $claim_count }}',
+                confirmCallback: function () {},
+                confirmText: '',
+                modalTitle: '',
+                modalButton: '',
+                editItemMode: false
             },
             components: {
                 collectionPart : collectionPart
@@ -153,6 +162,12 @@
                         return '';
                     }
                     return marked(this.user.about, { sanitize: true, gfm: true, breaks: true })
+                },
+                markdownArtistDescription: function () {
+                    if (this.artist.description == '' || this.artist.description == null) {
+                        return '';
+                    }
+                    return marked(this.artist.description, { sanitize: true, gfm: true, breaks: true })
                 }
             },
             mounted: function () {
@@ -160,6 +175,9 @@
                 this.initFactions();
                 this.loadCountries();
                 this.loadPrizes();
+                if (this.user.artist) {
+                    this.loadArtist();
+                }
                 // Enable gallery
                 $(document).on('click', '[data-toggle="lightbox"]', function(event) {
                     event.preventDefault();
@@ -248,6 +266,14 @@
                         toastr.error('Something went wrong while loading the countries.', '', {timeOut: 2000});
                     });
                 },
+                loadArtist: function() {
+                    axios.get('/api/artists/' + '{{ $user->artist_id }}').then(function (response) {
+                                pageProfile.artist = response.data;
+                    }, function (response) {
+                        // error handling
+                        toastr.error('Something went wrong while loading artist details.', '', {timeOut: 2000});
+                    });
+                },
                 cancelEdits: function() {
                     this.user = JSON.parse(JSON.stringify(this.userOriginal)); // copy object
                     this.editMode = false;
@@ -275,6 +301,64 @@
                                 toastr.error('Something went wrong.', '', {timeOut: 2000});
                             }
                     );
+                    // save artist details too
+                    if (this.user.artist) {
+                        this.saveArtistDetails();
+                    }
+                },
+                saveArtistDetails: function() {
+                    axios.put('/api/artists/' + '{{ $user->artist_id }}', this.artist)
+                        .then(function(response) {
+                                toastr.info('Artist details updated successfully.', '', {timeOut: 2000});
+                            }, function(response) {
+                                // error handling
+                                toastr.error('Something went wrong.', '', {timeOut: 2000});
+                            }
+                        );
+                },
+                hidePopovers: function() {
+                    $('.popover').popover('hide');
+                },
+                modalForAddArtItem: function() {
+                    this.art_item = { proper: true, official: false, artist_id: this.artist.id };
+                    this.modalTitle = 'Create Art item';
+                    this.modalButton = 'Create';
+                    this.editItemMode = false;
+                    $("#modal-art-item").modal('show');
+                    $('[data-toggle="popover"]').popover();
+                },
+                modalForEditArtItem: function(artIndex) {
+                    this.art_item = this.artist.items[artIndex];
+                    this.art_item.typeHelper = this.art_item.type;
+                    this.modalTitle = 'Edit Art item';
+                    this.modalButton = 'Save';
+                    this.editItemMode = true;
+                    $("#modal-art-item").modal('show');
+                    $('[data-toggle="popover"]').popover();
+                },
+                createArtItem: function() {
+                    axios.post('/api/prize-items', this.art_item)
+                        .then(function(response) {
+                            pageProfile.loadArtist();
+                            $("#modal-art-item").modal('hide');
+                            toastr.info('Art item is created successfully.', '', {timeOut: 2000});
+                        }, function(response) {
+                            // error handling
+                            toastr.error('Something went wrong.', '', {timeOut: 2000});
+                        }
+                );
+                },
+                updateArtItem: function() {
+
+                },
+                deleteArtItem: function(artId) {
+                    axios.delete('/api/prize-items/' + artId).then(function (response) {
+                        pageProfile.loadArtist();
+                        toastr.info('Art item is deleted.', '', {timeOut: 2000});
+                    }, function(response) {
+                        // error handling
+                        toastr.error('Something went wrong.', '', {timeOut: 2000});
+                    });
                 },
                 factionCodeToFactionTitle: function(code) {
                     switch (code) {

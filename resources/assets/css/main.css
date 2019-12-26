@@ -1195,3 +1195,18 @@ table.prize-collection td {
     vertical-align: top;
     padding: 0.2em;
 }
+/* add photo on profile art page */
+.shrink100x100 {
+    max-width: 100px;
+    max-height: 100px;
+    margin: 2px;
+}
+.size100x100 {
+    width: 100px;
+    height: 100px;
+}
+.flex-row {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}

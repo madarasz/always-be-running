@@ -124,41 +124,38 @@ class PrizeController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function createPrizeItem(Request $request) {
-        $this->authorize('admin', Tournament::class, $request->user());
+        $this->authPrizeItem($request);
 
-        $newItem = PrizeElement::create([
-            'prize_id' => $request->input('prize_id'),
-            'quantity' => $request->input('quantity'),
-            'title' => $request->input('title'),
-            'type' => $request->input('type'),
-            'artist_id' => $request->input('artist_id'),
+        $newItem = PrizeElement::create(array_merge($request->all(), [
             'creator' => $request->user()->id
-        ]);
+        ]));
 
         return response()->json($newItem);
     }
 
     public function editPrizeItem($id, Request $request) {
         $item = PrizeElement::findOrFail($id);
-        $this->authorize('admin', Tournament::class, $request->user());
+        $this->authPrizeItem($request);
 
-        $item->update([
-            'quantity' => $request->input('quantity'),
-            'title' => $request->input('title'),
-            'type' => $request->input('type'),
-            'artist_id' => $request->input('artist_id'),
-        ]);
+        $item->update($request->all());
 
         return response()->json($item);
     }
 
     public function deletePrizeItem($id, Request $request) {
         // auth, error checking
-        $this->authorize('admin', Tournament::class, $request->user());
+        $this->authPrizeItem($request);
         $item = PrizeElement::findOrFail($id);
         $item->delete();
 
         return response()->json('Prize item deleted.');
+    }
+
+    private function authPrizeItem(Request $request) {
+        if (!$request->user()->admin && 
+            !($request->has('artist_id') && $request->input('artist_id') == $request->user()->id)) {
+            abort(403);
+        }
     }
 
 }

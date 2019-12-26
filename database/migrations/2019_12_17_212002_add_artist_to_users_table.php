@@ -13,7 +13,7 @@ class AddArtistToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('artist')->default(false);
+            $table->integer('artist_id')->unsigned()->nullable();
         });
     }
 

@@ -85,6 +85,7 @@ Route::delete('/api/prize-items/{id}', 'PrizeController@deletePrizeItem');
 Route::put('/api/prize-items/{id}', 'PrizeController@editPrizeItem');
 
 Route::get('/api/artists', 'ArtistController@getArtists');
+Route::get('/api/artists/{id}', 'ArtistController@getArtistDetails');
 Route::post('/api/artists', 'ArtistController@createArtist');
 Route::put('/api/artists/{id}', 'ArtistController@editArtist');
 Route::delete('/api/artists/{id}', 'ArtistController@deleteArtist');
