@@ -71,8 +71,8 @@ var tournamentOnlineConcluded = {
     players_number_wrong: '2',
     top: 'top 4',
     top_number: '4',
-    date: '2017.01.01.',
-    end_date: '2017.01.05.',
+    date: '2019.12.01.',
+    end_date: '2019.12.05.',
     start_time: '11:40',
     date_type: 'multiple',
     date_type_id: 'end-date-multiple'
@@ -88,7 +88,7 @@ var tournamentNrtmJsonWithoutTopCut = {
     players_number: '9',
     top: '- no elimination rounds -',
     top_number: '0',
-    date: '2017.01.01.',
+    date: '2019.12.01.',
     concluded: true,
     imported_results: {
         swiss: [
@@ -120,7 +120,7 @@ var tournamentCobraJsonWithTopCut = {
     players_number: '16',
     top: 'top 4',
     top_number: '4',
-    date: '2018.01.01.',
+    date: '2019.12.01.',
     concluded: true,
     imported_results: {
         swiss: [

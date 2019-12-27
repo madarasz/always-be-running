@@ -20,6 +20,8 @@
             @include('profile.usernames')
             {{--About--}}
             @include('profile.about')
+            {{-- Artist --}}
+            @include('profile.artist')
             {{--second save button--}}
             <div class="text-xs-center">
                 <button type="button" class="btn btn-info" href="#" id="button-save2" v-if="editMode" v-cloak

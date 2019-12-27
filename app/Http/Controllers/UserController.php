@@ -8,6 +8,8 @@ use App\Photo;
 use App\Tournament;
 use App\User;
 use App\Video;
+use App\Artist;
+use App\PrizeElement;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -30,6 +32,10 @@ class UserController extends Controller
                 $page_section = 'profile';
                 $countries = \Countries::orderBy('name')->get();
                 $factions = CardIdentity::where('pack_code', '!=', 'draft')->groupBy('faction_code')->get();
+                $art_types = PrizeElement::groupBy('type')
+                    ->orderBy(\DB::raw('count(type)'), 'DESC')
+                    ->lists('type')
+                    ->all();
             }
         }
 
@@ -48,7 +54,7 @@ class UserController extends Controller
         $created = Tournament::where('creator', $user->id)->where('approved', 1)->orderBy('tournaments.date', 'desc')->get();
         $username = $user->name;
         return view('profile', compact('user', 'claims', 'claims_by_size', 'created', 'created_count', 'claim_count',
-            'username', 'page_section', 'message', 'countries', 'factions'));
+            'username', 'page_section', 'message', 'countries', 'factions', 'art_types'));
     }
 
     /**
@@ -120,5 +126,35 @@ class UserController extends Controller
         }
 
         return response()->json($result);
+    }
+
+    public function registerAsArtist(Request $request) {
+        if (!Auth::user()) {
+            abort(403);
+        }
+
+        $user_id = $request->user()->id;
+        $artist = Artist::where('user_id', $user_id)->first();
+
+        // add Artist entry if missing
+        if (is_null($artist)) {    
+            $artist = Artist::create([
+                'user_id' => $user_id,
+                'creator_id' => $user_id
+            ]);
+        }
+
+        $request->user()->update(['artist_id' => $artist->id]); // add artist_id
+        
+        return response()->json($artist);
+    }
+
+    public function unregisterAsArtist(Request $request) {
+        if (!Auth::user()) {
+            abort(403);
+        }
+
+        $request->user()->update(['artist_id' => null]); // remove artist_id, artist entry unchanged
+        return response()->json('unregistered as artist');
     }
 }

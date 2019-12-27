@@ -67,6 +67,7 @@ Route::get('photos/{id}/rotate/{dir}', 'PhotosController@rotate');
 Route::delete('photos/{id}', 'PhotosController@destroy');
 Route::post('api/photos', 'PhotosController@storeApi');
 Route::delete('api/photos/{id}', 'PhotosController@destroyApi');
+Route::put('api/photos/{id}', 'PhotosController@update');
 
 Route::get('/api/tournament-groups', 'TournamentGroupController@getTournamentGroups');
 Route::get('/api/tournament-groups/{id}', 'TournamentGroupController@getTournamentGroupDetails');
@@ -83,6 +84,14 @@ Route::put('/api/prizes/{id}', 'PrizeController@editPrizeKit');
 Route::post('/api/prize-items', 'PrizeController@createPrizeItem');
 Route::delete('/api/prize-items/{id}', 'PrizeController@deletePrizeItem');
 Route::put('/api/prize-items/{id}', 'PrizeController@editPrizeItem');
+
+Route::get('/api/artists', 'ArtistController@getArtists');
+Route::get('/api/artists/{id}', 'ArtistController@getArtistDetails');
+Route::post('/api/artists', 'ArtistController@createArtist');
+Route::put('/api/artists/{id}', 'ArtistController@editArtist');
+Route::delete('/api/artists/{id}', 'ArtistController@deleteArtist');
+Route::post('/api/artists/register', 'UserController@registerAsArtist');
+Route::post('/api/artists/unregister', 'UserController@unregisterAsArtist');
 
 Route::get('/api/prize-collections/{id}', 'PrizeCollectionController@get');
 Route::put('/api/prize-collections/{id}', 'PrizeCollectionController@update');

@@ -318,7 +318,7 @@ module.exports = {
             locateStrategy: 'xpath'
         },
         map: {
-            selector: "//div[@id='map']/div",
+            selector: "//button[@id='button-show-map']",
             locateStrategy: 'xpath'
         },
         approvalNeed: {

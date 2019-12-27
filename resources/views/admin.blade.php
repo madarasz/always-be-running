@@ -54,6 +54,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#tab-art" role="tab">
+                    <i class="fa fa-paint-brush" aria-hidden="true"></i>
+                    Art
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#tab-stats" role="tab">
                     <i class="fa fa-line-chart" aria-hidden="true"></i>
                     Stats
@@ -84,8 +90,10 @@
         @include('admin.videos')
         {{--Stats--}}
         @include('admin.stats')
-        {{--Stats--}}
+        {{--Prizes--}}
         @include('admin.prizes')
+        {{--Art--}}
+        @include('admin.art')
         {{--VIP--}}
         @include('admin.vip')
     </div>

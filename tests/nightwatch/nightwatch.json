@@ -1,4 +1,8 @@
 {
+  "webdriver": {
+    "start_process": false,
+    "use_legacy_jsonwire": true
+  },
   "src_folders": [
     "./tests/nightwatch/tests"
   ],
@@ -41,10 +45,15 @@
       }
     },
     "chrome": {
+      "extends": "selenium",
       "desiredCapabilities" : {
         "browserName" : "chrome",
         "javascriptEnabled" : true,
-        "acceptSslCerts" : true
+        "acceptSslCerts" : true,
+        "chromeOptions" : {
+          "args" : ["start-fullscreen"],
+          "w3c": false
+        }
       }
     },
     "firefox": {

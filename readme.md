@@ -51,9 +51,28 @@ Google API keys, you can create yourself.
 
 There are Nightwatch automated integration tests in the *tests/nightwatch* directory.
 
+Install globally nightwatch and webdriver-manager
+```
+npm install -g nightwatch
+npm install -g webdriver-manager
+```
+
+Update webdriver-manager: `webdriver-manager update`
+
+Start webdriver-manager process in seperate terminal
+```
+webdriver-manager start
+```
+
 Run Nightwatch tests on **Chrome** by command:
 
         gulp nightwatch:chrome
         
 There are currently problems with running tests on **PhantomJS** and **Safari**
 Safari browser must be enabled for automation, [https://webkit.org/blog/6900/webdriver-support-in-safari-10/](read more)
+
+To delete test data (substitute current year):
+```
+DELETE FROM entries WHERE tournament_id IN (SELECT id FROM tournaments WHERE title LIKE '%|2019%')
+DELETE FROM tournaments WHERE title LIKE '%|2019%'
+```

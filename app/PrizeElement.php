@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class PrizeElement extends Model
 {
     public $timestamps = true;
-    protected $fillable = ['prize_id', 'quantity', 'title', 'type', 'creator'];
+    protected $fillable = ['prize_id', 'quantity', 'title', 'type', 'creator', 'artist_id', 'official', 'proper'];
     protected $dates = ['created_at', 'updated_at'];
     protected $appends = ['quantityString'];
 

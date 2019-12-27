@@ -44,3 +44,5 @@ jquery.bracket.min.css
 resources/views/partials/wanted-alt.blade.php
 phpinfo.php
 jquery.timepicker.*
+chromedriver.log
+tests_output

@@ -28,6 +28,12 @@
                         Info
                     </a>
                 </li>
+                <li class="nav-item" id="tabf-my-art" v-if="user.artist">
+                    <a class="nav-link" data-toggle="tab" href="#tab-my-art" role="tab">
+                        <i class="fa fa-paint-brush" aria-hidden="true"></i>
+                        My art
+                    </a>
+                </li>
                 <li class="nav-item" id="tabf-collection">
                     <a class="nav-link" data-toggle="tab" href="#tab-collection" role="tab">
                         <i class="fa fa-gift" aria-hidden="true"></i>
@@ -40,6 +46,7 @@
         {{--Tab panes--}}
         <div class="tab-content">
             @include('profile.tab-info')
+            @include('profile.tab-my-art')
             @include('profile.tab-collection')
         </div>
     </div>
@@ -125,10 +132,23 @@
                     prize_owning_text: `{{ $user->prize_owning_text }}`,
                     prize_trading_text: `{{ $user->prize_trading_text }}`,
                     prize_wanting_text: `{{ $user->prize_wanting_text }}`,
+                    artist: '{{ $user->artist_id !== NULL }}' == 1
                 },
+                artist: { id: '{{ $user->artist_id }}' },
+                artistDetailsChanged: false,
+                art_item: {},
+                art_types: {!! json_encode($art_types) !!},
+                maxArtPhotos: 2, // per art item
                 userOriginal: {},
+                artistOriginal: {},
                 countryMapping: {},
-                claimCount: '{{ $claim_count }}'
+                claimCount: '{{ $claim_count }}',
+                confirmCallback: function () {},
+                confirmText: '',
+                modalTitle: '',
+                modalButton: '',
+                editItemMode: false,
+                imageUploading: false
             },
             components: {
                 collectionPart : collectionPart
@@ -145,6 +165,12 @@
                         return '';
                     }
                     return marked(this.user.about, { sanitize: true, gfm: true, breaks: true })
+                },
+                markdownArtistDescription: function () {
+                    if (this.artist.description == '' || this.artist.description == null) {
+                        return '';
+                    }
+                    return marked(this.artist.description, { sanitize: true, gfm: true, breaks: true })
                 }
             },
             mounted: function () {
@@ -152,6 +178,9 @@
                 this.initFactions();
                 this.loadCountries();
                 this.loadPrizes();
+                if (this.user.artist) {
+                    this.loadArtist();
+                }
                 // Enable gallery
                 $(document).on('click', '[data-toggle="lightbox"]', function(event) {
                     event.preventDefault();
@@ -234,14 +263,24 @@
                 },
                 loadCountries: function() {
                     axios.get('/api/country-mapping').then(function (response) {
-                                pageProfile.countryMapping = response.data;
+                        pageProfile.countryMapping = response.data;
                     }, function (response) {
                         // error handling
                         toastr.error('Something went wrong while loading the countries.', '', {timeOut: 2000});
                     });
                 },
+                loadArtist: function() {
+                    axios.get('/api/artists/' + this.artist.id).then(function (response) {
+                        pageProfile.artist = response.data;
+                        pageProfile.artistOriginal = JSON.parse(JSON.stringify(pageProfile.artist)); // copy object
+                    }, function (response) {
+                        // error handling
+                        toastr.error('Something went wrong while loading artist details.', '', {timeOut: 2000});
+                    });
+                },
                 cancelEdits: function() {
                     this.user = JSON.parse(JSON.stringify(this.userOriginal)); // copy object
+                    this.artist = JSON.parse(JSON.stringify(this.artistOriginal)); // copy object
                     this.editMode = false;
                     this.confirmNavigatingAway(false);
                 },
@@ -267,6 +306,151 @@
                                 toastr.error('Something went wrong.', '', {timeOut: 2000});
                             }
                     );
+                    // save artist details too
+                    if (this.user.artist && this.artistDetailsChanged) {
+                        this.saveArtistDetails();
+                    }
+                },
+                saveArtistDetails: function() {
+                    axios.put('/api/artists/' + this.artist.id, this.artist)
+                        .then(function(response) {
+                                this.artistDetailsChanged = false;
+                                toastr.info('Artist details updated successfully.', '', {timeOut: 2000});
+                            }, function(response) {
+                                // error handling
+                                toastr.error('Something went wrong.', '', {timeOut: 2000});
+                            }
+                        );
+                },
+                hidePopovers: function() {
+                    $('.popover').popover('hide');
+                },
+                modalForAddArtItem: function() {
+                    this.art_item = { 
+                        proper: true, 
+                        official: false, 
+                        artist_id: this.artist.id,
+                        prize_id: null,
+                        quantity: null,
+                        photoId: null,
+                        photoThumbUrl: null
+                    };
+                    this.modalTitle = 'Create Art item';
+                    this.modalButton = 'Create';
+                    this.editItemMode = false;
+                    document.getElementById('photo-to-upload').value = "";
+                    $("#modal-art-item").modal('show');
+                    $('[data-toggle="popover"]').popover();
+                },
+                modalForEditArtItem: function(artIndex) {
+                    this.art_item = JSON.parse(JSON.stringify(this.artist.items[artIndex])); // copy
+                    this.art_item.typeHelper = this.art_item.type;
+                    this.modalTitle = 'Edit Art item';
+                    this.modalButton = 'Save';
+                    this.editItemMode = true;
+                    $("#modal-art-item").modal('show');
+                    $('[data-toggle="popover"]').popover();
+                },
+                modallForAddPhoto: function(artIndex) {
+                    this.art_item = this.artist.items[artIndex];
+                    this.art_item.photoId = null;
+                    this.art_item.photoThumbUrl = null;
+                    document.getElementById('photo-add-file').value = "";
+                    $("#modal-art-upload").modal('show');
+                },
+                closeModal: function() {
+                    this.hidePopovers();
+                    if (this.art_item.photoId) {
+                        this.deleteArtPhoto(this.art_item.photoId);
+                    }
+                },
+                createArtItem: function() {
+                    axios.post('/api/prize-items', this.art_item)
+                        .then(function(response) {
+                            pageProfile.art_item.id = response.data.id;
+                            pageProfile.loadArtist();
+                            pageProfile.hidePopovers();
+                            $("#modal-art-item").modal('hide');
+                            toastr.info('Art item is created successfully.', '', {timeOut: 2000});
+                            // attach photo
+                            if (pageProfile.art_item.photoId != null) {
+                                pageProfile.attachArtPhoto();
+                            }
+                        }, function(response) {
+                            // error handling
+                            toastr.error('Something went wrong.', '', {timeOut: 2000});
+                    });
+                },
+                updateArtItem: function() {
+                    axios.put('/api/prize-items/' + this.art_item.id, this.art_item)
+                        .then(function(response) {
+                            $("#modal-art-item").modal('hide');
+                            pageProfile.hidePopovers();
+                            toastr.info('Art item is updated successfully.', '', {timeOut: 2000});
+                            pageProfile.loadArtist();
+                        }, function(response) {
+                            // error handling
+                            toastr.error('Something went wrong.', '', {timeOut: 2000});
+                    });
+                },
+                deleteArtItem: function(artId) {
+                    axios.delete('/api/prize-items/' + artId).then(function (response) {
+                        pageProfile.loadArtist();
+                        toastr.info('Art item is deleted.', '', {timeOut: 2000});
+                    }, function(response) {
+                        // error handling
+                        toastr.error('Something went wrong.', '', {timeOut: 2000});
+                    });
+                },
+                uploadArtPhoto: function(elementId = 'photo-to-upload') {
+                    if (document.getElementById(elementId).files[0]) {
+                        // prepare data
+                        this.imageUploading = true;
+                        var data = new FormData();
+                        data.append('photo', document.getElementById(elementId).files[0]);
+                        data.append('prize_id', null);
+                        data.append('prize_element_id', null); // set later
+                        data.append('user_id', this.userId);
+                        data.append('title', '');
+
+                        // post data
+                        axios.post('/api/photos', data)
+                            .then(function(response) {
+                                pageProfile.art_item.photoId = response.data.id;
+                                pageProfile.art_item.photoThumbUrl = response.data.url;
+                                pageProfile.imageUploading = false;
+                            }, function(response) {
+                                // error handling
+                                toastr.error('Something went wrong.', '', {timeOut: 2000});
+                                pageProfile.imageUploading = false;
+                        });
+                    } else {
+                        // in case of empty field
+                        deleteArtPhoto(this.art_item.photoId);
+                        this.art_item.photoId = null;
+                        this.art_item.photoThumbUrl = null;
+                    }
+                },
+                attachArtPhoto: function() {
+                    axios.put('/api/photos/' + this.art_item.photoId, { "prize_element_id": this.art_item.id })
+                        .then(function(response) {
+                                // photo attached
+                                pageProfile.loadArtist();
+                                $("#modal-art-upload").modal('hide');
+                            }, function(response) {
+                                // error handling
+                                toastr.error('Could not attach photo to art item.', '', {timeOut: 2000});
+                            }
+                    );
+                },
+                deleteArtPhoto: function(photoId) {
+                    axios.delete('/api/photos/' + photoId).then(function (response) {
+                        pageProfile.loadArtist();
+                        toastr.info('Photo deleted.', '', {timeOut: 2000});
+                    }, function(response) {
+                        // error handling
+                        toastr.error('Photo was not deleted.', '', {timeOut: 2000});
+                    });
                 },
                 factionCodeToFactionTitle: function(code) {
                     switch (code) {
@@ -292,6 +476,26 @@
                     } else {
                         window.onbeforeunload = null
                     }
+                },
+                registerArtist: function() {
+                    axios.post('/api/artists/register').then(function(response) {
+                        toastr.info('Registered as artist successfully.', '', {timeOut: 2000});
+                        pageProfile.user.artist = true;
+                        pageProfile.artist.id = response.data.id;
+                        pageProfile.loadArtist();
+                    }, function (response) {
+                        // error handling
+                        toastr.error('Something went wrong.', '', {timeOut: 2000});
+                    });
+                },
+                unregisterArtist: function() {
+                    axios.post('/api/artists/unregister').then(function(response) {
+                        toastr.info('Unregistered as artist successfully.', '', {timeOut: 2000});
+                        pageProfile.user.artist = false;
+                    }, function (response) {
+                        // error handling
+                        toastr.error('Something went wrong.', '', {timeOut: 2000});
+                    });
                 },
                 drawClaimChart: function() {
 

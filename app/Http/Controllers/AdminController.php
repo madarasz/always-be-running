@@ -287,7 +287,7 @@ class AdminController extends Controller
 
     public function toggleFeatured(Request $request, $id) {
         if ($request->user()->id != 1276) {
-            about(403);
+            abort(403);
         }
         $tournament = Tournament::findOrFail($id);
         $message = $tournament->featured ? 'Tournament removed from featured.' : 'Tournament added to featured.';

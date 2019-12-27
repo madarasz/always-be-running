@@ -17,7 +17,7 @@ class User extends Authenticatable
         'username_real', 'username_preferred', 'username_jinteki', 'username_stimhack', 'username_twitter', 'website',
         'about', 'autofilter_upcoming', 'autofilter_results', 'username_slack', 'show_chart', 'secret_id',
         'prize_owning_public', 'prize_trading_public', 'prize_wanting_public',
-        'prize_owning_text', 'prize_trading_text', 'prize_wanting_text'
+        'prize_owning_text', 'prize_trading_text', 'prize_wanting_text', 'artist_id'
     ];
 
     /**
@@ -50,6 +50,10 @@ class User extends Authenticatable
 
     public function getDisplayUsernameLowerAttribute() {
         return strtolower($this->displayUsername());
+    }
+
+    public function artist() {
+        return $this->hasOne(Artist::class, 'id', 'artist_id');
     }
 
     public function badges() {
