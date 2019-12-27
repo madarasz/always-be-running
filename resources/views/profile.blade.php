@@ -343,7 +343,7 @@
                     $('[data-toggle="popover"]').popover();
                 },
                 modalForEditArtItem: function(artIndex) {
-                    this.art_item = this.artist.items[artIndex];
+                    this.art_item = JSON.parse(JSON.stringify(this.artist.items[artIndex])); // copy
                     this.art_item.typeHelper = this.art_item.type;
                     this.modalTitle = 'Edit Art item';
                     this.modalButton = 'Save';
