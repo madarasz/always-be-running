@@ -12,10 +12,10 @@
                 </h5> 
                 {{-- website --}}
                 <div class="form-group row m-a-1">
-                    <h6>
+                    <h6 style="overflow: hidden">
                         <strong>homepage:</strong>
                         <div class="col-form-label" v-if="!editMode">
-                            <a :href="artist.url" v-cloak>@{{ artist.url }}</a>
+                            <a :href="artist.url" v-cloak style="overflow: hidden; text-overflow: ellipsis; display: block">@{{ artist.url }}</a>
                         </div>
                     </h6>
                     <input class="form-control" type="text" id="artist-website" v-if="editMode" v-cloak
