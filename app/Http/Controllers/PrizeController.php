@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Prize;
 use App\PrizeElement;
 use App\Tournament;
+use App\Photo;
 use Illuminate\Http\Request;
 
 class PrizeController extends Controller
@@ -144,8 +145,17 @@ class PrizeController extends Controller
 
     public function deletePrizeItem($id, Request $request) {
         // auth, error checking
-        $this->authPrizeItem($request);
         $item = PrizeElement::findOrFail($id);
+        $request->request->add(['artist_id' => $item->artist_id]); // for auth
+        $this->authPrizeItem($request);
+        
+        // delete related photos
+        $photos = Photo::where('prize_element_id', $id)->get();
+        foreach($photos as $photo) {
+            app('App\Http\Controllers\PhotosController')->destroyApi($request, $photo->id);
+        }
+
+        // delete item
         $item->delete();
 
         return response()->json('Prize item deleted.');
@@ -153,7 +163,7 @@ class PrizeController extends Controller
 
     private function authPrizeItem(Request $request) {
         if (!$request->user()->admin && 
-            !($request->has('artist_id') && $request->input('artist_id') == $request->user()->id)) {
+            !($request->has('artist_id') && $request->input('artist_id') == $request->user()->artist_id)) {
             abort(403);
         }
     }

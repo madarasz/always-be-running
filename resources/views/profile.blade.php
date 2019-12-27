@@ -134,7 +134,8 @@
                     prize_wanting_text: `{{ $user->prize_wanting_text }}`,
                     artist: '{{ $user->artist_id !== NULL }}' == 1
                 },
-                artist: {},
+                artist: { id: '{{ $user->artist_id }}' },
+                artistDetailsChanged: false,
                 art_item: {},
                 art_types: {!! json_encode($art_types) !!},
                 maxArtPhotos: 2, // per art item
@@ -268,7 +269,7 @@
                     });
                 },
                 loadArtist: function() {
-                    axios.get('/api/artists/' + '{{ $user->artist_id }}').then(function (response) {
+                    axios.get('/api/artists/' + this.artist.id).then(function (response) {
                                 pageProfile.artist = response.data;
                     }, function (response) {
                         // error handling
@@ -303,13 +304,14 @@
                             }
                     );
                     // save artist details too
-                    if (this.user.artist) {
+                    if (this.user.artist && this.artistDetailsChanged) {
                         this.saveArtistDetails();
                     }
                 },
                 saveArtistDetails: function() {
                     axios.put('/api/artists/' + '{{ $user->artist_id }}', this.artist)
                         .then(function(response) {
+                                this.artistDetailsChanged = false;
                                 toastr.info('Artist details updated successfully.', '', {timeOut: 2000});
                             }, function(response) {
                                 // error handling
@@ -352,6 +354,12 @@
                     this.art_item.photoThumbUrl = null;
                     document.getElementById('photo-add-file').value = "";
                     $("#modal-art-upload").modal('show');
+                },
+                closeModal: function() {
+                    this.hidePopovers();
+                    if (this.art_item.photoId) {
+                        this.deleteArtPhoto(this.art_item.photoId);
+                    }
                 },
                 createArtItem: function() {
                     axios.post('/api/prize-items', this.art_item)
@@ -470,6 +478,8 @@
                     axios.post('/api/artists/register').then(function(response) {
                         toastr.info('Registered as artist successfully.', '', {timeOut: 2000});
                         pageProfile.user.artist = true;
+                        pageProfile.artist.id = response.data.id;
+                        pageProfile.loadArtist();
                     }, function (response) {
                         // error handling
                         toastr.error('Something went wrong.', '', {timeOut: 2000});

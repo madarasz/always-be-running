@@ -135,7 +135,6 @@ class UserController extends Controller
 
         $user_id = $request->user()->id;
         $artist = Artist::where('user_id', $user_id)->first();
-        $request->user()->update(['artist_id' => $artist->id]); // add artist_id
 
         // add Artist entry if missing
         if (is_null($artist)) {    
@@ -144,6 +143,9 @@ class UserController extends Controller
                 'creator_id' => $user_id
             ]);
         }
+
+        $request->user()->update(['artist_id' => $artist->id]); // add artist_id
+        
         return response()->json($artist);
     }
 

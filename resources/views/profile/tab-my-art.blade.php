@@ -19,7 +19,7 @@
                         </div>
                     </h6>
                     <input class="form-control" type="text" id="artist-website" v-if="editMode" v-cloak
-                               name="artist-website" v-model="artist.url" placeholder="https://...">
+                               name="artist-website" v-model="artist.url" placeholder="https://..." @change="artistDetailsChanged = true">
                 </div>
                 {{-- description --}}
                 <div class="form-group row m-a-1">
@@ -28,7 +28,9 @@
                     </h6>
                     <div class="markdown-content" v-html="markdownArtistDescription" v-if="!editMode"></div>
                     <div v-if="editMode" style="width: 100%">
-                        <textarea rows="6" cols="" name="artist-description" class="form-control" v-model="artist.description" v-cloak></textarea>
+                        <textarea rows="6" cols="" name="artist-description" class="form-control" v-model="artist.description" 
+                            @change="artistDetailsChanged = true" v-cloak>
+                        </textarea>
                         <div class="pull-right">
                             <small><a href="http://commonmark.org/help/" target="_blank" rel="nofollow"><img src="/img/markdown_icon.png"/></a> formatting is supported</small>
                             @include('partials.popover', ['direction' => 'top', 'content' =>
@@ -64,6 +66,13 @@
                         <th></th>
                     </thead>
                     <tbody>
+                        {{-- no art item message --}}
+                        <tr v-if="artist.items && artist.items.length == 0">
+                            <td colspan="3" class="text-xs-center">
+                                <em>no art items yet</em>
+                            </td>
+                        </tr>
+                        {{-- list of art items --}}
                         <tr v-for="(item, index) in artist.items">
                             <td nowrap>
                                 <div class="flex-row">

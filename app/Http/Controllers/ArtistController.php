@@ -53,7 +53,7 @@ class ArtistController extends Controller
     public function editArtist(Request $request, $id)
     {
         $artist = Artist::findOrFail($id);
-        $this->authorize('admin', Tournament::class, $request->user());
+        $this->authArtist($request, $id);
 
         $artist->update($request->all());
 
@@ -79,5 +79,11 @@ class ArtistController extends Controller
         $artist->delete();
 
         return response()->json('Artist removed.');
+    }
+
+    private function authArtist(Request $request, $id) {
+        if (!$request->user()->admin && !$id == $request->user()->artist_id) {
+            abort(403);
+        }
     }
 }
