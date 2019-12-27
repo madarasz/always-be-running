@@ -22,10 +22,12 @@
                                name="artist-website" v-model="artist.url" placeholder="https://..." @change="artistDetailsChanged = true">
                 </div>
                 {{-- description --}}
-                <div class="form-group row m-a-1">
+                <div class="row m-t-1 m-l-1 m-r-1">
                     <h6>
                         <strong>additional information:</strong>
                     </h6>
+                </div>
+                <div class="form-group row m-b-1 m-l-1 m-r-1">
                     <div class="markdown-content" v-html="markdownArtistDescription" v-if="!editMode"></div>
                     <div v-if="editMode" style="width: 100%">
                         <textarea rows="6" cols="" name="artist-description" class="form-control" v-model="artist.description" 

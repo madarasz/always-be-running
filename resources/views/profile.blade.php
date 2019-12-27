@@ -140,6 +140,7 @@
                 art_types: {!! json_encode($art_types) !!},
                 maxArtPhotos: 2, // per art item
                 userOriginal: {},
+                artistOriginal: {},
                 countryMapping: {},
                 claimCount: '{{ $claim_count }}',
                 confirmCallback: function () {},
@@ -262,7 +263,7 @@
                 },
                 loadCountries: function() {
                     axios.get('/api/country-mapping').then(function (response) {
-                                pageProfile.countryMapping = response.data;
+                        pageProfile.countryMapping = response.data;
                     }, function (response) {
                         // error handling
                         toastr.error('Something went wrong while loading the countries.', '', {timeOut: 2000});
@@ -270,7 +271,8 @@
                 },
                 loadArtist: function() {
                     axios.get('/api/artists/' + this.artist.id).then(function (response) {
-                                pageProfile.artist = response.data;
+                        pageProfile.artist = response.data;
+                        pageProfile.artistOriginal = JSON.parse(JSON.stringify(pageProfile.artist)); // copy object
                     }, function (response) {
                         // error handling
                         toastr.error('Something went wrong while loading artist details.', '', {timeOut: 2000});
@@ -278,6 +280,7 @@
                 },
                 cancelEdits: function() {
                     this.user = JSON.parse(JSON.stringify(this.userOriginal)); // copy object
+                    this.artist = JSON.parse(JSON.stringify(this.artistOriginal)); // copy object
                     this.editMode = false;
                     this.confirmNavigatingAway(false);
                 },
@@ -309,7 +312,7 @@
                     }
                 },
                 saveArtistDetails: function() {
-                    axios.put('/api/artists/' + '{{ $user->artist_id }}', this.artist)
+                    axios.put('/api/artists/' + this.artist.id, this.artist)
                         .then(function(response) {
                                 this.artistDetailsChanged = false;
                                 toastr.info('Artist details updated successfully.', '', {timeOut: 2000});

@@ -37,6 +37,7 @@
                         <label for="photo" class="col-sm-3 col-form-label">Photo:</label>
                         <div class="col-sm-9">
                             <input type="file" name="photo" class="form-control" id="photo-to-upload" @change="uploadArtPhoto()"/>
+                            <div class="small-text text-xs-center">max 8MB png or jpg file</div>
                             {{-- photo preview --}}
                             <img id="photo-preview" v-if="art_item.photoThumbUrl != null" :src="art_item.photoThumbUrl"
                                 class="shrink100x100"/>

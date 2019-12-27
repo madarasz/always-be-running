@@ -4,7 +4,7 @@
         Artist
     </h5>
     {{-- Register as artist--}}
-    <div class="text-xs-center" v-if="!user.artist">
+    <div class="text-xs-center m-b-1" v-if="!user.artist">
         <button type="button" class="btn btn-success" href="#" id="button-register-artist" v-cloak
                 @click="registerArtist()">
             <i class="fa fa-paint-brush" aria-hidden="true"></i> Register as an Artist
@@ -19,7 +19,7 @@
             Congratulations! You are a registered artist.
         </div>
         <div>
-            You can manage your artist gallery on the <a href="#tab-my-art">My art</a> tab of your profile.
+            You can manage your artist gallery on the <a class="fake-link" onclick="$('[href=\'#tab-my-art\']').tab('show')">My art</a> tab of your profile.
         </div>
         <hr/>
         <button type="button" class="btn btn-danger" href="#" id="button-unregister-artist" v-cloak
