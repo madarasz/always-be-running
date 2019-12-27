@@ -7,7 +7,7 @@
             <div class="bracket">
                 <h5>
                     <i class="fa fa-paint-brush" aria-hidden="true"></i>
-                    Artists of unofficial art (@{{ artists.length }})
+                    Artists (@{{ artists.length }})
                     <div class="pull-right">
                         {{--create button--}}
                         {{-- <a class="btn btn-success white-text" id="button-add-artist"
@@ -198,7 +198,13 @@
             loadArtists: function() {
                 axios.get('/api/artists').then(function (response) {
                     $('#artists-loader').addClass('hidden-xs-up');
-                    adminArt.artists = response.data;
+                    // add artists who are not unregistered
+                    adminArt.artist = [];
+                    for (var i = 0; i < response.data.length; i++) {
+                        if (response.data[i].user.artist_id != null) {
+                            adminArt.artists.push(response.data[i]);
+                        }
+                    }
                 }, function (response) {
                     // error handling
                     toastr.error('Something went wrong while loading the artists.', '', {timeOut: 2000});
