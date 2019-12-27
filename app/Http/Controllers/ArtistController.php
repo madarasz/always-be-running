@@ -16,7 +16,7 @@ class ArtistController extends Controller
      */
     public function getArtists()
     {
-        $artists = Artist::get();
+        $artists = Artist::with(['items', 'items.photos'])->get();
         return response()->json($artists);
     }
 

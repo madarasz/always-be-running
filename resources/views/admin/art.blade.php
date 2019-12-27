@@ -10,10 +10,10 @@
                     Artists of unofficial art (@{{ artists.length }})
                     <div class="pull-right">
                         {{--create button--}}
-                        <a class="btn btn-success white-text" id="button-add-artist"
+                        {{-- <a class="btn btn-success white-text" id="button-add-artist"
                            data-toggle="modal" data-target="#modal-artist" @click="modalForAddArtist">
                             Add Artist
-                        </a>
+                        </a> --}}
                     </div>
                 </h5>
                 <div class="loader" id="artists-loader">&nbsp;</div>
@@ -21,7 +21,7 @@
                     <thead>
                         <th></th>
                         <th>artist name</th>
-                        <th>#items</th>
+                        <th class="text-xs-center">#items</th>
                         <th></th>
                     </thead>
                     <tbody>
@@ -33,21 +33,21 @@
                         <tr v-for="(artist, index) in artists" :class="artist.id == selectedArtist.id ? 'row-selected': ''"
                                 @click="selectArtistByIndex(index)">
                             <td></td>
-                            <td>@{{ artist.name }}</td>
-                            <td></td>
+                            <td>@{{ artist.displayArtistName }}</td>
+                            <td class="text-xs-center"><span v-if="artist.items">@{{ artist.items.length }}</span></td>
                             <td class="text-xs-right">
                                 {{--edit button--}}
-                                <a class="btn btn-primary btn-xs white-text" @click.stop="modalForEditArtist(artist)">
+                                {{-- <a class="btn btn-primary btn-xs white-text" @click.stop="modalForEditArtist(artist)">
                                     <i class="fa fa-pencil"></i> edit
-                                </a>
+                                </a> --}}
                                 {{--delete button--}}
-                                <form method="post" action="" style="display: inline" v-if="artist.tournamentCount != 0">
+                                {{-- <form method="post" action="" style="display: inline" v-if="artist.tournamentCount != 0">
                                     <input name="_method" type="hidden" value="DELETE"/>
                                     <input name="_token" type="hidden" value="{{ csrf_token() }}">
                                     <input name="delete_id" type="hidden" :value="artist.id">
                                     <confirm-button button-text="delete" button-class="btn btn-danger btn-xs" button-icon="fa fa-trash" id="-art"
                                         @click="confirmCallback = function() { deleteArtist(artist.id) }; confirmText = 'Remove Artist?'" />
-                                </form>
+                                </form> --}}
                             </td>
                         </tr>
                     </tbody>
@@ -63,16 +63,16 @@
                     <i class="fa fa-user-circle" aria-hidden="true"></i>
                     Artist details
                     <div class="pull-right" v-if="selectedArtist.id != 0">
-                        {{--create button--}}
-                        <a class="btn btn-primary white-text" @click.stop="modalForEditArtist(selectedArtist)">
+                        {{--edit button--}}
+                        {{-- <a class="btn btn-primary white-text" @click.stop="modalForEditArtist(selectedArtist)">
                             Edit
-                        </a>
+                        </a> --}}
                     </div>
                 </h5>
                 <div class="text-xs-center" v-if="selectedArtist.id == 0">
                     <em>
                         <i class="fa fa-chevron-up" aria-hidden="true"></i>
-                        select a artist to view details
+                        select an artist to view details
                         <i class="fa fa-chevron-up" aria-hidden="true"></i>
                     </em>
                 </div>
@@ -86,25 +86,85 @@
     </div>
     <div class="row">
         {{-- Art list --}}
-        <div class="col-xs-12 col-lg-6">
+        <div class="col-xs-12">
             <div class="bracket">
                 <h5>
                     <i class="fa fa-picture-o" aria-hidden="true"></i>
                     Art list
-                    <div class="pull-right" v-if="selectedArtist.id != 0">
+                    {{-- <div class="pull-right" v-if="selectedArtist.id != 0"> --}}
                         {{--create button--}}
-                        <a class="btn btn-primary btn-sm white-text" @click.stop="modalForAddItem">
+                        {{-- <a class="btn btn-primary btn-sm white-text" @click.stop="modalForAddItem">
                             Add
-                        </a>
-                    </div>
+                        </a> --}}
+                    {{-- </div> --}}
                 </h5>
                 <div class="text-xs-center" v-if="selectedArtist.id == 0">
                     <em>
                         <i class="fa fa-chevron-up" aria-hidden="true"></i>
-                        select a artist to view details
+                        select an artist to view details
                         <i class="fa fa-chevron-up" aria-hidden="true"></i>
                     </em>
                 </div>
+                <table class="table table-sm table-striped abr-table" v-if="selectedArtist.id > 0">
+                    <thead>
+                        <th class="text-xs-center">
+                            <i class="fa fa-camera" aria-hidden="true"></i>
+                        </th>
+                        <th style="width: 99%">item</th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                        {{-- no art item message --}}
+                        <tr v-if="selectedArtist.items && selectedArtist.items.length == 0">
+                            <td colspan="3" class="text-xs-center">
+                                <em>no art items yet</em>
+                            </td>
+                        </tr>
+                        {{-- list of art items --}}
+                        <tr v-for="(item, index) in selectedArtist.items">
+                            <td nowrap>
+                                <div class="flex-row">
+                                    <div class="gallery-item" style="margin: 0" v-for="photo in item.photos">
+                                        <div style="position: relative;">
+                                            {{--image thumpnail--}}
+                                            <a :href="photo.url" data-toggle="lightbox" data-gallery="prizekit-gallery"
+                                                :data-title="item.title">
+                                                <img :src="photo.urlThumb" class="shrink100x100"/>
+                                            </a>
+                                            {{--delete button--}}
+                                            {{-- <div class="abs-top-left" v-if="editMode">
+                                                <form method="post" action="" style="display: inline">
+                                                    <input name="_method" type="hidden" value="DELETE"/>
+                                                    <input name="_token" type="hidden" value="{{ csrf_token() }}">
+                                                    <confirm-button button-class="btn btn-danger btn-xs" button-icon="fa fa-trash"
+                                                        @click="confirmCallback = function() { deleteArtPhoto(photo.id) }; confirmText = 'Delete photo?'" />
+                                                </form>
+                                            </div> --}}
+                                        </div>
+                                    </div>     
+                                    {{-- <div v-if="editMode && item.photos.length < maxArtPhotos" class="size100x100 flex-center">
+                                        <a class="btn btn-primary btn-xs white-text" v-if="editMode" @click="modallForAddPhoto(index)">
+                                            <i class="fa fa-plus"></i> <i class="fa fa-camera"></i>
+                                        </a>
+                                    </div> --}}
+                                </div>
+                            </td>
+                            {{-- title and type --}}
+                            <td>
+                                @{{ item.title }}<br/>
+                                <span class="small-text">@{{ item.type}}</span>
+                            </td>
+                            {{-- edit and delete buttons --}}
+                            <td>
+                                {{-- <a class="btn btn-primary btn-xs white-text" v-if="editMode" @click="modalForEditArtItem(index)">
+                                    <i class="fa fa-pencil"></i> edit
+                                </a>
+                                <confirm-button button-class="btn btn-danger btn-xs" button-icon="fa fa-trash" button-text="delete" v-if="editMode"
+                                            @click="confirmCallback = function() { deleteArtItem(item.id) }; confirmText = 'Are you sure you want to delete art item?'" /> --}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
