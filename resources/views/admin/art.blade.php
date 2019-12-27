@@ -33,7 +33,14 @@
                         <tr v-for="(artist, index) in artists" :class="artist.id == selectedArtist.id ? 'row-selected': ''"
                                 @click="selectArtistByIndex(index)">
                             <td></td>
-                            <td>@{{ artist.displayArtistName }}</td>
+                            <td>
+                                <a v-if="artist.user" :href="'/profile/'+artist.user.id+'#tab-my-art'" :class="artist.user.linkClass">
+                                    @{{ artist.displayArtistName }}
+                                </a>
+                                <span v-if="!artist.user">
+                                    @{{ artist.displayArtistName }}
+                                </span>
+                            </td>
                             <td class="text-xs-center"><span v-if="artist.items">@{{ artist.items.length }}</span></td>
                             <td class="text-xs-right">
                                 {{--edit button--}}
