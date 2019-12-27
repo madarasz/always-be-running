@@ -32,14 +32,14 @@ class UserController extends Controller
                 $page_section = 'profile';
                 $countries = \Countries::orderBy('name')->get();
                 $factions = CardIdentity::where('pack_code', '!=', 'draft')->groupBy('faction_code')->get();
-                $art_types = PrizeElement::groupBy('type')
-                    ->orderBy(\DB::raw('count(type)'), 'DESC')
-                    ->lists('type')
-                    ->all();
             }
         }
 
         $user = User::findOrFail($id);
+        $art_types = PrizeElement::groupBy('type')
+            ->orderBy(\DB::raw('count(type)'), 'DESC')
+            ->lists('type')
+            ->all();
 
         $deleted_tournaments = Tournament::withTrashed()->whereNotNull('deleted_at')->pluck('id')->all();
         $message = session()->has('message') ? session('message') : '';
@@ -145,7 +145,7 @@ class UserController extends Controller
         }
 
         $request->user()->update(['artist_id' => $artist->id]); // add artist_id
-        
+
         return response()->json($artist);
     }
 
