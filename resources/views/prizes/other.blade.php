@@ -15,37 +15,25 @@
                 </h5>
                 <div class="markdown-content" v-html="markdownDescription( artist.description)">
                 </div>
-                <table class="table table-sm table-striped abr-table">
-                    <thead>
-                        <th class="text-xs-center">
-                            <i class="fa fa-camera" aria-hidden="true"></i>
-                        </th>
-                        <th style="width: 99%">item</th>
-                    </thead>
-                    <tbody>
-                        {{-- list of art items --}}
-                        <tr v-for="(item, index) in artist.items">
-                            <td nowrap>
-                                <div class="flex-row">
-                                    <div class="gallery-item" style="margin: 0" v-for="photo in item.photos">
-                                        <div style="position: relative;">
-                                            {{--image thumpnail--}}
-                                            <a :href="photo.url" data-toggle="lightbox" data-gallery="prizekit-gallery"
-                                                :data-title="item.title">
-                                                <img :src="photo.urlThumb" class="shrink100x100"/>
-                                            </a>
-                                        </div>
-                                    </div>     
+                <div class="row">
+                    <div class="col-xs-12 col-lg-6 p-t-1 p-b-1 checkered-lg" v-for="(item, index) in artist.items">
+                        <div class="flex-row">
+                            <div class="gallery-item" style="margin: 0" v-for="photo in item.photos">
+                                <div style="position: relative;">
+                                    {{--image thumpnail--}}
+                                    <a :href="photo.url" data-toggle="lightbox" data-gallery="prizekit-gallery"
+                                        :data-title="item.title">
+                                        <img :src="photo.urlThumb" class="shrink100x100"/>
+                                    </a>
                                 </div>
-                            </td>
-                            {{-- title and type --}}
-                            <td>
+                            </div>     
+                            <div class="m-l-1">
                                 @{{ item.title }}<br/>
                                 <span class="small-text">@{{ item.type}}</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

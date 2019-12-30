@@ -1223,3 +1223,21 @@ table.prize-collection td {
     text-overflow: ellipsis; 
     display: block;
 }
+/* responsive checkerboard background */
+.checkered-lg:nth-of-type(2n+1) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+@media (min-width: 992px) {
+    .checkered-lg:nth-of-type(4n+1) {
+        background-color: rgba(0, 0, 0, 0.05) !important;
+    }
+    .checkered-lg:nth-of-type(4n+2) {
+        background-color: rgba(0, 0, 0, 0.00) !important;
+    }
+    .checkered-lg:nth-of-type(4n+3) {
+        background-color: rgba(0, 0, 0, 0.00) !important;
+    }
+    .checkered-lg:nth-of-type(4n) {
+        background-color: rgba(0, 0, 0, 0.05) !important;
+    }
+}
