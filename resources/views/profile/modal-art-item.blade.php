@@ -48,7 +48,7 @@
                     <div class="form-group row p-t-1">
                         <div class="form-check form-check-inline text-xs-center" style="width: 100%">
                             <input class="form-check-input" type="checkbox" value="" v-model="art_item.proper"
-                                   style="margin-left:0" name="proper-check">
+                                   style="margin-left:0" name="proper-check" false-value="0" true-value="1">
                             <label class="form-check-label" for="proper-check">
                                 proper text
                                 @include('partials.popover', ['direction' => 'top', 'content' =>
@@ -61,7 +61,7 @@
                     <div class="form-group row p-t-1">
                         <div class="form-check form-check-inline text-xs-center" style="width: 100%">
                             <input class="form-check-input" type="checkbox" value="" v-model="art_item.official"
-                                   style="margin-left:0" name="official-check">
+                                   style="margin-left:0" name="official-check" false-value="0" true-value="1">
                             <label class="form-check-label" for="official-check">
                                 official FFG/NISEI item
                                 @include('partials.popover', ['direction' => 'right', 'content' =>
