@@ -837,6 +837,14 @@ a.supporter:hover {
 a.admin:hover {
     color: #844ea3 !important;
 }
+/* artist username */
+.artist {
+    color: #eb3c21 !important;
+}
+a.artist:hover {
+    color: #c92b13 !important;
+}
+
 /*modal tabs*/
 .modal-tabs > ul.nav-tabs {
     background-color: #eee;

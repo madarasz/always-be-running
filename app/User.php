@@ -87,6 +87,9 @@ class User extends Authenticatable
         if ($this->admin) {
             return "admin";
         }
+        if ($this->artist()) {
+            return "artist";
+        }
         if ($this->supporter) {
             return "supporter";
         }

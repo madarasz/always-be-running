@@ -1,15 +1,22 @@
-{{--Supporter strip--}}
-@if ($user->supporter)
-    <div class="alert alert-warning">
-        <i class="fa fa-star" aria-hidden="true"></i>
-        This user <a href="/support-me" class="supporter">supports</a> AlwaysBeRunning.net
-    </div>
-@endif
 {{--Admin strip--}}
 @if ($user->admin)
     <div class="alert alert-info">
         <i class="fa fa-certificate" aria-hidden="true"></i>
         This user is an admin.
+    </div>
+@endif
+{{--Artist strip--}}
+@if ($user->artist)
+    <div class="alert alert-danger">
+        <i class="fa fa-paint-brush" aria-hidden="true"></i>
+        This user is an <a class="fake-link" onclick="$('[href=\'#tab-my-art\']').tab('show')">artist</a>.
+    </div>
+@endif
+{{--Supporter strip--}}
+@if ($user->supporter)
+    <div class="alert alert-warning">
+        <i class="fa fa-star" aria-hidden="true"></i>
+        This user <a href="/support-me" class="supporter">supports</a> AlwaysBeRunning.net
     </div>
 @endif
 {{--Badge notification--}}
