@@ -1,4 +1,4 @@
-<div class="tab-pane" id="tab-official" role="tabpanel">
+<div class="tab-pane active" id="tab-official" role="tabpanel">
     {{--Filters--}}
     <div class="row">
         <div class="col-xs-12">
