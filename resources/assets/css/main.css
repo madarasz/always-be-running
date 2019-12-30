@@ -1210,3 +1210,8 @@ table.prize-collection td {
     flex-flow: row nowrap;
     align-items: center;
 }
+.ellipis-overflow {
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    display: block;
+}

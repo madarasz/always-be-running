@@ -86,7 +86,7 @@
                 <div v-if="selectedArtist.id != 0">
                     <strong>name:</strong> @{{ selectedArtist.name }}<br/>
                     <strong>homepage:</strong> <a :href="selectedArtist.url">@{{ selectedArtist.url }}</a><br/>
-                    <div v-html="compiledMarkdownArtistDescription"></div>
+                    <div class="markdown-content" v-html="compiledMarkdownArtistDescription"></div>
                 </div>
             </div>
         </div>
