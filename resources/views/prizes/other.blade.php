@@ -4,7 +4,14 @@
             <div class="bracket">
                 <h5 style="overflow: hidden">
                     <i aria-hidden="true" class="fa fa-paint-brush"></i>
-                    <strong>@{{ artist.displayArtistName }}</strong>
+                    <strong>
+                        <a v-if="artist.user" :href="'/profile/'+artist.user.id">
+                            @{{ artist.displayArtistName }}
+                        </a>
+                        <span v-if="!artist.user">
+                            @{{ artist.displayArtistName }}
+                        </span>
+                    </strong>
                     {{-- artist webpage --}}
                     <a class="small-text pull-right hidden-sm-down" v-if="artist.url" :href="artist.url">
                         @{{ artist.url}}
