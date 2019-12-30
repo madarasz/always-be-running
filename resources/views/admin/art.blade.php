@@ -205,13 +205,8 @@
             loadArtists: function() {
                 axios.get('/api/artists').then(function (response) {
                     $('#artists-loader').addClass('hidden-xs-up');
-                    // add artists who are not unregistered
-                    adminArt.artist = [];
-                    for (var i = 0; i < response.data.length; i++) {
-                        if (response.data[i].user.artist_id != null) {
-                            adminArt.artists.push(response.data[i]);
-                        }
-                    }
+                    // add artists who are not unregistered or without user
+                    adminArt.artists = response.data.filter((x) => x.user == null || x.user.artist_id != null);
                 }, function (response) {
                     // error handling
                     toastr.error('Something went wrong while loading the artists.', '', {timeOut: 2000});
