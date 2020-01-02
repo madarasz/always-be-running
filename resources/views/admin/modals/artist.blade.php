@@ -3,8 +3,12 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="cancelModal()"><span aria-hidden="true">×</span></button>
                 <h4 class="modal-title" id="myModalLabel">@{{ modalTitle }}</h4>
+                <div class="modal-subtitle" v-if="!editMode">
+                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                    Only add artists without ABR/NetrunnerDB profiles!
+                </div>
             </div>
             <div class="modal-body">
 
@@ -19,12 +23,12 @@
                     </div>
 
                     {{--User ID--}}
-                    <div class="form-group row">
+                    {{-- <div class="form-group row">
                         <label for="title" class="col-sm-9 col-form-label">NetrunnerDB UserID:</label>
                         <div class="col-sm-3">
                             <input type="number" name="title" class="form-control" v-model="selectedArtist.user_id"/>
                         </div>
-                    </div>
+                    </div> --}}
 
                     {{--Description--}}
                     <div class="form-group m-b-3">

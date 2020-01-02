@@ -10,10 +10,10 @@
                     Artists (@{{ artists.length }})
                     <div class="pull-right">
                         {{--create button--}}
-                        {{-- <a class="btn btn-success white-text" id="button-add-artist"
+                        <a class="btn btn-success white-text" id="button-add-artist"
                            data-toggle="modal" data-target="#modal-artist" @click="modalForAddArtist">
                             Add Artist
-                        </a> --}}
+                        </a>
                     </div>
                 </h5>
                 <div class="loader" id="artists-loader">&nbsp;</div>
@@ -44,17 +44,17 @@
                             <td class="text-xs-center"><span v-if="artist.items">@{{ artist.items.length }}</span></td>
                             <td class="text-xs-right">
                                 {{--edit button--}}
-                                {{-- <a class="btn btn-primary btn-xs white-text" @click.stop="modalForEditArtist(artist)">
+                                <a class="btn btn-primary btn-xs white-text" @click="modalForEditArtist(artist)" v-if="artist.user == null">
                                     <i class="fa fa-pencil"></i> edit
-                                </a> --}}
+                                </a>
                                 {{--delete button--}}
-                                {{-- <form method="post" action="" style="display: inline" v-if="artist.tournamentCount != 0">
+                                <form method="post" action="" style="display: inline" v-if="artist.items.length == 0">
                                     <input name="_method" type="hidden" value="DELETE"/>
                                     <input name="_token" type="hidden" value="{{ csrf_token() }}">
                                     <input name="delete_id" type="hidden" :value="artist.id">
                                     <confirm-button button-text="delete" button-class="btn btn-danger btn-xs" button-icon="fa fa-trash" id="-art"
                                         @click="confirmCallback = function() { deleteArtist(artist.id) }; confirmText = 'Remove Artist?'" />
-                                </form> --}}
+                                </form>
                             </td>
                         </tr>
                     </tbody>
@@ -71,9 +71,9 @@
                     Artist details
                     <div class="pull-right" v-if="selectedArtist.id != 0">
                         {{--edit button--}}
-                        {{-- <a class="btn btn-primary white-text" @click.stop="modalForEditArtist(selectedArtist)">
+                        <a class="btn btn-primary white-text" @click.stop="modalForEditArtist(selectedArtist)">
                             Edit
-                        </a> --}}
+                        </a>
                     </div>
                 </h5>
                 <div class="text-xs-center" v-if="selectedArtist.id == 0">
@@ -84,7 +84,7 @@
                     </em>
                 </div>
                 <div v-if="selectedArtist.id != 0">
-                    <strong>name:</strong> @{{ selectedArtist.name }}<br/>
+                    <strong>name:</strong> @{{ selectedArtist.displayArtistName }}<br/>
                     <strong>homepage:</strong> <a :href="selectedArtist.url">@{{ selectedArtist.url }}</a><br/>
                     <div class="markdown-content" v-html="compiledMarkdownArtistDescription"></div>
                 </div>
@@ -139,7 +139,7 @@
                                                 <img :src="photo.urlThumb" class="shrink100x100"/>
                                             </a>
                                             {{--delete button--}}
-                                            {{-- <div class="abs-top-left" v-if="editMode">
+                                            {{-- <div class="abs-top-left">
                                                 <form method="post" action="" style="display: inline">
                                                     <input name="_method" type="hidden" value="DELETE"/>
                                                     <input name="_token" type="hidden" value="{{ csrf_token() }}">
@@ -202,30 +202,42 @@
             }
         },
         methods: {
-            loadArtists: function() {
+            loadArtists: function(idToSelect = false) {
                 axios.get('/api/artists').then(function (response) {
                     $('#artists-loader').addClass('hidden-xs-up');
                     // add artists who are not unregistered or without user
                     adminArt.artists = response.data.filter((x) => x.user == null || x.user.artist_id != null);
+                    // pre-select an artist
+                    if (idToSelect) {
+                        adminArt.selectedArtist = adminArt.artists.find((x) => x.id == idToSelect);
+                    }
                 }, function (response) {
                     // error handling
                     toastr.error('Something went wrong while loading the artists.', '', {timeOut: 2000});
                 });
             },
             selectArtistByIndex: function(index) {
-                this.selectedArtist = this.artists[index];
+                this.selectedArtist = JSON.parse(JSON.stringify(this.artists[index])); // copy object
+                this.selectedArtist.name = this.selectedArtist.displayArtistName;
+                this.selectedArtist.index = index;
             },
             modalForAddArtist: function() {
+                this.selectedArtist = {};
                 this.editMode = false;
                 this.modalTitle = 'Add Artist';
                 this.modalButton = 'Add';
             },
             modalForEditArtist: function(artist) {
-                this.selectedArtist = artist;
                 this.editMode = true;
                 this.modalTitle = 'Edit Artist';
                 this.modalButton = 'Save';
                 $("#modal-artist").modal('show');
+            },
+            cancelModal: function() {
+                // restore selectedArtist value
+                if (this.selectedArtist && this.selectedArtist.index) {
+                    this.selectedArtist = JSON.parse(JSON.stringify(this.artists[this.selectedArtist.index]));
+                }
             },
             modalForAddItem: function() {
 
@@ -236,7 +248,7 @@
             addArtist: function() {
                 axios.post('/api/artists', this.selectedArtist)
                     .then(function(response) {
-                        adminArt.loadArtists();
+                        adminArt.loadArtists(response.data.id);
                         $("#modal-artist").modal('hide');
                         toastr.info('Artist successfully.', '', {timeOut: 2000});
                     }, function(response) {
@@ -250,7 +262,7 @@
                         .then(function(response) {
                             $("#modal-artist").modal('hide');
                             toastr.info('Artist updated successfully.', '', {timeOut: 2000});
-                            adminArt.loadArtists();
+                            adminArt.loadArtists(response.data.id);
                         }, function(response) {
                             // error handling
                             toastr.error('Something went wrong.', '', {timeOut: 2000});
