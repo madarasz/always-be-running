@@ -87,7 +87,7 @@ class User extends Authenticatable
         if ($this->admin) {
             return "admin";
         }
-        if ($this->artist()) {
+        if ($this->artist()->count()) {
             return "artist";
         }
         if ($this->supporter) {
