@@ -50,7 +50,7 @@
                                     <i class="fa fa-pencil"></i> edit
                                 </a>
                                 {{--delete button--}}
-                                <form method="post" action="" style="display: inline" v-if="artist.items.length == 0">
+                                <form method="post" action="" style="display: inline" v-if="artist.items.length == 0 && artist.user == null">
                                     <input name="_method" type="hidden" value="DELETE"/>
                                     <input name="_token" type="hidden" value="{{ csrf_token() }}">
                                     <input name="delete_id" type="hidden" :value="artist.id">
