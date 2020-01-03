@@ -16,7 +16,7 @@ class ArtistController extends Controller
      */
     public function getArtists()
     {
-        $artists = Artist::with(['items', 'items.photos'])->get();
+        $artists = Artist::with(['items', 'items.photos'])->orderBy('endorsed', 'DESC')->get();
         return response()->json($artists);
     }
 
