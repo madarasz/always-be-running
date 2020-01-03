@@ -14,6 +14,7 @@ use App\Video;
 use App\Tournament;
 use App\VideoTag;
 use App\Mwl;
+use App\PrizeElement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -73,6 +74,10 @@ class AdminController extends Controller
         $missing_videos = Video::where('flag_removed', true)->get();
         $tournament_types = TournamentType::where('order', '<', 7)->orderBy('order')->pluck('type_name', 'id');
         $tournament_types->put(0,'other'); // adding 'other' to prize types
+        $art_types = PrizeElement::groupBy('type')
+            ->orderBy(\DB::raw('count(type)'), 'DESC')
+            ->lists('type')
+            ->all();
         // VIP information
         $vips = [];
         $vip_ids = DB::select('SELECT DISTINCT user_id FROM badge_user WHERE badge_id IN (1,2,8,9,10,11,14,15,17,18,31,39,48,56,57,59,60,61,62)');
@@ -111,13 +116,14 @@ class AdminController extends Controller
         $badge_count = DB::table('badge_user')->count();
         $unseen_badge_count = DB::table('badge_user')->where('seen', 0)->count();
 
+        $user = $request->user();
         $page_section = 'admin';
         return view('admin', compact('user', 'message', 'nowdate', 'badge_type_count', 'badge_count', 'unseen_badge_count',
             'count_ids', 'last_id', 'count_packs', 'last_pack', 'count_cycles', 'last_cycle', 'count_mwls', 'last_mwl', 'packs', 'cycles',
             'page_section', 'video_channels', 'video_users', 'entry_types', 'published_count', 'private_count',
             'backlink_count', 'no_backlink_count', 'unexported_count', 'broken_count', 'broken_users', 'missing_videos',
             'ktm_update', 'ktm_packs', 'photos', 'photo_tournaments', 'photo_users', 'video_users_tagged', 'vips',
-            'tournament_types'));
+            'tournament_types', 'art_types'));
     }
 
     public function approveTournament($id, Request $request)

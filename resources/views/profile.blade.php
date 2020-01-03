@@ -338,7 +338,7 @@
                     this.modalTitle = 'Create Art item';
                     this.modalButton = 'Create';
                     this.editItemMode = false;
-                    document.getElementById('photo-to-upload').value = "";
+                    document.getElementById('art-to-upload').value = "";
                     $("#modal-art-item").modal('show');
                     $('[data-toggle="popover"]').popover();
                 },
@@ -402,7 +402,7 @@
                         toastr.error('Something went wrong.', '', {timeOut: 2000});
                     });
                 },
-                uploadArtPhoto: function(elementId = 'photo-to-upload') {
+                uploadArtPhoto: function(elementId = 'art-to-upload') {
                     if (document.getElementById(elementId).files[0]) {
                         // prepare data
                         this.imageUploading = true;

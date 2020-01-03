@@ -1,5 +1,7 @@
 <div class="tab-pane" id="tab-art" role="tabpanel">
     @include('admin.modals.artist')
+    @include('profile.modal-art-item')
+    @include('profile.modal-art-upload')
     <confirm-modal :modal-body="confirmText" :callback="confirmCallback" id="-art"></confirm-modal>
     <div class="row">
         {{--Artist list--}}
@@ -98,12 +100,12 @@
                 <h5>
                     <i class="fa fa-picture-o" aria-hidden="true"></i>
                     Art list
-                    {{-- <div class="pull-right" v-if="selectedArtist.id != 0"> --}}
+                    <div class="pull-right" v-if="selectedArtist.id != 0">
                         {{--create button--}}
-                        {{-- <a class="btn btn-primary btn-sm white-text" @click.stop="modalForAddItem">
+                        <a class="btn btn-primary btn-sm white-text" @click.stop="modalForAddItem">
                             Add
-                        </a> --}}
-                    {{-- </div> --}}
+                        </a>
+                    </div>
                 </h5>
                 <div class="text-xs-center" v-if="selectedArtist.id == 0">
                     <em>
@@ -139,21 +141,21 @@
                                                 <img :src="photo.urlThumb" class="shrink100x100"/>
                                             </a>
                                             {{--delete button--}}
-                                            {{-- <div class="abs-top-left">
+                                            <div class="abs-top-left">
                                                 <form method="post" action="" style="display: inline">
                                                     <input name="_method" type="hidden" value="DELETE"/>
                                                     <input name="_token" type="hidden" value="{{ csrf_token() }}">
-                                                    <confirm-button button-class="btn btn-danger btn-xs" button-icon="fa fa-trash"
+                                                    <confirm-button button-class="btn btn-danger btn-xs" button-icon="fa fa-trash" id="-art"
                                                         @click="confirmCallback = function() { deleteArtPhoto(photo.id) }; confirmText = 'Delete photo?'" />
                                                 </form>
-                                            </div> --}}
+                                            </div>
                                         </div>
                                     </div>     
-                                    {{-- <div v-if="editMode && item.photos.length < maxArtPhotos" class="size100x100 flex-center">
-                                        <a class="btn btn-primary btn-xs white-text" v-if="editMode" @click="modallForAddPhoto(index)">
+                                    <div v-if="item.photos.length < maxArtPhotos" class="size100x100 flex-center">
+                                        <a class="btn btn-primary btn-xs white-text" @click="modallForAddPhoto(index)">
                                             <i class="fa fa-plus"></i> <i class="fa fa-camera"></i>
                                         </a>
-                                    </div> --}}
+                                    </div>
                                 </div>
                             </td>
                             {{-- title and type --}}
@@ -163,11 +165,11 @@
                             </td>
                             {{-- edit and delete buttons --}}
                             <td>
-                                {{-- <a class="btn btn-primary btn-xs white-text" v-if="editMode" @click="modalForEditArtItem(index)">
+                                <a class="btn btn-primary btn-xs white-text" @click="modalForEditItem(index)">
                                     <i class="fa fa-pencil"></i> edit
                                 </a>
-                                <confirm-button button-class="btn btn-danger btn-xs" button-icon="fa fa-trash" button-text="delete" v-if="editMode"
-                                            @click="confirmCallback = function() { deleteArtItem(item.id) }; confirmText = 'Are you sure you want to delete art item?'" /> --}}
+                                <confirm-button button-class="btn btn-danger btn-xs" button-icon="fa fa-trash" button-text="delete" id="-art"
+                                            @click="confirmCallback = function() { deleteArtItem(item.id) }; confirmText = 'Are you sure you want to delete art item?'" />
                             </td>
                         </tr>
                     </tbody>
@@ -182,10 +184,14 @@
         data: {
             artists: [],
             selectedArtist: { id: 0 },
-            selectedArt: { id: 0},
+            art_item: { id: 0 },
             modalTitle: '',
             modalButton: '',
+            art_types: {!! json_encode($art_types) !!},
             editMode: false,
+            editItemMode: false,
+            imageUploading: false,
+            maxArtPhotos: 2,
             confirmCallback: function () {
             },
             confirmText: ''
@@ -202,14 +208,15 @@
             }
         },
         methods: {
-            loadArtists: function(idToSelect = false) {
+            loadArtists: function(idToSelect = -1) {
                 axios.get('/api/artists').then(function (response) {
                     $('#artists-loader').addClass('hidden-xs-up');
                     // add artists who are not unregistered or without user
-                    adminArt.artists = response.data.filter((x) => x.user == null || x.user.artist_id != null);
+                    adminArt.artists = response.data.filter((x) => (x.user == null || x.user.artist_id != null));
                     // pre-select an artist
-                    if (idToSelect) {
-                        adminArt.selectedArtist = adminArt.artists.find((x) => x.id == idToSelect);
+                    if (idToSelect > -1 && idToSelect !== undefined) {
+                        adminArt.selectedArtist = response.data.find((x) => x.id == idToSelect);
+                        adminArt.selectedArtist.name = adminArt.selectedArtist.displayArtistName;
                     }
                 }, function (response) {
                     // error handling
@@ -238,12 +245,6 @@
                 if (this.selectedArtist && this.selectedArtist.index) {
                     this.selectedArtist = JSON.parse(JSON.stringify(this.artists[this.selectedArtist.index]));
                 }
-            },
-            modalForAddItem: function() {
-
-            },
-            modalForEditItem: function() {
-
             },
             addArtist: function() {
                 axios.post('/api/artists', this.selectedArtist)
@@ -278,6 +279,141 @@
                     // error handling
                     toastr.error('Something went wrong.', '', {timeOut: 2000});
                 });
+            },
+            modalForAddItem: function() {
+                this.editMode = true; // for the modal
+                this.art_item = { 
+                    proper: true, 
+                    official: false, 
+                    artist_id: this.selectedArtist.id,
+                    prize_id: null,
+                    quantity: null,
+                    photoId: null,
+                    photoThumbUrl: null
+                };
+                this.modalTitle = 'Create Art item';
+                this.modalButton = 'Create';
+                this.editItemMode = false;
+                $("#modal-art-item").modal('show');
+                $('[data-toggle="popover"]').popover();
+                if (document.getElementById('art-to-upload')) {
+                    document.getElementById('art-to-upload').value = "";
+                }
+            },
+            modalForEditItem: function(artIndex) {
+                this.editMode = true; // for the modal
+                this.art_item = JSON.parse(JSON.stringify(this.selectedArtist.items[artIndex])); // copy
+                this.art_item.typeHelper = this.art_item.type;
+                this.modalTitle = 'Edit Art item';
+                this.modalButton = 'Save';
+                this.editItemMode = true;
+                $("#modal-art-item").modal('show');
+                $('[data-toggle="popover"]').popover();
+            },
+            modallForAddPhoto: function(itemIndex) {
+                this.editMode = true; // for the modal
+                this.art_item = this.selectedArtist.items[itemIndex];
+                this.art_item.photoId = null;
+                this.art_item.photoThumbUrl = null;
+                $("#modal-art-upload").modal('show');
+                document.getElementById('photo-add-file').value = "";
+            },
+            closeModal: function() {
+                this.hidePopovers();
+                if (this.art_item.photoId) {
+                    this.deleteArtPhoto(this.art_item.photoId);
+                }
+            },
+            hidePopovers: function() {
+                $('.popover').popover('hide');
+            },
+            createArtItem: function() {
+                axios.post('/api/prize-items', this.art_item)
+                    .then(function(response) {
+                        adminArt.art_item.id = response.data.id;
+                        adminArt.loadArtists(adminArt.selectedArtist.id);
+                        adminArt.hidePopovers();
+                        $("#modal-art-item").modal('hide');
+                        toastr.info('Art item is created successfully.', '', {timeOut: 2000});
+                        // attach photo
+                        if (adminArt.art_item.photoId != null) {
+                            adminArt.attachArtPhoto();
+                        }
+                    }, function(response) {
+                        // error handling
+                        toastr.error('Something went wrong.', '', {timeOut: 2000});
+                });
+            },
+            updateArtItem: function() {
+                axios.put('/api/prize-items/' + this.art_item.id, this.art_item)
+                    .then(function(response) {
+                        $("#modal-art-item").modal('hide');
+                        adminArt.hidePopovers();
+                        toastr.info('Art item is updated successfully.', '', {timeOut: 2000});
+                        adminArt.loadArtists(adminArt.selectedArtist.id);
+                    }, function(response) {
+                        // error handling
+                        toastr.error('Something went wrong.', '', {timeOut: 2000});
+                });
+            },
+            deleteArtItem: function(artId) {
+                axios.delete('/api/prize-items/' + artId).then(function (response) {
+                    adminArt.loadArtists(adminArt.selectedArtist.id);
+                    toastr.info('Art item is deleted.', '', {timeOut: 2000});
+                }, function(response) {
+                    // error handling
+                    toastr.error('Something went wrong.', '', {timeOut: 2000});
+                });
+            },
+            uploadArtPhoto: function(elementId = 'art-to-upload') {
+                if (document.getElementById(elementId).files[0]) {
+                    // prepare data
+                    this.imageUploading = true;
+                    var data = new FormData();
+                    data.append('photo', document.getElementById(elementId).files[0]);
+                    data.append('prize_id', null);
+                    data.append('prize_element_id', null); // set later
+                    data.append('user_id', {{ $user->id }});
+                    data.append('title', '');
+
+                    // post data
+                    axios.post('/api/photos', data)
+                        .then(function(response) {
+                            adminArt.art_item.photoId = response.data.id;
+                            adminArt.art_item.photoThumbUrl = response.data.url;
+                            adminArt.imageUploading = false;
+                        }, function(response) {
+                            // error handling
+                            toastr.error('Something went wrong.', '', {timeOut: 2000});
+                            adminArt.imageUploading = false;
+                    });
+                } else {
+                    // in case of empty field
+                    this.deleteArtPhoto(this.art_item.photoId);
+                    this.art_item.photoId = null;
+                    this.art_item.photoThumbUrl = null;
+                }
+            },
+            attachArtPhoto: function() {
+                axios.put('/api/photos/' + this.art_item.photoId, { "prize_element_id": this.art_item.id })
+                    .then(function(response) {
+                            // photo attached
+                            adminArt.loadArtists(adminArt.selectedArtist.id);
+                            $("#modal-art-upload").modal('hide');
+                        }, function(response) {
+                            // error handling
+                            toastr.error('Could not attach photo to art item.', '', {timeOut: 2000});
+                        }
+                );
+            },
+            deleteArtPhoto: function(photoId) {
+                axios.delete('/api/photos/' + photoId).then(function (response) {
+                        adminArt.loadArtists(adminArt.selectedArtist.id);
+                        toastr.info('Photo deleted.', '', {timeOut: 2000});
+                    }, function(response) {
+                        // error handling
+                        toastr.error('Photo was not deleted.', '', {timeOut: 2000});
+                    });
             }
         }
     })
