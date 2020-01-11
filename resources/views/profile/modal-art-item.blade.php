@@ -14,7 +14,17 @@
                     <div class="form-group row">
                         <label for="title" class="col-sm-3 col-form-label">Title:</label>
                         <div class="col-sm-9">
-                            <input type="text" name="title" class="form-control" v-model="art_item.title" required />
+                            <input type="text" name="title" class="form-control" v-model="art_item.title" 
+                                placeholder="card/art title" required />
+                        </div>
+                    </div>
+
+                    {{--Info--}}
+                    <div class="form-group row">
+                        <label for="title" class="col-sm-3 col-form-label">Additional info:</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="title" class="form-control" v-model="art_item.info"
+                                placeholder="i.e. commisioned to event" />
                         </div>
                     </div>
 

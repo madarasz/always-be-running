@@ -35,7 +35,7 @@
                                 </div>
                             </div>     
                             <div class="m-l-1">
-                                @{{ item.title }}<br/>
+                                @{{ item.title }} <em v-if="item.info && item.info.length > 0">(@{{ item.info }})</em><br/>
                                 <span class="small-text">@{{ item.type}}</span>
                             </div>
                         </div>

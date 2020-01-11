@@ -105,7 +105,7 @@
                             </td>
                             {{-- title and type --}}
                             <td>
-                                @{{ item.title }}<br/>
+                                @{{ item.title }} <em v-if="item.info && item.info.length > 0">(@{{ item.info }})</em><br/>
                                 <span class="small-text">@{{ item.type}}</span>
                             </td>
                             {{-- edit and delete buttons --}}
