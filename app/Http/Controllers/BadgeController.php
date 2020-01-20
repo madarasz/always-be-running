@@ -142,7 +142,7 @@ class BadgeController extends Controller
                 $tounamentIds = Tournament::where('tournament_type_id', $type)->where('approved', 1)->pluck('id');
             } else {
                 $tounamentIds = Tournament::where('tournament_type_id', $type)
-                    ->where('date', '>', $year)->where('date', '<', ($year + 1))->where('approved', 1)->pluck('id');
+                    ->where('date', '>', $year)->where('date', '<', ($year + 1).'.03')->where('approved', 1)->pluck('id'); // adding '.03' to year to compensate for late 2019 nationals
             }
         }
 
