@@ -19,7 +19,7 @@ class AddTypeToEntriesTable extends Migration
             // 3 - claim with decklists
             // 4 - claim without decklists
             // 11 - imported entry by NRTM
-            // 12 - imported entry by CSV
+            // 12 - imported entry by CSV - depricated
             // 13 - imported entry by manual
             // 14 - imported entry by Cobr.ai
         });

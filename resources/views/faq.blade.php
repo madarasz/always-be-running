@@ -106,11 +106,29 @@
                     <a name="import" class="anchor"></a><strong>How do I import the tournament results?</strong>
                 </p>
                 <p>
-                    You can do it in bulk either by <strong><a href="#import-nrtm">NRTM</a></strong> or a
-                    <strong><a href="#import-csv">CSV</a></strong> file that you prepare.
+                    You can do it in bulk either by <strong><a href="#import-cobrai">Cobr.ai</a></strong> or by <strong><a href="#import-nrtm">NRTM</a></strong>.
                     Or you can <strong><a href="#import-manual">import manually</a></strong>.
                 </p>
                 <ul>
+                    <li>
+                        <p>
+                            <a name="import-cobrai" class="anchor"></a>
+                            <a href="https://cobr.ai">Cobr.ai</a> is a Netrunner tournament
+                            manager website. 
+                        </p>
+                        <ol>
+                            <li>Use your <em>NetrunnerDB</em> account to log in, create the tournament and record results.</li>
+                            <li>Once you have all the results and the tournament is finished, go to the <strong>Settings</strong> tab.</li>
+                            <li>Here you can either:</li>
+                            <ul>
+                                <li>Click <strong>Upload to Always Be Running</strong>. You will get an conclusion code which you can use on AlwaysBeRunning.net to conlcude the tournament</li>
+                                <li><strong>Download as JSON</strong> and use that file on AlwaysBeRunning.net to conclude the tournament.</li>
+                            </ul>
+                        </ol>
+                        <div class="bracket-mini markdown-content">
+                            <img src="img/faq-cobrai.png"/>
+                        </div>
+                    </li>
                     <li>
                         <p>
                             <a name="import-nrtm" class="anchor"></a>
@@ -174,22 +192,6 @@
                                         switch on <strong>Add JSON Data to Export</strong>.</em>
                                 </li>
                             </ul>
-                        </p>
-                    </li>
-                    <li>
-                        <a name="import-csv" class="anchor"></a>
-                        <p>
-                            If you are uploading a CSV file, you have to follow this format:<br/>
-                        <blockquote class="help-markdown">name;swiss-rank;topcut-rank;runnerID;corpID</blockquote><br/>
-                        If there were no top-cut or the player did not reach top-cut, use "0" (zero)
-                        in the <em>top-cut rank</em> field. The ID fields should be the (substring of the)
-                        official card name. Example:
-                        <blockquote class="help-markdown">
-                            Pete;1;0;Kit;Near-Earth Hub<br/>
-                            Tristan;2;0;Hayley;Engineering the Future<br/>
-                            Alice;3;0;Omar;Controlling the Message<br/>
-                            Ed;4;0;Khan;Architects of Tomorrow<br/>
-                        </blockquote>
                         </p>
                     </li>
                     <li>

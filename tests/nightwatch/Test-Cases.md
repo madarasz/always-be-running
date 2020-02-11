@@ -97,10 +97,6 @@
 - Navigate to Results page
 - Check that tournament is in to-be-concluded table and not in results table
 
-**TODO**
-
-- Conclude by CSV
-
 *concluding is also tested in **"008 Claiming"***
 
 ### 008 Claiming

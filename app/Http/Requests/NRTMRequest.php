@@ -24,7 +24,7 @@ class NRTMRequest extends Request
     public function rules()
     {
         return [
-            'jsonresults' => 'required_without_all:conclusion_code,csvresults',
+            'jsonresults' => 'required_without_all:conclusion_code',
             'conclusion_code' => 'conc_code:'.Request::get('conclusion_code'),
         ];
     }

@@ -69,18 +69,6 @@
                                                 <input id="jsonresults" class="form-control" name="jsonresults" type="file">
                                             </div>
                                             <div class="p-b-1"><strong>OR</strong></div>
-                                            {{--CSV--}}
-                                            <div class="form-group text-xs-left">
-                                                {!! Form::label('csvresults', 'CSV file') !!}
-                                                @include('partials.popover', ['direction' => 'top', 'content' =>
-                                                    '<strong>required row format:</strong><br/>
-                                                    <em>name;swiss-rank;topcut-rank;runnerID;corpID</em><br/>
-                                                    <br/>
-                                                    If there were no top-cut or the player did not reach top-cut, use "0" (zero)
-                                                    in the <em>top-cut rank</em> field. The ID fields should be the (substring of the)
-                                                    official card name. Eg. "Andromeda" works.'])
-                                                <input id="csvresults" class="form-control" name="csvresults" type="file">
-                                            </div>
                                             <div class="button-spacer"></div>
                                             <div class="inside-bottom-center">
                                                 {!! Form::submit('Conclude via import', ['class' => 'btn btn-conclude']) !!}

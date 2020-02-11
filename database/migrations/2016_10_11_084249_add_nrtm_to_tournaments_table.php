@@ -16,7 +16,7 @@ class AddNrtmToTournamentsTable extends Migration
             $table->boolean('import')->default(0);
             // 0 - no import
             // 1 - by NRTM
-            // 2 - by CSV
+            // 2 - by CSV - depricated
             // 3 - by manual
             // 4 - by Cobr.ai
         });
