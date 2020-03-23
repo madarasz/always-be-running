@@ -138,45 +138,59 @@
                 </div>
                 <div class="col-md-9 col-xs-12 legal-bullshit" v-if="selectedPrizeIndex > -1" v-html="prizeSummary"></div>
             </div>
-            {{-- Alt arts --}}
+            {{-- Unofficial alt arts --}}
             <div class="row form-group m-t-1">
                 <label for="alt_prize_selector" class="col-md-3 col-xs-12 col-form-label">
                     Unofficial prizes:
                     @include('partials.popover', ['direction' => 'top', 'content' =>
                             'You can add prize items from the artists registered on ABR. These are usually fan made alternate arts or items.<br/>
-                            <a href="https://alwaysberunning.net/prizes#tab-other" target="_blank">Check out these art items</a>'])
+                            <a href="https://alwaysberunning.net/prizes#tab-other" target="_blank">Check out these items</a>'])
                 </label>
                 <div class="col-md-5 col-xs-8">
                     <div class="loader-chart" v-if="unofficialPrizes.length == 0">&nbsp;</div>
                     <div class="input-group">
-                        <div class="input-group-prepend">
-                            <img style="max-heigh: 38px; max-width: 38px" :src="focusedUnofficialPrize.urlThumb" v-if="focusedUnofficialPrize != null">
+                        <div class="input-group-prepend" style="display: flex">
+                            <img class="v-autocomplete-preview" :src="focusedUnofficialPrize.urlThumb" v-if="focusedUnofficialPrize != null">
                         </div>
                         <template v-if="unofficialPrizes.length > 0">
                             <v-autocomplete :items="unofficialPrizesSelection" v-model="focusedUnofficialPrize"
                                 :input-attrs="{ class: focusedUnofficialPrize != null ? 'border-left-flat v-autocomplete-input' : 'v-autocomplete-input'}"
-                                :component-item='selectionTemplate' :get-label="getPrizeLabel" placeholder="start typing"
+                                :component-item='selectionTemplate' :get-label="getPrizeLabel" placeholder="type title or artist"
                                 @update-items="prizeInputChange" :min-len="2" :auto-select-one-item="false"/>
                         </template>
                     </div>
                 </div>
                 <div class="col-md-4 col-xs-4">
                     <div class="input-group">
-                        <input maxlength="15" type="text" placeholder="quantity" class="form-control"/>
+                        <input maxlength="15" type="text" placeholder="quantity" class="form-control" v-model="unofficialQuantity"/>
                         <div class="input-group-append">
                             <button type="button" class="btn border-left-flat" :class="focusedUnofficialPrize != null ? 'btn-primary' : 'btn-secondary'"
-                                    style="border-left: 0" :disabled="focusedUnofficialPrize == null">
-                                <i aria-hidden="true" class="fa fa-plus-circle"
-                                        style="font-size: 1.3em" id="button-add-unofficial"></i>
-                            </button>
-                            
+                                    style="border-left: 0" :disabled="focusedUnofficialPrize == null" @click="addUnofficialPrize">
+                                <i aria-hidden="true" class="fa fa-plus-circle font-1-3" id="button-add-unofficial"></i>
+                            </button> 
                         </div>
                     </div>
                 </div>
-                {{-- <div class="col-md-1 col-xs-1 text-xs-center" style="padding: 0.5rem 0">
-                    
-                </div> --}}
             </div>
+            {{-- Added unofficialPrizes --}}
+            <table v-if="addedUnofficialPrizes.length > 0" style="margin: 0 auto">
+                <tr v-for="(prize, index) in addedUnofficialPrizes">
+                    <td class="text-xs-right">
+                        @{{ prize.quantity }}<span v-if="!isNaN(prize.quantity) && prize.quantity.length">x</span>
+                    </td>
+                    <td nowrap>
+                        <img class="v-autocomplete-preview" :src="prize.urlThumb" v-if="prize.urlThumb.length">
+                        <strong>@{{ prize.title }}</strong> by <em>@{{ prize.artist }}</em>
+                    </td>
+                    <td>
+                        <i aria-hidden="true" class="fa fa-times-circle text-danger font-1-3 btn" @click="removeUnofficial(index)"></i>
+                    </td>
+                </tr>
+            </table>
+            <div class="text-xs-center legal-bullshit" v-if="addedUnofficialPrizes.length == 0">
+                no unofficial items added
+            </div>
+            <hr/>
             {{--Additional prizes--}}
             <div class="form-group hide-nonrequired m-t-1">
                 {!! Form::label('prize_additional', 'Additional prizes') !!}
@@ -475,7 +489,7 @@
     // template for filtered unofficial items
     Vue.use(VAutocomplete.default);
     var itemTemplate = Vue.component('itemTemplate', {
-        template: '<div><strong>@{{ item.title }}</strong> by <em></em>@{{ item.artist }}</div>',
+        template: '<div><strong>@{{ item.title }}</strong> by <em>@{{ item.artist }}</em></div>',
         props: {
             item: { required: true },
         }
@@ -487,8 +501,8 @@
             prizes: [], // all official prize kits
             unofficialPrizes: [], // all unofficial prize items
             unofficialPrizesSelection: null, // list of filtered unofficial items
-            unofficialSelected: false,
             focusedUnofficialPrize: null, // currently selected unofficial item
+            unofficialQuantity: '',
             addedUnofficialPrizes: [],
             prizeId: '{{ old('prize_id', $tournament->prize_id) }}' || '0',
             selectionTemplate: itemTemplate
@@ -557,11 +571,19 @@
                 return "";
             },
             prizeInputChange(text) {
-                console.log('search: '+text)
                 this.unofficialPrizesSelection = this.unofficialPrizes.filter(
                     x => { return x.title.toUpperCase().includes(text.toUpperCase()) || 
                                 x.artist.toUpperCase().includes(text.toUpperCase()); }
                 );
+            },
+            addUnofficialPrize() {
+                this.focusedUnofficialPrize.quantity = this.unofficialQuantity;
+                this.addedUnofficialPrizes.push(JSON.parse(JSON.stringify(this.focusedUnofficialPrize)));
+                this.focusedUnofficialPrize = null;
+                this.unofficialQuantity = "";
+            },
+            removeUnofficial(index) {
+                this.addedUnofficialPrizes.splice(index, 1);
             }
         }
     });

@@ -1281,3 +1281,11 @@ table.prize-collection td {
     border-top-left-radius: 0; 
     border-bottom-left-radius: 0;
 }
+.v-autocomplete-preview {
+    max-height: 38px; 
+    max-width: 38px;
+    margin: auto 0;
+}
+.font-1-3 {
+    font-size: 1.3em;
+}
