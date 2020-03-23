@@ -126,7 +126,7 @@
             <div class="row form-group">
                 {!! Form::label('prize_id', 'Official prize kit:', ['class' => 'col-md-3 col-xs-12 col-form-label']) !!}
                 <div class="col-md-9 col-xs-12">
-                    {{--<div class="loader-chart" id="prizes-loader" v-if="prizes.length == 0">&nbsp;</div>--}}
+                    <div class="loader-chart" v-if="prizes.length == 0">&nbsp;</div>
                     <select name="prize_id" v-model="prizeId" class="form-control" v-if="prizes.length > 0">
                         <option value="0">--- none ---</option>
                         <option v-for="prize in prizes" :value="prize.id">@{{ prize.year+' '+prize.title }}</option>
@@ -138,15 +138,53 @@
                 </div>
                 <div class="col-md-9 col-xs-12 legal-bullshit" v-if="selectedPrizeIndex > -1" v-html="prizeSummary"></div>
             </div>
-
+            {{-- Alt arts --}}
+            <div class="row form-group m-t-1">
+                <label for="alt_prize_selector" class="col-md-3 col-xs-12 col-form-label">
+                    Unofficial prizes:
+                    @include('partials.popover', ['direction' => 'top', 'content' =>
+                            'You can add prize items from the artists registered on ABR. These are usually fan made alternate arts or items.<br/>
+                            <a href="https://alwaysberunning.net/prizes#tab-other" target="_blank">Check out these art items</a>'])
+                </label>
+                <div class="col-md-5 col-xs-8">
+                    <div class="loader-chart" v-if="unofficialPrizes.length == 0">&nbsp;</div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <img style="max-heigh: 38px; max-width: 38px" :src="focusedUnofficialPrize.urlThumb" v-if="focusedUnofficialPrize != null">
+                        </div>
+                        <template v-if="unofficialPrizes.length > 0">
+                            <v-autocomplete :items="unofficialPrizesSelection" v-model="focusedUnofficialPrize"
+                                :input-attrs="{ class: focusedUnofficialPrize != null ? 'border-left-flat v-autocomplete-input' : 'v-autocomplete-input'}"
+                                :component-item='selectionTemplate' :get-label="getPrizeLabel" placeholder="start typing"
+                                @update-items="prizeInputChange" :min-len="2" :auto-select-one-item="false"/>
+                        </template>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xs-4">
+                    <div class="input-group">
+                        <input maxlength="15" type="text" placeholder="quantity" class="form-control"/>
+                        <div class="input-group-append">
+                            <button type="button" class="btn border-left-flat" :class="focusedUnofficialPrize != null ? 'btn-primary' : 'btn-secondary'"
+                                    style="border-left: 0" :disabled="focusedUnofficialPrize == null">
+                                <i aria-hidden="true" class="fa fa-plus-circle"
+                                        style="font-size: 1.3em" id="button-add-unofficial"></i>
+                            </button>
+                            
+                        </div>
+                    </div>
+                </div>
+                {{-- <div class="col-md-1 col-xs-1 text-xs-center" style="padding: 0.5rem 0">
+                    
+                </div> --}}
+            </div>
             {{--Additional prizes--}}
-            <div class="form-group hide-nonrequired">
+            <div class="form-group hide-nonrequired m-t-1">
                 {!! Form::label('prize_additional', 'Additional prizes') !!}
                 <div class="pull-right">
                     <small><a href="http://commonmark.org/help/" target="_blank" rel="nofollow"><img src="/img/markdown_icon.png"/></a> formatting is supported</small>
                 </div>
                 {!! Form::textarea('prize_additional', old('prize_additional', $tournament->prize_additional),
-                    ['rows' => 4, 'cols' => '', 'class' => 'form-control', 'placeholder' => 'anything in addition to the selected prize kit']) !!}
+                    ['rows' => 4, 'cols' => '', 'class' => 'form-control', 'placeholder' => 'anything in addition to the selected prizes, how prizes will be distributed']) !!}
             </div>
         </div>
         {{--Conclusion--}}
@@ -434,11 +472,26 @@
         }
     }
 
+    // template for filtered unofficial items
+    Vue.use(VAutocomplete.default);
+    var itemTemplate = Vue.component('itemTemplate', {
+        template: '<div><strong>@{{ item.title }}</strong> by <em></em>@{{ item.artist }}</div>',
+        props: {
+            item: { required: true },
+        }
+    });
+
     var formTournament= new Vue({
         el: '#form-tournament',
         data: {
-            prizes: [],
-            prizeId: '{{ old('prize_id', $tournament->prize_id) }}' || '0'
+            prizes: [], // all official prize kits
+            unofficialPrizes: [], // all unofficial prize items
+            unofficialPrizesSelection: null, // list of filtered unofficial items
+            unofficialSelected: false,
+            focusedUnofficialPrize: null, // currently selected unofficial item
+            addedUnofficialPrizes: [],
+            prizeId: '{{ old('prize_id', $tournament->prize_id) }}' || '0',
+            selectionTemplate: itemTemplate
         },
         mounted: function () {
             this.loadPrizes();
@@ -471,17 +524,45 @@
             }
         },
         methods: {
-            // load all my groups
+            // load all prizes
             loadPrizes: function () {
+                // load prize kits
                 axios.get('/api/prizes').then(function (response) {
                     formTournament.prizes = response.data;
-                    $('#prizes-loader').addClass('hidden-xs-up');
                 }, function (response) {
                     // error handling
                     toastr.error('Something went wrong while loading the prize kits.', '', {timeOut: 2000});
                 });
+                // load unofficial arts
+                axios.get('/api/artists').then(function (response) {
+                    formTournament.unofficialPrizes = response.data.map(
+                        x => { return x.items.map(
+                            y => { return {
+                                id: y.id, 
+                                title: y.title, 
+                                artist: x.displayArtistName,
+                                urlThumb: y.photos.length > 0 ? y.photos[0].urlThumb : ""
+                            }}
+                        )}
+                    ).flat();
+                }, function (response) {
+                    // error handling
+                    toastr.error('Something went wrong while loading the unofficial prizes.', '', {timeOut: 2000});
+                });
+            },
+            getPrizeLabel(item) {
+                if (item != null && item.hasOwnProperty('title') && item.hasOwnProperty('artist')) {
+                    return item.title+' by '+item.artist;
+                }
+                return "";
+            },
+            prizeInputChange(text) {
+                console.log('search: '+text)
+                this.unofficialPrizesSelection = this.unofficialPrizes.filter(
+                    x => { return x.title.toUpperCase().includes(text.toUpperCase()) || 
+                                x.artist.toUpperCase().includes(text.toUpperCase()); }
+                );
             }
-
         }
     });
 

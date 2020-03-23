@@ -1235,3 +1235,49 @@ table.prize-collection td {
         background-color: rgba(0, 0, 0, 0.00) !important;
     }
 }
+
+/* v-autocomplete for unofficial prize selection */
+.v-autocomplete {
+    position:relative;
+    width: 100%;
+}
+.v-autocomplete .v-autocomplete-list {
+    position:absolute
+}
+.v-autocomplete .v-autocomplete-list .v-autocomplete-list-item {
+    cursor:pointer
+}
+.v-autocomplete .v-autocomplete-list-item .v-autocomplete-item-active {
+    background-color:#f3f6fa
+}
+.v-autocomplete-input {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.25;
+    color: #55595c;
+    background-color: #fff;
+    background-image: none;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.25rem;
+}
+.v-autocomplete-list {
+    border: 2px solid rgba(0, 0, 0, 0.35);
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    background-color:#fff;
+    z-index: 500;
+}
+.v-autocomplete-item-active:hover {
+    background-color: #cce5ff;
+}
+.v-autocomplete-selected .v-autocomplete-input {
+    background-color: #edf7ef !important;
+    border-color: #c5e7cd !important;
+}
+.border-left-flat {
+    border-top-left-radius: 0; 
+    border-bottom-left-radius: 0;
+}
