@@ -176,7 +176,7 @@
             <table v-if="addedUnofficialPrizes.length > 0" style="margin: 0 auto">
                 <tr v-for="(prize, index) in addedUnofficialPrizes">
                     <td class="text-xs-right">
-                        @{{ prize.quantity }}<span v-if="!isNaN(prize.quantity) && prize.quantity.length">x</span>
+                        @{{ prize.quantity }}<span v-if="prize.quantity.length">@{{ isNaN(prize.quantity) ? ':' : 'x'}}</span>
                     </td>
                     <td nowrap>
                         <img class="v-autocomplete-preview" :src="prize.urlThumb" v-if="prize.urlThumb.length">

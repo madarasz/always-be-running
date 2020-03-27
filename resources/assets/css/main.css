@@ -1289,3 +1289,9 @@ table.prize-collection td {
 .font-1-3 {
     font-size: 1.3em;
 }
+
+/* prizes */
+.table-prizes {
+    margin: 0 auto; 
+    width: 90%;
+}

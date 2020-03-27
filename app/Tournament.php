@@ -56,7 +56,7 @@ class Tournament extends Model
     }
 
     public function unofficial_prizes() {
-        return $this->hasMany(TournamentPrizes::class, 'tournament_id', 'id');
+        return $this->hasMany(TournamentPrize::class, 'tournament_id', 'id');
     }
 
     public function groups() {
