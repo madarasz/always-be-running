@@ -126,7 +126,7 @@
             <div class="row form-group">
                 {!! Form::label('prize_id', 'Official prize kit:', ['class' => 'col-md-3 col-xs-12 col-form-label']) !!}
                 <div class="col-md-9 col-xs-12">
-                    {{--<div class="loader-chart" id="prizes-loader" v-if="prizes.length == 0">&nbsp;</div>--}}
+                    <div class="loader-chart" v-if="prizes.length == 0">&nbsp;</div>
                     <select name="prize_id" v-model="prizeId" class="form-control" v-if="prizes.length > 0">
                         <option value="0">--- none ---</option>
                         <option v-for="prize in prizes" :value="prize.id">@{{ prize.year+' '+prize.title }}</option>
@@ -138,15 +138,67 @@
                 </div>
                 <div class="col-md-9 col-xs-12 legal-bullshit" v-if="selectedPrizeIndex > -1" v-html="prizeSummary"></div>
             </div>
-
+            {{-- Unofficial alt arts --}}
+            <div class="row form-group m-t-1">
+                <label for="alt_prize_selector" class="col-md-3 col-xs-12 col-form-label">
+                    Unofficial prizes:
+                    @include('partials.popover', ['direction' => 'top', 'content' =>
+                            'You can add prize items from the artists registered on ABR. These are usually fan made alternate arts or items.<br/>
+                            <a href="https://alwaysberunning.net/prizes#tab-other" target="_blank">Check out these items</a>'])
+                </label>
+                <div class="col-md-5 col-xs-8">
+                    <div class="loader-chart" v-if="!unofficialPrizesLoaded">&nbsp;</div>
+                    <div class="input-group">
+                        <div class="input-group-prepend" style="display: flex">
+                            <img class="v-autocomplete-preview" :src="focusedUnofficialPrize.urlThumb" v-if="focusedUnofficialPrize != null">
+                        </div>
+                        <template v-if="unofficialPrizesLoaded">
+                            <v-autocomplete :items="unofficialPrizesSelection" v-model="focusedUnofficialPrize"
+                                :input-attrs="{ class: focusedUnofficialPrize != null ? 'border-left-flat v-autocomplete-input' : 'v-autocomplete-input'}"
+                                :component-item='selectionTemplate' :get-label="getPrizeLabel" placeholder="type title or artist"
+                                @update-items="prizeInputChange" :min-len="2" :auto-select-one-item="false"/>
+                        </template>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xs-4">
+                    <div class="input-group">
+                        <input maxlength="15" type="text" placeholder="quantity" class="form-control" v-model="unofficialQuantity"/>
+                        <div class="input-group-append">
+                            <button type="button" class="btn border-left-flat" :class="focusedUnofficialPrize != null ? 'btn-primary' : 'btn-secondary'"
+                                    style="border-left: 0" :disabled="focusedUnofficialPrize == null" @click="addUnofficialPrize">
+                                <i aria-hidden="true" class="fa fa-plus-circle font-1-3" id="button-add-unofficial"></i>
+                            </button> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{-- Added unofficialPrizes --}}
+            <table v-if="addedUnofficialPrizes.length > 0" style="margin: 0 auto">
+                <tr v-for="(prize, index) in addedUnofficialPrizes">
+                    <td class="text-xs-right">
+                        @{{ prize.quantity }}<span v-if="prize.quantity.length">@{{ isNaN(prize.quantity) ? ':' : 'x'}}</span>
+                    </td>
+                    <td nowrap>
+                        <img class="v-autocomplete-preview" :src="prize.urlThumb" v-if="prize.urlThumb.length">
+                        <strong>@{{ prize.title }}</strong> by <em>@{{ prize.artist }}</em>
+                    </td>
+                    <td>
+                        <i aria-hidden="true" class="fa fa-times-circle text-danger font-1-3 btn" @click="removeUnofficial(index)"></i>
+                    </td>
+                </tr>
+            </table>
+            <div class="text-xs-center legal-bullshit" v-if="addedUnofficialPrizes.length == 0">
+                no unofficial items added
+            </div>
+            <hr/>
             {{--Additional prizes--}}
-            <div class="form-group hide-nonrequired">
+            <div class="form-group hide-nonrequired m-t-1">
                 {!! Form::label('prize_additional', 'Additional prizes') !!}
                 <div class="pull-right">
                     <small><a href="http://commonmark.org/help/" target="_blank" rel="nofollow"><img src="/img/markdown_icon.png"/></a> formatting is supported</small>
                 </div>
                 {!! Form::textarea('prize_additional', old('prize_additional', $tournament->prize_additional),
-                    ['rows' => 4, 'cols' => '', 'class' => 'form-control', 'placeholder' => 'anything in addition to the selected prize kit']) !!}
+                    ['rows' => 4, 'cols' => '', 'class' => 'form-control', 'placeholder' => 'anything in addition to the selected prizes, how prizes will be distributed']) !!}
             </div>
         </div>
         {{--Conclusion--}}
@@ -434,11 +486,28 @@
         }
     }
 
+    // template for filtered unofficial items
+    Vue.use(VAutocomplete.default);
+    var itemTemplate = Vue.component('itemTemplate', {
+        template: '<div><strong>@{{ item.title }}</strong> by <em>@{{ item.artist }}</em></div>',
+        props: {
+            item: { required: true },
+        }
+    });
+
     var formTournament= new Vue({
         el: '#form-tournament',
         data: {
-            prizes: [],
-            prizeId: '{{ old('prize_id', $tournament->prize_id) }}' || '0'
+            prizes: [], // all official prize kits
+            unofficialPrizes: [], // all unofficial prize items
+            unofficialPrizesSelection: null, // list of filtered unofficial items
+            focusedUnofficialPrize: null, // currently selected unofficial item
+            unofficialQuantity: '',
+            addedUnofficialPrizes: [],
+            prizeId: '{{ old('prize_id', $tournament->prize_id) }}' || '0',
+            selectionTemplate: itemTemplate,
+            unofficialPrizesLoaded: false,
+            tournamentId: {{ is_null($tournament->id) ? $temp_id : $tournament->id }}
         },
         mounted: function () {
             this.loadPrizes();
@@ -471,17 +540,99 @@
             }
         },
         methods: {
-            // load all my groups
+            // load all prizes
             loadPrizes: function () {
+                // load prize kits
                 axios.get('/api/prizes').then(function (response) {
                     formTournament.prizes = response.data;
-                    $('#prizes-loader').addClass('hidden-xs-up');
                 }, function (response) {
                     // error handling
                     toastr.error('Something went wrong while loading the prize kits.', '', {timeOut: 2000});
                 });
-            }
+                // load unofficial arts
+                axios.get('/api/artists').then(function (response) {
+                    formTournament.unofficialPrizes = response.data.map(
+                        x => { return x.items.map(
+                            y => { return {
+                                id: y.id, 
+                                title: y.title, 
+                                artist: x.displayArtistName,
+                                urlThumb: y.photos.length > 0 ? y.photos[0].urlThumb : ""
+                            }}
+                        )}
+                    ).flat();
+                    formTournament.unofficialPrizesLoaded = true;
 
+                    // {{-- if editing load already added unofficial prizes --}}
+                    @if (!is_null($tournament->id))       
+                        formTournament.unofficialPrizesLoaded = false;
+                        formTournament.loadAddedUnofficialPrizes();
+                    @endif
+
+                }, function (response) {
+                    // error handling
+                    toastr.error('Something went wrong while loading the unofficial prizes.', '', {timeOut: 2000});
+                });
+            },
+            getPrizeLabel(item) {
+                if (item != null && item.hasOwnProperty('title') && item.hasOwnProperty('artist')) {
+                    return item.title+' by '+item.artist;
+                }
+                return "";
+            },
+            prizeInputChange(text) {
+                this.unofficialPrizesSelection = this.unofficialPrizes.filter(
+                    x => { return x.title.toUpperCase().includes(text.toUpperCase()) || 
+                                x.artist.toUpperCase().includes(text.toUpperCase()); }
+                );
+            },
+            addUnofficialPrize() {
+                this.focusedUnofficialPrize.quantity = this.unofficialQuantity;
+                var payload = {
+                    prize_element_id: this.focusedUnofficialPrize.id, 
+                    quantity: this.focusedUnofficialPrize.quantity
+                }
+                axios.post('/api/unofficial-prizes/'+this.tournamentId, payload).then(function (response) {
+                    formTournament.focusedUnofficialPrize.tournamentPrizeId = response.data.id;
+                    formTournament.addedUnofficialPrizes.push(JSON.parse(JSON.stringify(formTournament.focusedUnofficialPrize)));
+                    formTournament.focusedUnofficialPrize = null;
+                    formTournament.unofficialQuantity = "";
+                    toastr.info('Unofficial prize added', {timeOut: 500});
+                }, function (response) {
+                    // error handling
+                    toastr.error('Something went wrong while adding the unofficial prize', '', {timeOut: 2000});
+                });
+            },
+            removeUnofficial(index) {
+                axios.delete('/api/unofficial-prizes/'+this.addedUnofficialPrizes[index].tournamentPrizeId).then(function (response) {
+                    formTournament.addedUnofficialPrizes.splice(index, 1);
+                    toastr.info('Unofficial prize removed', {timeOut: 500});
+                }, function (response) {
+                    // error handling
+                    toastr.error('Something went wrong while removing the unofficial prize', '', {timeOut: 2000});
+                });
+            },
+            loadAddedUnofficialPrizes() {
+                axios.get('/api/tournaments/'+this.tournamentId+'/unofficial-prizes').then(function (response) {
+                    formTournament.addedUnofficialPrizes = response.data.map(
+                        x => {
+                            prize =  formTournament.unofficialPrizes.find(y => { return y.id == x.prize_element_id; });
+                            return {
+                                artist: prize.artist,
+                                id: prize.id,
+                                quantity: x.quantity,
+                                title: prize.title,
+                                tournamentPrizeId: x.id,
+                                urlThumb: prize.urlThumb
+                            };
+                        }
+                    );
+                    formTournament.unofficialPrizesLoaded = true;
+                }, function (response) {
+                    // error handling
+                    toastr.error('Something went wrong while loading the unofficial prizes for the tournament', '', {timeOut: 2000});
+                });
+            }
         }
     });
 

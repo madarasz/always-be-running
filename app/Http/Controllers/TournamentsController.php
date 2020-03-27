@@ -12,6 +12,7 @@ use App\TournamentType;
 use App\CardIdentity;
 use App\Video;
 use App\Mwl;
+use App\TournamentPrize;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +37,9 @@ class TournamentsController extends Controller
                 'concluded_at' => date('Y-m-d H:i:s')
             ]));
         }
+
+        // updating unofficial prize connections from temp_id
+        TournamentPrize::where('tournament_id', $request->temp_id)->update(['tournament_id' => $tournament->id]);
 
         // redirecting to show newly created tournament
         return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
@@ -64,9 +68,14 @@ class TournamentsController extends Controller
         // make cardpool default to 'not yet known'
         $tournament->cardpool_id = 'unknown';
 
+        // randomize temporary ID for unofficial prizes relation
+        do {
+            $temp_id = rand(100000, 999999);
+        } while (TournamentPrize::where('tournament_id', $temp_id)->count() > 0 || Tournament::where('id', $temp_id)->count() > 0);
+
         $page_section = 'organize';
         return view('tournaments.create', compact('tournament_types', 'tournament', 'cardpools', 'page_section',
-            'tournament_formats', 'tournament_prizes', 'mwls', 'mwl_dates'));
+            'tournament_formats', 'tournament_prizes', 'mwls', 'mwl_dates', 'temp_id'));
     }
 
     /**
