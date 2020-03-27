@@ -35,7 +35,7 @@
                 @include('tournaments.viewer.description')
             @endunless
             {{--Prizes--}}
-            @if(@$tournament->prize || $tournament->prize_additional !== '')
+            @if(@$tournament->prize || $tournament->prize_additional !== '' || $tournament->unofficial_prizes->count() > 0)
                 @include('tournaments.viewer.prizes')
             @endif
             {{--Matches--}}
