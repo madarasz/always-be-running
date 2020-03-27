@@ -55,6 +55,10 @@ class Tournament extends Model
         return $this->hasMany(Video::class, 'tournament_id', 'id');
     }
 
+    public function unofficial_prizes() {
+        return $this->hasMany(TournamentPrizes::class, 'tournament_id', 'id');
+    }
+
     public function groups() {
         return $this->belongsToMany(TournamentGroup::class, 'tournament_tournament_groups',
             'tournament_id', 'tournament_group_id');
