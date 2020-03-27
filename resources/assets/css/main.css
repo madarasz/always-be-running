@@ -1295,3 +1295,7 @@ table.prize-collection td {
     margin: 0 auto; 
     width: 90%;
 }
+.qr-code {
+    max-width: 50%;
+    height: auto;
+}
