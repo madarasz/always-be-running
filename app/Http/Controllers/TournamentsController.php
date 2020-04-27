@@ -536,6 +536,10 @@ class TournamentsController extends Controller
         if ($request->input('mwl_id')) {
             $tournaments = $tournaments->where('mwl_id', $request->input('mwl_id'));
         }
+        if ($request->input('format')) {
+            $format_id = TournamentFormat::where('format_name', $request->input('format'))->first()->id;
+            $tournaments = $tournaments->where('tournament_format_id', $format_id); 
+        }
         if ($request->input('state')) {
             $tournaments = $tournaments->where('location_state', $request->input('state'));
         }
