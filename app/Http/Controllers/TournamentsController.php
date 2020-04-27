@@ -533,6 +533,9 @@ class TournamentsController extends Controller
         if ($request->input('cardpool')) {
             $tournaments = $tournaments->where('cardpool_id', $request->input('cardpool'));
         }
+        if ($request->input('mwl_id')) {
+            $tournaments = $tournaments->where('mwl_id', $request->input('mwl_id'));
+        }
         if ($request->input('state')) {
             $tournaments = $tournaments->where('location_state', $request->input('state'));
         }
