@@ -99,6 +99,9 @@ class BadgeController extends Controller
         $this->addChampionshipBadges($userid, 2019, 9, $badges, [2005]);    // 2019 european championship
         $this->addChampionshipBadges($userid, 2017, 10, $badges, [617]);    // 2017 north american championship, tournament_type_id is a hack
         $this->addChampionshipBadges($userid, 2018, 10, $badges, [1542]);    // 2018 north american championship, tournament_type_id is a hack
+        $this->addChampionshipBadges($userid, 2020, 9, $badges, [2810]);    // 2020 european+african championship
+        $this->addChampionshipBadges($userid, 2020, 10, $badges, [2811]);    // 2020 american championship, tournament_type_id is a hack
+        $this->addChampionshipBadges($userid, 2020, 11, $badges, [2809]);    // 2020 asia-pacific championship, tournament_type_id is a hack
         $this->addPlayerLevelBadges($userid, $badges);
         $this->addFactionBadges($userid, $badges);
         $this->addRecurringBadge($userid, $badges);
@@ -163,7 +166,7 @@ class BadgeController extends Controller
             $badges[$badgeid] = true;
         } elseif ($type > 2) {
 
-            // top 16
+            // top cut
             $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('rank_top', '>', 0)->where('type', 3)->first();
             if ($year == 2019 && $type ==9) {
                 // Euro 2019 "day 2", not "top-cut"
