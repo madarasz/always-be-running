@@ -59,10 +59,14 @@
                 @include('partials.badgelist-year', ['badge_list' => $europe_winner])
                 @include('partials.badgelist-year', ['badge_list' => $europe_top16])
                 @include('partials.badgelist-year', ['badge_list' => $europe_player])
-                {{--North American Championship--}}
+                {{--American Championship--}}
                 @include('partials.badgelist-year', ['badge_list' => $namerica_winner])
                 @include('partials.badgelist-year', ['badge_list' => $namerica_top16])
                 @include('partials.badgelist-year', ['badge_list' => $namerica_player])
+                {{--APAC Championship--}}
+                @include('partials.badgelist-year', ['badge_list' => $apac_winner])
+                @include('partials.badgelist-year', ['badge_list' => $apac_top16])
+                @include('partials.badgelist-year', ['badge_list' => $apac_player])
                 {{--Nationals--}}
                 @include('partials.badgelist-year', ['badge_list' => $nationals_winner])
                 @include('partials.badgelist-year', ['badge_list' => $nationals_top])

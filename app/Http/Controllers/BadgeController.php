@@ -33,6 +33,9 @@ class BadgeController extends Controller
         $namerica_winner = Badge::where('tournament_type_id', 10)->where('winlevel', 1)->orderBy('order','desc');
         $namerica_top16 = Badge::where('tournament_type_id', 10)->where('winlevel', 2)->orderBy('order','desc');
         $namerica_player = Badge::where('tournament_type_id', 10)->where('winlevel', 5)->orderBy('order','desc');
+        $apac_winner = Badge::where('tournament_type_id', 11)->where('winlevel', 1)->orderBy('order','desc');
+        $apac_top16 = Badge::where('tournament_type_id', 11)->where('winlevel', 2)->orderBy('order','desc');
+        $apac_player = Badge::where('tournament_type_id', 11)->where('winlevel', 5)->orderBy('order','desc');
         $nationals_winner = Badge::where('tournament_type_id', 4)->where('winlevel', 1)->orderBy('order','desc');
         $nationals_top = Badge::where('tournament_type_id', 4)->where('winlevel', 2)->orderBy('order','desc');
         $regionals_winner = Badge::where('tournament_type_id', 3)->where('winlevel', 1)->orderBy('order','desc');
@@ -46,6 +49,7 @@ class BadgeController extends Controller
             'badges', 'badges_worlds_winner', 'badges_worlds_top16', 'badges_worlds_player',
             'europe_winner', 'europe_top16', 'europe_player',
             'namerica_winner', 'namerica_top16', 'namerica_player',
+            'apac_winner', 'apac_top16', 'apac_player',
             'nationals_winner', 'nationals_top', 'regionals_winner', 'regionals_top',
             'comm_uk_winner', 'comm_uk_player', 'comm_hun_winner', 'comm_hun_player'
         ]));
@@ -176,7 +180,7 @@ class BadgeController extends Controller
             if ($found) {
                 $badgeid = Badge::where('tournament_type_id', $type)->where('year', $year)->where('winlevel', 2)->first()->id;
                 $badges[$badgeid] = true;
-            } elseif ($type == 5 || $type == 9 || $type == 10) {
+            } elseif ($type == 5 || $type == 9 || $type == 10 || $type == 11) {
                 // participation
                 $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('runner_deck_id', '>', 0)->where('type', 3)->first();
                 if ($found) {
