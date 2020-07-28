@@ -84,18 +84,27 @@ class AdminController extends Controller
         $vips = User::whereIn('id', json_decode(json_encode($vip_ids), true))->with('claims', 'tournamentsCreated')->get();
 
         // Know the Meta update calculation
-        $ktm_update = preg_replace('/\./i', '-', file_get_contents('http://www.knowthemeta.com/LastUpdate/'));
+        $ktm_metas = json_decode(file_get_contents('https://alwaysberunning.net/ktm/metas.json'), true);
         $ktm_packs = [];
+        $ktm_update = $ktm_metas[0]['lastUpdate'];
         foreach($packs as $cycle) {
             foreach($cycle as $pack) {
-                $pack_tournaments = Tournament::where('cardpool_id', $pack->toArray()['id'])->pluck('id')->all();
-                if (count($pack_tournaments)) {
-                    $pack_entries = Entry::whereIn('type', [1, 11, 12, 13, 3, 4])->where('updated_at', '>', $ktm_update)
-                        ->whereIn('tournament_id', $pack_tournaments)->count();
-                    $pack_decks = Entry::where('type', 3)->where('updated_at', '>', $ktm_update)
-                        ->whereIn('tournament_id', $pack_tournaments)->count();
-                    if ($pack_entries) {
-                        $ktm_packs[$pack->toArray()['name']] = [$pack_entries, $pack_decks];
+                if ($pack['date_release'] > '2019-12-30') {
+                    $pack_tournaments = Tournament::where('cardpool_id', $pack->toArray()['id'])->pluck('id')->all();
+                    $update_stamp = '2000-01-01 12:00:00';
+                    foreach($ktm_metas as $meta) {
+                        if ($meta['cardpool'] == $pack['name']) {
+                            $update_stamp = $meta['lastUpdate'];
+                        }
+                    }
+                    if (count($pack_tournaments)) {
+                        $pack_entries = Entry::whereIn('type', [1, 11, 12, 13, 3, 4])->where('updated_at', '>', $update_stamp)
+                            ->whereIn('tournament_id', $pack_tournaments)->count();
+                        $pack_decks = Entry::where('type', 3)->where('updated_at', '>', $update_stamp)
+                            ->whereIn('tournament_id', $pack_tournaments)->count();
+                        if ($pack_entries) {
+                            $ktm_packs[$pack->toArray()['name']] = [$pack_entries, $pack_decks];
+                        }
                     }
                 }
             }
