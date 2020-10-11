@@ -178,8 +178,11 @@ class BadgeController extends Controller
             }
 
             if ($found) {
-                $badgeid = Badge::where('tournament_type_id', $type)->where('year', $year)->where('winlevel', 2)->first()->id;
-                $badges[$badgeid] = true;
+                $found = Badge::where('tournament_type_id', $type)->where('year', $year)->where('winlevel', 2)->first();
+                if ($found) {
+                    $badgeid = $found->id;
+                    $badges[$badgeid] = true;
+                }
             } elseif ($type == 5 || $type == 9 || $type == 10 || $type == 11) {
                 // participation
                 $found = Entry::where('user', $userid)->whereIn('tournament_id', $tounamentIds)->where('runner_deck_id', '>', 0)->where('type', 3)->first();
