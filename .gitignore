@@ -47,3 +47,4 @@ phpinfo.php
 jquery.timepicker.*
 chromedriver.log
 tests_output
+public/ktm/*
