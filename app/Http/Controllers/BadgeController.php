@@ -163,11 +163,13 @@ class BadgeController extends Controller
 
         if ($found) {
             if (is_null($year)) {
-                $badgeid = Badge::where('tournament_type_id', $type)->where('winlevel', 1)->first()->id;
+                $badgeid = Badge::where('tournament_type_id', $type)->where('winlevel', 1)->first();
             } else {
-                $badgeid = Badge::where('tournament_type_id', $type)->where('year', $year)->where('winlevel', 1)->first()->id;
+                $badgeid = Badge::where('tournament_type_id', $type)->where('year', $year)->where('winlevel', 1)->first();
             }
-            $badges[$badgeid] = true;
+            if ($badgeid) {
+                $badges[$badgeid->id] = true;
+            }
         } elseif ($type > 2) {
 
             // top cut
