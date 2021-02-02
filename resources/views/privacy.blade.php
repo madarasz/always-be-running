@@ -32,6 +32,11 @@
                     <strong>Google</strong> is the Data Processor.
                 </p>
                 <p>
+                    I'm also using YouTube API Services for adding and displaying tournament videos. Please read 
+                    <a href="https://www.youtube.com/t/terms" target="_blank">YouTube Terms of Service</a> and
+                    <a href="https://policies.google.com/privacy" target="_blank">Google Privacy Policy</a>.
+                </p>
+                <p>
                     Your consent status:
                     <strong><span id="status-consent"></span></strong>
                     - <a class="btn btn-xs btn-primary white-text" onclick="deleteCookie('cookieconsent_status'); location.reload();">change</a>
