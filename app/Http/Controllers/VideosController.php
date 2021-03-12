@@ -270,7 +270,7 @@ class VideosController extends Controller
                     'length' => array_key_exists('length', $details) ? $details['length'] : null,
                     'video_title' => $details['video_title'],
                     'thumbnail_url' => $details['thumbnail_url'],
-                    'channel_name' => $details['lechannel_namegth']
+                    'channel_name' => $details['channel_name']
                 ]);
             }
         }
