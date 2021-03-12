@@ -268,7 +268,7 @@ class VideosController extends Controller
                 $video->update([
                     'flag_removed' => false,
                     'length' => array_key_exists('length', $details) ? $details['length'] : null,
-                    'video_title' => $details['title'],
+                    'video_title' => $details['video_title'],
                     'thumbnail_url' => $details['thumbnail_url'],
                     'channel_name' => $details['lechannel_namegth']
                 ]);
