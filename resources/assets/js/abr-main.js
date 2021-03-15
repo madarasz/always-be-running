@@ -266,7 +266,7 @@ function watchVideo(videoId, type) {
         // add video player iframe
         switch (parseInt(type)) {
             case 2:
-                $('#section-video-player').html('<iframe id="iframe-video" src="//player.twitch.tv/?video=v' + videoId + '&autoplay=false" frameborder="0" allowfullscreen="true" scrolling="no"></iframe>');
+                $('#section-video-player').html('<iframe id="iframe-video" src="//player.twitch.tv/?video=v' + videoId + '&autoplay=false&parent=alwaysberunning.net" frameborder="0" allowfullscreen="true" scrolling="no"></iframe>');
                 break;
             default:
                 $('#section-video-player').html('<iframe id="iframe-video" src="//www.youtube.com/embed/' + videoId + '" frameborder="0" allowfullscreen></iframe>');
