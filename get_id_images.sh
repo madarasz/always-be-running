@@ -25,7 +25,12 @@ do
             # download
             if [ "$imageurl" == "null" ]; then
                 # download from NetrunnerDB
-                curl "https://netrunnerdb.com/card_image/$card.png" > "public/img/ids/$card.png"
+                if [ $card -lt 31001 ]; then
+                  curl "https://netrunnerdb.com/card_image/$card.png" > "public/img/ids/$card.png"
+                else
+                  curl "https://netrunnerdb.com/card_image/large/$card.jpg" > "public/img/ids/$card.png"
+                  mogrify -resize 372x520 "public/img/ids/$card.png"
+                fi
             else
                 # download from CardGameDB
                 curl $imageurl > "public/img/ids/$card.png"
@@ -40,14 +45,23 @@ do
                     echo runner
                     mogrify -crop 238x238+31+51 -resize 80x80 "public/img/ids/$card.png"
                 fi
-            else
-                # NISEI images
+            elif [ $card -lt 30001 ]; then
+                # old NISEI images
                 if [ ${sides[$i]} == "corp" ]; then
                     echo corp
                     mogrify -crop 355x355+48+75 -resize 80x80 "public/img/ids/$card.png"
                 else
                     echo runner
                     mogrify -crop 330x330+62+88 -resize 80x80 "public/img/ids/$card.png"
+                fi
+            else
+                # new NISEI images
+                if [ ${sides[$i]} == "corp" ]; then
+                    echo corp
+                    mogrify -crop 266x266+53+57 -resize 80x80 "public/img/ids/$card.png"
+                else
+                    echo runner
+                    mogrify -crop 266x266+53+61 -resize 80x80 "public/img/ids/$card.png"
                 fi
             fi
         fi
