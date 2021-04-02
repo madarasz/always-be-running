@@ -58,12 +58,14 @@
                     {!! Form::label('tournament_format_id', 'Format') !!}
                     @include('partials.popover', ['direction' => 'right', 'content' =>
                         '<ul>
-                            <li><strong>Standard:</strong> Most tournaments are like this. <em>Tournament Regulations</em> by FFG and latest <em>MWL, FAQ</em> are in effect.</li>
-                            <li><strong>Cache Refresh:</strong> 1 Core Set + 1 Deluxe Expansion + 1 Terminal Directive + current Data Cycle + second-most current Data Cycle. Latest MWL plus additional rules apply.</li>
-                            <li><strong>1.1.1.1:</strong> 1 Core Set + 1 Deluxe Expansion + 1 Data Pack + 1 Card. Please state in the description if MWL applies.</li>
-                            <li><strong>Draft:</strong> Drafting with the official FFG draft packs.</li>
+                            <li><strong>Standard:</strong> Most tournaments are like this. <em>Tournament Regulations</em> by NISEI and latest <em>Banlist, FAQ</em> are in effect. No additional rules!</li>
+                            <li><strong>Startup:</strong> Cardpool is <em>Sytem Gateway</em> + most recent <em>System Update</em> set + most recent NISEI cycle.</li>
+                            <li><strong>Snapshot:</strong> This format is a “snapshot” of the meta at Magnum Opus 2018, the culmination of FFG Organized Play.</li>
+                            <li><strong>Eternal:</strong> Eternal is not affected by rotation and has a much less stringent ban list. The largest and most complex format.</li>
                             <li><strong>Cube Draft:</strong> Drafting with a custom draft pool. Please give more information about the draft pool in the description.</li>
+                            <li><strong>Draft:</strong> Drafting with the official FFG draft packs.</li>
                         </ul>
+                        Check out <a href="https://nisei.net/players/supported-formats/" target="_blank" rel="nofollow">NISEI supported formats</a> for more information.
                         If your tournament rules differs from the format you selected, explain the differences in the
                         description.'])
                     {!! Form::select('tournament_format_id', $tournament_formats,
