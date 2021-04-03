@@ -391,6 +391,9 @@
     changeTournamentType();
     hideNonRequired();
 
+    // disable "-----" in format selection
+    $("#tournament_format_id > [value='9999']").prop('disabled', true)
+
     // adjust MWL based on selected date
     function mwlAdjust() {
         var selectedDate = document.getElementById("date").value;
