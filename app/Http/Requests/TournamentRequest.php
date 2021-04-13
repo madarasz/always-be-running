@@ -35,7 +35,7 @@ class TournamentRequest extends Request
                 '|date_later_max_week:'.Request::get('date').','.Request::get('end_date')
         ];
 
-        if (Request::get('tournament_type_id') != 7) // non-online tournament requires location
+        if (!Request::get('online')) // non-online tournament requires location
         {
             $rules = array_merge($rules, [
                 'location_city' => 'required',
@@ -98,8 +98,9 @@ class TournamentRequest extends Request
         }
 
         // online tournament has no location
-        if ($input['tournament_type_id'] == 7)
+        if (array_key_exists('online', $input))
         {
+            $input['online'] = 1;
             $input['location_country'] = '';
             $input['location_us_state'] = '';
             $input['location_city'] = '';
@@ -107,6 +108,8 @@ class TournamentRequest extends Request
             $input['location_address'] = '';
             $input['location_lat'] = null;
             $input['location_long'] = null;
+        } else {
+            $input['online'] = 0;
         }
 
         // non-tournament has no conclusion

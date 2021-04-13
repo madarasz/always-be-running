@@ -79,7 +79,7 @@ class CalendarController extends Controller
         $end = new \DateTime('@'.strtotime($calendarEntry['end'].' '.$tournament->timezone));
 
         // timezone for non-online tournaments
-        if ($tournament->tournament_type_id != 7) {
+        if (!$tournament->online) {
             $timezone = new \DateTimeZone ($tournament->timezone);
             $start->setTimezone($timezone);
             $end->setTimezone($timezone);

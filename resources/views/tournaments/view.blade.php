@@ -58,7 +58,7 @@
         </div>
     </div>
     {{--Google maps library--}}
-    @if($tournament->tournament_type_id != 7)
+    @if(!$tournament->online)
         @include('tournaments.viewer.map')
     @endif
     {{--Enable gallery--}}

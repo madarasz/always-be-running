@@ -54,7 +54,7 @@ class TournamentsController extends Controller
     public function create(Request $request)
     {
         $this->authorize('logged_in', Tournament::class, $request->user());
-        $tournament_types = TournamentType::orderBy('order')->pluck('type_name', 'id')->all();
+        $tournament_types = TournamentType::orderBy('order')->where('id', '!=', 7)->pluck('type_name', 'id')->all(); // skipping 'online' type 
         $tournament_formats = TournamentFormat::orderBy('order')->pluck('format_name', 'id')->all();
         $mwls = Mwl::orderBy('date', 'desc')->pluck('name', 'id')->all();
         $mwl_dates = Mwl::orderBy('date', 'desc')->pluck('date')->all();
@@ -338,7 +338,7 @@ class TournamentsController extends Controller
         // filter for country / online
         if (!is_null($request->input('location'))) {
             if ($request->input('location') == 'online') {
-                $tournaments = $tournaments->where('tournament_type_id', 7);
+                $tournaments = $tournaments->where('online', 1);
             } else {
                 $tournaments = $tournaments->where('location_country', $request->input('location'));
             }
@@ -522,7 +522,7 @@ class TournamentsController extends Controller
         if ($request->input('country')) {
             if ($request->include_online) { // include online
                 $tournaments = $tournaments->where(function ($q) use ($request) {
-                    $q->where('location_country', $request->input('country'))->orWhere('tournament_type_id', 7);
+                    $q->where('location_country', $request->input('country'))->orWhere('online', 1);
                 });
             } else { // just country filter
                 $tournaments = $tournaments->where('location_country', $request->input('country'));

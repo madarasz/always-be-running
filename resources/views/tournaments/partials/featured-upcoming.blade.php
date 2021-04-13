@@ -32,7 +32,7 @@
                                     </div>
                                     <div class="featured-title">
                                         ({{ $ft->date }}) -
-                                        {{ $ft->tournament_type_id == 7 ? 'online' : $ft->location_country }}
+                                        {{ $ft->online ? 'online' : $ft->location_country }}
                                     </div>
                                 </div>
                             </div>

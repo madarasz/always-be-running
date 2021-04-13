@@ -25,7 +25,6 @@
                             Additional tournament types:
                             <ul>
                                 <li><strong>community tournament:</strong> a tournament not supported by FFG/NISEI or its prize pack</li>
-                                <li><strong>online event:</strong> You are playing via Jinteki.net/OCTGN. No location is required.</li>
                                 <li><strong>non-tournament:</strong> This is not a tournament. Just play. <em>Weekly recurrence</em> is an option.</li>
                                 <li><strong>continental championship:</strong> North American / European championship</li>
                                 <li><strong>team:</strong> more than one players can claim a single rank, conflicts are relaxed</li>
@@ -316,38 +315,44 @@
         </div>
         {{--Location--}}
         <div class="bracket">
-            {{--Overlay--}}
-            <div id="overlay-location" class="overlay hidden-xs-up">
-                <div>'online' events have no location</div>
-            </div>
             {{--Location input--}}
             <div class="form-group">
+                <div class="form-group hide-nonrequired pull-right">
+                    {!! Form::checkbox('online', null, in_array(old('online', $tournament->online), [1, '1', 'on'], true), ['id' => 'online', 'onchange' => 'changeTournamentType()']) !!}
+                    {!! Form::label('online', 'online event') !!}
+                </div>
                 {!! Html::decode(Form::label('location_search', 'Location<sup class="text-danger hidden-xs-up req-conclusion">*</sup>')) !!}
                 @include('partials.popover', ['direction' => 'top', 'content' =>
                             'Use the input field to search for the location of the tournament.
                             Providing the city is enough, but locating the store or address helps players.'])
-                {!! Form::text('location_search', null,
-                    ['class' => 'form-control', 'placeholder' => 'search city, address or store name']) !!}
-                {{--Google map--}}
-                <div class="map-wrapper-small">
-                    <div id="map"></div>
+                <div style="position: relative">
+                    {{--Overlay--}}
+                    <div id="overlay-location" class="overlay hidden-xs-up" style="top: 16px; bottom: 0px;">
+                        <div>'online' events have no location</div>
+                    </div>
+                    {!! Form::text('location_search', null,
+                        ['class' => 'form-control', 'placeholder' => 'search city, address or store name']) !!}
+                    {{--Google map--}}
+                    <div class="map-wrapper-small">
+                        <div id="map"></div>
+                    </div>
+                    {{--Location info--}}
+                    <div class="form-group m-t-2">
+                        <strong>Country:<sup class="text-danger req-location">*</sup></strong> <span id="country"></span><br/>
+                        <strong>State (US):</strong> <span id="state"></span><br/>
+                        <strong>City:<sup class="text-danger req-location">*</sup></strong> <span id="city"></span><br/>
+                        <strong>Store/Venue:</strong> <span id="store"></span><br/>
+                        <strong>Address:</strong> <span id="address"></span><br/>
+                        {!! Form::hidden('location_country', old('location_country', $tournament->location_country), ['id' => 'location_country']) !!}
+                        {!! Form::hidden('location_state', old('location_state', $tournament->location_state), ['id' => 'location_state']) !!}
+                        {!! Form::hidden('location_city', old('location_city', $tournament->location_city), ['id' => 'location_city']) !!}
+                        {!! Form::hidden('location_store', old('location_store', $tournament->location_store), ['id' => 'location_store']) !!}
+                        {!! Form::hidden('location_address', old('location_address', $tournament->location_address), ['id' => 'location_address']) !!}
+                        {!! Form::hidden('location_place_id', old('location_place_id', $tournament->location_place_id), ['id' => 'location_place_id']) !!}
+                        {!! Form::hidden('location_lat', old('location_lat', $tournament->location_lat), ['id' => 'location_lat']) !!}
+                        {!! Form::hidden('location_long', old('location_long', $tournament->location_long), ['id' => 'location_long']) !!}
+                    </div>
                 </div>
-            </div>
-            {{--Location info--}}
-            <div class="form-group">
-                <strong>Country:<sup class="text-danger req-location">*</sup></strong> <span id="country"></span><br/>
-                <strong>State (US):</strong> <span id="state"></span><br/>
-                <strong>City:<sup class="text-danger req-location">*</sup></strong> <span id="city"></span><br/>
-                <strong>Store/Venue:</strong> <span id="store"></span><br/>
-                <strong>Address:</strong> <span id="address"></span><br/>
-                {!! Form::hidden('location_country', old('location_country', $tournament->location_country), ['id' => 'location_country']) !!}
-                {!! Form::hidden('location_state', old('location_state', $tournament->location_state), ['id' => 'location_state']) !!}
-                {!! Form::hidden('location_city', old('location_city', $tournament->location_city), ['id' => 'location_city']) !!}
-                {!! Form::hidden('location_store', old('location_store', $tournament->location_store), ['id' => 'location_store']) !!}
-                {!! Form::hidden('location_address', old('location_address', $tournament->location_address), ['id' => 'location_address']) !!}
-                {!! Form::hidden('location_place_id', old('location_place_id', $tournament->location_place_id), ['id' => 'location_place_id']) !!}
-                {!! Form::hidden('location_lat', old('location_lat', $tournament->location_lat), ['id' => 'location_lat']) !!}
-                {!! Form::hidden('location_long', old('location_long', $tournament->location_long), ['id' => 'location_long']) !!}
             </div>
         </div>
     </div>

@@ -11,7 +11,7 @@ $(function () {
 //overlay changes based on tournament type on tournament form
 function changeTournamentType() {
     //online event, disable location
-    if ($("#tournament_type_id option:selected").html() === 'online event') {
+    if ($("#online").prop("checked")) {
         $('#overlay-location').removeClass('hidden-xs-up');
     } else {
         $('#overlay-location').addClass('hidden-xs-up');

@@ -68,7 +68,7 @@ class PagesController extends Controller
 
         $nowdate = date('Y.m.d.');
         $tournaments = Tournament::where('approved', 1)->where('concluded',1);
-        $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->unique()->all())->pluck('type_name', 'id')->all();
+        $tournament_types = TournamentType::whereIn('id', $tournaments->pluck('tournament_type_id')->unique()->all())->where('id', '!=', 7)->pluck('type_name', 'id')->all();
         $tournament_cardpools = CardPack::whereIn('id', $tournaments->pluck('cardpool_id')->unique()->all())->where('id', '!=', 'unknown')
             ->orderBy('cycle_position', 'desc')->orderBy('position', 'desc')->pluck('name', 'id')->all();
         $countries = $tournaments->where('location_country', '!=', '')->orderBy('location_country')

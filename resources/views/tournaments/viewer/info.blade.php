@@ -16,7 +16,7 @@
     @endif
     {{--Location, date--}}
     <h5>
-        @unless($tournament->tournament_type_id == 7)
+        @unless($tournament->online)
             <span id="tournament-location">
                 {{ $tournament->location() }}
             </span>
@@ -80,7 +80,7 @@
         @endunless
     </p>
     {{--Google map--}}
-    @if($tournament->tournament_type_id != 7)
+    @if(!$tournament->online)
         <div class="map-wrapper-small map-placeholder">
             {{--Map placeholder--}}
             <div class="map-placeholder-cell">

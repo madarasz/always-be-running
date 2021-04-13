@@ -12,7 +12,7 @@
                     {{ $tournament->title }}
                 </a><br/>
                 <div class="small-text">
-                    @if($tournament->tournament_type_id != 7)
+                    @if(!$tournament->online)
                         {{ $tournament->location_country }}, {{$tournament->location_country === 'United States' ? $tournament->location_state.', ' : ''}}{{ $tournament->location_city }}
                     @else
                         online

@@ -110,7 +110,7 @@
                     @if (count($ft->videos))
                         {{ count($ft->videos) }} <i title="video" class="fa fa-video-camera"></i>
                     @endif
-                    {{ $ft->tournament_type_id == 7 ? 'online' : $ft->location_country }}
+                    {{ $ft->online ? 'online' : $ft->location_country }}
                 </div>
             </div>
             </div>

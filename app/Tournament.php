@@ -14,7 +14,7 @@ class Tournament extends Model
         'location_address', 'location_place_id', 'players_number', 'description', 'concluded', 'decklist', 'top_number', 'creator',
         'tournament_type_id', 'start_time', 'reg_time', 'cardpool_id', 'conflict', 'contact', 'import', 'location_lat', 'location_long',
         'recur_weekly', 'incomplete', 'link_facebook', 'tournament_format_id', 'end_date', 'concluded_by', 'concluded_at',
-        'relax_conflicts', 'timezone', 'prize_id', 'prize_additional', 'mwl_id'];
+        'relax_conflicts', 'timezone', 'prize_id', 'prize_additional', 'mwl_id', 'online'];
     protected $dates = ['created_at', 'updated_at', 'deleted_at', 'concluded_at'];
     protected $hidden = ['tournament_type_id', 'tournament_format_id', 'cardpool_id', 'relax_conflicts', 'timezone', 'pivot'];
     protected $appends = ['seoUrl'];
@@ -199,7 +199,7 @@ class Tournament extends Model
     }
 
     public function location() {
-        if ($this->tournament_type_id == 7) {
+        if ($this->online) {
             return 'online';
         } else {
             if ($this->location_country === 'United States') {
@@ -211,7 +211,7 @@ class Tournament extends Model
     }
 
     public function getTimezone() {
-        if (is_null($this->timezone) && $this->tournament_type_id != 7) { // not online tournament
+        if (is_null($this->timezone) && !$this->online) { // not online tournament
             // request timezone from google maps api
             $tzRequest = file_get_contents("https://maps.googleapis.com/maps/api/timezone/json?location=".
                 $this->location_lat.','. $this->location_long.'&timestamp='.time($this->date).'&key='.ENV('GOOGLE_BACKEND_API'));
@@ -228,7 +228,7 @@ class Tournament extends Model
     }
 
     public function calendarEntry() {
-        $allday = $this->tournament_type_id == 7 || strlen($this->start_time) == 0;
+        $allday = $this->online || strlen($this->start_time) == 0;
 
         if (is_null($this->recur_weekly)) {
             // non recurring

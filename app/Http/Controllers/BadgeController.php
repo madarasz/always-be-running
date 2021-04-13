@@ -452,7 +452,7 @@ class BadgeController extends Controller
 
     private function addTravellerPlayer($userid, &$badges) {
         $country_count = DB::table('entries')->join('tournaments', 'entries.tournament_id', '=', 'tournaments.id')
-            ->selectRaw('*, count(*)')->where('entries.user', $userid)->where('tournaments.tournament_type_id', '!=', 7)
+            ->selectRaw('*, count(*)')->where('entries.user', $userid)->where('tournaments.online', 0)
             ->where('tournaments.approved', 1)->whereNull('tournaments.deleted_at')->groupBy('tournaments.location_country')
             ->where('entries.rank', '>', 0)->get();
         if (count($country_count) >= 3) {
