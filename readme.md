@@ -33,9 +33,8 @@ Google API keys, you can create yourself.
 7. Prepare DB tables
 
         php artisan migrate
-        php artisan db:seed
 
-8. Add Badges data to your database by importing `badges.sql`
+8. Add Badges and Tournament Type and format data to your database by importing `seed.sql`
 
 9. Run the webapp. It should be available at [http://localhost:8000](http://localhost:8000) afterwards.
 
@@ -47,32 +46,12 @@ Google API keys, you can create yourself.
 
 13. You are done :)
 
-### Automated tests
+### Automated tests via **Cypress**
 
-There are Nightwatch automated integration tests in the *tests/nightwatch* directory.
+##### Requires
+- nodejs 14 or above
+- install cypress globally with `npm install -g cypress`
 
-Install globally nightwatch and webdriver-manager
-```
-npm install -g nightwatch
-npm install -g webdriver-manager
-```
 
-Update webdriver-manager: `webdriver-manager update`
 
-Start webdriver-manager process in seperate terminal
-```
-webdriver-manager start
-```
-
-Run Nightwatch tests on **Chrome** by command:
-
-        gulp nightwatch:chrome
-        
-There are currently problems with running tests on **PhantomJS** and **Safari**
-Safari browser must be enabled for automation, [https://webkit.org/blog/6900/webdriver-support-in-safari-10/](read more)
-
-To delete test data (substitute current year):
-```
-DELETE FROM entries WHERE tournament_id IN (SELECT id FROM tournaments WHERE title LIKE '%|2019%')
-DELETE FROM tournaments WHERE title LIKE '%|2019%'
-```
+*Previous Nigthwatch tests were deprecated. Files are still found in `/tests/nightwatch/`*
