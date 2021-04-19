@@ -52,6 +52,12 @@ Google API keys, you can create yourself.
 - nodejs 14 or above
 - install cypress globally with `npm install -g cypress`
 
+##### Running tests via UI
+Open Cypress with `npx cypress open` command.
+
+##### Running via command line
+
+##### Running via Github actions
 
 
 *Previous Nigthwatch tests were deprecated. Files are still found in `/tests/nightwatch/`*
