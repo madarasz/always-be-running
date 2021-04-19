@@ -25,13 +25,20 @@ jobs:
           tools: composer:v2
 
       # Install nodejs v14
-      - name: Install nodejs
+      #- name: Install nodejs v14
+      #  run: |
+      #    curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+      #    sudo apt-get install -y nodejs
+
+      # Check nodejs, npm, php version
+      - name: Check versions
         run: |
-          curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-          sudo apt-get install -y nodejs
+          php -v
+          nodejs -v
+          npm -v
 
       # Install dependencies
-      - name: Run a multi-line script
+      - name: Install dependencies
         run: |
           composer install
           npm install
