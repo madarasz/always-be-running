@@ -49,4 +49,5 @@ chromedriver.log
 tests_output
 public/ktm/*
 cypress/integration/examples
+cypress/snapshots/**/__diff_output__/**
 node-gyp

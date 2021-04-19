@@ -36,6 +36,8 @@ function getElement(elementName) {
             return cy.get("#discover-table-options span.control-paging:nth-of-type(3)")
         case 'show map button':
             return cy.get('#button-show-map')
+        case 'include online checkbox':
+            return cy.get('#include-online')
         default:
             throw new Error("No element defined for name: " + elementName)
     }

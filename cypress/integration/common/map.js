@@ -6,10 +6,10 @@ Given('I set up Google map intercepts', () => {
 
 When('I display upcoming map', () => {
     cy.get('#button-show-map').click()
-    cy.wait('@googleMaps')
-    cy.wait(2000)
 })
 
-Then('Google map loads', () => {
-    cy.get('#map').scrollIntoView().matchImageSnapshot()
+Then('{word} Google map loads', (mapName) => {
+    cy.wait('@googleMaps')
+    cy.wait(2000)
+    cy.get('#map').scrollIntoView().matchImageSnapshot('map-'+mapName)
 })
