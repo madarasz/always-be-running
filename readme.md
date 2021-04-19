@@ -4,9 +4,9 @@
 
 You will need the following in order to run ABR locally:
 - MySQL (preferably)
-- PHP
+- PHP 7.1
 - PHP Composer
-- Node, NPM
+- NodeJs v14, NPM
 - JQ - download via apt-get (Debian) or homebrew (Mac), this is NOT an npm module
 - imagemagick
 
@@ -55,9 +55,11 @@ Google API keys, you can create yourself.
 ##### Running tests via UI
 Open Cypress with `npx cypress open` command.
 
-##### Running via command line
+##### Running via command line (headless)
+*image snapshots will be probably different, disabling such fails*
+Run: `npx cypress run --env failOnSnapshotDiff=false`
 
 ##### Running via Github actions
-
+under development
 
 *Previous Nigthwatch tests were deprecated. Files are still found in `/tests/nightwatch/`*

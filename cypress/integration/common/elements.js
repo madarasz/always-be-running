@@ -4,6 +4,10 @@ Then('I see {string} element', (elementName) => {
     getElement(elementName).should('be.visible')
 })
 
+Then('{string} element exists', (elementName) => {
+    getElement(elementName)
+})
+
 Then("I don't see {string} element", (elementName) => {
     getElement(elementName).should('not.be.visible')
 })
@@ -38,6 +42,14 @@ function getElement(elementName) {
             return cy.get('#button-show-map')
         case 'include online checkbox':
             return cy.get('#include-online')
+        case 'cookie banner':
+            return cy.get("div[aria-label='cookieconsent']")
+        case 'Privacy and Cookie Policy link':
+            return cy.get("a[aria-label='learn more about cookies']")
+        case 'Allow cookies button':
+            return cy.get("a[aria-label='dismiss cookie message']")
+        case 'polite Cookie Policy':
+            return cy.get("div.cc-bottom")
         default:
             throw new Error("No element defined for name: " + elementName)
     }

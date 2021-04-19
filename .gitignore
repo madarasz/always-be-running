@@ -50,4 +50,6 @@ tests_output
 public/ktm/*
 cypress/integration/examples
 cypress/snapshots/**/__diff_output__/**
+cypress/videos
+cypress/screenshots
 node-gyp
