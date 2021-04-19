@@ -21,7 +21,7 @@
     "laravel-elixir": "^5.0.0",
     "marked": "^0.3.19",
     "mysql": "^2.16.0",
-    "node-sass": "4.12.0",
+    "node-sass": "4.13.1",
     "openssl": "1.1.0",
     "requirejs": "^2.3.6",
     "tether": "^1.4.4",
