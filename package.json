@@ -11,6 +11,7 @@
     "bootstrap-sass": "^3.4.1",
     "cypress": "^7.1.0",
     "cypress-cucumber-preprocessor": "^4.0.3",
+    "cypress-image-snapshot": "^4.0.1",
     "event-stream": "^4.0.1",
     "gulp-cli": "^2.3.0",
     "gulp-dependencies": "^0.1.1",
