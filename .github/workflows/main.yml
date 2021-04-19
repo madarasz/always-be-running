@@ -34,7 +34,7 @@ jobs:
       - name: Check versions
         run: |
           php -v
-          nodejs -v
+          node -v
           npm -v
 
       # Install dependencies
