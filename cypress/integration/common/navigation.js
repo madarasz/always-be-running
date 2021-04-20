@@ -7,5 +7,11 @@ Given('I open the {string} page', (pageName) => {
         case 'Upcoming':
             cy.visit(url)
             break
+        case 'Organize':
+            cy.visit(url+'organize')
+            break
+        case 'Admin':
+            cy.visit(url+'admin', { failOnStatusCode: false })
+            break
     }
 })

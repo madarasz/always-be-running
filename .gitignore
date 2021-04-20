@@ -52,4 +52,5 @@ cypress/integration/examples
 cypress/snapshots/**/__diff_output__/**
 cypress/videos
 cypress/screenshots
+cypress.env.json
 node-gyp
