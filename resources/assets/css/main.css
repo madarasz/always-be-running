@@ -938,7 +938,33 @@ a.artist:hover {
     background-color: #fff;
     color: #575a5c;
 }
-
+/* new types */
+.type-startup {
+    font-size: 70%;
+    position: relative;
+    top: -0.1em;
+    color: #bc6657;
+    border-color: #bc6657;
+    padding: .35em .5em .25em .5em;
+ }
+ .type-snapshot {
+    font-size: 70%;
+    position: relative;
+    top: -0.1em;
+    color: #bc9457;
+    border-color: #bc9457;
+    padding: .35em .5em .25em .5em;
+ }
+ .type-eternal {
+    border-color: #ab57bc;
+    color: #ab57bc;
+    padding: .25em .5em .25em .45em;
+}
+.type-other {
+    border-color: black;
+    color: black;
+    padding: .25em .5em .25em .45em;
+}
 /* gallery */
 .gallery-item {
     display: inline-block;

@@ -584,6 +584,22 @@ function tournamentEmblem(target, type, format) {
 
     // tournament formats
     switch (format) {
+        case 'startup':
+            target.append('<span class="tournament-format type-startup" title="startup">SU</span> ');
+            break;
+        case 'snapshot':
+            target.append('<span class="tournament-format type-snapshot" title="snapshot">SN</span> ');
+            break;
+        case 'eternal':
+            target.append('<span class="tournament-format type-eternal" title="eternal">E</span> ');
+            break;
+        case 'other':
+            target.append('<span class="tournament-format type-other" title="other">?</span> ');
+            break;
+        case 'cube draft':
+            target.append('<span class="tournament-format type-cube-draft" title="cube draft">CD</span> ');
+            break;
+        // old formats
         case 'cache refresh':
             target.append('<span class="tournament-format type-cache" title="cache refresh">CR</span> ');
             break;
@@ -592,9 +608,6 @@ function tournamentEmblem(target, type, format) {
             break;
         case 'draft':
             target.append('<span class="tournament-format type-draft" title="draft">D</span> ');
-            break;
-        case 'cube draft':
-            target.append('<span class="tournament-format type-cube-draft" title="cube draft">CD</span> ');
             break;
     }
 }
