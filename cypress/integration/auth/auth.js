@@ -1,16 +1,32 @@
 import { When } from "cypress-cucumber-preprocessor/steps";
 
 When('I login with {string} user', (user) => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
     cy.readFile('.env').then((env) => {
         const clientid_pattern = /NETRUNNERDB_CLIENT_ID=(.*)/
         const redirecturi_pattern = /NETRUNNERDB_REDIRECT_URL=(.*)/
         const clientid = env.match(clientid_pattern)[1]
         const redirecturi = env.match(redirecturi_pattern)[1]
-        // console.log(clientid, redirecturi)
         const netrunnerdb_auth_url = 'https://netrunnerdb.com/oauth/v2/auth'
-        cy.clearCookies()
-        cy.clearLocalStorage()
-        cy.getCookies().should('have.length', 0)
+        const netrunnerdb_login_url = 'https://netrunnerdb.com/oauth/v2/auth_login_check'
+        const username = Cypress.env(user + '_username')
+        const password = Cypress.env(user + '_password')
+        
+        cy.request({
+            method: 'POST',
+            url: netrunnerdb_login_url,
+            form: true,
+            body: {
+                _username: username,
+                _password: password,
+                _submit: 'Log In'
+            },
+            followRedirect: false
+        }).then(({status, headers, body}) => {
+            //console.log(status, headers, body)
+        })
+        
         cy.request({
             method: 'GET',
             url: netrunnerdb_auth_url,
@@ -23,8 +39,9 @@ When('I login with {string} user', (user) => {
             },
             followRedirect: false
         }).then(({status, headers, body}) => {
+            //console.log(status, headers, body)
             const token = getToken(body)
-            // console.log('token:', token)
+            //console.log('token:', token)
             cy.request({
                 method: 'POST',
                 url: netrunnerdb_auth_url,
@@ -49,22 +66,7 @@ When('I login with {string} user', (user) => {
                 //console.log(status, headers, body)
             })
         })
-    })
-    
-    /*cy.request({
-        method: 'POST',
-        url: 'https://netrunnerdb.com/oauth/v2/auth_login_check',
-        form: true,
-        body: {
-            _username: 'Necro2',
-            _password: 'sajtsajt',
-            _submit: 'Log In'
-        },
-        followRedirect: false
-    }).then(({status, headers, body}) => {
-        console.log(status, headers, body)
-    })*/
-    
+    })    
 })
 
 function getToken(body) {
