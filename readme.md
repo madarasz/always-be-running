@@ -47,10 +47,17 @@ Google API keys, you can create yourself.
 13. You are done :)
 
 ### Automated tests via **Cypress**
+Due to dependency conflicts, you have to have a seperate environment to test and build :(
 
 ##### Requires
-- nodejs 14 or above
+- nodejs 14
+
+##### Making the test environment
+- delete the `node-modules` folder
+- overwrite `package.json` with `test-package.json`
+- overwrite `package-lock.json` with `test-package-lock.json`
 - install cypress globally with `npm install -g cypress`
+- `npm install`
 
 ##### Running tests via UI
 Open Cypress with `npx cypress open` command.
