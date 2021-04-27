@@ -6,7 +6,7 @@ You will need the following in order to run ABR locally:
 - MySQL (preferably)
 - PHP 7.1
 - PHP Composer
-- NodeJs v14, NPM
+- NodeJs v10, NPM v6 recommended
 - JQ - download via apt-get (Debian) or homebrew (Mac), this is NOT an npm module
 - imagemagick
 
