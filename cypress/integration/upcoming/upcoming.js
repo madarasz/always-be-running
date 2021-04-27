@@ -19,7 +19,7 @@ Then('I see {string} tournament on {string} in {string} with {string} cardpool w
 
 Then('I see the following upcoming tournaments:', (dataTable) => {
     dataTable.rawTable.slice(1).forEach(row => {
-        validateUpcoming(row[0], row[1], row[2], row[3], row[4], row[5])
+        validateUpcoming(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
     });
 })
 
@@ -61,13 +61,19 @@ Then('I see {int} days marked in the calendar', (count) => {
     cy.get('.fc-content').filter(':visible').should('have.length', count)
 })
 
-function validateUpcoming(tournamentName, date, location, cardpool, tournamentType, regs) {
+function validateUpcoming(tournamentName, date, location, cardpool, tournamentType, regs, icon) {
     cy.contains(tournamentName).should('be.visible').parent('td').parent('tr').within(() => {
         cy.get('td').eq(1).contains(date)
         cy.get('td').eq(2).contains(location)
         cy.get('td').eq(3).contains(cardpool)
         cy.get('td').eq(4).contains(tournamentType)
         cy.get('td').eq(5).contains(regs)
+        if (icon.length > 0) {
+            cy.get('td').eq(0).get('span').should('have.class', 'type-'+icon)
+        } else {
+            cy.get('td').eq(0).get('span').should('not.have.class', 'tournament-format')
+            cy.get('td').eq(0).get('span').should('not.have.class', 'tournament-type')
+        }
     })
 }
 

@@ -7,11 +7,11 @@ Feature: Upcoming page
     Scenario: Loading upcoming tournaments table
         Then I see 18 upcoming tournaments
         And I see the following upcoming tournaments:
-            | title                                         | date        | location   | cardpool             | type               | regs |
-            | Baltic Grid GNK tournament                    | 2021.04.18. | online     | System Gateway       | online event       | 4    |
-            | GLC Retrunner2 - Core + Genesis + C&C         | 2021.04.18. | online     | Creation and Control | online event       | 1    |
-            | Double Elimination Bracket #3                 | 2021.05.05. | Queensland | System Gateway       | GNK / seasonal     | 0    |
-            | NtscapeNavigator's online Store Championship  | 2021.05.08. | York       | System Gateway       | store championship | 18   |
+            | title                                         | date        | location   | cardpool             | type               | regs | icon    |
+            | Baltic Grid GNK tournament                    | 2021.04.18. | online     | System Gateway       | online event       | 4    | startup |
+            | GLC Retrunner2 - Core + Genesis + C&C         | 2021.04.18. | online     | Creation and Control | online event       | 1    |         |
+            | Double Elimination Bracket #3                 | 2021.05.05. | Queensland | System Gateway       | GNK / seasonal     | 0    | startup |
+            | NtscapeNavigator's online Store Championship  | 2021.05.08. | York       | System Gateway       | store championship | 18   | store   |
 
     Scenario: Upcoming tournament table controlls
         Then 10 upcoming tournaments are visible
@@ -39,15 +39,15 @@ Feature: Upcoming page
         When I filter upcoming tournament type to "store championship"
         Then 6 upcoming tournaments are visible
         And I see the following upcoming tournaments:
-            | title                                          | date        | location     | cardpool             | type               | regs |
-            | Italian Store Championship 2021 - Holy edition | 2021.05.09. | Vatican City | System Gateway       | store championship | 1    |
-            | Augsburg SC - still no new date                | 2021.07.01. | Augsburg     | Uprising             | store championship | 10   |
-            | NtscapeNavigator's online Store Championship   | 2021.05.08. | York         | System Gateway       | store championship | 18   |
+            | title                                          | date        | location     | cardpool             | type               | regs | icon    |
+            | Italian Store Championship 2021 - Holy edition | 2021.05.09. | Vatican City | System Gateway       | store championship | 1    | store   |
+            | Augsburg SC - still no new date                | 2021.07.01. | Augsburg     | Uprising             | store championship | 10   | store   |
+            | NtscapeNavigator's online Store Championship   | 2021.05.08. | York         | System Gateway       | store championship | 18   | store   |
         When I filter upcoming tournament country to "Germany"
         Then 1 upcoming tournaments are visible
         And I see the following upcoming tournaments:
-            | title                                          | date        | location     | cardpool             | type               | regs |
-            | Augsburg SC - still no new date                | 2021.07.01. | Augsburg     | Uprising             | store championship | 10   |
+            | title                                          | date        | location     | cardpool             | type               | regs | icon   |
+            | Augsburg SC - still no new date                | 2021.07.01. | Augsburg     | Uprising             | store championship | 10   | store   |
         When I filter upcoming tournament type to "---"
         And I filter upcoming tournament country to "United States"
         And I click on "include online checkbox" element
