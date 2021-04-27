@@ -2,7 +2,6 @@ process.env.DISABLE_NOTIFIER = true;
 var elixir = require('laravel-elixir');
 var gulp = require("gulp");
 var shell = require("gulp-shell");
-var nightwatch = require('gulp-nightwatch');
 var clean = require('gulp-rimraf');
 var vueFile = elixir.config.production ? "vue.min.js" : "vue.js";
 
@@ -82,34 +81,4 @@ elixir(function(mix) {
     gulp.task("test", function() {
         shell('nightwatch -c tests/nightwatch/nightwatch.json');
     });
-});
-
-// run automated nightwatch tests
-gulp.task('nightwatch:chrome', function(){
-    return gulp.src('')
-        .pipe(nightwatch({
-            configFile: './tests/nightwatch/nightwatch.json',
-            cliArgs: [ '--env chrome' ]
-        }));
-});
-gulp.task('nightwatch:phantomjs', function(){
-    return gulp.src('')
-        .pipe(nightwatch({
-            configFile: './tests/nightwatch/nightwatch.json',
-            cliArgs: [ '--env phantomjs' ]
-        }));
-});
-gulp.task('nightwatch:safari', function(){
-    return gulp.src('')
-        .pipe(nightwatch({
-            configFile: './tests/nightwatch/nightwatch.json',
-            cliArgs: [ '--env safari' ]
-        }));
-});
-// deleting reports and screenshots of nightwatch tests
-gulp.task('nightwatch:clean', function(){
-    console.log('Cleaning reports and screenshots.');
-    // TODO: it still deletes the .gitkeep file
-    return gulp.src(['!tests/nightwatch/reports/screenshots/.gitkeep', 'tests/nightwatch/reports/*' ],
-        { read: false, dot: true }).pipe(clean());
 });

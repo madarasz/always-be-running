@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "scripts": {
+    "cypress:open": "cypress open"
+  },
+  "devDependencies": {
+    "cypress": "^7.1.0",
+    "cypress-cucumber-preprocessor": "^4.1.0",
+    "cypress-image-snapshot": "^4.0.1"
+  },
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": true
+  }
+}
