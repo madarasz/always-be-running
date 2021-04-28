@@ -1704,7 +1704,7 @@
         "top_count": 0,
         "claim_count": 1,
         "claim_conflict": false,
-        "matchdata": true,
+        "matchdata": false,
         "videos": 0,
         "winner_runner_identity": "00006",
         "winner_corp_identity": "00005"

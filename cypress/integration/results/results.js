@@ -9,11 +9,15 @@ Given('results data is mocked', () => {
 
 Then('I see the following tournament results:', (dataTable) => {
     dataTable.rawTable.slice(1).forEach(row => {
-        validateResults(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7])
+        validateResults(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
     });
 })
 
-function validateResults(title, date, location, cardpool, runner, corp, players, claims) {
+Then('{int} tournament results are visible', (count) => {
+    cy.get('#results tbody tr').filter(':visible').should('have.length', count)
+})
+
+function validateResults(title, date, location, cardpool, runner, corp, players, claims, typeIcon, icons) {
     cy.contains(title).should('be.visible').parent('td').should('have.class', 'tournament-title').parent('tr').within(() => {
         cy.get('td').eq(1).contains(date)
         cy.get('td').eq(2).contains(location)
@@ -22,5 +26,18 @@ function validateResults(title, date, location, cardpool, runner, corp, players,
         cy.get('td').eq(4).should('have.class', 'cell-winner-v').find('img:first').next().should('have.attr', 'src', '/img/ids/' + corp + '.png')
         cy.get('td').eq(5).contains(players)
         cy.get('td').eq(6).contains(claims)
+        if (typeIcon.length > 0) {
+            cy.get('td.tournament-title').find('span').should('have.class', 'type-'+typeIcon)
+        } else {
+            cy.get('td.tournament-title').find('span').should('not.have.class', 'tournament-format')
+            cy.get('td.tournament-title').find('span').should('not.have.class', 'tournament-type')
+        }
+        if (icons.length > 0) {
+            icons.split(',').forEach((icon) => {
+                cy.get(`td.tournament-title i[title='${icon}']`)
+            })
+        } else {
+            cy.get('td.tournament-title').should('not.have.descendants', 'i')
+        }
     })
 }

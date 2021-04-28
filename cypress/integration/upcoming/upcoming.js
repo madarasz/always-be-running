@@ -69,10 +69,10 @@ function validateUpcoming(tournamentName, date, location, cardpool, tournamentTy
         cy.get('td').eq(4).contains(tournamentType)
         cy.get('td').eq(5).contains(regs)
         if (icon.length > 0) {
-            cy.get('td').eq(0).get('span').should('have.class', 'type-'+icon)
+            cy.get('td').eq(0).find('span').should('have.class', 'type-'+icon)
         } else {
-            cy.get('td').eq(0).get('span').should('not.have.class', 'tournament-format')
-            cy.get('td').eq(0).get('span').should('not.have.class', 'tournament-type')
+            cy.get('td').eq(0).find('span').should('not.have.class', 'tournament-format')
+            cy.get('td').eq(0).find('span').should('not.have.class', 'tournament-type')
         }
     })
 }
