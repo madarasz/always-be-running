@@ -22,10 +22,36 @@ Then('{int} tournaments to be concluded are visible', (count) => {
     cy.get('#to-be-concluded tbody tr').filter(':visible').should('have.length', count)
 })
 
+Then('{int} featured tournament results are visible', (count) => {
+    cy.get('.featured-box').filter(':visible').should('have.length', count + 1) // plus one because "Support me" is also a featured-box
+})
+
 Then('I see the following to be concluded tournaments:', (dataTable) => {
     dataTable.rawTable.slice(1).forEach(row => {
         validateToBeConcluded(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
     });
+})
+
+Then('I see the following featured tournament results:', (dataTable) => {
+    dataTable.rawTable.slice(1).forEach(row => {
+        valudateFeaturedResults(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
+    });
+})
+
+When('I filter results cardpool to {string}', (cardpool) => {
+    cy.get('#cardpool').select(cardpool)
+})
+
+When('I filter results type to {string}', (cardpool) => {
+    cy.get('#tournament_type_id').select(cardpool)
+})
+
+When('I filter results country to {string}', (cardpool) => {
+    cy.get('#location_country').select(cardpool)
+})
+
+When('I filter results format to {string}', (cardpool) => {
+    cy.get('#format').select(cardpool)
 })
 
 function validateResults(title, date, location, cardpool, runner, corp, players, claims, typeIcon, icons) {
@@ -54,8 +80,22 @@ function validateToBeConcluded(title, date, location, cardpool, regs, typeIcon, 
     })
 }
 
+function valudateFeaturedResults(title, date, cardpool, location, winner, runner, corp, iconType, players, claims, photos, videos) {
+    cy.get('.featured-title').contains(title).should('be.visible').parent('div').parent('div').parent('div').parent('div').within(() => {
+        cy.get('span.small-text').contains(date)
+        cy.get('span.small-text').contains(cardpool)
+        if (iconType.length > 0) {
+            cy.get('.featured-title').find('span').should('have.class', 'type-'+iconType)
+        }
+        cy.get('table').contains(winner)
+        cy.get('table tr td.cell-winner').find('img').eq(0).should('have.attr', 'src', '/img/ids/' + runner + '.png')
+        cy.get('table tr td.cell-winner').find('img').eq(1).should('have.attr', 'src', '/img/ids/' + corp + '.png')
+        cy.get('.featured-footer').contains(location).contains(players).contains(claims).contains(photos).contains(videos)
+    })
+}
+
 function validateTypeIcon(typeIcon) {
-    if (typeIcon.length > 0) {
+    if (typeIcon && typeIcon.length > 0) {
         cy.get('td.tournament-title').find('span').should('have.class', 'type-'+typeIcon)
     } else {
         cy.get('td.tournament-title').find('span').should('not.have.class', 'tournament-format')
@@ -64,7 +104,7 @@ function validateTypeIcon(typeIcon) {
 }
 
 function validateIcons(icons) {
-    if (icons.length > 0) {
+    if (icons && icons.length > 0) {
         icons.split(',').forEach((icon) => {
             cy.get(`td.tournament-title i[title='${icon}']`)
         })

@@ -56,12 +56,16 @@ function getElement(elementName) {
             return cy.get("div.cc-bottom")
         case 'logout button':
             return cy.get("#button-logout")
+        case 'tournament results tab':
+            return cy.get(".nav-link[href='#tab-results']")
         case 'waiting for conclusion tab':
             return cy.get(".nav-link[href='#tab-to-be-concluded']")
         case 'conclude login warning':
             return cy.get('#warning-conclude')
         case 'results conclude button':
             return cy.get("button[data-target='#concludeModal']")
+        case 'support me featured box':
+            return cy.get('#featured-support-me')
         default:
             throw new Error("No element defined for name: " + elementName)
     }

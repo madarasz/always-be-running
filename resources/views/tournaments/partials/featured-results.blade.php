@@ -1,4 +1,4 @@
-<div class="bracket">
+<div class="bracket" id="bracket-featured">
     <h5>
         <i class="fa fa-star" aria-hidden="true"></i>
         Featured
@@ -15,7 +15,7 @@
     <div class="row" style="padding: .5em 1em 1em;">
         {{--support me box--}}
         <div class="col-xs-12 featured-col">
-            <div class="featured-box">
+            <div class="featured-box" id="featured-support-me">
                 <div class="featured-header">
                     <div class="featured-bg support-bg"></div>
                     <div class="stuff">

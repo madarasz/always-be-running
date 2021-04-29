@@ -12,6 +12,7 @@ Feature: Upcoming page
             | GLC Retrunner2 - Core + Genesis + C&C         | 2021.04.18. | online     | Creation and Control | online event       | 1    |         |
             | Double Elimination Bracket #3                 | 2021.05.05. | Queensland | System Gateway       | GNK / seasonal     | 0    | startup |
             | NtscapeNavigator's online Store Championship  | 2021.05.08. | York       | System Gateway       | store championship | 18   | store   |
+    # TODO featured
 
     Scenario: Upcoming tournament table controlls
         Then 10 upcoming tournaments are visible
