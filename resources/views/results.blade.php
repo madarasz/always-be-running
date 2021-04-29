@@ -137,6 +137,7 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
         var resultsDataAll = [], resultsDataFiltered = [], toBeConcludedAll = [], toBeConcludedFiltered = [],
+                userAuthenticated = @if (@Auth::user()) true @else false @endif,
                 packlist = [],
                 defaultCountry = "",
                 currentPack = "",
@@ -168,12 +169,6 @@
                 updateTournamentTable('#to-be-concluded', ['title', 'date', 'location', 'cardpool', 'conclusion', 'players'],
                         'no tournaments waiting for conclusion', '', toBeConcludedFiltered);
                 updatePaging('to-be-concluded');
-
-                @if (!@Auth::user())
-                    // hide conclude buttons from logged out visitors
-                    $('.btn-conclude').replaceWith('<em>waiting</em>');
-                @endif
-
             });
 
             var resultDataUpdater = function(data) {
