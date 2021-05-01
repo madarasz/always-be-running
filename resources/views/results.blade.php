@@ -3,7 +3,7 @@
 @section('content')
     <h4 class="page-header">Netrunner Tournament Results</h4>
     @include('partials.message')
-    <div class="row">
+    <div class="row" id="results-page">
         {{--Results table--}}
         <div class="col-lg-9 push-lg-3 col-12" id="col-results">
             <div class="bracket">
@@ -35,14 +35,12 @@
                 <div class="tab-content">
                     {{--Results table--}}
                     <div class="tab-pane active" id="tab-results" role="tabpanel">
-                        @include('tournaments.partials.tabledin',
-                            ['columns' => ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims' ],
-                            'skip_header' => true, 'id' => 'results', 'doublerow' => true, 'loader' => true,
-                            'maxrows' => 50, 'pager_options' => [50,100,'all']])
-                        <div class="loader hidden-xs-up" id="results-more-loader">loading more</div>
+                        <div class="loader" id="results-loader" v-if="!resultsLoaded">&nbsp;</div>
+                        <tournament-table :tournaments="resultsData" table-id="results" :is-loaded="resultsLoaded" :headers="resultHeaders" 
+                                empty-message="no tournaments to show" :show-flags="showFlag"/>
                     </div>
                     {{--Conclude modal--}}
-                    @include('tournaments.modals.conclude')
+                    <!-- TODO @include('tournaments.modals.conclude') -->
                     {{--To be concluded table--}}
                     <div class="tab-pane" id="tab-to-be-concluded" role="tabpanel">
                         {{--Warning for not logged in users--}}
@@ -64,7 +62,7 @@
         <div class="col-lg-3 pull-lg-9 col-12" id="col-other">
             {{--Filters--}}
             <div class="bracket" id="bracket-filters">
-                <div class="loader" id="filter-loader" style="margin-top: 0">loading</div>
+                <div class="loader" id="filter-loader" style="margin-top: 0" v-if="!resultsLoaded">loading</div>
                 <h5><i class="fa fa-filter" aria-hidden="true"></i> Filter</h5>
                 {!! Form::open(['url' => '/tournaments']) !!}
                     <div class="row no-gutters">
@@ -143,7 +141,36 @@
                 currentPack = "",
                 runnerIDs = [], corpIDs = [], offset = 50, offsetIterator = 1000;
 
-        positionFilters();
+        var resultsPage = new Vue({
+            el: '#results-page',
+            data: {
+                resultsData: [],
+                toConcludeData: [],
+                resultsLoaded: false,
+                resultHeaders: ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'],
+                showFlag: true
+            },
+            computed: {},
+            mounted: function () {
+                this.getResultsData()
+            },
+            methods: {
+                getResultsData: function() {
+                    $.ajax({
+                        url: '/api/tournaments/results',
+                        dataType: "json",
+                        async: true,
+                        success: function (data) {
+                            resultsPage.resultsData = data
+                            resultsPage.resultsLoaded = true
+                            $('.filter').prop("disabled", false)
+                        }
+                    });
+                }
+            }
+        });
+
+        /*positionFilters();
 
         // load tournaments, first 50 for quick display
         getTournamentData('/results?limit='+offset, function(data) {
@@ -309,8 +336,7 @@
                 document.getElementById('matchdata').checked = true;
                 $('#filter-matchdata').addClass('active-filter');
             @endif
-
-        }
+        }*/
     </script>
 @stop
 

@@ -60,6 +60,7 @@ elixir(function(mix) {
             "axios.min.js",
             "toastr.min.js",
             "abr-vue.js",
+            "tournament.table.js",
             "marked.js",
             "v-autocomplete.js"
         ])

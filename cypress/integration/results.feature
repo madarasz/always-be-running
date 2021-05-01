@@ -81,3 +81,5 @@ Feature: Results
         And I filter results format to "---"
         And I turn checkbox "matchdata" ON
     #Scenario: Filtering with URLs
+    #TODO: multiple days
+    #TODO: conflicts
