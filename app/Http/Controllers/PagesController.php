@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Tournament;
 use App\TournamentType;
+use App\Mwl;
 use App\CardPack;
 use Illuminate\Support\Facades\DB;
 
@@ -63,6 +64,7 @@ class PagesController extends Controller
         $type = $request->input('type');
         $country = $request->input('country');
         $format = $request->input('format');
+        $mwl = $request->input('mwl');
         $videos = $request->input('videos');
         $matchdata = $request->input('matchdata');
 
@@ -74,6 +76,7 @@ class PagesController extends Controller
         $countries = $tournaments->where('location_country', '!=', '')->orderBy('location_country')
             ->pluck('location_country')->unique()->all();
         $tournament_formats = TournamentFormat::whereIn('id', $tournaments->pluck('tournament_format_id')->unique()->all())->pluck('format_name', 'id')->all();
+        $tournament_mwls = Mwl::whereIn('id', $tournaments->pluck('mwl_id')->unique()->all())->pluck('name', 'id')->all();
         $featured = Tournament::where('featured', '>', 0)->where('concluded', 1)->where('approved', 1)
             ->with('winner')->orderBy('date', 'desc')->get();
 
@@ -82,6 +85,7 @@ class PagesController extends Controller
         $tournament_formats = [-1 => '---'] + $tournament_formats;
         $countries = [-1 => '---'] + $countries;
         $tournament_cardpools = [-1 => '---'] + $tournament_cardpools;
+        $tournament_mwls = [-1 => '---'] + $tournament_mwls;
         $message = session()->has('message') ? session('message') : '';
         $page_section = 'results';
 
@@ -92,8 +96,8 @@ class PagesController extends Controller
         }
 
         return view('results', compact('registered', 'message', 'nowdate', 'tournament_types', 'countries',
-            'tournament_cardpools', 'tournament_formats', 'page_section', 'default_country', 'default_country_id',
-            'cardpool', 'type', 'country', 'format', 'videos', 'matchdata', 'featured', 'nowdate'));
+            'tournament_cardpools', 'tournament_formats', 'tournament_mwls', 'page_section', 'default_country', 'default_country_id',
+            'cardpool', 'type', 'country', 'format', 'mwl', 'videos', 'matchdata', 'featured', 'nowdate'));
     }
 
     /**

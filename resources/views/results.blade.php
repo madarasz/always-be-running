@@ -3,6 +3,7 @@
 @section('content')
     <h4 class="page-header">Netrunner Tournament Results</h4>
     @include('partials.message')
+    @include('tournaments.modals.conclude')
     <div class="row" id="results-page">
         {{--Results table--}}
         <div class="col-lg-9 push-lg-3 col-12" id="col-results">
@@ -36,11 +37,9 @@
                     {{--Results table--}}
                     <div class="tab-pane active" id="tab-results" role="tabpanel">
                         <div class="loader" id="results-loader" v-if="!resultsLoaded">&nbsp;</div>
-                        <tournament-table :tournaments="resultsData" table-id="results" :is-loaded="resultsLoaded" :headers="resultHeaders" 
-                                empty-message="no tournaments to show" :show-flags="showFlag"/>
+                        <tournament-table :tournaments="resultsFiltered" table-id="results" :is-loaded="resultsLoaded" :headers="resultHeaders" 
+                                empty-message="no tournaments to show"/>
                     </div>
-                    {{--Conclude modal--}}
-                    <!-- TODO @include('tournaments.modals.conclude') -->
                     {{--To be concluded table--}}
                     <div class="tab-pane" id="tab-to-be-concluded" role="tabpanel">
                         {{--Warning for not logged in users--}}
@@ -50,10 +49,8 @@
                                 Please <a href="/oauth2/redirect">login via NetrunnerDB</a> to conclude tournaments.
                             </div>
                         @endif
-                        @include('tournaments.partials.tabledin',
-                            ['columns' => ['title', 'date', 'location', 'cardpool', 'conclusion', 'regs'],
-                            'skip_header' => true, 'id' => 'to-be-concluded', 'doublerow' => true, 'loader' => true,
-                            'maxrows' => 50, 'pager_options' => [50,100,'all']])
+                        <tournament-table :tournaments="toConcludeFiltered" table-id="to-be-concluded" :is-loaded="toConcludeLoaded" :headers="toConcludeHeaders" 
+                                empty-message="no tournaments waiting for conclusion" :user-auth="userAuthenticated"/>
                     </div>
                 </div>
                 @include('tournaments.partials.icons')
@@ -64,67 +61,80 @@
             <div class="bracket" id="bracket-filters">
                 <div class="loader" id="filter-loader" style="margin-top: 0" v-if="!resultsLoaded">loading</div>
                 <h5><i class="fa fa-filter" aria-hidden="true"></i> Filter</h5>
-                {!! Form::open(['url' => '/tournaments']) !!}
+                <form>
                     <div class="row no-gutters">
                         <div class="form-group col-xs-6 col-lg-12" id="filter-cardpool">
-                            {!! Form::label('cardpool', 'Cardpool') !!}
-                            {!! Form::select('cardpool', array_combine($tournament_cardpools, $tournament_cardpools),
-                                null, ['class' => 'form-control filter',
-                                'onchange' => "filterResults()", 'disabled' => '']) !!}
+                            <label for="cardpool">Cardpool</label>
+                            <select v-model="filterCardpool" @change="applyFilters" id="cardpool" name="cardpool" class="form-control filter" 
+                                    :class="filterCardpool !== '---' ? 'active-filter' : ''" disabled>
+                                <option v-for="cardpool in tournamentCardpools" :key="cardpool" :value="cardpool">@{{ cardpool }}</option>
+                            </select> 
+                        </div>
+                        <div class="form-group col-xs-6 col-lg-12" id="filter-cardpool">
+                            <label for="mwl">Ban list</label>
+                            <select v-model="filterMwl" @change="applyFilters" id="mwl" name="mwl" class="form-control filter" 
+                                    :class="filterMwl !== '---' ? 'active-filter' : ''" disabled>
+                                <option v-for="mwl in tournamentMwls" :key="mwl" :value="mwl">@{{ mwl }}</option>
+                            </select> 
                         </div>
                         <div class="form-group col-xs-6 col-lg-12" id="filter-type">
-                            {!! Form::label('tournament_type_id', 'Type') !!}
-                            {!! Form::select('tournament_type_id', array_combine($tournament_types,$tournament_types),
-                                null, ['class' => 'form-control filter',
-                                'onchange' => "filterResults()", 'disabled' => '']) !!}
+                            <label for="tournament_type_id">Type</label>
+                            <select v-model="filterType" @change="applyFilters" id="tournament_type_id" name="tournament_type_id" class="form-control filter" 
+                                    :class="filterType !== '---' ? 'active-filter' : ''" disabled>
+                                <option v-for="ttype in tournamentTypes" :key="ttype" :value="ttype">@{{ ttype }}</option>
+                            </select>
                         </div>
                         <div class="form-group col-xs-6 col-lg-12" id="filter-country">
-                            {!! Form::label('location_country', 'Country') !!}
-                            {!! Form::select('location_country', array_combine($countries, $countries), null,
-                                ['class' => 'form-control filter',
-                                'onchange' => "filterResults()", 'disabled' => '']) !!}
+                            <label for="location_country">Country</label>
+                            <select v-model="filterCountry" @change="applyFilters" id="location_country" name="location_country" class="form-control filter" 
+                                    :class="filterCountry !== '---' ? 'active-filter' : ''" disabled>
+                                <option v-for="country in tournamentCountries" :key="country" :value="country">@{{ country }}</option>
+                            </select>
                             <div class="legal-bullshit text-xs-center hidden-xs-up" id="label-default-country">
                                 using user's default filter
                             </div>
                         </div>
                         <div class="form-group col-xs-6 col-lg-12" id="filter-format">
-                            {!! Form::label('format', 'Format') !!}
-                            {!! Form::select('format', array_combine($tournament_formats, $tournament_formats), null,
-                                ['class' => 'form-control filter',
-                                'onchange' => "filterResults()", 'disabled' => '']) !!}
+                            <label for="format">Format</label>
+                            <select v-model="filterFormat" @change="applyFilters" id="format" name="format" class="form-control filter" 
+                                    :class="filterFormat !== '---' ? 'active-filter' : ''" disabled>
+                                <option v-for="format in tournamentFormats" :key="format" :value="format">@{{ format }}</option>
+                            </select>
                         </div>
-                        <div class="form-group col-xs-6 col-lg-12 m-b-0" id="filter-video">
-                            {!! Form::checkbox('videos', null, null, ['id' => 'videos', 'class' => 'filter', 'disabled' => '',
-                                'onchange' => "filterResults()"]) !!}
-                            {!! Html::decode(Form::label('videos', 'has video <i class="fa fa-video-camera" aria-hidden="true"></i>')) !!}
+                        <div id="filter-video" class="form-group col-xs-6 col-lg-12 m-b-0" :class="filterVideo ? 'active-filter' : ''">
+                            <input v-model="filterVideo" id="videos" @change="applyFilters" name="videos" type="checkbox" class="filter" disabled>
+                            <label for="videos">has video <i aria-hidden="true" class="fa fa-video-camera"></i></label>
                         </div>
-                        <div class="form-group col-xs-6 col-lg-12 m-b-0" id="filter-matchdata">
-                            {!! Form::checkbox('matchdata', null, null, ['id' => 'matchdata', 'class' => 'filter', 'disabled' => '',
-                                'onchange' => "filterResults()"]) !!}
-                            {!! Html::decode(Form::label('matchdata', 'has match data <i class="fa fa-handshake-o" aria-hidden="true"></i>')) !!}
+                        <div id="filter-matchdata" class="form-group col-xs-6 col-lg-12 m-b-0" :class="filterMatchdata ? 'active-filter' : ''">
+                            <input v-model="filterMatchdata" id="matchdata" @change="applyFilters" name="matchdata" type="checkbox" class="filter" disabled>
+                            <label for="matchdata">has match data <i aria-hidden="true" class="fa fa-handshake-o"></i></label>
                         </div>
                     </div>
-                {!! Form::close() !!}
+                </form>
             </div>
             {{--Stats--}}
             <div class="bracket">
                 <h5>
                     <i class="fa fa-bar-chart" aria-hidden="true"></i>
-                    Statistics - <span id="stat-packname" class="small-text"></span><br/>
-                    <small>provided by <a href="http://www.knowthemeta.com">KnowTheMeta</a></small>
+                    Statistics<br/>
+                    <div id="stat-packname" class="small-text text-xs-center p-b-1 p-t-1" v-if="statsLoaded">
+                        <span v-if="!statError">@{{ currentPack.title }}<br/>@{{ currentPack.mwl }}</span>
+                        <span v-else>@{{ filterCardpool }}</span>
+                    </div>
                 </h5>
                 <div class="text-xs-center">
                     {{--runner ID chart--}}
-                    <div class="loader-chart stat-load">loading</div>
-                    <div id="stat-chart-runner" class="stat-chart"></div>
-                    <div class="small-text p-b-1 hidden-xs-up stat-error">no stats available</div>
+                    <div class="loader-chart stat-load" v-if="!statsLoaded">loading</div>
+                    <div id="stat-chart-runner" class="stat-chart" :class="statError ? 'hidden-xs-up' : ''"></div>
+                    <div class="small-text p-b-1" v-if="statError">no stats available</div>
                     <div class="small-text p-b-1">runner IDs</div>
                     {{--corp ID chart--}}
-                    <div class="loader-chart stat-load">loading</div>
-                    <div id="stat-chart-corp" class="stat-chart"></div>
-                    <div class="small-text p-b-1 hidden-xs-up stat-error">no stats available</div>
+                    <div class="loader-chart stat-load" v-if="!statsLoaded">loading</div>
+                    <div id="stat-chart-corp" class="stat-chart" :class="statError ? 'hidden-xs-up' : ''"></div>
+                    <div class="small-text p-b-1" v-if="statError">no stats available</div>
                     <div class="small-text">corp IDs</div>
                 </div>
+                <h5 class="text-xs-right p-t-1"><small>provided by <a href="http://www.knowthemeta.com">KnowTheMeta</a></small></h5>
             </div>
             {{--Featured--}}
             @if (count($featured))
@@ -135,10 +145,8 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
         var resultsDataAll = [], resultsDataFiltered = [], toBeConcludedAll = [], toBeConcludedFiltered = [],
-                userAuthenticated = @if (@Auth::user()) true @else false @endif,
                 packlist = [],
                 defaultCountry = "",
-                currentPack = "",
                 runnerIDs = [], corpIDs = [], offset = 50, offsetIterator = 1000;
 
         var resultsPage = new Vue({
@@ -146,13 +154,40 @@
             data: {
                 resultsData: [],
                 toConcludeData: [],
+                resultsFiltered: [],
+                toConcludeFiltered: [],
                 resultsLoaded: false,
+                toConcludeLoaded: false,
                 resultHeaders: ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'],
-                showFlag: true
+                toConcludeHeaders: ['title', 'date', 'location', 'conclusion', 'regs'],
+                showFlag: true,
+                userAuthenticated: @if (@Auth::user()) true @else false @endif,
+                tournamentCardpools: [ @foreach ($tournament_cardpools as $cardpoola) '{{ $cardpoola }}', @endforeach ],
+                tournamentTypes: [ @foreach ($tournament_types as $ttype) '{{ $ttype }}', @endforeach ],
+                tournamentCountries: [ @foreach ($countries as $countrya) '{{ $countrya }}', @endforeach ],
+                tournamentFormats: [ @foreach ($tournament_formats as $formata) '{{ $formata }}', @endforeach ],
+                tournamentMwls: [ @foreach ($tournament_mwls as $mwla) '{{ $mwla }}', @endforeach ],
+                filterCardpool: @if ($cardpool !== null) convertFromURLString('{{ $cardpool }}') @else '---' @endif,
+                filterMwl:  @if ($mwl !== null) convertFromURLString('{{ $mwl }}') @else '---' @endif,
+                filterType: @if ($type !== null) '{{ $type }}' @else '---' @endif,
+                filterCountry: @if ($country !== null) '{{ $country }}' @else '---' @endif,
+                filterFormat: @if ($format !== null) '{{ $format }}' @else '---' @endif,
+                filterVideo: @if ($videos !== null) true @else false @endif,
+                filterMatchdata: @if ($matchdata !== null) true @else false @endif,
+                packs: [],
+                currentPack: {},
+                metaStatsRunner: [],
+                metaStatsCorp: [],
+                statsLoaded: false,
+                statError: false
             },
             computed: {},
             mounted: function () {
                 this.getResultsData()
+                this.getToConcludeData()
+                this.positionFilters()
+                google.charts.load('current', {'packages':['corechart']})
+                google.charts.setOnLoadCallback(this.initCharts)
             },
             methods: {
                 getResultsData: function() {
@@ -162,181 +197,114 @@
                         async: true,
                         success: function (data) {
                             resultsPage.resultsData = data
+                            resultsPage.resultsFiltered = resultsPage.filterDataSet(data)
                             resultsPage.resultsLoaded = true
                             $('.filter').prop("disabled", false)
                         }
-                    });
+                    })
+                },
+                getToConcludeData: function() {
+                    $.ajax({
+                        url: '/api/tournaments?concluded=0&recur=0&hide-non=1&desc=1&end={{ $nowdate }}',
+                        dataType: "json",
+                        async: true,
+                        success: function (data) {
+                            resultsPage.toConcludeData = data
+                            resultsPage.toConcludeFiltered = resultsPage.filterDataSet(data)
+                            resultsPage.toConcludeLoaded = true
+                        }
+                    })
+                },
+                applyFilters: function() {
+                    this.resultsFiltered = this.filterDataSet(this.resultsData)
+                    this.toConcludeFiltered = this.filterDataSet(this.toConcludeData)
+                    this.updateUrlWithFilters()
+                    this.switchIdStats()
+                },
+                filterDataSet: function(data) {
+                    if (this.filterCardpool !== '---') data = data.filter(x => x.cardpool === this.filterCardpool)
+                    if (this.filterType !== '---') data = data.filter(x => x.type === this.filterType)
+                    if (this.filterMwl !== '---') data = data.filter(x => x.mwl === this.filterMwl)
+                    if (this.filterCountry !== '---') data = data.filter(x => x.location_country === this.filterCountry)
+                    if (this.filterFormat !== '---') data = data.filter(x => x.format === this.filterFormat)
+                    if (this.filterVideo) data = data.filter(x => x.videos > 0)
+                    if (this.filterMatchdata) data = data.filter(x => x.matchdata)
+                    return data
+                },
+                updateUrlWithFilters: function() {
+                    var newUrl = '/results?'
+                    if (this.filterCardpool !== '---' )  newUrl += 'cardpool=' + convertToURLString(this.filterCardpool) + '&'
+                    if (this.filterType !== '---') newUrl += 'type=' + this.filterType + '&'
+                    if (this.filterMwl !== '---') newUrl += 'mwl=' + convertToURLString(this.filterMwl) + '&'
+                    if (this.filterCountry !== '---') newUrl += 'country=' + this.filterCountry + '&'
+                    if (this.filterFormat !== '---') newUrl += 'format=' + this.filterFormat + '&'
+                    if (this.filterVideo) newUrl += 'videos=true&'
+                    if (this.filterMatchdata) newUrl += 'matchdata=true&'
+                    window.history.pushState("Results", "Results - " + this.filterCardpool + " - " + this.filterType + " - " + this.filterCountry, newUrl.slice(0, -1))
+                },
+                switchIdStats: function() {
+                    if (this.filterCardpool == '---') {
+                        this.currentPack = this.packs[0] // get latest stat
+                        this.statError = false
+                        this.getMetaStats(this.currentPack.file)
+                    } else {
+                        this.currentPack = this.packs.find(x => x.cardpool == this.filterCardpool)
+                        console.log(this.currentPack)
+                        if (this.currentPack) {
+                            this.statError = false
+                            this.getMetaStats(this.currentPack.file)
+                        }
+                        else {
+                            this.statError = true
+                            this.statsLoaded = true    
+                        }
+                    }
+                },
+                initCharts: function() {
+                    $.ajax({
+                        url: 'https:/alwaysberunning.net/ktm/metas.json',
+                        dataType: "json",
+                        async: true,
+                        success: function (data) {
+                            resultsPage.packs = data
+                            resultsPage.currentPack = data[0]
+                            resultsPage.switchIdStats()
+                        }
+                    })
+                },
+                getMetaStats: function(metafile) {
+                    resultsPage.statsLoaded = false
+                    $.ajax({
+                        url: 'https:/alwaysberunning.net/ktm/' + metafile,
+                        dataType: "json",
+                        async: true,
+                        success: function (data) {
+                            resultsPage.metaStatsRunner = data.identities.runner.map(x => { return { title: x.title, allStandingCount: x.used, faction: x.faction }})
+                            resultsPage.metaStatsCorp = data.identities.corp.map(x => { return { title: x.title, allStandingCount: x.used, faction: x.faction }})             
+                            drawResultStats('stat-chart-runner', resultsPage.metaStatsRunner, 0.04)
+                            drawResultStats('stat-chart-corp', resultsPage.metaStatsCorp, 0.04)
+                            resultsPage.statsLoaded = true
+                        }
+                    })
+                },
+                positionFilters: function () {
+                    if (window.matchMedia( "(min-width: 992px)").matches) {
+                        // lg-size
+                        $('#col-other').prepend($('#bracket-filters'))
+                    } else {
+                        // below lg-size
+                        $('#col-results').prepend($('#bracket-filters'))
+                    }
                 }
             }
         });
-
-        /*positionFilters();
-
-        // load tournaments, first 50 for quick display
-        getTournamentData('/results?limit='+offset, function(data) {
-            // duplicate arrays
-            resultsDataAll = data.slice();
-            resultsDataFiltered = data.slice();
-
-            // apply filters in URL
-            applyInitialResultsFilters();
-
-            // display
-            updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', resultsDataFiltered);
-            $('#results-more-loader').removeClass('hidden-xs-up');
-            $('#results-controls').addClass('hidden-xs-up');
-
-            // load tournaments to be concluded
-            getTournamentData("?concluded=0&recur=0&hide-non=1&desc=1&end={{ $nowdate }}", function(data) {
-                toBeConcludedAll = data;
-                toBeConcludedFiltered = toBeConcludedAll.slice();
-
-                applyInitialResultsFilters();
-
-                updateTournamentTable('#to-be-concluded', ['title', 'date', 'location', 'cardpool', 'conclusion', 'players'],
-                        'no tournaments waiting for conclusion', '', toBeConcludedFiltered);
-                updatePaging('to-be-concluded');
-            });
-
-            var resultDataUpdater = function(data) {
-                resultsDataAll = resultsDataAll.concat(data);
-                resultsDataFiltered = resultsDataAll.slice();
-
-                if (data.length == offsetIterator) {
-                    // we have more results to add, load next chunk
-                    offset += offsetIterator;
-                    getTournamentData('/results?limit='+offsetIterator+'&offset='+offset, resultDataUpdater);
-                } else {
-                    // all is loaded, display all
-                    // apply filters in URL
-                    applyInitialResultsFilters();
-                    $('#results').find('tbody').empty();
-                    updateTournamentTable('#results', ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'], 'no tournaments to show', '', resultsDataFiltered);
-                    updatePaging('results');
-
-                    $('#results-more-loader').addClass('hidden-xs-up');
-                    $('#filter-loader').addClass('hidden-xs-up');
-                    $('#results-controls').removeClass('hidden-xs-up');
-                    $('.filter').prop("disabled", false);
-                }                
-            };
-
-            // load the rest
-            getTournamentData('/results?limit='+offsetIterator+'&offset='+offset, resultDataUpdater);
-        });
-
-        // statistics charts
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(initCharts);
-        function initCharts() {
-            // KtM get packs
-            getKTMDataPacks(function (packs) {
-                packlist = packs;
-                updateIdStats(packs[0]);
-            });
-        }
 
         // redraw charts on window resize
         $(window).resize(function(){
-            drawResultStats('stat-chart-runner', runnerIDs, 0.04);
-            drawResultStats('stat-chart-corp', corpIDs, 0.04);
-            positionFilters();
-        });
-
-        // position filter bracket based on screen width
-        function positionFilters() {
-            if (window.matchMedia( "(min-width: 992px)").matches) {
-                // lg-size
-                $('#col-other').prepend($('#bracket-filters'));
-            } else {
-                // below lg-size
-                $('#col-results').prepend($('#bracket-filters'));
-            }
-        }
-
-        // apply Results page filters from URL and user settings
-        function applyInitialResultsFilters() {
-            var requestedCardpool = '-',
-                    requestedType = '-',
-                    requestedCountry = '-',
-                    requestedFormat = '-';
-
-            // cardpool from URL
-                    @if ($cardpool !== null)
-                        var availableCardpools = collectOptions('cardpool');
-            requestedCardpool = '{{ $cardpool }}';
-
-            if (requestedCardpool in availableCardpools) {
-                filterTournamentData(resultsDataFiltered, 'cardpool', availableCardpools[requestedCardpool]);
-                filterTournamentData(toBeConcludedFiltered, 'cardpool', availableCardpools[requestedCardpool]);
-                document.getElementById('cardpool').value = availableCardpools[requestedCardpool];
-                $('#filter-cardpool').addClass('active-filter');
-            }
-            @endif
-
-            // type from URL
-                    @if ($type !== null)
-                        var availableTypes = collectOptions('tournament_type_id');
-            requestedType = '{{ $type }}';
-
-            if (requestedType in availableTypes) {
-                filterTournamentData(resultsDataFiltered, 'type', availableTypes[requestedType]);
-                filterTournamentData(toBeConcludedFiltered, 'type', availableTypes[requestedType]);
-                document.getElementById('tournament_type_id').value = availableTypes[requestedType];
-                $('#filter-type').addClass('active-filter');
-            }
-            @endif
-
-            // format from URL
-                    @if ($format !== null)
-                        var availableFormats = collectOptions('format');
-            requestedFormat = '{{ $format }}';
-
-            if (requestedFormat in availableFormats) {
-                filterTournamentData(resultsDataFiltered, 'format', availableFormats[requestedFormat]);
-                filterTournamentData(toBeConcludedFiltered, 'format', availableFormats[requestedFormat]);
-                document.getElementById('format').value = availableFormats[requestedFormat];
-                $('#filter-format').addClass('active-filter');
-            }
-            @endif
-
-            // country from URL
-            @if ($country !== null)
-                var availableCountries = collectOptions('location_country');
-                requestedCountry = '{{ $country }}';
-
-                if (requestedCountry in availableCountries) {
-                    filterTournamentData(resultsDataFiltered, 'location_country', convertFromURLString(requestedCountry));
-                    filterTournamentData(toBeConcludedFiltered, 'location_country', convertFromURLString(requestedCountry));
-                    document.getElementById('location_country').value = availableCountries[requestedCountry];
-                    $('#filter-country').addClass('active-filter');
-                }
-            @elseif (@$default_country && $country == null && $videos == null && $format == null && $type == null && $cardpool == null)
-                // user's default country
-                defaultCountry = '{{ $default_country }}';
-                filterTournamentData(resultsDataFiltered, 'location_country', defaultCountry);
-                filterTournamentData(toBeConcludedFiltered, 'location_country', defaultCountry);
-                $('#label-default-country').removeClass('hidden-xs-up');
-                document.getElementById('location_country').value = defaultCountry;
-                $('#filter-country').addClass('active-filter');
-                updateResultsURL(requestedCardpool, requestedType, defaultCountry, requestedFormat,
-                        document.getElementById('videos').checked);
-            @endif
-
-            // just tournaments with videos
-            @if ($videos !== null)
-                filterTournamentData(resultsDataFiltered, 'videos', true);
-                document.getElementById('videos').checked = true;
-                $('#filter-video').addClass('active-filter');
-            @endif
-
-            // just tournaments with matchdata
-            @if ($matchdata !== null)
-                filterTournamentData(resultsDataFiltered, 'matchdata', true);
-                document.getElementById('matchdata').checked = true;
-                $('#filter-matchdata').addClass('active-filter');
-            @endif
-        }*/
+            drawResultStats('stat-chart-runner', resultsPage.metaStatsRunner, 0.04)
+            drawResultStats('stat-chart-corp', resultsPage.metaStatsCorp, 0.04)
+            resultsPage.positionFilters()
+        })
     </script>
 @stop
 

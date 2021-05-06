@@ -514,8 +514,7 @@ function factionCodeToFactionTitle(code) {
 
 // converts string to URL friendly string
 function convertToURLString (input) {
-    var output = input.toLowerCase();
-    output = output.replace(/[^a-z0-9_\s-]/g, "");
+    output = input.replace(/[^A-Za-z0-9._\s-]/g, "");
     output = output.replace(/[\s-]+/g, " ");
     output = output.replace(/[\s_]/g, "-");
     return output;
@@ -523,7 +522,7 @@ function convertToURLString (input) {
 
 // sometimes you need to go back, use with caution
 function convertFromURLString (input) {
-    return toTitleCase(input.replace(/-/g, " "));
+    return input.replace(/-/g, " ");
 }
 
 // capitalize each first letter of each word

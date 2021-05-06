@@ -5,7 +5,10 @@ Vue.component('tournament-table', {
         tableId: String,
         emptyMessage: String,
         isLoaded: Boolean,
-        showFlags: Boolean
+        userAuth: {
+            type: Boolean,
+            default: false
+        }
     },
     template: `
     <div>
@@ -26,6 +29,11 @@ Vue.component('tournament-table', {
                 <th v-if="headers.includes('claims')" class="text-xs-center">
                     <span class="hidden-sm-down">claims</span>
                     <i class="fa fa-address-card hidden-xs-down hidden-md-up" title="claims"></i>
+                </th>
+                <th v-if="headers.includes('conclusion')" class="text-xs-center">conclusion</th>
+                <th v-if="headers.includes('regs')" class="text-xs-center">
+                    <span class="hidden-sm-down">regs</span>
+                    <i class="hidden-xs-down hidden-md-up fa fa-registered" title="registered"></i>
                 </th>
             </thead>
             <tbody v-if="isLoaded">
@@ -90,7 +98,19 @@ Vue.component('tournament-table', {
                         <img :src="'/img/ids/'+tournament.winner_runner_identity+'.png'">
                         <img :src="'/img/ids/'+tournament.winner_corp_identity+'.png'">
                     </td>
-                    <td v-if="headers.includes('players')" class="text-xs-center hidden-xs-down">
+                    <td v-if="headers.includes('conclusion')" class="text-xs-center">
+                        <span v-if="tournament.concluded" class="label label-success">concluded</span>
+                        <template v-else-if="tournament.date <= nowDate">
+                            <button v-if="userAuth" class="btn btn-conclude btn-xs" data-toggle="modal" data-target="#concludeModal" :data-tournament-id="tournament.id"
+                                    :data-subtitle="tournament.title + ' - ' + tournament.date">
+                                <i class="fa fa-check" aria-hidden></i>
+                                conclude
+                            </button>
+                            <em v-if="!userAuth">waiting</em>
+                        </template>
+                        <span v-else class="label label-info">not yet</span>
+                    </td>
+                    <td v-if="headers.includes('players') || headers.includes('regs')" class="text-xs-center hidden-xs-down">
                         {{ tournament.concluded ? tournament.players_count : tournament.registration_count }}
                     </td>
                     <td v-if="headers.includes('claims')" class="text-xs-center hidden-xs-down">
@@ -100,7 +120,7 @@ Vue.component('tournament-table', {
                 </tr>
             </tbody>
         </table>
-        <div class="text-xs-center small-text" :id="tableId+'-paging'" v-if="isLoaded">
+        <div class="text-xs-center small-text" :id="tableId+'-paging'" v-if="isLoaded && tournaments.length > 0">
             <a class="fake-link" @click="paging(-pageWith)" v-if="fromIndex > 1" :id="tableId+'-paging-forward'">
                 <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
             </a>
@@ -144,6 +164,14 @@ Vue.component('tournament-table', {
         changeFlagOption: function (flagOption) {
             this.showFlag = flagOption
             setCookie('showflag', flagOption)
+        }
+    },
+    computed: {
+        nowDate: function () {
+            const date = new Date()
+            const m = date.getMonth() + 1
+            const d = date.getDate()
+            return `${date.getFullYear()}.${m < 10 ? '0' : ''}${m}.${d < 10 ? '0' : ''}${d}.`
         }
     },
     watch: {
