@@ -70,7 +70,7 @@
                                 <option v-for="cardpool in tournamentCardpools" :key="cardpool" :value="cardpool">@{{ cardpool }}</option>
                             </select> 
                         </div>
-                        <div class="form-group col-xs-6 col-lg-12" id="filter-cardpool">
+                        <div class="form-group col-xs-6 col-lg-12" id="filter-mwl">
                             <label for="mwl">Ban list</label>
                             <select v-model="filterMwl" @change="applyFilters" id="mwl" name="mwl" class="form-control filter" 
                                     :class="filterMwl !== '---' ? 'active-filter' : ''" disabled>
@@ -125,12 +125,12 @@
                 <div class="text-xs-center">
                     {{--runner ID chart--}}
                     <div class="loader-chart stat-load" v-if="!statsLoaded">loading</div>
-                    <div id="stat-chart-runner" class="stat-chart" :class="statError ? 'hidden-xs-up' : ''"></div>
+                    <div id="stat-chart-runner" :class="statError ? 'hidden-xs-up' : ''"></div>
                     <div class="small-text p-b-1" v-if="statError">no stats available</div>
                     <div class="small-text p-b-1">runner IDs</div>
                     {{--corp ID chart--}}
                     <div class="loader-chart stat-load" v-if="!statsLoaded">loading</div>
-                    <div id="stat-chart-corp" class="stat-chart" :class="statError ? 'hidden-xs-up' : ''"></div>
+                    <div id="stat-chart-corp" :class="statError ? 'hidden-xs-up' : ''"></div>
                     <div class="small-text p-b-1" v-if="statError">no stats available</div>
                     <div class="small-text">corp IDs</div>
                 </div>
@@ -249,7 +249,6 @@
                         this.getMetaStats(this.currentPack.file)
                     } else {
                         this.currentPack = this.packs.find(x => x.cardpool == this.filterCardpool)
-                        console.log(this.currentPack)
                         if (this.currentPack) {
                             this.statError = false
                             this.getMetaStats(this.currentPack.file)
@@ -257,6 +256,7 @@
                         else {
                             this.statError = true
                             this.statsLoaded = true    
+                            $("div[dir='ltr']").hide() // hide any leftover charts, don't know why 
                         }
                     }
                 },
@@ -280,10 +280,12 @@
                         async: true,
                         success: function (data) {
                             resultsPage.metaStatsRunner = data.identities.runner.map(x => { return { title: x.title, allStandingCount: x.used, faction: x.faction }})
-                            resultsPage.metaStatsCorp = data.identities.corp.map(x => { return { title: x.title, allStandingCount: x.used, faction: x.faction }})             
-                            drawResultStats('stat-chart-runner', resultsPage.metaStatsRunner, 0.04)
-                            drawResultStats('stat-chart-corp', resultsPage.metaStatsCorp, 0.04)
+                            resultsPage.metaStatsCorp = data.identities.corp.map(x => { return { title: x.title, allStandingCount: x.used, faction: x.faction }})     
                             resultsPage.statsLoaded = true
+                            Vue.nextTick(function() {
+                                drawResultStats('stat-chart-runner', resultsPage.metaStatsRunner, 0.04)
+                                drawResultStats('stat-chart-corp', resultsPage.metaStatsCorp, 0.04) 
+                            })
                         }
                     })
                 },
@@ -301,8 +303,10 @@
 
         // redraw charts on window resize
         $(window).resize(function(){
-            drawResultStats('stat-chart-runner', resultsPage.metaStatsRunner, 0.04)
-            drawResultStats('stat-chart-corp', resultsPage.metaStatsCorp, 0.04)
+            if (resultsPage.statsLoaded) {
+                drawResultStats('stat-chart-runner', resultsPage.metaStatsRunner, 0.04)
+                drawResultStats('stat-chart-corp', resultsPage.metaStatsCorp, 0.04)
+            }
             resultsPage.positionFilters()
         })
     </script>
