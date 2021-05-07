@@ -1,4 +1,4 @@
-import { Given, Then } from "cypress-cucumber-preprocessor/steps";
+import { Given, Then, When } from "cypress-cucumber-preprocessor/steps";
 
 const url = 'http://localhost:8000/'
 
@@ -17,6 +17,10 @@ Given('I open the {string} page', (pageName) => {
             cy.visit(url+'admin', { failOnStatusCode: false })
             break
     }
+})
+
+When('I visit url {string}', (pageUrl) => {
+    cy.visit(url+pageUrl)
 })
 
 Then('current url is {string}', (desiredUrl) => {

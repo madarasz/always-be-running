@@ -68,7 +68,7 @@ Vue.component('tournament-table', {
                             {{ tournament.videos > 1 ? tournament.videos : ''}}<i class="fa fa-video-camera" title="video" v-if="tournament.videos > 0"></i>
                         </span>
                     </td>
-                    <td v-if="headers.includes('date')">
+                    <td v-if="headers.includes('date')" class="line-breaker">
                         <span class="line-breaker">{{ tournament.date ? tournament.date.substring(0, 5) : tournament.recurring_day }}</span>
                         <span class="line-breaker">{{ tournament.date ? tournament.date.substring(5) : '' }}<i class="fa fa-plus-circle icon-upper" title="multiple day event" v-if="tournament.end_date"></i></span>
                     </td>
@@ -130,18 +130,18 @@ Vue.component('tournament-table', {
             </a>
         </div>
         <div class="text-xs-center" :id="tableId+'-options'" style="font-size: 80%; font-style: normal">
-            <span class="label control-paging" :class="pageWith == 50 ? 'label-active' : 'label-inactive'" @click="changePageOption(50)">
+            <span class="label control-paging" :class="pageWith == 50 ? 'label-active' : 'label-inactive'" @click="changePageOption(50)" :id="tableId+'-option-50'">
                 50
             </span>
-            <span class="label control-paging" :class="pageWith == 100 ? 'label-active' : 'label-inactive'" @click="changePageOption(100)">
+            <span class="label control-paging" :class="pageWith == 100 ? 'label-active' : 'label-inactive'" @click="changePageOption(100)" :id="tableId+'-option-100'">
                 100
             </span>
-            <span class="label control-paging" :class="pageWith == 100000 ? 'label-active' : 'label-inactive'" @click="changePageOption(100000)">
+            <span class="label control-paging" :class="pageWith == 100000 ? 'label-active' : 'label-inactive'" @click="changePageOption(100000)" :id="tableId+'-option-all'">
                 all
             </span>
             <span> - </span>
-            <span class="label control-flag" :class="showFlag ? 'label-active' : 'label-inactive'" @click="changeFlagOption(true)">flag</span>
-            <span class="label control-text" :class="!showFlag ? 'label-active' : 'label-inactive'" @click="changeFlagOption(false)">text</span>
+            <span class="label control-flag" :class="showFlag ? 'label-active' : 'label-inactive'" @click="changeFlagOption(true)" :id="tableId+'-option-flag'">flag</span>
+            <span class="label control-text" :class="!showFlag ? 'label-active' : 'label-inactive'" @click="changeFlagOption(false)" :id="tableId+'-option-text'">text</span>
         </div>
     </div>
         `,

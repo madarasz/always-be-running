@@ -11,5 +11,5 @@ When('I display upcoming map', () => {
 Then('{word} Google map loads', (mapName) => {
     cy.wait('@googleMaps')
     cy.wait(2000)
-    cy.get('#map').scrollIntoView().matchImageSnapshot('map-'+mapName)
+    cy.get('#map').scrollIntoView().matchImageSnapshot('map-'+mapName, { failureThreshold: 0.03 })
 })

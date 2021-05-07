@@ -90,9 +90,11 @@
                                     :class="filterCountry !== '---' ? 'active-filter' : ''" disabled>
                                 <option v-for="country in tournamentCountries" :key="country" :value="country">@{{ country }}</option>
                             </select>
-                            <div class="legal-bullshit text-xs-center hidden-xs-up" id="label-default-country">
+                            @if (@$default_country !== null)
+                            <div class="legal-bullshit text-xs-center" v-if="filterCountry === '{{ @$default_country }}'" id="label-default-country">
                                 using user's default filter
                             </div>
+                            @endif
                         </div>
                         <div class="form-group col-xs-6 col-lg-12" id="filter-format">
                             <label for="format">Format</label>
@@ -159,7 +161,7 @@
                 resultsLoaded: false,
                 toConcludeLoaded: false,
                 resultHeaders: ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'],
-                toConcludeHeaders: ['title', 'date', 'location', 'conclusion', 'regs'],
+                toConcludeHeaders: ['title', 'date', 'location', 'cardpool', 'conclusion', 'regs'],
                 showFlag: true,
                 userAuthenticated: @if (@Auth::user()) true @else false @endif,
                 tournamentCardpools: [ @foreach ($tournament_cardpools as $cardpoola) '{{ $cardpoola }}', @endforeach ],
@@ -170,7 +172,7 @@
                 filterCardpool: @if ($cardpool !== null) convertFromURLString('{{ $cardpool }}') @else '---' @endif,
                 filterMwl:  @if ($mwl !== null) convertFromURLString('{{ $mwl }}') @else '---' @endif,
                 filterType: @if ($type !== null) '{{ $type }}' @else '---' @endif,
-                filterCountry: @if ($country !== null) '{{ $country }}' @else '---' @endif,
+                filterCountry: @if ($country !== null) '{{ $country }}' @else @if (@$default_country !== null) '{{ $default_country }}' @else '---' @endif @endif,
                 filterFormat: @if ($format !== null) '{{ $format }}' @else '---' @endif,
                 filterVideo: @if ($videos !== null) true @else false @endif,
                 filterMatchdata: @if ($matchdata !== null) true @else false @endif,
@@ -186,6 +188,7 @@
                 this.getResultsData()
                 this.getToConcludeData()
                 this.positionFilters()
+                this.updateUrlWithFilters()
                 google.charts.load('current', {'packages':['corechart']})
                 google.charts.setOnLoadCallback(this.initCharts)
             },

@@ -94,7 +94,6 @@ class PagesController extends Controller
             $default_country = $request->user()->country->name;
             $default_country_id = array_search($default_country, $countries, true);
         }
-
         return view('results', compact('registered', 'message', 'nowdate', 'tournament_types', 'countries',
             'tournament_cardpools', 'tournament_formats', 'tournament_mwls', 'page_section', 'default_country', 'default_country_id',
             'cardpool', 'type', 'country', 'format', 'mwl', 'videos', 'matchdata', 'featured', 'nowdate'));

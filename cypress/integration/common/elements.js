@@ -16,6 +16,10 @@ Then("I don't see {string} element", (elementName) => {
     getElement(elementName).should('not.be.visible')
 })
 
+Then("element {string} should not exist", (elementName) => {
+    getElement(elementName).should('not.exist')
+})
+
 Then("I see text {string}", (text) => {
     cy.contains(text).should('be.visible')
 })
@@ -66,6 +70,28 @@ function getElement(elementName) {
             return cy.get("button[data-target='#concludeModal']")
         case 'support me featured box':
             return cy.get('#featured-support-me')
+        case 'results forward button':
+            return cy.get('#results-paging-forward')
+        case 'results back button':
+            return cy.get('#results-paging-back')
+        case 'results 50 option':
+            return cy.get('#results-options span.control-paging:nth-child(1)')
+        case 'results 100 option':
+            return cy.get('#results-options span.control-paging:nth-child(2)')
+        case 'results all option':
+            return cy.get('#results-options span.control-paging:nth-child(3)')
+        case 'results flag option':
+            return cy.get('#results-options .control-flag')
+        case 'results text option':
+            return cy.get('#results-options .control-text')
+        case 'Profile menu':
+            return cy.get('a.nav-link span#nav-profile')
+        case 'Profile Edit button':
+            return cy.get('#button-edit')
+        case 'Profile Save button':
+            return cy.get('#button-save')
+        case 'results default country label':
+            return cy.get('#label-default-country')
         default:
             throw new Error("No element defined for name: " + elementName)
     }

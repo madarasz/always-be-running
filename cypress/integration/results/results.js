@@ -1,9 +1,15 @@
 import { Given, Then, When } from "cypress-cucumber-preprocessor/steps";
 
 Given('results data is mocked', () => {
+    cy.intercept('GET', '/api/tournaments/results', { fixture: 'results.json' })
     cy.intercept('GET', '/api/tournaments/results?limit=50', { fixture: 'results_limit_50.json' })
     cy.intercept('GET', '/api/tournaments/results?limit=1000&offset=50', { fixture: 'results_offset_50_limit_1000.json' })
-    cy.intercept('GET', '/api/tournaments?concluded=0&recur=0&hide-non=1&desc=1&end=2021.04.28.', { fixture: 'results_to_be_concluded' })
+    cy.intercept('GET', '/api/tournaments?concluded=0&recur=0&hide-non=1&desc=1&end=*', { fixture: 'results_to_be_concluded' })
+    cy.intercept('GET', 'https://alwaysberunning.net/ktm/*').as('metas')
+    cy.intercept('GET', 'https://alwaysberunning.net/ktm/metas.json', { fixture: 'ktm_metas.json' })
+    cy.intercept('GET', 'https://alwaysberunning.net/ktm/system-gateway.json', { fixture: 'ktm_system_gateway.json' })
+    cy.intercept('GET', 'https://alwaysberunning.net/ktm/uprising-ban20-09.json', { fixture: 'ktm_uprising.json' })
+    cy.intercept('https://www.gstatic.com/charts/loader.js').as('googleCharts')
     // mock date
     cy.clock(new Date(2021, 3, 27), ['Date'])
 })
@@ -15,15 +21,15 @@ Then('I see the following tournament results:', (dataTable) => {
 })
 
 Then('{int} tournament results are visible', (count) => {
-    cy.get('#results tbody tr').filter(':visible').should('have.length', count)
+    cy.get('#results tbody tr td:nth-child(2)').should('have.length', count)
 })
 
 Then('{int} tournaments to be concluded are visible', (count) => {
-    cy.get('#to-be-concluded tbody tr').filter(':visible').should('have.length', count)
+    cy.get('#to-be-concluded tbody tr td:nth-child(2)').should('have.length', count)
 })
 
 Then('{int} featured tournament results are visible', (count) => {
-    cy.get('.featured-box').filter(':visible').should('have.length', count + 1) // plus one because "Support me" is also a featured-box
+    cy.get('.featured-box').should('have.length', count + 1) // plus one because "Support me" is also a featured-box
 })
 
 Then('I see the following to be concluded tournaments:', (dataTable) => {
@@ -54,15 +60,29 @@ When('I filter results format to {string}', (cardpool) => {
     cy.get('#format').select(cardpool)
 })
 
+Then('{string} statistics loads', (cardpool) => {
+    cy.get('#stat-chart-runner', { timeout: 10000 }).should('be.visible')
+    cy.wait(500)
+    cy.get('#stat-chart-runner').scrollIntoView().matchImageSnapshot('stat-runner-'+cardpool, { failureThreshold: 0.03 })
+    cy.get('#stat-chart-corp').scrollIntoView().matchImageSnapshot('stat-corp-'+cardpool, { failureThreshold: 0.03 })
+})
+
 function validateResults(title, date, location, cardpool, runner, corp, players, claims, typeIcon, icons) {
     cy.contains(title).should('be.visible').parent('td').should('have.class', 'tournament-title').parent('tr').within(() => {
-        cy.get('td').eq(1).contains(date)
+        cy.get('td').eq(1).contains(date.slice(0,5))
+        cy.get('td').eq(1).contains(date.slice(5,6))
+        if (date.slice(-1) === '+') cy.get('td').eq(1).find("i[title='multiple day event']")
         cy.get('td').eq(2).contains(location)
         cy.get('td').eq(3).contains(cardpool)
         cy.get('td').eq(4).should('have.class', 'cell-winner-v').find('img:first').should('have.attr', 'src', '/img/ids/' + runner + '.png')
         cy.get('td').eq(4).should('have.class', 'cell-winner-v').find('img:first').next().should('have.attr', 'src', '/img/ids/' + corp + '.png')
         cy.get('td').eq(5).contains(players)
-        cy.get('td').eq(6).contains(claims)
+        if (claims.slice(-1) === '!') {
+            cy.get('td').eq(6).contains(claims.slice(0, -1)).find("i[title='conflict']")
+        } else {
+            cy.get('td').eq(6).contains(claims)
+            cy.get('td').eq(6).find("i[title='conflict']").should('not.exist')
+        }
         validateTypeIcon(typeIcon)
         validateIcons(icons)
     })
@@ -70,7 +90,8 @@ function validateResults(title, date, location, cardpool, runner, corp, players,
 
 function validateToBeConcluded(title, date, location, cardpool, regs, typeIcon, icons) {
     cy.contains(title).should('be.visible').parent('td').should('have.class', 'tournament-title').parent('tr').within(() => {
-        cy.get('td').eq(1).contains(date)
+        cy.get('td').eq(1).contains(date.slice(0,5))
+        cy.get('td').eq(1).contains(date.slice(5))
         cy.get('td').eq(2).contains(location)
         cy.get('td').eq(3).contains(cardpool)
         cy.get('td').eq(4).contains('waiting')
