@@ -69,4 +69,5 @@ Run: `npx cypress run --env failOnSnapshotDiff=false`
 ##### Running via Github actions
 under development
 
+*nvm is a nice tool to run multiple versions of npm. example: `nvm exec 10 npm install`*
 *Previous Nigthwatch tests were deprecated. Files are still found in `/tests/nightwatch/`*

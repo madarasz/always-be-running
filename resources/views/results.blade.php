@@ -11,8 +11,8 @@
                 {{--Result / to be concluded tabs--}}
                 <div class="modal-tabs">
                     <ul id="result-tabs" class="nav nav-tabs" role="tablist">
-                        <li class="nav-item" id="t-results">
-                            <a class="nav-link active" data-toggle="tab" href="#tab-results" role="tab">
+                        <li class="nav-item" id="t-results" role="tab">
+                            <a class="nav-link active" data-toggle="tab" href="#tab-results">
                                 <h5>
                                     <i class="fa fa-list-alt" aria-hidden="true"></i>
                                     Tournament results
@@ -21,8 +21,8 @@
                                 </h5>
                             </a>
                         </li>
-                        <li class="nav-item" id="t-to-be-concluded">
-                            <a class="nav-link" data-toggle="tab" href="#tab-to-be-concluded" role="tab">
+                        <li class="nav-item" id="t-to-be-concluded" role="tab">
+                            <a class="nav-link" data-toggle="tab" href="#tab-to-be-concluded">
                                 <h5>
                                     <i class="fa fa-clock-o" aria-hidden="true"></i>
                                     Waiting for conclusion
@@ -37,7 +37,7 @@
                     {{--Results table--}}
                     <div class="tab-pane active" id="tab-results" role="tabpanel">
                         <div class="loader" id="results-loader" v-if="!resultsLoaded">&nbsp;</div>
-                        <tournament-table :tournaments="resultsFiltered" table-id="results" :is-loaded="resultsLoaded" :headers="resultHeaders" 
+                        <tournament-table :tournaments="resultsFiltered" table-id="results" :is-loaded="resultsLoaded" :is-fully-loaded="resultsLoadedFully" :headers="resultHeaders" 
                                 empty-message="no tournaments to show"/>
                     </div>
                     {{--To be concluded table--}}
@@ -66,28 +66,28 @@
                         <div class="form-group col-xs-6 col-lg-12" id="filter-cardpool">
                             <label for="cardpool">Cardpool</label>
                             <select v-model="filterCardpool" @change="applyFilters" id="cardpool" name="cardpool" class="form-control filter" 
-                                    :class="filterCardpool !== '---' ? 'active-filter' : ''" disabled>
+                                    :class="filterCardpool !== '---' ? 'active-filter' : ''" :disabled="!resultsLoaded">
                                 <option v-for="cardpool in tournamentCardpools" :key="cardpool" :value="cardpool">@{{ cardpool }}</option>
                             </select> 
                         </div>
                         <div class="form-group col-xs-6 col-lg-12" id="filter-mwl">
                             <label for="mwl">Ban list</label>
                             <select v-model="filterMwl" @change="applyFilters" id="mwl" name="mwl" class="form-control filter" 
-                                    :class="filterMwl !== '---' ? 'active-filter' : ''" disabled>
+                                    :class="filterMwl !== '---' ? 'active-filter' : ''" :disabled="!resultsLoaded">
                                 <option v-for="mwl in tournamentMwls" :key="mwl" :value="mwl">@{{ mwl }}</option>
                             </select> 
                         </div>
                         <div class="form-group col-xs-6 col-lg-12" id="filter-type">
                             <label for="tournament_type_id">Type</label>
                             <select v-model="filterType" @change="applyFilters" id="tournament_type_id" name="tournament_type_id" class="form-control filter" 
-                                    :class="filterType !== '---' ? 'active-filter' : ''" disabled>
+                                    :class="filterType !== '---' ? 'active-filter' : ''" :disabled="!resultsLoaded">
                                 <option v-for="ttype in tournamentTypes" :key="ttype" :value="ttype">@{{ ttype }}</option>
                             </select>
                         </div>
                         <div class="form-group col-xs-6 col-lg-12" id="filter-country">
                             <label for="location_country">Country</label>
                             <select v-model="filterCountry" @change="applyFilters" id="location_country" name="location_country" class="form-control filter" 
-                                    :class="filterCountry !== '---' ? 'active-filter' : ''" disabled>
+                                    :class="filterCountry !== '---' ? 'active-filter' : ''" :disabled="!resultsLoaded">
                                 <option v-for="country in tournamentCountries" :key="country" :value="country">@{{ country }}</option>
                             </select>
                             @if (@$default_country !== null)
@@ -99,16 +99,16 @@
                         <div class="form-group col-xs-6 col-lg-12" id="filter-format">
                             <label for="format">Format</label>
                             <select v-model="filterFormat" @change="applyFilters" id="format" name="format" class="form-control filter" 
-                                    :class="filterFormat !== '---' ? 'active-filter' : ''" disabled>
+                                    :class="filterFormat !== '---' ? 'active-filter' : ''" :disabled="!resultsLoaded">
                                 <option v-for="format in tournamentFormats" :key="format" :value="format">@{{ format }}</option>
                             </select>
                         </div>
                         <div id="filter-video" class="form-group col-xs-6 col-lg-12 m-b-0" :class="filterVideo ? 'active-filter' : ''">
-                            <input v-model="filterVideo" id="videos" @change="applyFilters" name="videos" type="checkbox" class="filter" disabled>
+                            <input v-model="filterVideo" id="videos" @change="applyFilters" name="videos" type="checkbox" class="filter" :disabled="!resultsLoaded">
                             <label for="videos">has video <i aria-hidden="true" class="fa fa-video-camera"></i></label>
                         </div>
                         <div id="filter-matchdata" class="form-group col-xs-6 col-lg-12 m-b-0" :class="filterMatchdata ? 'active-filter' : ''">
-                            <input v-model="filterMatchdata" id="matchdata" @change="applyFilters" name="matchdata" type="checkbox" class="filter" disabled>
+                            <input v-model="filterMatchdata" id="matchdata" @change="applyFilters" name="matchdata" type="checkbox" class="filter" :disabled="!resultsLoaded">
                             <label for="matchdata">has match data <i aria-hidden="true" class="fa fa-handshake-o"></i></label>
                         </div>
                     </div>
@@ -146,11 +146,7 @@
     </div>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        var resultsDataAll = [], resultsDataFiltered = [], toBeConcludedAll = [], toBeConcludedFiltered = [],
-                packlist = [],
-                defaultCountry = "",
-                runnerIDs = [], corpIDs = [], offset = 50, offsetIterator = 1000;
-
+     // TODO: topcut, video icon, no IDs if no first spot has no ID, date aligned to top
         var resultsPage = new Vue({
             el: '#results-page',
             data: {
@@ -159,6 +155,7 @@
                 resultsFiltered: [],
                 toConcludeFiltered: [],
                 resultsLoaded: false,
+                resultsLoadedFully: false,
                 toConcludeLoaded: false,
                 resultHeaders: ['title', 'date', 'location', 'cardpool', 'winner', 'players', 'claims'],
                 toConcludeHeaders: ['title', 'date', 'location', 'cardpool', 'conclusion', 'regs'],
@@ -181,11 +178,13 @@
                 metaStatsRunner: [],
                 metaStatsCorp: [],
                 statsLoaded: false,
-                statError: false
+                statError: false,
+                offset: 100,
+                limit: 100,
+                offsetIterator: 1000
             },
-            computed: {},
             mounted: function () {
-                this.getResultsData()
+                this.getResultsData(this.limit, 0)
                 this.getToConcludeData()
                 this.positionFilters()
                 this.updateUrlWithFilters()
@@ -193,16 +192,22 @@
                 google.charts.setOnLoadCallback(this.initCharts)
             },
             methods: {
-                getResultsData: function() {
+                getResultsData: function(rlimit, roffset) {
                     $.ajax({
-                        url: '/api/tournaments/results',
+                        url: `/api/tournaments/results?limit=${rlimit}&offset=${roffset}`,
                         dataType: "json",
                         async: true,
                         success: function (data) {
-                            resultsPage.resultsData = data
-                            resultsPage.resultsFiltered = resultsPage.filterDataSet(data)
+                            resultsPage.resultsData = resultsPage.resultsData.concat(data)
+                            resultsPage.resultsFiltered = resultsPage.filterDataSet(resultsPage.resultsData)
                             resultsPage.resultsLoaded = true
-                            $('.filter').prop("disabled", false)
+                            if (data.length == resultsPage.limit) {
+                                resultsPage.limit = resultsPage.offsetIterator
+                                resultsPage.getResultsData(resultsPage.limit, resultsPage.offset)
+                                resultsPage.offset += resultsPage.offsetIterator
+                            } else {
+                                resultsPage.resultsLoadedFully = true
+                            }
                         }
                     })
                 },

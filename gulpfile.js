@@ -78,8 +78,4 @@ elixir(function(mix) {
             'cookieconsent.min.css'
         ])
         .version(['css/all.css', 'js/all.js']);
-
-    gulp.task("test", function() {
-        shell('nightwatch -c tests/nightwatch/nightwatch.json');
-    });
 });

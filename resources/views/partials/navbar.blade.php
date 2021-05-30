@@ -7,7 +7,7 @@
     <div class="container">
         <div class="nav-main">
             <a class="navbar-brand" href="/#">
-                <img src="/favicon-96x96.png" class="navbar-brand-image image-30x30"/>
+                <img src="/favicon-96x96.png" class="navbar-brand-image image-30x30" alt="logo"/>
                 <span class="hidden-md-up">ABR</span>
                 <span class="hidden-sm-down">Always be Running.net</span>
             </a>

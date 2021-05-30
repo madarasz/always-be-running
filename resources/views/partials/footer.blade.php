@@ -7,10 +7,10 @@
         [<a href="/privacy">Privacy</a>] -
         [<a href="/support-me" class="supporter">Support Me</a>] -
         {{--[<a href="/birthday">Birthday</a>] ---}}
-        <a href="#" onclick="goToSlackChannel()"><i class="fa fa-slack contact-icon" aria-hidden="true"></i></a> -
-        <a href="https://twitter.com/alwaysberunnin"><i class="fa fa-twitter contact-icon" aria-hidden="true"></i></a> -
-        <a href="https://www.facebook.com/alwaysberunning"><i class="fa fa-facebook-official contact-icon" aria-hidden="true"></i></a> -
-        <a href="https://github.com/madarasz/always-be-running"><i class="fa fa-github contact-icon" aria-hidden="true"></i></a>
+        <a href="#" onclick="goToSlackChannel()" aria-label="Slack"><i class="fa fa-slack contact-icon" aria-hidden="true"></i></a> -
+        <a href="https://twitter.com/alwaysberunnin" aria-label="Twitter"><i class="fa fa-twitter contact-icon" aria-hidden="true"></i></a> -
+        <a href="https://www.facebook.com/alwaysberunning" aria-label="Facebook"><i class="fa fa-facebook-official contact-icon" aria-hidden="true"></i></a> -
+        <a href="https://github.com/madarasz/always-be-running" aria-label="Github"><i class="fa fa-github contact-icon" aria-hidden="true"></i></a>
     </p>
     <p class="legal-bullshit">The information presented on this site about Android:Netrunner, both literal and graphical,
             is copyrighted by Fantasy Flight Games and/or Wizards of the Coast.<br/>

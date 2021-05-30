@@ -5,6 +5,10 @@ Vue.component('tournament-table', {
         tableId: String,
         emptyMessage: String,
         isLoaded: Boolean,
+        isFullyLoaded: {
+            type: Boolean,
+            default: true
+        },
         userAuth: {
             type: Boolean,
             default: false
@@ -95,8 +99,8 @@ Vue.component('tournament-table', {
                         <span v-else class="text-danger">not&nbsp;yet&nbsp;known</span>
                     </td>
                     <td v-if="headers.includes('winner')" class="text-xs-center cell-winner-v">
-                        <img :src="'/img/ids/'+tournament.winner_runner_identity+'.png'">
-                        <img :src="'/img/ids/'+tournament.winner_corp_identity+'.png'">
+                        <img :src="'/img/ids/'+tournament.winner_runner_identity+'.png'" v-if="tournament.winner_runner_identity" alt="">
+                        <img :src="'/img/ids/'+tournament.winner_corp_identity+'.png'" v-if="tournament.winner_corp_identity" alt="">
                     </td>
                     <td v-if="headers.includes('conclusion')" class="text-xs-center">
                         <span v-if="tournament.concluded" class="label label-success">concluded</span>
@@ -124,7 +128,7 @@ Vue.component('tournament-table', {
             <a class="fake-link" @click="paging(-pageWith)" v-if="fromIndex > 1" :id="tableId+'-paging-forward'">
                 <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
             </a>
-            showing {{ fromIndex }}-{{ toIndex }} of {{ tournaments.length }}
+            showing {{ fromIndex }}-{{ toIndex }} of {{ isFullyLoaded ? tournaments.length : '...loading...' }}
             <a class="fake-link" @click="paging(pageWith)" v-if="toIndex < tournaments.length" :id="tableId+'-paging-back'">
                 <i class="fa fa-chevron-circle-right" aria-hidden="true"></i>
             </a>
