@@ -12,7 +12,7 @@
                                 <li>TO is a <a href="/support-me">supporter</a></li>
                             </ul>'])
     </h5>
-    <div class="row" style="padding: .5em 1em 1em;">
+    <div class="row" style="padding: .5em 1em 1em;" v-lazy-container="{ selector: 'img' }">
         {{--support me box--}}
         <div class="col-xs-12 featured-col">
             <div class="featured-box" id="featured-support-me">
@@ -65,9 +65,9 @@
                         </td>
                         <td class="text-xs-right cell-winner" nowrap="">
                             @if ($ft->winner->type == 3)
-                                <a href="{{ $ft->winner->runner_deck_url() }}" title="{{ $ft->winner->runner_deck_title }}"><img src="/img/ids/{{ $ft->winner->runner_deck_identity }}.png" alt=""></a>&nbsp;<a href="{{ $ft->winner->corp_deck_url() }}"><img src="/img/ids/{{ $ft->winner->corp_deck_identity }}.png" alt=""></a>
+                                <a href="{{ $ft->winner->runner_deck_url() }}" title="{{ $ft->winner->runner_deck_title }}"><img data-src="/img/ids/{{ $ft->winner->runner_deck_identity }}.png" alt=""></a>&nbsp;<a href="{{ $ft->winner->corp_deck_url() }}"><img data-src="/img/ids/{{ $ft->winner->corp_deck_identity }}.png" alt=""></a>
                             @else
-                                <img src="/img/ids/{{ $ft->winner->runner_deck_identity }}.png" alt="">&nbsp;<img src="/img/ids/{{ $ft->winner->corp_deck_identity }}.png" alt="">
+                                <img data-src="/img/ids/{{ $ft->winner->runner_deck_identity }}.png" alt="">&nbsp;<img data-src="/img/ids/{{ $ft->winner->corp_deck_identity }}.png" alt="">
                             @endif
                         </td>
                     </tr>
@@ -79,7 +79,7 @@
                         @foreach($ft->photos as $index => $photo)
                             <a href="{{ $photo->url() }}" data-toggle="lightbox" data-gallery="gallery" data-title="{{ $photo->title }}"
                                data-footer="{{ 'uploaded by <a href="/profile/'.$photo->user->id.'">'.$photo->user->displayUsername().'</a>' }}">
-                                <img src="{{ $photo->urlThumb() }}" alt="photo thumbnail"/>
+                                <img data-src="{{ $photo->urlThumb() }}" alt="photo thumbnail"/>
                             </a>
                         @endforeach
                     </div>
@@ -90,11 +90,11 @@
                         @foreach($ft->videos as $index => $video)
                             @if (intval($video->type) == 1)
                                 <a href="https://www.youtube.com/watch?v={{ $video->video_id }}">
-                                    <img src="{{ $video->thumbnail_url }}" alt="video thumbnail"/>
+                                    <img data-src="{{ $video->thumbnail_url }}" alt="video thumbnail"/>
                                 </a>
                             @else
                                 <a href="https://www.twitch.tv/videos/{{ $video->video_id }}">
-                                    <img src="{{ $video->thumbnail_url }}" alt="video thumbnail"/>
+                                    <img data-src="{{ $video->thumbnail_url }}" alt="video thumbnail"/>
                                 </a>
                             @endif
                         @endforeach

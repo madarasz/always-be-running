@@ -15,7 +15,7 @@ Vue.component('tournament-table', {
         }
     },
     template: `
-    <div>
+    <div v-lazy-container="{ selector: 'img' }">
         <table class="table table-sm table-striped abr-table table-doublerow" :id="tableId">
             <thead>
                 <th v-if="headers.includes('title')">title</th>
@@ -78,13 +78,13 @@ Vue.component('tournament-table', {
                     </td>
                     <td v-if="headers.includes('location')" class="text-center text-md-left">
                         <template v-if="tournament.location === 'online'">
-                            <img v-if="showFlag" class="country-flag" src="/img/flags/online.png" title="online">
+                            <img v-if="showFlag" class="country-flag" data-src="/img/flags/online.png" title="online">
                             <span v-if="showFlag" class="hidden-sm-down">online</span>
                             <span v-if="!showFlag">online</span>
                         </template>
                         <template v-else>
                             <template v-if="tournament.location_country in countryFlags && countryFlags[tournament.location_country] != null">
-                                <img v-if="showFlag" class="country-flag" :src="'/img/flags/' + countryFlags[tournament.location_country]" :title="tournament.location_country">
+                                <img v-if="showFlag" class="country-flag" :data-src="'/img/flags/' + countryFlags[tournament.location_country]" :title="tournament.location_country">
                                 <span v-if="!showFlag">{{ tournament.location_country }}</span><span class="hidden-sm-down" v-if="!showFlag">, </span>
                                 <span class="hidden-sm-down">{{ tournament.location.substr(tournament.location.indexOf(', ')+2) }}</span>
                             </template>
@@ -99,8 +99,8 @@ Vue.component('tournament-table', {
                         <span v-else class="text-danger">not&nbsp;yet&nbsp;known</span>
                     </td>
                     <td v-if="headers.includes('winner')" class="text-xs-center cell-winner-v">
-                        <img :src="'/img/ids/'+tournament.winner_runner_identity+'.png'" v-if="tournament.winner_runner_identity" alt="">
-                        <img :src="'/img/ids/'+tournament.winner_corp_identity+'.png'" v-if="tournament.winner_corp_identity" alt="">
+                        <img :data-src="'/img/ids/'+tournament.winner_runner_identity+'.png'" v-if="tournament.winner_runner_identity" alt="">
+                        <img :data-src="'/img/ids/'+tournament.winner_corp_identity+'.png'" v-if="tournament.winner_corp_identity" alt="">
                     </td>
                     <td v-if="headers.includes('conclusion')" class="text-xs-center">
                         <span v-if="tournament.concluded" class="label label-success">concluded</span>

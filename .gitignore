@@ -37,6 +37,7 @@ resources/assets/js/axios.min.js
 resources/assets/js/require.js
 resources/assets/js/marked.js
 resources/assets/js/v-autocomplete.js
+resources/assets/js/vue-lazyload.js
 resources/assets/*/toastr.min.*
 phantomjsdriver.log
 app/Http/Controllers/ASController.php

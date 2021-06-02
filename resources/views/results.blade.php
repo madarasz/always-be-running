@@ -146,6 +146,14 @@
     </div>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
+
+        Vue.use(VueLazyload, {
+            preLoad: 1.3,
+            error: 'img/fail.png',
+            loading: 'img/loading-spinner.gif',
+            attempt: 1
+        })
+
      // TODO: topcut, video icon, no IDs if no first spot has no ID, date aligned to top
         var resultsPage = new Vue({
             el: '#results-page',
