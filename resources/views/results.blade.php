@@ -154,7 +154,6 @@
             attempt: 1
         })
 
-     // TODO: topcut, video icon, no IDs if no first spot has no ID, date aligned to top
         var resultsPage = new Vue({
             el: '#results-page',
             data: {

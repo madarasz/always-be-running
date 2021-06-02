@@ -67,30 +67,24 @@ Vue.component('tournament-table', {
                         <span class="text-nowrap">
                             <img class="img-patron-o" v-if="parseInt(tournament.creator_supporter) > 2">
                             <i class="fa fa-handshake-o" title="match data" v-if="tournament.matchdata"></i>
-                            <i class="fa fa-scissors-o" title="top cut" v-if="tournament.top_count > 0"></i>
+                            <i class="fa fa-scissors" title="top cut" v-if="tournament.top_count > 0"></i>
                             {{ tournament.photos > 1 ? tournament.photos : ''}}<i class="fa fa-camera" title="photo" v-if="tournament.photos > 0"></i>
                             {{ tournament.videos > 1 ? tournament.videos : ''}}<i class="fa fa-video-camera" title="video" v-if="tournament.videos > 0"></i>
                         </span>
                     </td>
-                    <td v-if="headers.includes('date')" class="line-breaker">
-                        <span class="line-breaker">{{ tournament.date ? tournament.date.substring(0, 5) : tournament.recurring_day }}</span>
-                        <span class="line-breaker">{{ tournament.date ? tournament.date.substring(5) : '' }}<i class="fa fa-plus-circle icon-upper" title="multiple day event" v-if="tournament.end_date"></i></span>
+                    <td v-if="headers.includes('date')">
+                        <span class="line-breaker">{{ tournament.date ? tournament.date.substring(0, 5) : tournament.recurring_day }}</span><span class="line-breaker">{{ tournament.date ? tournament.date.substring(5) : '' }}<i class="fa fa-plus-circle icon-upper" title="multiple day event" v-if="tournament.end_date"></i></span>
                     </td>
                     <td v-if="headers.includes('location')" class="text-center text-md-left">
                         <template v-if="tournament.location === 'online'">
-                            <img v-if="showFlag" class="country-flag" data-src="/img/flags/online.png" title="online">
-                            <span v-if="showFlag" class="hidden-sm-down">online</span>
-                            <span v-if="!showFlag">online</span>
+                            <img v-if="showFlag" class="country-flag" data-src="/img/flags/online.png" title="online"><span v-if="showFlag" class="hidden-sm-down">online</span><span v-if="!showFlag">online</span>
                         </template>
                         <template v-else>
                             <template v-if="tournament.location_country in countryFlags && countryFlags[tournament.location_country] != null">
-                                <img v-if="showFlag" class="country-flag" :data-src="'/img/flags/' + countryFlags[tournament.location_country]" :title="tournament.location_country">
-                                <span v-if="!showFlag">{{ tournament.location_country }}</span><span class="hidden-sm-down" v-if="!showFlag">, </span>
-                                <span class="hidden-sm-down">{{ tournament.location.substr(tournament.location.indexOf(', ')+2) }}</span>
+                                <img v-if="showFlag" class="country-flag" :data-src="'/img/flags/' + countryFlags[tournament.location_country]" :title="tournament.location_country"><span v-if="!showFlag">{{ tournament.location_country }}</span><span class="hidden-sm-down" v-if="!showFlag">, </span><span class="hidden-sm-down">{{ tournament.location.substr(tournament.location.indexOf(', ')+2) }}</span>
                             </template>
                             <template v-else>
-                                <span class="hidden-sm-down">{{ tournament.location }}</span>
-                                <span class="hidden-md-up">{{ tournament.location_country }}</span>
+                                <span class="hidden-sm-down">{{ tournament.location }}</span><span class="hidden-md-up">{{ tournament.location_country }}</span>
                             </template>
                         </template>
                     </td>
