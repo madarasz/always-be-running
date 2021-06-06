@@ -2,8 +2,9 @@ import { Given, Then, When } from "cypress-cucumber-preprocessor/steps";
 
 Given('results data is mocked', () => {
     cy.intercept('GET', '/api/tournaments/results', { fixture: 'results.json' })
-    cy.intercept('GET', '/api/tournaments/results?limit=50', { fixture: 'results_limit_50.json' })
-    cy.intercept('GET', '/api/tournaments/results?limit=1000&offset=50', { fixture: 'results_offset_50_limit_1000.json' })
+    cy.intercept('GET', '/api/tournaments/results?limit=100&offset=0', { fixture: 'results_limit_100_offset_0.json' })
+    //cy.intercept('GET', '/api/tournaments/results?limit=50', { fixture: 'results_limit_50.json' })
+    //cy.intercept('GET', '/api/tournaments/results?limit=1000&offset=50', { fixture: 'results_offset_50_limit_1000.json' })
     cy.intercept('GET', '/api/tournaments?concluded=0&recur=0&hide-non=1&desc=1&end=*', { fixture: 'results_to_be_concluded' })
     cy.intercept('GET', 'https://alwaysberunning.net/ktm/*').as('metas')
     cy.intercept('GET', 'https://alwaysberunning.net/ktm/metas.json', { fixture: 'ktm_metas.json' })
@@ -28,8 +29,8 @@ Then('{int} tournaments to be concluded are visible', (count) => {
     cy.get('#to-be-concluded tbody tr td:nth-child(2)').should('have.length', count)
 })
 
-Then('{int} featured tournament results are visible', (count) => {
-    cy.get('.featured-box').should('have.length', count + 1) // plus one because "Support me" is also a featured-box
+Then('At least {int} featured tournament results are visible', (count) => {
+    cy.get('.featured-box').should('have.length.greaterThan', count) // plus one because "Support me" is also a featured-box
 })
 
 Then('I see the following to be concluded tournaments:', (dataTable) => {
@@ -74,8 +75,8 @@ function validateResults(title, date, location, cardpool, runner, corp, players,
         if (date.slice(-1) === '+') cy.get('td').eq(1).find("i[title='multiple day event']")
         cy.get('td').eq(2).contains(location)
         cy.get('td').eq(3).contains(cardpool)
-        cy.get('td').eq(4).should('have.class', 'cell-winner-v').find('img:first').should('have.attr', 'src', '/img/ids/' + runner + '.png')
-        cy.get('td').eq(4).should('have.class', 'cell-winner-v').find('img:first').next().should('have.attr', 'src', '/img/ids/' + corp + '.png')
+        cy.get('td').eq(4).should('have.class', 'cell-winner-v').find('img:first').should('have.attr', 'data-src', '/img/ids/' + runner + '.png')
+        cy.get('td').eq(4).should('have.class', 'cell-winner-v').find('img:first').next().should('have.attr', 'data-src', '/img/ids/' + corp + '.png')
         cy.get('td').eq(5).contains(players)
         if (claims.slice(-1) === '!') {
             cy.get('td').eq(6).contains(claims.slice(0, -1)).find("i[title='conflict']")
@@ -109,8 +110,8 @@ function valudateFeaturedResults(title, date, cardpool, location, winner, runner
             cy.get('.featured-title').find('span').should('have.class', 'type-'+iconType)
         }
         cy.get('table').contains(winner)
-        cy.get('table tr td.cell-winner').find('img').eq(0).should('have.attr', 'src', '/img/ids/' + runner + '.png')
-        cy.get('table tr td.cell-winner').find('img').eq(1).should('have.attr', 'src', '/img/ids/' + corp + '.png')
+        cy.get('table tr td.cell-winner').find('img').eq(0).should('have.attr', 'data-src', '/img/ids/' + runner + '.png')
+        cy.get('table tr td.cell-winner').find('img').eq(1).should('have.attr', 'data-src', '/img/ids/' + corp + '.png')
         cy.get('.featured-footer').contains(location).contains(players).contains(claims).contains(photos).contains(videos)
     })
 }

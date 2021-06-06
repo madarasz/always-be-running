@@ -208,7 +208,7 @@
                             resultsPage.resultsData = resultsPage.resultsData.concat(data)
                             resultsPage.resultsFiltered = resultsPage.filterDataSet(resultsPage.resultsData)
                             resultsPage.resultsLoaded = true
-                            if (data.length == resultsPage.limit) {
+                            if (data.length != resultsPage.limit) {
                                 resultsPage.limit = resultsPage.offsetIterator
                                 resultsPage.getResultsData(resultsPage.limit, resultsPage.offset)
                                 resultsPage.offset += resultsPage.offsetIterator

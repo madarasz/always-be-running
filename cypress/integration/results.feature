@@ -32,7 +32,7 @@ Feature: Results
         Then I see "results conclude button" element
 
     Scenario: Featured
-        Then 1 featured tournament results are visible
+        Then At least 1 featured tournament results are visible
         And I see "support me featured box" element
         And I see the following featured tournament results:
             | title       | date        | cardpool | location      | winner | runner | corp  | icon-type | players | claims | photos | videos |
