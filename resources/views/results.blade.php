@@ -22,7 +22,7 @@
                             </a>
                         </li>
                         <li class="nav-item" id="t-to-be-concluded" role="tab">
-                            <a class="nav-link" data-toggle="tab" href="#tab-to-be-concluded">
+                            <a class="nav-link" data-toggle="tab" href="#tab-to-be-concluded" @click="getToConcludeData()">
                                 <h5>
                                     <i class="fa fa-clock-o" aria-hidden="true"></i>
                                     Waiting for conclusion
@@ -192,7 +192,6 @@
             },
             mounted: function () {
                 this.getResultsData(this.limit, 0)
-                this.getToConcludeData()
                 this.positionFilters()
                 this.updateUrlWithFilters()
                 google.charts.load('current', {'packages':['corechart']})
@@ -208,7 +207,7 @@
                             resultsPage.resultsData = resultsPage.resultsData.concat(data)
                             resultsPage.resultsFiltered = resultsPage.filterDataSet(resultsPage.resultsData)
                             resultsPage.resultsLoaded = true
-                            if (data.length != resultsPage.limit) {
+                            if (data.length == resultsPage.limit) {
                                 resultsPage.limit = resultsPage.offsetIterator
                                 resultsPage.getResultsData(resultsPage.limit, resultsPage.offset)
                                 resultsPage.offset += resultsPage.offsetIterator

@@ -134,8 +134,8 @@ Vue.component('tournament-table', {
             <span class="label control-paging" :class="pageWith == 100 ? 'label-active' : 'label-inactive'" @click="changePageOption(100)" :id="tableId+'-option-100'">
                 100
             </span>
-            <span class="label control-paging" :class="pageWith == 100000 ? 'label-active' : 'label-inactive'" @click="changePageOption(100000)" :id="tableId+'-option-all'">
-                all
+            <span class="label control-paging" :class="pageWith == 500 ? 'label-active' : 'label-inactive'" @click="changePageOption(100000)" :id="tableId+'-option-500'">
+                500
             </span>
             <span> - </span>
             <span class="label control-flag" :class="showFlag ? 'label-active' : 'label-inactive'" @click="changeFlagOption(true)" :id="tableId+'-option-flag'">flag</span>

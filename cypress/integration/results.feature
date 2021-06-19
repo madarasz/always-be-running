@@ -141,3 +141,6 @@ Feature: Results
         Then "Uprising + Ban20.09" statistics loads
         When I filter results cardpool to "Core Set"
         Then I see text "no stats available"
+
+        # TODO: navigate to #tab-to-be-concluded
+        # paging on more than 100
