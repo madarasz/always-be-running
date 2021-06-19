@@ -79,6 +79,9 @@ class PagesController extends Controller
         $tournament_mwls = Mwl::whereIn('id', $tournaments->pluck('mwl_id')->unique()->all())->pluck('name', 'id')->all();
         $featured = Tournament::where('featured', '>', 0)->where('concluded', 1)->where('approved', 1)
             ->with('winner')->orderBy('date', 'desc')->get();
+        $results_count = Tournament::where('concluded', 1)->where(function($query) {
+                $query->whereNull('approved')->orWhere('approved', 1);
+        })->where('incomplete', 0)->count();
 
         // adding empty filters
         $tournament_types = [-1 => '---'] + $tournament_types;
@@ -96,7 +99,7 @@ class PagesController extends Controller
         }
         return view('results', compact('registered', 'message', 'nowdate', 'tournament_types', 'countries',
             'tournament_cardpools', 'tournament_formats', 'tournament_mwls', 'page_section', 'default_country', 'default_country_id',
-            'cardpool', 'type', 'country', 'format', 'mwl', 'videos', 'matchdata', 'featured', 'nowdate'));
+            'cardpool', 'type', 'country', 'format', 'mwl', 'videos', 'matchdata', 'featured', 'nowdate', 'results_count'));
     }
 
     /**

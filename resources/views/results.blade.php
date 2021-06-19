@@ -36,9 +36,9 @@
                 <div class="tab-content">
                     {{--Results table--}}
                     <div class="tab-pane active" id="tab-results" role="tabpanel">
-                        <div class="loader" id="results-loader" v-if="!resultsLoaded">&nbsp;</div>
-                        <tournament-table :tournaments="resultsFiltered" table-id="results" :is-loaded="resultsLoaded" :is-fully-loaded="resultsLoadedFully" :headers="resultHeaders" 
-                                empty-message="no tournaments to show"/>
+                        <div class="loader" id="results-loader" v-if="resultsData.length == 0">&nbsp;</div>
+                        <tournament-table :tournaments="resultsFiltered" table-id="results" :is-loaded="resultsLoaded" :headers="resultHeaders" 
+                                empty-message="no tournaments to show" v-on:pageforward="resultPageForward" :tournament-count="resultsFilteredCount"/>
                     </div>
                     {{--To be concluded table--}}
                     <div class="tab-pane" id="tab-to-be-concluded" role="tabpanel">
@@ -49,8 +49,9 @@
                                 Please <a href="/oauth2/redirect">login via NetrunnerDB</a> to conclude tournaments.
                             </div>
                         @endif
+                        <div class="loader" id="to-be-concluded-loader" v-if="toConcludeData.length == 0">&nbsp;</div>
                         <tournament-table :tournaments="toConcludeFiltered" table-id="to-be-concluded" :is-loaded="toConcludeLoaded" :headers="toConcludeHeaders" 
-                                empty-message="no tournaments waiting for conclusion" :user-auth="userAuthenticated"/>
+                                empty-message="no tournaments waiting for conclusion" :user-auth="userAuthenticated" :tournament-count="toConcludeFiltered.length"/>
                     </div>
                 </div>
                 @include('tournaments.partials.icons')
@@ -188,7 +189,8 @@
                 statError: false,
                 offset: 100,
                 limit: 100,
-                offsetIterator: 1000
+                offsetIterator: 1000,
+                resultsCount: {{ $results_count }}
             },
             mounted: function () {
                 this.getResultsData(this.limit, 0)
@@ -197,8 +199,20 @@
                 google.charts.load('current', {'packages':['corechart']})
                 google.charts.setOnLoadCallback(this.initCharts)
             },
+            computed: {
+                resultsFilteredCount: function() {
+                    if (this.isFilterActive) return this.resultsFiltered.length
+                    return this.resultsCount
+                },
+                isFilterActive: function() {
+                    return this.filterCardpool !== '---' || this.filterType !== '---' || this.filterMwl !== '---' || this.filterCountry !== '---' ||
+                                this.filterFormat !== '---' || this.filterVideo || this.filterMatchdata
+                }
+            },
             methods: {
                 getResultsData: function(rlimit, roffset) {
+                    this.resultsLoaded = false
+                    console.log(`Loading results, offset: ${roffset}, limit: ${rlimit}`)
                     $.ajax({
                         url: `/api/tournaments/results?limit=${rlimit}&offset=${roffset}`,
                         dataType: "json",
@@ -207,15 +221,21 @@
                             resultsPage.resultsData = resultsPage.resultsData.concat(data)
                             resultsPage.resultsFiltered = resultsPage.filterDataSet(resultsPage.resultsData)
                             resultsPage.resultsLoaded = true
-                            if (data.length == resultsPage.limit) {
-                                resultsPage.limit = resultsPage.offsetIterator
-                                resultsPage.getResultsData(resultsPage.limit, resultsPage.offset)
-                                resultsPage.offset += resultsPage.offsetIterator
-                            } else {
+                            if (resultsPage.resultsData.length == resultsPage.resultsCount) {
                                 resultsPage.resultsLoadedFully = true
+                            } else if (resultsPage.isFilterActive) {
+                                resultsPage.getMoreResultsData() // load all results if a filter is selected
                             }
                         }
                     })
+                },
+                getMoreResultsData: function() {
+                    this.limit = this.offsetIterator
+                    this.getResultsData(this.limit, this.offset)
+                    this.offset += this.offsetIterator
+                },
+                resultPageForward: function(toIndex) {
+                    if (this.resultsFiltered.length <= toIndex) this.getMoreResultsData()
                 },
                 getToConcludeData: function() {
                     $.ajax({
@@ -231,6 +251,7 @@
                 },
                 applyFilters: function() {
                     this.resultsFiltered = this.filterDataSet(this.resultsData)
+                    if (this.resultsData.length < this.resultsCount) this.getMoreResultsData()
                     this.toConcludeFiltered = this.filterDataSet(this.toConcludeData)
                     this.updateUrlWithFilters()
                     this.switchIdStats()

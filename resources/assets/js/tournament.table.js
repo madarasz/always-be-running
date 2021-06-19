@@ -5,10 +5,7 @@ Vue.component('tournament-table', {
         tableId: String,
         emptyMessage: String,
         isLoaded: Boolean,
-        isFullyLoaded: {
-            type: Boolean,
-            default: true
-        },
+        tournamentCount: Number, 
         userAuth: {
             type: Boolean,
             default: false
@@ -40,8 +37,8 @@ Vue.component('tournament-table', {
                     <i class="hidden-xs-down hidden-md-up fa fa-registered" title="registered"></i>
                 </th>
             </thead>
-            <tbody v-if="isLoaded">
-                <tr v-if="tournaments.length == 0">
+            <tbody>
+                <tr v-if="tournaments.length == 0 && isLoaded">
                     <td :colspan="headers.length" class="text-xs-center small-text">{{ emptyMessage }}</td>
                 </tr>
                 <tr v-for="tournament in tournaments.slice(fromIndex-1, toIndex)" :key="tournament.id">
@@ -118,11 +115,11 @@ Vue.component('tournament-table', {
                 </tr>
             </tbody>
         </table>
-        <div class="text-xs-center small-text" :id="tableId+'-paging'" v-if="isLoaded && tournaments.length > 0">
+        <div class="text-xs-center small-text" :id="tableId+'-paging'" v-if="tournaments.length > 0">
             <a class="fake-link" @click="paging(-pageWith)" v-if="fromIndex > 1" :id="tableId+'-paging-forward'">
                 <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
             </a>
-            showing {{ fromIndex }}-{{ toIndex }} of {{ isFullyLoaded ? tournaments.length : '...loading...' }}
+            showing {{ fromIndex }}-{{ toIndex }} of {{ isLoaded ? tournamentCount : '...loading...' }}
             <a class="fake-link" @click="paging(pageWith)" v-if="toIndex < tournaments.length" :id="tableId+'-paging-back'">
                 <i class="fa fa-chevron-circle-right" aria-hidden="true"></i>
             </a>
@@ -134,7 +131,7 @@ Vue.component('tournament-table', {
             <span class="label control-paging" :class="pageWith == 100 ? 'label-active' : 'label-inactive'" @click="changePageOption(100)" :id="tableId+'-option-100'">
                 100
             </span>
-            <span class="label control-paging" :class="pageWith == 500 ? 'label-active' : 'label-inactive'" @click="changePageOption(100000)" :id="tableId+'-option-500'">
+            <span class="label control-paging" :class="pageWith == 500 ? 'label-active' : 'label-inactive'" @click="changePageOption(500)" :id="tableId+'-option-500'">
                 500
             </span>
             <span> - </span>
@@ -144,20 +141,22 @@ Vue.component('tournament-table', {
     </div>
         `,
     methods: {
-        paging: function(modifyIndex) {
+        paging: function (modifyIndex) {
             this.fromIndex += modifyIndex
             if (this.fromIndex < 1) {
                 this.fromIndex = 1
                 this.toIndex = this.pageWith
             }
             this.toIndex = this.fromIndex + this.pageWith - 1
-            if (this.toIndex > this.tournaments.length) this.toIndex = this.tournaments.length
+            if (this.toIndex > this.tournamentCount) this.toIndex = this.tournamentCount
+            if (modifyIndex > 0) this.$emit('pageforward', this.toIndex)
         },
         changePageOption: function (pageOption) {
             this.pageWith = parseInt(pageOption)
             this.fromIndex = 1
-            this.toIndex = Math.min(this.pageWith, this.tournaments.length)
+            this.toIndex = Math.min(this.pageWith, this.tournamentCount)
             setCookie('pager-'+this.tableId+'-option', pageOption)
+            this.$emit('pageforward', this.toIndex)
         },
         changeFlagOption: function (flagOption) {
             this.showFlag = flagOption
