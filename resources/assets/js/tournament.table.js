@@ -163,6 +163,11 @@ Vue.component('tournament-table', {
             setCookie('showflag', flagOption)
         }
     },
+    watch: {
+        tournamentCount: function (value) {
+            if (this.toIndex > value) this.toIndex = value
+        }
+    },
     computed: {
         nowDate: function () {
             const date = new Date()
@@ -176,7 +181,7 @@ Vue.component('tournament-table', {
             showFlag: getCookie('showflag').length ? getCookie('showflag') === 'true' : true,
             pageWith: getCookie('pager-'+this.tableId+'-option').length ? parseInt(getCookie('pager-'+this.tableId+'-option')) : 50,
             fromIndex: 1,
-            toIndex: 50,
+            toIndex: getCookie('pager-'+this.tableId+'-option') || 50,
             countryFlags: { // TODO: import this from abr-flags.js
                 "Afghanistan": "AF.png",
                 "Åland Islands": null,

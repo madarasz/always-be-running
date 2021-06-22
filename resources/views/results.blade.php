@@ -220,7 +220,7 @@
                             resultsPage.resultsData = resultsPage.resultsData.concat(data)
                             resultsPage.resultsFiltered = resultsPage.filterDataSet(resultsPage.resultsData)
                             resultsPage.resultsLoaded = true
-                            if (resultsPage.resultsData.length == resultsPage.resultsCount) {
+                            if (resultsPage.resultsData.length >= resultsPage.resultsCount) {
                                 resultsPage.resultsLoadedFully = true
                             } else if (resultsPage.isFilterActive) resultsPage.getMoreResultsData() // load all results if a filter is selected
                         }
