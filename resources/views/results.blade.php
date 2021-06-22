@@ -188,7 +188,7 @@
                 statsLoaded: false,
                 statError: false,
                 offset: 100,
-                limit: 100,
+                limit: getCookie('pager-results-option') ? getCookie('pager-results-option') * 2 : 100,
                 offsetIterator: 1000,
                 resultsCount: {{ $results_count }}
             },
@@ -212,7 +212,6 @@
             methods: {
                 getResultsData: function(rlimit, roffset) {
                     this.resultsLoaded = false
-                    console.log(`Loading results, offset: ${roffset}, limit: ${rlimit}`)
                     $.ajax({
                         url: `/api/tournaments/results?limit=${rlimit}&offset=${roffset}`,
                         dataType: "json",
@@ -223,9 +222,7 @@
                             resultsPage.resultsLoaded = true
                             if (resultsPage.resultsData.length == resultsPage.resultsCount) {
                                 resultsPage.resultsLoadedFully = true
-                            } else if (resultsPage.isFilterActive) {
-                                resultsPage.getMoreResultsData() // load all results if a filter is selected
-                            }
+                            } else if (resultsPage.isFilterActive) resultsPage.getMoreResultsData() // load all results if a filter is selected
                         }
                     })
                 },

@@ -115,7 +115,7 @@ Vue.component('tournament-table', {
                 </tr>
             </tbody>
         </table>
-        <div class="text-xs-center small-text" :id="tableId+'-paging'" v-if="tournaments.length > 0">
+        <div class="text-xs-center small-text" :id="tableId+'-paging'" v-if="tournaments.length > 0 || isLoaded">
             <a class="fake-link" @click="paging(-pageWith)" v-if="fromIndex > 1" :id="tableId+'-paging-forward'">
                 <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
             </a>
@@ -169,12 +169,6 @@ Vue.component('tournament-table', {
             const m = date.getMonth() + 1
             const d = date.getDate()
             return `${date.getFullYear()}.${m < 10 ? '0' : ''}${m}.${d < 10 ? '0' : ''}${d}.`
-        }
-    },
-    watch: {
-        tournaments: function (newValue) {
-            this.fromIndex = 1
-            this.toIndex = Math.min(this.pageWith, newValue.length)
         }
     },
     data: function() {
