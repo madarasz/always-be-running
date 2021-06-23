@@ -294,7 +294,7 @@
                 },
                 initCharts: function() {
                     $.ajax({
-                        url: 'https:/alwaysberunning.net/ktm/metas.json',
+                        url: 'https://alwaysberunning.net/ktm/metas.json',
                         dataType: "json",
                         async: true,
                         success: function (data) {
@@ -307,7 +307,7 @@
                 getMetaStats: function(metafile) {
                     resultsPage.statsLoaded = false
                     $.ajax({
-                        url: 'https:/alwaysberunning.net/ktm/' + metafile,
+                        url: 'https://alwaysberunning.net/ktm/' + metafile,
                         dataType: "json",
                         async: true,
                         success: function (data) {
