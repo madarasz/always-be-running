@@ -36,7 +36,7 @@ Feature: Results
         And I see "support me featured box" element
         And I see the following featured tournament results:
             | title       | date        | cardpool | location      | winner | runner | corp  | icon-type | players | claims | photos | videos |
-            | NISEI World | 2020.10.09. | Uprising | United States | Limes  | 26066  | 22026 | world     | 294     | 77     | 1      | 3      |
+            | NISEI World | 2020.10.09. | Uprising | United States | Limes  | 26066  | 22026 | world     | 294     | 80     | 1      | 3      |
 
     Scenario: Filtering
         # filter cardpool to Uprising

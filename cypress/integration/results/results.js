@@ -46,19 +46,19 @@ Then('I see the following featured tournament results:', (dataTable) => {
 })
 
 When('I filter results cardpool to {string}', (cardpool) => {
-    cy.get('#cardpool').select(cardpool)
+    cy.get('#cardpool:not([disabled])').select(cardpool)
 })
 
 When('I filter results type to {string}', (cardpool) => {
-    cy.get('#tournament_type_id').select(cardpool)
+    cy.get('#tournament_type_id:not([disabled])').select(cardpool)
 })
 
 When('I filter results country to {string}', (cardpool) => {
-    cy.get('#location_country').select(cardpool)
+    cy.get('#location_country:not([disabled])').select(cardpool)
 })
 
 When('I filter results format to {string}', (cardpool) => {
-    cy.get('#format').select(cardpool)
+    cy.get('#format:not([disabled])').select(cardpool)
 })
 
 Then('{string} statistics loads', (cardpool) => {

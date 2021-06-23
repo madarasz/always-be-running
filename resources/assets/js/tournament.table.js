@@ -165,7 +165,8 @@ Vue.component('tournament-table', {
     },
     watch: {
         tournamentCount: function (value) {
-            if (this.toIndex > value) this.toIndex = value
+            this.fromIndex = 1
+            this.toIndex = Math.min(value, this.pageWith)
         }
     },
     computed: {

@@ -190,7 +190,7 @@
                 offset: 100,
                 limit: getCookie('pager-results-option') ? getCookie('pager-results-option') * 2 : 100,
                 offsetIterator: 1000,
-                resultsCount: {{ $results_count }}
+                resultsCount: -1 // initial value
             },
             mounted: function () {
                 this.getResultsData(this.limit, 0)
@@ -220,6 +220,7 @@
                             resultsPage.resultsData = resultsPage.resultsData.concat(data)
                             resultsPage.resultsFiltered = resultsPage.filterDataSet(resultsPage.resultsData)
                             resultsPage.resultsLoaded = true
+                            if (resultsPage.resultsCount <0) resultsPage.resultsCount = data[0].tournament_count
                             if (resultsPage.resultsData.length >= resultsPage.resultsCount) {
                                 resultsPage.resultsLoadedFully = true
                             } else if (resultsPage.isFilterActive) resultsPage.getMoreResultsData() // load all results if a filter is selected

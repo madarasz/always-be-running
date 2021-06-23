@@ -307,6 +307,7 @@ class TournamentsController extends Controller
             ->where(function($query) {
                 $query->whereNull('approved')->orWhere('approved', 1);
             })->where('incomplete', 0)->orderBy('date', 'desc');
+        $count = $tournaments->count();
 
         $this->applyLimitOffset($request, $tournaments);
 
@@ -317,7 +318,8 @@ class TournamentsController extends Controller
 
         $endtime = microtime(true);
         if (count($result)) {
-            $result[count($result) - 1]['rendered_in'] = $endtime-$startTime;
+            $result[0]['rendered_in'] = $endtime-$startTime;
+            $result[0]['tournament_count'] = $count;
         }
 
         return response()->json($result);
