@@ -432,7 +432,7 @@ class TournamentsController extends Controller
                 $event_data['top_count'] = $tournament->top_number;
                 $event_data['claim_count'] = $tournament->claimCount;
                 $event_data['claim_conflict'] = $tournament->conflict == 1;
-                $event_data['matchdata'] = $tournament->import == 1 || $tournament->import == 4;
+                $event_data['matchdata'] = $tournament->import == 1 || $tournament->import == 4 || $tournament->import == 5;
                 $event_data['videos'] = $tournament->videosCount; // ~ +0.1s
 
                 // winner IDs
@@ -606,7 +606,7 @@ class TournamentsController extends Controller
             unlink($filename);
         }
 
-        return redirect()->back()->with('message', 'You have cleared all claims by NRTM import.');
+        return redirect()->back()->with('message', 'You have cleared all claims by import.');
 
     }
 
@@ -827,6 +827,9 @@ class TournamentsController extends Controller
             if (array_key_exists('uploadedFrom', $json) && $json['uploadedFrom'] == 'Cobra') {
                 // imported by Cobr.ai
                 $tournament->import = 4;
+            } else if (array_key_exists('uploadedFrom', $json) && $json['uploadedFrom'] == 'AesopsTables') {
+                // imported by AesopsTables
+                $tournament->import = 5;
             } else {
                 // imported by NRTM
                 $tournament->import = 1;

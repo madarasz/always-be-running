@@ -19,6 +19,7 @@ class AddNrtmToTournamentsTable extends Migration
             // 2 - by CSV - depricated
             // 3 - by manual
             // 4 - by Cobr.ai
+            // 5 - by Aesops Tables
         });
     }
 

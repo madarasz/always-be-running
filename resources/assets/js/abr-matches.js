@@ -152,7 +152,7 @@ function fillMatchRow(player1, player2, matchId, match) {
             $('#' + matchId + 'p1-win').text('LOSES');
             $('#' + matchId + 'p2-win').text('WINS');
         }
-    } else {
+    } else if (match.player1 && match.player2) {
         if (match.player1.corpScore + match.player1.runnerScore + match.player2.corpScore + match.player2.runnerScore > 0) {
             // NRTM
             $('#' + matchId + 'score').html((match.player1.corpScore + match.player1.runnerScore) + '&nbsp;-&nbsp;' + (match.player2.corpScore + match.player2.runnerScore));
@@ -162,6 +162,14 @@ function fillMatchRow(player1, player2, matchId, match) {
             // Cobr.ai doesn't have scores per sides, only combinedScore
             $('#' + matchId + 'score').html((match.player1.combinedScore) + '&nbsp;-&nbsp;' + (match.player2.combinedScore));
         }
+    } else if (match.corp && match.runner) {
+        // Aesop's table
+        $('#' + matchId + 'score1').html((match.corp.score) + '&nbsp;-&nbsp;' + (match.runner.score));
+        $('#' + matchId + 'score2').hide()
+        $('#' + matchId + 'p1r').hide()
+        $('#' + matchId + 'p2c').hide()
+    } else {
+        console.error("Error reading match JSON")
     }
 }
 
@@ -255,11 +263,19 @@ function displayMatches(id, show) {
                                 matchId = 'match-' + index + '-' + u + '-',
                                 rowcClass = u % 2 ? '' : 'row-colored';
 
-                            if (match.player1.id) {
+                            // nrtm
+                            if (match.player1 && match.player1.id) {
                                 player1 = chartData[data['players'][idToIndex[match.player1.id]].entry_id];
                             }
-                            if (match.player2.id) {
+                            if (match.player2 && match.player2.id) {
                                 player2 = chartData[data['players'][idToIndex[match.player2.id]].entry_id];
+                            }
+                            // aesops table
+                            if (match.corp && match.corp.id) {
+                                player1 = chartData[data['players'][idToIndex[match.corp.id]].entry_id];
+                            }
+                            if (match.runner && match.runner.id) {
+                                player2 = chartData[data['players'][idToIndex[match.runner.id]].entry_id];
                             }
 
                             // prepare row

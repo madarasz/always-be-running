@@ -88,6 +88,8 @@
                         manual import
                     @elseif ($tournament->import == 4)
                         Cobr.ai
+                    @elseif ($tournament->import == 5)
+                         Aesop's Tables
                     @else
                         manual conclusion
                     @endif
