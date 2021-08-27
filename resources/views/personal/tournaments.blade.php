@@ -15,7 +15,7 @@
         <div class="bracket">
             @include('tournaments.partials.tabledin',
             ['columns' => ['title', 'location', 'date', 'cardpool', 'user_claim'],
-            'title' => 'My tournaments', 'subtitle' => 'tournaments I registered to',
+            'title' => 'My tournaments', 'subtitle' => 'tournaments I\'m going to or claimed',
              'id' => 'my-table', 'icon' => 'fa-list-alt', 'loader' => true, 'doublerow' => true])
         </div>
     </div>
@@ -58,7 +58,7 @@
                 </div>
                 <i class="fa fa-calendar" aria-hidden="true"></i>
                 My calendar<br/>
-                <small>tournaments I registered to</small>
+                <small>tournaments I'm going to</small>
             </h5>
             @include('partials.calendar')
         </div>
@@ -67,7 +67,7 @@
             <h5>
                 <i class="fa fa-globe" aria-hidden="true"></i>
                 My map<br/>
-                <small>tournaments I registered to</small>
+                <small>tournaments I'm going to</small>
             </h5>
             <div class="map-wrapper">
                 <div id="mymap" style="height: 100%"></div>

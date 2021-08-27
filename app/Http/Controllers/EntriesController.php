@@ -33,7 +33,7 @@ class EntriesController extends Controller
             App('App\Http\Controllers\BadgeController')->addClaimBadges($user_id);
         }
 
-        return redirect()->back()->with('message', 'You have been registered for the tournament.');
+        return redirect()->back()->with('message', 'You are going to the tournament.');
     }
 
     public function unregister(Request $request, $id)
@@ -50,7 +50,7 @@ class EntriesController extends Controller
             App('App\Http\Controllers\BadgeController')->addClaimBadges($user_id);
         }
 
-        return redirect()->back()->with('message', 'You have unregistered from the tournament.');
+        return redirect()->back()->with('message', 'You are not going to the tournament.');
     }
 
     public function claim(EntryRequest $request, $id)

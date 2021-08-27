@@ -62,9 +62,9 @@
             </th>
         @endif
         @if( in_array('regs', $columns) )
-            <th class="text-xs-center hidden-sm-down">regs</th>
+            <th class="text-xs-center hidden-sm-down">going</th>
             <th class="text-xs-center hidden-xs-down hidden-md-up">
-                <i class="fa fa-registered" title="registered"></i>
+                <i class="fa fa-registered" title="players going"></i>
             </th>
         @endif
         @if( in_array('claims', $columns) )

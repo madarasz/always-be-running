@@ -22,7 +22,7 @@
                                         'You can only tag users who have logged into <em>AlwaysBeRunning.net</em> at least once.'])
                                     <select name="user_id" class="form-control" id="user_id">
                                         @if($regcount)
-                                            <optgroup label="registered users">
+                                            <optgroup label="users taking part">
                                                 @foreach ($registered as $player)
                                                     <option value="{{ $player->id }}">{{ $player->displayUsername() }}</option>
                                                 @endforeach

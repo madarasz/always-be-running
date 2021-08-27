@@ -33,8 +33,8 @@ Vue.component('tournament-table', {
                 </th>
                 <th v-if="headers.includes('conclusion')" class="text-xs-center">conclusion</th>
                 <th v-if="headers.includes('regs')" class="text-xs-center">
-                    <span class="hidden-sm-down">regs</span>
-                    <i class="hidden-xs-down hidden-md-up fa fa-registered" title="registered"></i>
+                    <span class="hidden-sm-down">going</span>
+                    <i class="hidden-xs-down hidden-md-up fa fa-registered" title="going"></i>
                 </th>
             </thead>
             <tbody>

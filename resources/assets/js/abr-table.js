@@ -271,12 +271,12 @@ function updateTournamentTable(elementID, columns, emptyMessage, csrftoken, data
                 }), ' claim'), $('<br>'), $('<span>', {
                     class: 'small-text'
                 }).append('or&nbsp;', $('<a>', {
-                    text: 'unregister',
+                    text: 'not going',
                     href: '/tournaments/' + element.id + '/unregister'
                 })));
             } else {    // registered
                 cell.append($('<span>', {
-                    text: 'registered',
+                    text: 'going',
                     'class': 'label label-info'
                 }));
             }

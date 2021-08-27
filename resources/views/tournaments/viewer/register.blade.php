@@ -1,5 +1,5 @@
 {{--List of registered players--}}
-<h6>Registered players {{ $regcount > 0 ? '('.$regcount.')' : '' }}</h6>
+<h6>Players going {{ $regcount > 0 ? '('.$regcount.')' : '' }}</h6>
 @if ($regcount)
     <ul id="registered-players">
         @foreach ($registered as $player)
@@ -15,13 +15,13 @@
         @if ($user)
             @if ($user_entry)
                 @if ($user_entry->rank)
-                    <span class="btn btn-danger disabled" id="unregister-disabled"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</span><br/>
+                    <span class="btn btn-danger disabled" id="unregister-disabled"><i class="fa fa-minus-circle" aria-hidden="true"></i> Not going</span><br/>
                     <small><em>remove your claim first</em></small>
                 @else
-                    <a href="{{"/tournaments/$tournament->id/unregister"}}" class="btn btn-danger" id="unregister"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</a>
+                    <a href="{{"/tournaments/$tournament->id/unregister"}}" class="btn btn-danger" id="unregister"><i class="fa fa-minus-circle" aria-hidden="true"></i> Not going</a>
                 @endif
             @else
-                <a href="{{"/tournaments/$tournament->id/register"}}" class="btn btn-primary" id="register"><i class="fa fa-plus-circle" aria-hidden="true"></i> Register</a>
+                <a href="{{"/tournaments/$tournament->id/register"}}" class="btn btn-primary" id="register"><i class="fa fa-plus-circle" aria-hidden="true"></i> Going</a>
             @endif
         @else
             <div class="text-xs-center p-b-1" id="suggest-login2">
@@ -31,6 +31,6 @@
     </div>
 @elseif ($user_entry && !$user_entry->rank)
     <div class="text-xs-center">
-        <a href="{{"/tournaments/$tournament->id/unregister"}}" class="btn btn-danger" id="unregister"><i class="fa fa-minus-circle" aria-hidden="true"></i> Unregister</a>
+        <a href="{{"/tournaments/$tournament->id/unregister"}}" class="btn btn-danger" id="unregister"><i class="fa fa-minus-circle" aria-hidden="true"></i> Not going</a>
     </div>
 @endif

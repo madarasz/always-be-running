@@ -123,7 +123,7 @@
                     <tr>
                         <td>registration_count</td>
                         <td>int</td>
-                        <td>number of users registered for the event</td>
+                        <td>number of users going to the event</td>
                     </tr>
                     <tr>
                         <td>photos</td>
