@@ -106,6 +106,9 @@ class BadgeController extends Controller
         $this->addChampionshipBadges($userid, 2020, 9, $badges, [2810]);    // 2020 european+african championship
         $this->addChampionshipBadges($userid, 2020, 10, $badges, [2811]);    // 2020 american championship, tournament_type_id is a hack
         $this->addChampionshipBadges($userid, 2020, 11, $badges, [2809]);    // 2020 asia-pacific championship, tournament_type_id is a hack
+        $this->addChampionshipBadges($userid, 2021, 9, $badges, [3014]);    // 2021 european+african championship
+        $this->addChampionshipBadges($userid, 2021, 10, $badges, [3015]);    // 2021 american championship, tournament_type_id is a hack
+        $this->addChampionshipBadges($userid, 2021, 11, $badges, [3013]);    // 2021 asia-pacific championship, tournament_type_id is a hack
         $this->addPlayerLevelBadges($userid, $badges);
         $this->addFactionBadges($userid, $badges);
         $this->addRecurringBadge($userid, $badges);
