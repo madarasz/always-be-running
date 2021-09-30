@@ -285,6 +285,9 @@ input[type="checkbox"] {
 .markdown-content img {
     max-width: 100%;
     height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* ID hotness on homepage */
