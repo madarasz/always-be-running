@@ -87,7 +87,7 @@ class BadgeController extends Controller
      */
     public function addClaimBadges($userid) {
         // prepare badges array
-        $fromYear = 2016; $toYear = 2020;
+        $fromYear = 2016; $toYear = 2021;
         $badges = Badge::where('year', '>=', $fromYear)->where('year', '<=', $toYear)->pluck('id')->all();
         $badges = array_merge([13, 14, 15, 93, 94, 27, 28, 29, 30, 34, 35, 36, 49, 50, 51, 52, 53, 54, 55, 73, 74, 75, 76, 77, 78, 79, 80, 81], $badges);
         $badges = array_combine($badges, array_fill(1, count($badges), false));
