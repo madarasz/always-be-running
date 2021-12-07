@@ -55,6 +55,7 @@
                 @include('partials.badgelist-year', ['badge_list' => $badges_worlds_winner])
                 @include('partials.badgelist-year', ['badge_list' => $badges_worlds_top16])
                 @include('partials.badgelist-year', ['badge_list' => $badges_worlds_player])
+                @include('partials.badgelist-year', ['badge_list' => $badges_worlds_staff])
                 {{--Europe Championship--}}
                 @include('partials.badgelist-year', ['badge_list' => $europe_winner])
                 @include('partials.badgelist-year', ['badge_list' => $europe_top16])
@@ -98,6 +99,7 @@
                 @include('partials.badgelist-year', ['badge_list' => $comm_uk_player])
                 @include('partials.badgelist-year', ['badge_list' => $comm_hun_winner])
                 @include('partials.badgelist-year', ['badge_list' => $comm_hun_player])
+                @include('partials.badgelist-year', ['badge_list' => $other_community])
             </div>
             <div class="bracket">
                 <p>

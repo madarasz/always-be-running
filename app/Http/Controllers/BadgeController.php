@@ -27,6 +27,7 @@ class BadgeController extends Controller
         $badges_worlds_winner = Badge::where('tournament_type_id', 5)->where('winlevel', 1)->orderBy('order','desc');
         $badges_worlds_top16 = Badge::where('tournament_type_id', 5)->where('winlevel', 2)->orderBy('order','desc');
         $badges_worlds_player = Badge::where('tournament_type_id', 5)->where('winlevel', 5)->orderBy('order','desc');
+        $badges_worlds_staff = Badge::where('tournament_type_id', 5)->where('winlevel', 9)->orderBy('order','desc');
         $europe_winner = Badge::where('tournament_type_id', 9)->where('winlevel', 1)->orderBy('order','desc');
         $europe_top16 = Badge::where('tournament_type_id', 9)->where('winlevel', 2)->orderBy('order','desc');
         $europe_player = Badge::where('tournament_type_id', 9)->where('winlevel', 5)->orderBy('order','desc');
@@ -44,14 +45,15 @@ class BadgeController extends Controller
         $comm_uk_player = Badge::where('order', '>', 8100)->where('order', '<', 8199)->where('winlevel', 2)->orderBy('order','desc');
         $comm_hun_winner = Badge::where('order', '>', 8200)->where('order', '<', 8299)->where('winlevel', 1)->orderBy('order','desc');
         $comm_hun_player = Badge::where('order', '>', 8200)->where('order', '<', 8299)->where('winlevel', 2)->orderBy('order','desc');
+        $other_community = Badge::where('order', '>', 8300)->where('order', '<', 8399)->orderBy('order','desc');
 
         return view('badges', compact([
-            'badges', 'badges_worlds_winner', 'badges_worlds_top16', 'badges_worlds_player',
+            'badges', 'badges_worlds_winner', 'badges_worlds_top16', 'badges_worlds_player', 'badges_worlds_staff',
             'europe_winner', 'europe_top16', 'europe_player',
             'namerica_winner', 'namerica_top16', 'namerica_player',
             'apac_winner', 'apac_top16', 'apac_player',
             'nationals_winner', 'nationals_top', 'regionals_winner', 'regionals_top',
-            'comm_uk_winner', 'comm_uk_player', 'comm_hun_winner', 'comm_hun_player'
+            'comm_uk_winner', 'comm_uk_player', 'comm_hun_winner', 'comm_hun_player', 'other_community'
         ]));
     }
 
