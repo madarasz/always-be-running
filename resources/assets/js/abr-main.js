@@ -579,6 +579,12 @@ function tournamentEmblem(target, type, format) {
         case 'team tournament':
             target.append('<span class="tournament-type type-team" title="team tournament">TT</span> ');
             break;
+        case 'async tournament':
+            target.append('<span class="tournament-type type-async" title="asynchronous tournament">A</span> ');
+            break;
+        case 'circuit opener':
+            target.append('<span class="tournament-type type-circuit" title="circuit opener">CO</span> ');
+            break;
     }
 
     // tournament formats

@@ -50,6 +50,8 @@ Vue.component('tournament-table', {
                         <span class="tournament-type type-continental" title="continental championship" v-if="tournament.type == 'continental championship'">C</span>
                         <span class="tournament-type type-world" title="worlds championship" v-if="tournament.type == 'worlds championship'">W</span>
                         <span class="tournament-type type-team" title="team tournament" v-if="tournament.type == 'team tournament'">TT</span>
+                        <span class="tournament-type type-async" title="asynchronous tournament" v-if="tournament.type == 'asynchronous tournament'">A</span>
+                        <span class="tournament-type type-circuit" title="circuit opener" v-if="tournament.type == 'circuit opener'">CU</span>
                         <span class="tournament-format type-startup" title="startup" v-if="tournament.format == 'startup'">SU</span>
                         <span class="tournament-format type-snapshot" title="snapshot" v-if="tournament.format == 'snapshot'">SN</span>
                         <span class="tournament-format type-eternal" title="eternal" v-if="tournament.format == 'eternal'">E</span>

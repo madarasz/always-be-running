@@ -9,5 +9,7 @@
                 } break;
         case 9: echo "<span class=\"".@$class." tournament-type type-continental\" title=\"continental championship\">C</span>"; break;
         case 10: echo "<span class=\"".@$class." tournament-type type-team\" title=\"team tournament\">TT</span>"; break;
+        case 11: echo "<span class=\"".@$class." tournament-type type-circuit\" title=\"circuit opener\">CO</span>"; break;
+        case 12: echo "<span class=\"".@$class." tournament-type type-async\" title=\"asynchronous tournament\">A</span>"; break;
     }
 ?>

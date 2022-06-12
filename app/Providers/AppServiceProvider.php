@@ -35,11 +35,11 @@ class AppServiceProvider extends ServiceProvider
             $end = strtotime(substr(str_replace(".", "/", $parameters[1]),0,10));
             return ($end > $start); // end is later
         });
-        // validator for tournament end dates, max length
+        // validator for tournament end dates, max week for normal tournaments, max 8 weeks for async
         Validator::extend('date_later_max_week', function($attribute, $value, $parameters, $validator) {
             $start = strtotime(substr(str_replace(".", "/", $parameters[0]),0,10));
             $end = strtotime(substr(str_replace(".", "/", $parameters[1]),0,10));
-            return ($end - $start <= 60 * 60 * 24 * 7 || $end <= $start); // end is max a week later
+            return ($end - $start <= 60 * 60 * 24 * 7 * ($parameters[2] == 12 ? 12 : 1) || $end <= $start); // end is max a week later
         });
     }
 

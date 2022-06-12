@@ -904,6 +904,17 @@ a.artist:hover {
     top: -0.15em;
     padding: 0.4em 0.5em !important;
 }
+.type-circuit {
+    background-color: rgb(51, 230, 90);
+    font-size: 70%;
+    position: relative;
+    top: -0.15em;
+    padding: 0.4em 0.5em !important;
+}
+.type-async {
+    background-color: rgb(230, 51, 141);
+    padding: .25em .3em;
+}
 /* tournament format */
 .tournament-format {
     display: inline-block;
