@@ -62,7 +62,7 @@ class BadgeController extends Controller
      */
     public function refreshBadges(Request $request) {
         $this->authorize('admin', Tournament::class, $request->user());
-        set_time_limit(600);
+        set_time_limit(6000);
 
         $startTime = microtime(true);
         $badgesBefore = DB::table('badge_user')->count();
