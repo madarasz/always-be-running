@@ -111,6 +111,9 @@ class BadgeController extends Controller
         $this->addChampionshipBadges($userid, 2021, 9, $badges, [3014]);    // 2021 european+african championship
         $this->addChampionshipBadges($userid, 2021, 10, $badges, [3015]);    // 2021 american championship, tournament_type_id is a hack
         $this->addChampionshipBadges($userid, 2021, 11, $badges, [3013]);    // 2021 asia-pacific championship, tournament_type_id is a hack
+        $this->addChampionshipBadges($userid, 2022, 9, $badges, [3342]);    // 2022 european+african championship
+        $this->addChampionshipBadges($userid, 2022, 10, $badges, [3341]);    // 2022 american championship, tournament_type_id is a hack
+        $this->addChampionshipBadges($userid, 2022, 11, $badges, [3340]);    // 2022 asia-pacific championship, tournament_type_id is a hack
         $this->addPlayerLevelBadges($userid, $badges);
         $this->addFactionBadges($userid, $badges);
         $this->addRecurringBadge($userid, $badges);
@@ -515,7 +518,8 @@ class BadgeController extends Controller
             ['tournament_id' => 69, 'badges' => ['winner_badge_id' => 78, 'participant_badge_id' => 79]],    // UK 2016
             ['tournament_id' => 1026, 'badges' => ['winner_badge_id' => 76, 'participant_badge_id' => 77]],    // UK 2017
             ['tournament_id' => 782, 'badges' => ['winner_badge_id' => 80, 'participant_badge_id' => 81]],    // HU 2017
-            ['tournament_id' => 1823, 'badges' => ['winner_badge_id' => 98, 'participant_badge_id' => 99]],    // HU 2017
+            ['tournament_id' => 1823, 'badges' => ['winner_badge_id' => 98, 'participant_badge_id' => 99]],    // HU 2018
+            ['tournament_id' => 3330, 'badges' => ['winner_badge_id' => 158, 'participant_badge_id' => 159]],    // German Nat Team 2022
         ];
 
         foreach($badge_list as $tournament) {
