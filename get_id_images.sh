@@ -9,6 +9,7 @@ types=( $(cat cards.json | jq -r '.data[].type_code' ) )
 sides=( $(cat cards.json | jq -r '.data[].side_code' ) )
 codes=( $(cat cards.json | jq -r '.data[].code' ) )
 titles=( $(cat cards.json | jq -r '.data[].title' | tr -s ' ' | tr ' ' '-' | tr '[:upper:]' '[:lower:]' | sed "s/[^a-z0-9.-]//g") )
+imgtemplate=( $(cat cards.json | jq -r '.imageUrlTemplate' ) )
 i=0;
 
 # iterate over cards
@@ -19,7 +20,9 @@ do
         # download if not already present
         if [ ! -f "public/img/ids/$card.png" ]; then
             echo "Downloading card image: $title"
-            curl "https://netrunnerdb.com/card_image/large/$card.jpg" > "public/img/ids/$card.png"
+            imgurl="${imgtemplate/\{code\}/"$card"}"
+            echo "Downloading from url: $imgurl"
+            curl "$imgurl" > "public/img/ids/$card.png"
             # crop and resize
             if [ $card -lt 26000 ]; then
                 # old FFG ID templates
