@@ -24,7 +24,7 @@
                             <br/><br/>
                             Additional tournament types:
                             <ul>
-                                <li><strong>community tournament:</strong> a tournament not supported by FFG/NISEI or its prize pack</li>
+                                <li><strong>community tournament:</strong> a tournament not supported by FFG/NSG or its prize pack</li>
                                 <li><strong>non-tournament:</strong> This is not a tournament. Just play. <em>Weekly recurrence</em> is an option.</li>
                                 <li><strong>continental championship:</strong> North American / European championship</li>
                                 <li><strong>team:</strong> more than one players can claim a single rank, conflicts are relaxed</li>
@@ -58,14 +58,14 @@
                     {!! Form::label('tournament_format_id', 'Format') !!}
                     @include('partials.popover', ['direction' => 'right', 'content' =>
                         '<ul>
-                            <li><strong>Standard:</strong> Most tournaments are like this. <em>Tournament Regulations</em> by NISEI and latest <em>Banlist, FAQ</em> are in effect. No additional rules!</li>
-                            <li><strong>Startup:</strong> Cardpool is <em>Sytem Gateway</em> + most recent <em>System Update</em> set + most recent NISEI cycle.</li>
+                            <li><strong>Standard:</strong> Most tournaments are like this. <em>Tournament Regulations</em> by NSG and latest <em>Banlist, FAQ</em> are in effect. No additional rules!</li>
+                            <li><strong>Startup:</strong> Cardpool is <em>Sytem Gateway</em> + most recent <em>System Update</em> set + most recent NSG cycle.</li>
                             <li><strong>Snapshot:</strong> This format is a “snapshot” of the meta at Magnum Opus 2018, the culmination of FFG Organized Play.</li>
                             <li><strong>Eternal:</strong> Eternal is not affected by rotation and has a much less stringent ban list. The largest and most complex format.</li>
                             <li><strong>Cube Draft:</strong> Drafting with a custom draft pool (not the official FFG draft packs). Please give more information about the draft pool in the description.</li>
                             <li><strong>Other:</strong> Use this if you have additional rules on deck building, legal cardpool, etc. Please explain in the description.</li>
                         </ul>
-                        Check out <a href="https://nisei.net/players/supported-formats/" target="_blank" rel="nofollow">NISEI supported formats</a> for more information.
+                        Check out <a href="https://nullsignal.games/players/supported-formats/" target="_blank" rel="nofollow">NSG supported formats</a> for more information.
                         If your tournament rules differs from the format you selected, explain the differences in the
                         description.'])
                     {!! Form::select('tournament_format_id', $tournament_formats,

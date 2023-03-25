@@ -73,9 +73,9 @@
                             <input class="form-check-input" type="checkbox" value="" v-model="art_item.official"
                                    style="margin-left:0" name="official-check" false-value="0" true-value="1">
                             <label class="form-check-label" for="official-check">
-                                official FFG/NISEI item
+                                official FFG/NSG item
                                 @include('partials.popover', ['direction' => 'right', 'content' =>
-                                    'This item is part of an official FFG/NISEI card pack or prize kit.'])
+                                    'This item is part of an official FFG/NSG card pack or prize kit.'])
                             </label>
                         </div>
                     </div>
