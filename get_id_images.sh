@@ -31,7 +31,7 @@ do
                     mogrify -crop 232x232+33+56 -resize 80x80 "public/img/ids/$card.png"
                 fi
             else
-                # new NISEI ID templates
+                # new NSG ID templates
                 if [ ${sides[$i]} == "corp" ]; then
                     echo corp
                     mogrify -crop 237x237+30+46 -resize 80x80 "public/img/ids/$card.png"
