@@ -33,3 +33,16 @@
   Header append Vary User-Agent env=!dont-vary
  </IfModule>
 </IfModule>
+
+#<IfModule mod_headers.c>
+#    <FilesMatch "\.xml$">
+#        Header set Cache-Control "max-age=900, public"
+#    </Files>
+#</IfModule>
+
+#<IfModule mod_expires.c>
+#    ExpiresActive On
+#    <FilesMatch "\.xml$">
+#        ExpiresDefault "access plus 15 minutes"
+#    </Files>
+#</IfModule>

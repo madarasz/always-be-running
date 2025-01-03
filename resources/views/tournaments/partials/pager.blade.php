@@ -11,7 +11,7 @@
 </div>
 <div class="text-xs-center hidden-xs-up" id="{{ $id }}-options" style="font-size: 80%; font-style: normal"
         data-selected="{{ @$pager_options[0] }}">
-    @if (count(@$pager_options)>0)
+    @if (isset($pager_options) && is_array($pager_options) && count($pager_options) > 0)
         @foreach($pager_options as $key=>$option)
             <span class="label control-paging {{ $key==0 ? 'label-active':'label-inactive' }}"
                   onclick="changePageOptions('{{$id}}', '{{ $option }}')">
@@ -20,7 +20,7 @@
         @endforeach
     @endif
     {{--country flag / text switcher--}}
-    @if (@$flag_switcher)
+    @if (isset($flag_switcher) && $flag_switcher)
         <span> - </span>
         <span class="label control-flag label-active" onclick="changeFlagOption(true)">flag</span>
         <span class="label control-text label-inactive" onclick="changeFlagOption(false)">text</span>
