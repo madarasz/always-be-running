@@ -4,6 +4,7 @@
 /vendor
 /node_modules
 /public/storage
+/public/*.xml
 Homestead.yaml
 Homestead.json
 .env
