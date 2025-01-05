@@ -140,7 +140,7 @@
                 <h5 class="text-xs-right p-t-1"><small>provided by <a href="http://www.knowthemeta.com">KnowTheMeta</a></small></h5>
             </div>
             {{--Featured--}}
-            @if (count($featured))
+            @if (isset($featured) && count($featured))
                 @include('tournaments.partials.featured-results')
             @endif
         </div>

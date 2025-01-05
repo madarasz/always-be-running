@@ -48,6 +48,6 @@
 </div>
 <hr/>
 {{--List of photos--}}
-@if (count($tournament->photos))
+@if (isset($tournament->photos) && count($tournament->photos))
     @include('tournaments.viewer.photolist')
 @endif

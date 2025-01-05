@@ -74,7 +74,7 @@
                 </table>
                 @endif
                 {{--photos--}}
-                @if (count($ft->photos))
+                @if (isset($ft->photos) && count($ft->photos))
                     <div class="featured-images">
                         @foreach($ft->photos as $index => $photo)
                             <a href="{{ $photo->url() }}" data-toggle="lightbox" data-gallery="gallery" data-title="{{ $photo->title }}"
@@ -85,7 +85,7 @@
                     </div>
                 @endif
                 {{--videos--}}
-                @if (count($ft->videos))
+                @if (isset($ft->videos) && count($ft->videos))
                     <div class="featured-images">
                         @foreach($ft->videos as $index => $video)
                             @if (intval($video->type) == 1)
@@ -104,10 +104,10 @@
                 <div class="small-text text-xs-center featured-footer">
                     {{ $ft->players_number }} <i class="fa fa-user" title="players"></i>
                     {{ $ft->claimCount }} <i class="fa fa-address-card" title="claims"></i>
-                    @if (count($ft->photos))
+                    @if (isset($ft->photos) && count($ft->photos))
                         {{ count($ft->photos) }} <i title="photo" class="fa fa-camera"></i>
                     @endif
-                    @if (count($ft->videos))
+                    @if (isset($ft->videos) && count($ft->videos))
                         {{ count($ft->videos) }} <i title="video" class="fa fa-video-camera"></i>
                     @endif
                     {{ $ft->online ? 'online' : $ft->location_country }}

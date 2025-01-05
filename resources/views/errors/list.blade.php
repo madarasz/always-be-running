@@ -1,4 +1,4 @@
-@if (count($errors))
+@if (isset($errors) && count($errors))
     <div class="alert alert-danger" id="error-list">
         <ul>
             @foreach($errors->all() as $error)

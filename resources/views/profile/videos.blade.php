@@ -1,4 +1,4 @@
-@if (count($user->videos))
+@if (isset($user->videos) && count($user->videos))
     <div class="bracket">
         <h5>
             <i class="fa fa-video-camera" aria-hidden="true"></i>

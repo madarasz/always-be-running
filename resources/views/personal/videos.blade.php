@@ -46,7 +46,7 @@
                                     <br/>
                                     {{ $video->channel_name }}
                                     {{--tagged users--}}
-                                    @if (count($video->videoTags))
+                                    @if (isset($video->videoTags) && count($video->videoTags))
                                         <br/>
                                         <span id="tags-{{ $video->video_id }}">
                                             @foreach($video->videoTags as $key => $tag)

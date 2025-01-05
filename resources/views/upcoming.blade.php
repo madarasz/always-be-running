@@ -64,7 +64,7 @@
         </div>
     </div>
     {{--Featured--}}
-    @if (count($featured))
+    @if (isset($featured) && count($featured))
         @include('tournaments.partials.featured-upcoming')
     @endif
     {{--Calendar and map--}}
