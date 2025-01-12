@@ -1,7 +1,7 @@
 <div style="position: relative;">
     {{--image thumpnail--}}
     <a href="{{ $photo->url() }}" data-toggle="lightbox" data-gallery="gallery" data-title="{{ $photo->title }}"
-       data-footer="{{ 'uploaded by <a href="/profile/'.$photo->user->id.'">'.$photo->user->displayUsername().'</a>' }}">
+    data-footer="{{ 'uploaded by <a href="/profile/'.(($photo->user) ? $photo->user->id : '').'">'.(($photo->user) ? $photo->user->displayUsername() : 'Unknown User').'</a>' }}">
         <img src="{{ $photo->urlThumb() }}"/>
     </a>
 
@@ -23,7 +23,7 @@
             </a>
         @endif
         {{--tournament button--}}
-        @if (@$button_tournament && @$photo->tournament->id)
+        @if (@$button_tournament && $photo->tournament && @$photo->tournament->id)
             <a href="{{ '/tournaments/'.@$photo->tournament->id }}" class="btn btn-sm btn-info fade-in">
                 <i class="fa fa-list-alt" aria-hidden="true"></i>
             </a>
