@@ -61,7 +61,8 @@
                             </thead>
                             <tbody>
                             @foreach($photo_users as $userid => $count)
-                                <?php $vuser = App\User::findOrFail($userid); ?>
+                                <?php $vuser = App\User::find($userid); ?>
+                                @if ($vuser)
                                 <tr>
                                     <td>
                                         <a href="/profile/{{ $vuser->id }}" class="{{ $vuser->linkClass() }}">
@@ -70,6 +71,7 @@
                                     </td>
                                     <td>{{ $count }}</td>
                                 </tr>
+                                @endif
                             @endforeach
                             </tbody>
                         </table>
