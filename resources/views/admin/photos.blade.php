@@ -60,19 +60,21 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($photo_users as $userid => $count)
-                                <?php $vuser = App\User::find($userid); ?>
-                                @if ($vuser)
-                                <tr>
-                                    <td>
-                                        <a href="/profile/{{ $vuser->id }}" class="{{ $vuser->linkClass() }}">
-                                            {{ $vuser->displayUsername() }}
-                                        </a>
-                                    </td>
-                                    <td>{{ $count }}</td>
-                                </tr>
-                                @endif
-                            @endforeach
+                            @if ($photo_users)
+                                @foreach($photo_users as $userid => $count)
+                                    <?php $vuser = App\User::find($userid); ?>
+                                    @if ($vuser)
+                                    <tr>
+                                        <td>
+                                            <a href="/profile/{{ $vuser->id }}" class="{{ $vuser->linkClass() }}">
+                                                {{ $vuser->displayUsername() }}
+                                            </a>
+                                        </td>
+                                        <td>{{ $count }}</td>
+                                    </tr>
+                                    @endif
+                                @endforeach
+                            @endif
                             </tbody>
                         </table>
                     </div>
