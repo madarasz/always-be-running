@@ -35,34 +35,61 @@ class PhotosController extends Controller
                 $created->update(['approved' => 1]);
             }
 
-            // saving photo and thumbnail
             $filename = $created->id.'.'.$request->photo->extension();
-            $request->file('photo')->move('photo', $filename);
-            File::copy('photo/' . $filename, 'photo/thumb_' . $filename);
+            $fullPath = public_path('photo/') . $filename;
+            $thumbPath = public_path('photo/thumb_') . $filename;
 
             try {
-                // resizing image
-                $img = Image::make(public_path('photo/') . $filename);
-                $img->resize(2560, 2560, function ($constraint) {
+                // Process image directly from upload before moving to final location
+                $img = Image::make($request->file('photo')->getRealPath());
+                
+                // Resize main image
+                $img->resize(1920, 1920, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 });
-                $img->save();
-
-                // trimming to square
-                $thumb = Image::make(public_path('photo/thumb_') . $filename);
+                $img->save($fullPath, 90); // Explicitly set quality to 90%
+                
+                // Create and process thumbnail
+                $thumb = Image::make($request->file('photo')->getRealPath());
                 $dim = min($thumb->height(), $thumb->width());
                 $thumb->resizeCanvas($dim, $dim, 'center');
-                // resize
-                $thumb->resize(200, 200, function ($constraint) {
+                $thumb->resize(400, 400, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 });
-                $thumb->save();
+                $thumb->save($thumbPath, 85); // Slightly lower quality for thumbnails
+                
+                // Verify files were created successfully
+                if (!file_exists($fullPath) || !file_exists($thumbPath)) {
+                    throw new \Exception('Failed to save processed images to disk');
+                }
+                
             } catch (NotReadableException $e) {
+                \Log::error('Photo upload failed - not readable: ' . $e->getMessage(), [
+                    'photo_id' => $created->id,
+                    'tournament_id' => $tournament->id,
+                    'user_id' => $request->user()->id
+                ]);
                 $created->delete();
                 return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
-                    ->withErrors(['There was a problem uploading your photo.']);
+                    ->withErrors(['The uploaded file could not be read as an image. Please ensure it is a valid image file.']);
+            } catch (\Exception $e) {
+                \Log::error('Photo upload failed: ' . $e->getMessage(), [
+                    'photo_id' => $created->id,
+                    'tournament_id' => $tournament->id,
+                    'user_id' => $request->user()->id
+                ]);
+                // Clean up any partially created files
+                if (file_exists($fullPath)) {
+                    @unlink($fullPath);
+                }
+                if (file_exists($thumbPath)) {
+                    @unlink($thumbPath);
+                }
+                $created->delete();
+                return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
+                    ->withErrors(['There was a problem processing your photo. Please try again or contact support if the issue persists.']);
             }
 
             // saving filename in DB
@@ -98,33 +125,57 @@ class PhotosController extends Controller
                 $created->update(['approved' => 1]);
             }
 
-            // saving photo and thumbnail
             $filename = $created->id.'.'.$request->photo->extension();
-            $request->file('photo')->move('photo', $filename);
-            File::copy('photo/' . $filename, 'photo/thumb_' . $filename);
+            $fullPath = public_path('photo/') . $filename;
+            $thumbPath = public_path('photo/thumb_') . $filename;
 
             try {
-                // resizing image
-                $img = Image::make(public_path('photo/') . $filename);
+                // Process image directly from upload before moving to final location
+                $img = Image::make($request->file('photo')->getRealPath());
+                
+                // Resize main image
                 $img->resize(2560, 2560, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 });
-                $img->save();
-
-                // trimming to square
-                $thumb = Image::make(public_path('photo/thumb_') . $filename);
+                $img->save($fullPath, 90); // Explicitly set quality to 90%
+                
+                // Create and process thumbnail
+                $thumb = Image::make($request->file('photo')->getRealPath());
                 $dim = min($thumb->height(), $thumb->width());
                 $thumb->resizeCanvas($dim, $dim, 'center');
-                // resize
                 $thumb->resize(200, 200, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 });
-                $thumb->save();
+                $thumb->save($thumbPath, 85); // Slightly lower quality for thumbnails
+                
+                // Verify files were created successfully
+                if (!file_exists($fullPath) || !file_exists($thumbPath)) {
+                    throw new \Exception('Failed to save processed images to disk');
+                }
+                
             } catch (NotReadableException $e) {
+                \Log::error('Photo upload API failed - not readable: ' . $e->getMessage(), [
+                    'photo_id' => $created->id,
+                    'user_id' => $request->user()->id
+                ]);
                 $created->delete();
-                return response()->json('There was a problem uploading your photo, was not readable.', 500);
+                return response()->json('The uploaded file could not be read as an image. Please ensure it is a valid image file.', 500);
+            } catch (\Exception $e) {
+                \Log::error('Photo upload API failed: ' . $e->getMessage(), [
+                    'photo_id' => $created->id,
+                    'user_id' => $request->user()->id
+                ]);
+                // Clean up any partially created files
+                if (file_exists($fullPath)) {
+                    @unlink($fullPath);
+                }
+                if (file_exists($thumbPath)) {
+                    @unlink($thumbPath);
+                }
+                $created->delete();
+                return response()->json('There was a problem processing your photo. Please try again or contact support if the issue persists.', 500);
             }
 
             // saving filename in DB
