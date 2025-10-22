@@ -50,6 +50,8 @@ jquery.timepicker.*
 chromedriver.log
 tests_output
 public/ktm/*
+public/kill-team*
+public/kt-rss/*
 cypress/integration/examples
 cypress/snapshots/**/__diff_output__/**
 cypress/videos

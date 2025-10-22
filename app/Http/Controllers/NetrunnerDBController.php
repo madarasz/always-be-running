@@ -19,8 +19,7 @@ class NetrunnerDBController extends Controller
 
     public function __construct()
     {
-        $protocol = env('APP_ENV') === 'local' ? 'http' : 'https';
-        $this->oauth = \OAuth2::consumer('NetrunnerDB', $protocol.'://'.env('NETRUNNERDB_REDIRECT_URL').'/oauth2/redirect');
+        $this->oauth = \OAuth2::consumer('NetrunnerDB', 'https://'.env('NETRUNNERDB_REDIRECT_URL').'/oauth2/redirect');
     }
 
     /**
