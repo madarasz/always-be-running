@@ -380,8 +380,8 @@
         </p>
     </div>
 </div>
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_FRONTEND_API')}}&libraries=places&language=en&callback=initializeMap">
+<script>
+(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={});var r=new Set;var e=new URLSearchParams;u=()=>h||(h=new Promise(async(f,n)=>{a=m.createElement("script");e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({key: "{{ENV('GOOGLE_FRONTEND_API')}}", v: "weekly", language: "en"});
 </script>
 <script type="text/javascript">
 
@@ -453,11 +453,15 @@
         });
     }
 
-    function initializeMap() {
+    async function initializeMap() {
 
         initDatePicker();
 
-        map = new google.maps.Map(document.getElementById('map'), {
+        // Load the Maps and Places libraries
+        const { Map } = await google.maps.importLibrary("maps");
+        const { Autocomplete, PlacesService, PlacesServiceStatus } = await google.maps.importLibrary("places");
+
+        map = new Map(document.getElementById('map'), {
             zoom: 1,
             center: {lat: 40.157053, lng: 19.329297},
             mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -466,7 +470,7 @@
         });
 
         var input = document.getElementById('location_search');
-        var autocomplete = new google.maps.places.Autocomplete(input);
+        var autocomplete = new Autocomplete(input);
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
         autocomplete.bindTo('bounds', map);
@@ -488,14 +492,17 @@
         });
 
         if (old_place_id.length > 0) {
-            var service = new google.maps.places.PlacesService(map);
+            var service = new PlacesService(map);
             service.getDetails({placeId: old_place_id}, function(place, status){
-                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                if (status === PlacesServiceStatus.OK) {
                     renderPlace(place, marker, map)
                 }
             });
         }
     }
+
+    // Call initializeMap when the page loads
+    initializeMap();
 
     // template for filtered unofficial items
     Vue.use(VAutocomplete.default);
