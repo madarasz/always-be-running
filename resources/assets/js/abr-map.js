@@ -125,8 +125,18 @@ function renderPlace(place, marker, map) {
         map.setCenter(place.geometry.location);
         map.setZoom(15);
     }
-    marker.setPosition(place.geometry.location);
-    marker.setVisible(true);
+
+    // Update marker position and visibility
+    // Works with both legacy Marker and AdvancedMarkerElement
+    if (marker.position !== undefined) {
+        // AdvancedMarkerElement
+        marker.position = place.geometry.location;
+        marker.map = map;
+    } else if (marker.setPosition) {
+        // Legacy Marker (fallback)
+        marker.setPosition(place.geometry.location);
+        marker.setVisible(true);
+    }
 
     // if we are on the tournament form, refresh infos
     if (document.getElementById('location_place_id')) {

@@ -454,50 +454,58 @@
     }
 
     async function initializeMap() {
+        try {
+            initDatePicker();
 
-        initDatePicker();
+            // Load the Maps, Places, and Marker libraries
+            const { Map } = await google.maps.importLibrary("maps");
+            const { Autocomplete, PlacesService, PlacesServiceStatus } = await google.maps.importLibrary("places");
+            const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
-        // Load the Maps and Places libraries
-        const { Map } = await google.maps.importLibrary("maps");
-        const { Autocomplete, PlacesService, PlacesServiceStatus } = await google.maps.importLibrary("places");
-
-        map = new Map(document.getElementById('map'), {
-            zoom: 1,
-            center: {lat: 40.157053, lng: 19.329297},
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            streetViewControl: false,
-            mapTypeControl: false
-        });
-
-        var input = document.getElementById('location_search');
-        var autocomplete = new Autocomplete(input);
-        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-        autocomplete.bindTo('bounds', map);
-
-        marker = new google.maps.Marker({
-            map: map,
-            anchorPoint: new google.maps.Point(0, -29)
-        });
-
-        autocomplete.addListener('place_changed', function() {
-            marker.setVisible(false);
-            var place = autocomplete.getPlace();
-            if (!place.geometry) {
-                console.log("Autocomplete's returned place contains no geometry");
-                return;
-            }
-            renderPlace(place, marker, map);
-
-        });
-
-        if (old_place_id.length > 0) {
-            var service = new PlacesService(map);
-            service.getDetails({placeId: old_place_id}, function(place, status){
-                if (status === PlacesServiceStatus.OK) {
-                    renderPlace(place, marker, map)
-                }
+            // Initialize map with mapId for AdvancedMarkerElement support
+            map = new Map(document.getElementById('map'), {
+                zoom: 1,
+                center: {lat: 40.157053, lng: 19.329297},
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                streetViewControl: false,
+                mapTypeControl: false,
+                mapId: "{{ENV('GOOGLE_MAP_ID')}}" // Required for AdvancedMarkerElement
             });
+
+            var input = document.getElementById('location_search');
+            var autocomplete = new Autocomplete(input);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+            autocomplete.bindTo('bounds', map);
+
+            // Use AdvancedMarkerElement instead of deprecated Marker
+            marker = new AdvancedMarkerElement({
+                map: map,
+                position: null
+            });
+
+            autocomplete.addListener('place_changed', function() {
+                // Hide marker by removing it from map
+                marker.map = null;
+                var place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    console.log("Autocomplete's returned place contains no geometry");
+                    return;
+                }
+                renderPlace(place, marker, map);
+            });
+
+            if (old_place_id.length > 0) {
+                var service = new PlacesService(map);
+                service.getDetails({placeId: old_place_id}, function(place, status){
+                    if (status === PlacesServiceStatus.OK) {
+                        renderPlace(place, marker, map)
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Error initializing Google Maps:", error);
+            console.error("Please ensure GOOGLE_MAP_ID is set in your .env file");
         }
     }
 
