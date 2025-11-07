@@ -234,7 +234,7 @@
 
     </script>
     <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_FRONTEND_API')}}&callback=initializeUpcoming&libraries=geometry">
+            src="https://maps.googleapis.com/maps/api/js?key={{config('services.google.frontend_api')}}&callback=initializeUpcoming&libraries=geometry">
     </script>
 @stop
 

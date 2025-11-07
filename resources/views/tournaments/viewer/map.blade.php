@@ -1,6 +1,6 @@
 {{--Draw location map--}}
 <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key={{ENV('GOOGLE_FRONTEND_API')}}&libraries=places&callback=mapIsReady">
+        src="https://maps.googleapis.com/maps/api/js?key={{config('services.google.frontend_api')}}&libraries=places&callback=mapIsReady">
 </script>
 {{--Scripts for google maps--}}
 <script type="text/javascript">

@@ -125,7 +125,7 @@
         ];
         google.charts.load('current', {
             'packages':['corechart', 'geochart'],
-            'mapsApiKey': '{{ env('GOOGLE_FRONTEND_API') }}'
+            'mapsApiKey': '{{ config('services.google.frontend_api') }}'
         });
 
         // get tournament data
