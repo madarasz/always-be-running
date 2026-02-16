@@ -1,0 +1,98 @@
+services:
+  # PHP-FPM Application Server
+  php:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.php
+    container_name: abr-php
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - ./docker/php.ini:/usr/local/etc/php/conf.d/local.ini:ro
+    networks:
+      - abr-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # Nginx Web Server
+  nginx:
+    image: nginx:alpine
+    container_name: abr-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html:ro
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - abr-network
+    depends_on:
+      - php
+
+  # MariaDB Database (MySQL 5.7 compatible, supports ARM64)
+  mysql:
+    image: mariadb:10.5
+    container_name: abr-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: netrunner
+      MYSQL_USER: abr
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: rootsecret
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - abr-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootsecret"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # phpMyAdmin for database management
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: abr-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: rootsecret
+      UPLOAD_LIMIT: 100M
+    networks:
+      - abr-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # Node.js for Gulp builds (custom image with build tools for node-sass)
+  node:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.node
+    container_name: abr-node
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - node-modules:/var/www/html/node_modules
+    networks:
+      - abr-network
+    command: sh -c "npm install && gulp"
+    profiles:
+      - build
+
+networks:
+  abr-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
+  node-modules:
+    driver: local
