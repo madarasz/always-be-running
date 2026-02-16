@@ -46,11 +46,12 @@ Migrate AlwaysBeRunning from Laravel 5.2/PHP 5.5/Gulp to Laravel 11/PHP 8.2/Vite
 4. **`docker/.env.docker`** - Docker-specific environment variables
 
 ### Validation
-- [ ] `docker-compose up` starts all services
-- [ ] `php artisan migrate` runs successfully
-- [ ] `gulp` builds assets
-- [ ] OAuth login with NetrunnerDB works
-- [ ] Application serves at localhost:8000
+- [X] `docker-compose up` starts all services
+- [X] `php artisan migrate` runs successfully
+- [X] `gulp` builds assets
+- [X] OAuth login with NetrunnerDB works 
+  - **we need localhost redirect URL from NetrunnerDB**
+- [X] Application serves at localhost:8000
 
 ---
 

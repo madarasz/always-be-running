@@ -1,0 +1,40 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Dependencies (will be installed in container)
+/vendor
+/node_modules
+
+# Environment files (use docker/.env.docker)
+.env
+
+# Storage directories (will be created in container)
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+!/storage/framework/cache/.gitignore
+!/storage/framework/sessions/.gitignore
+!/storage/framework/views/.gitignore
+!/storage/logs/.gitignore
+
+# Testing
+/cypress
+cypress.json
+cypress.env.json
+test-package.json
+test-package-lock.json
+
+# Documentation
+*.md
+!README.md
+
+# macOS
+.DS_Store
