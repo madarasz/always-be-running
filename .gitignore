@@ -58,5 +58,9 @@ cypress/videos
 cypress/screenshots
 cypress.env.json
 node-gyp
+e2e/node_modules
+e2e/package-lock.json
+e2e/.env
 npm-debug.log
 abr*.sql
+.codemie

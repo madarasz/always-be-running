@@ -2,7 +2,7 @@
 
 ## Overview
 
-Migrate AlwaysBeRunning from Laravel 5.2/PHP 5.5/Gulp to Laravel 11/PHP 8.2/Vite with minimal code changes, validated by E2E tests migrated from Cypress to Playwright.
+Migrate AlwaysBeRunning from Laravel 5.2/PHP 5.5/Gulp to Laravel 11/PHP 8.2/Vite with minimal code changes, validated by E2E tests migrated from Cypress to agent-browser.
 
 ## Current State Summary
 
@@ -12,7 +12,7 @@ Migrate AlwaysBeRunning from Laravel 5.2/PHP 5.5/Gulp to Laravel 11/PHP 8.2/Vite
 | PHP | >= 5.5.9 | 8.2+ |
 | Build | Gulp 3.9.1 + Elixir 5.0 | Vite |
 | Frontend | Vue 2.5.17, jQuery 2.2.3, Bootstrap 4-alpha | Vue 2.7 (keep), modernize later |
-| E2E Tests | Cypress 7.1.0 + Cucumber | Playwright + playwright-bdd |
+| E2E Tests | Cypress 7.1.0 + Cucumber | Vitest + agent-browser |
 | Routes | Single `app/Http/routes.php` (130+ routes) | `routes/web.php` + `routes/api.php` |
 | Models | In `app/` root (17 models) | Move to `app/Models/` |
 
@@ -55,7 +55,7 @@ Migrate AlwaysBeRunning from Laravel 5.2/PHP 5.5/Gulp to Laravel 11/PHP 8.2/Vite
 
 ---
 
-## Phase 1: Migrate E2E Tests from Cypress to Playwright
+## Phase 1: Migrate E2E Tests from Cypress to agent-browser
 
 **Goal:** Modern test suite that validates the application before/during/after Laravel upgrade.
 
@@ -65,73 +65,38 @@ Migrate AlwaysBeRunning from Laravel 5.2/PHP 5.5/Gulp to Laravel 11/PHP 8.2/Vite
 - `results.feature` (9 scenarios): Results display, pagination, filtering, statistics
 - `legal.feature` (1 scenario): Cookie consent
 
+### Test Framework: Vitest + agent-browser
+
+- **Vitest**: Fast, modern test runner with native ESM support
+- **agent-browser**: Headless browser automation from Vercel Labs
+
+See **[`e2e/PRACTICES.md`](e2e/PRACTICES.md)** for setup notes, page object patterns, locator rules, OAuth login helper, parameterized tests, API mocking, visual regression, and the Cypress → agent-browser migration table.
+
 ### Tasks
 
-1. **Install Playwright + playwright-bdd**
+1. **Install dependencies** (in `e2e/` subdirectory)
    ```bash
-   npm init playwright@latest
-   npm install playwright-bdd
+   cd e2e && npm install
    ```
 
-2. **Create `playwright.config.ts`**
-   ```typescript
-   import { defineConfig } from '@playwright/test';
-   import { defineBddConfig } from 'playwright-bdd';
-
-   const testDir = defineBddConfig({
-     features: 'e2e/features/*.feature',
-     steps: 'e2e/steps/**/*.ts',
-   });
-
-   export default defineConfig({
-     testDir,
-     use: { baseURL: 'http://localhost:8000' },
-   });
+2. **Directory structure**
    ```
-
-3. **Copy feature files** (unchanged)
-   - `cypress/integration/*.feature` → `e2e/features/*.feature`
-
-4. **Convert step definitions** (syntax changes required)
-
-   | Cypress Pattern | Playwright Pattern |
-   |-----------------|-------------------|
-   | `cy.visit(url)` | `await page.goto(url)` |
-   | `cy.get(sel)` | `page.locator(sel)` |
-   | `cy.intercept()` | `await page.route()` |
-   | `.should('have.length', n)` | `await expect(locator).toHaveCount(n)` |
-
-5. **Convert API mocking**
-   ```typescript
-   // Before (Cypress)
-   cy.intercept('GET', '/api/tournaments', { fixture: 'upcoming.json' });
-
-   // After (Playwright)
-   await page.route('/api/tournaments', route =>
-     route.fulfill({ json: require('../fixtures/upcoming.json') })
-   );
+   e2e/
+   ├── vitest.config.ts
+   ├── pages/          # BasePage, UpcomingPage, ResultsPage, OrganizePage, AdminPage, LegalPage
+   ├── helpers/        # auth.ts, mockApi.ts, visualTest.ts
+   ├── fixtures/       # JSON test data (copied from cypress/fixtures)
+   ├── screenshots/    # baseline/ and actual/
+   └── tests/          # *.test.ts files
    ```
-
-6. **Convert OAuth helper** (`cypress/integration/common/auth.js` → `e2e/helpers/auth.ts`)
-
-### Files to Create
-- `playwright.config.ts`
-- `e2e/features/*.feature` (4 files, copied)
-- `e2e/steps/common/navigation.ts`
-- `e2e/steps/common/elements.ts`
-- `e2e/steps/common/forms.ts`
-- `e2e/steps/common/auth.ts`
-- `e2e/steps/common/map.ts`
-- `e2e/steps/upcoming/upcoming.ts`
-- `e2e/steps/results/results.ts`
-- `e2e/steps/legal/legal.ts`
-- `e2e/fixtures/*.json` (9 files, copied)
 
 ### Validation
-- [ ] All 18 scenarios pass
+- [ ] All 18 scenarios pass as Vitest tests
 - [ ] OAuth login works for regular and admin users
-- [ ] API mocking works correctly
-- [ ] Visual snapshots match (if retained)
+- [ ] API mocking works via network routes
+- [ ] Page objects encapsulate all page interactions
+- [ ] Parameterized tests cover filter combinations
+- [ ] Visual snapshots match for maps and charts
 
 ---
 
@@ -139,49 +104,63 @@ Migrate AlwaysBeRunning from Laravel 5.2/PHP 5.5/Gulp to Laravel 11/PHP 8.2/Vite
 
 **Goal:** Increase test coverage for high-risk write operations before migration.
 
-### New Scenarios to Add
+### New Tests to Add
 
-Create `e2e/features/tournament-crud.feature`:
+Create `e2e/tests/tournament-crud.test.ts`:
 
-```gherkin
-Feature: Tournament Management
+```typescript
+import { describe, it, expect, beforeEach } from 'vitest';
+import { OrganizePage } from '../pages/OrganizePage';
 
-    Background:
-        Given I login with "regular" user
+describe('Tournament Management', () => {
+  let organizePage: OrganizePage;
 
-    Scenario: Create a new tournament
-        When I open the "Organize" page
-        And I click on "Create tournament" button
-        And I fill in tournament details:
-            | field       | value                    |
-            | title       | Test Tournament          |
-            | date        | 2025-06-01               |
-            | type        | GNK / seasonal           |
-            | format      | standard                 |
-        And I submit the tournament form
-        Then I see text "Tournament created"
-        And I see tournament "Test Tournament" in my tournaments
+  beforeEach(async () => {
+    await loginAsRegularUser();
+  });
 
-    Scenario: Edit an existing tournament
-        Given I have a tournament "My Test Event"
-        When I open tournament edit page for "My Test Event"
-        And I change the title to "Updated Event Name"
-        And I save changes
-        Then I see text "Tournament updated"
+  it('creates a new tournament', async () => {
+    await organizePage.open();
+    await organizePage.clickCreateTournament();
+    await organizePage.fillTournamentDetails({
+      title: 'Test Tournament',
+      date: '2025-06-01',
+      type: 'GNK / seasonal',
+      format: 'standard',
+    });
+    await organizePage.submitForm();
 
-    Scenario: Delete a tournament
-        Given I have a tournament "Tournament to Delete"
-        When I delete tournament "Tournament to Delete"
-        And I confirm the deletion
-        Then I don't see "Tournament to Delete" in my tournaments
+    expect(await organizePage.hasMessage('Tournament created')).toBe(true);
+    expect(await organizePage.hasTournament('Test Tournament')).toBe(true);
+  });
 
-    Scenario: Conclude a tournament with results
-        Given I have an ongoing tournament "Finished Tournament"
-        When I open tournament "Finished Tournament"
-        And I click "Conclude" button
-        And I enter top cut results
-        And I submit conclusion
-        Then tournament appears in Results page
+  it('edits an existing tournament', async () => {
+    // Setup: create tournament via API or seed
+    await organizePage.openEditPage('My Test Event');
+    await organizePage.changeTitle('Updated Event Name');
+    await organizePage.saveChanges();
+
+    expect(await organizePage.hasMessage('Tournament updated')).toBe(true);
+  });
+
+  it('deletes a tournament', async () => {
+    await organizePage.deleteTournament('Tournament to Delete');
+    await organizePage.confirmDeletion();
+
+    expect(await organizePage.hasTournament('Tournament to Delete')).toBe(false);
+  });
+
+  it('concludes a tournament with results', async () => {
+    await organizePage.openTournament('Finished Tournament');
+    await organizePage.clickConclude();
+    await organizePage.enterTopCutResults();
+    await organizePage.submitConclusion();
+
+    const resultsPage = new ResultsPage(browser);
+    await resultsPage.open();
+    expect(await resultsPage.hasTournament('Finished Tournament')).toBe(true);
+  });
+});
 ```
 
 ### Implementation Notes
@@ -190,7 +169,7 @@ Feature: Tournament Management
 - Tournament deletion uses soft-delete, verify in database
 
 ### Validation
-- [ ] All new CRUD scenarios pass
+- [ ] All new CRUD tests pass
 - [ ] Tournament appears in Results after conclusion
 - [ ] Soft-delete works correctly
 
@@ -203,7 +182,7 @@ Feature: Tournament Management
 ### Upgrade Path
 5.2 → 5.3 → 5.4 → 5.5 → 5.6 → 5.7 → 5.8 → 6.0
 
-**Approach:** Follow official Laravel upgrade guides for each version. Run Playwright tests after each version bump.
+**Approach:** Follow official Laravel upgrade guides for each version. Run E2E tests after each version bump.
 
 ---
 
@@ -237,7 +216,7 @@ Feature: Tournament Management
    "laravel/framework": "5.3.*"
    ```
 
-**Validation checkpoint:** Run Playwright tests
+**Validation checkpoint:** Run E2E tests
 
 ---
 
@@ -263,7 +242,7 @@ Feature: Tournament Management
    "laravel/framework": "5.4.*"
    ```
 
-**Validation checkpoint:** Run Playwright tests
+**Validation checkpoint:** Run E2E tests
 
 ---
 
@@ -287,7 +266,7 @@ Feature: Tournament Management
    "php": ">=7.0.0"
    ```
 
-**Validation checkpoint:** Run Playwright tests
+**Validation checkpoint:** Run E2E tests
 
 ---
 
@@ -310,7 +289,7 @@ Feature: Tournament Management
    "php": ">=7.1.3"
    ```
 
-**Validation checkpoint:** Run Playwright tests
+**Validation checkpoint:** Run E2E tests
 
 ---
 
@@ -331,7 +310,7 @@ Feature: Tournament Management
    "laravel/framework": "5.7.*"
    ```
 
-**Validation checkpoint:** Run Playwright tests
+**Validation checkpoint:** Run E2E tests
 
 ---
 
@@ -352,7 +331,7 @@ Feature: Tournament Management
    "laravel/framework": "5.8.*"
    ```
 
-**Validation checkpoint:** Run Playwright tests
+**Validation checkpoint:** Run E2E tests
 
 ---
 
@@ -382,7 +361,7 @@ Feature: Tournament Management
    "php": ">=7.2.0"
    ```
 
-**Validation checkpoint:** Run Playwright tests
+**Validation checkpoint:** Run E2E tests
 
 ---
 
@@ -417,7 +396,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 - [ ] All routes accessible
 - [ ] OAuth login works with new Socialite provider
 - [ ] All CRUD operations function
-- [ ] Playwright tests pass (all 22 scenarios)
+- [ ] E2E tests pass (all 22 tests)
 
 ---
 
@@ -449,7 +428,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
    "laravel/framework": "^7.0"
    ```
 
-**Validation checkpoint:** Run Playwright tests
+**Validation checkpoint:** Run E2E tests
 
 ---
 
@@ -478,7 +457,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
    "php": ">=7.3.0"
    ```
 
-**Validation checkpoint:** Run Playwright tests
+**Validation checkpoint:** Run E2E tests
 
 ---
 
@@ -505,7 +484,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
    "php": ">=8.0.2"
    ```
 
-**Validation checkpoint:** Run Playwright tests
+**Validation checkpoint:** Run E2E tests
 
 ---
 
@@ -527,7 +506,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
    "php": ">=8.1.0"
    ```
 
-**Validation checkpoint:** Run Playwright tests
+**Validation checkpoint:** Run E2E tests
 
 ---
 
@@ -559,7 +538,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
    "php": ">=8.2.0"
    ```
 
-**Validation checkpoint:** Run Playwright tests
+**Validation checkpoint:** Run E2E tests
 
 ---
 
@@ -575,7 +554,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 - [ ] PHP 8.2 features working
 - [ ] Admin panel functions
 - [ ] All API endpoints respond
-- [ ] Playwright tests pass (all 22 scenarios)
+- [ ] E2E tests pass (all 22 tests)
 
 ---
 
@@ -637,7 +616,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 - [ ] `npm run build` produces production assets
 - [ ] All styles render correctly
 - [ ] JavaScript functionality works
-- [ ] Playwright tests pass
+- [ ] E2E tests pass
 
 ---
 
@@ -657,7 +636,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 | `app/*.php` (models) | 2 | Move to `app/Models/` |
 | `gulpfile.js` | 4 | Replace with `vite.config.js` |
 | `resources/views/layout/general.blade.php` | 4 | Update asset references |
-| `cypress/` | 1 | Migrate to `e2e/` (Playwright) |
+| `cypress/` | 1 | Migrate to `e2e/` (agent-browser) |
 
 ---
 
@@ -685,7 +664,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 ## Risk Mitigation
 
 1. **Version Control Strategy**
-   - Create branch per phase: `phase-0-docker`, `phase-1-playwright`, etc.
+   - Create branch per phase: `phase-0-docker`, `phase-1-e2e`, etc.
    - Tag before each phase: `pre-phase-2`, `pre-phase-3`
    - Keep `master` untouched until phase completion
 
@@ -694,7 +673,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
    - Test migrations on copy of production data
 
 3. **Parallel Testing**
-   - Keep Cypress tests until Playwright achieves parity
+   - Keep Cypress tests until agent-browser achieves parity
    - Run both test suites during Phase 1 transition
 
 4. **OAuth Fallback**
@@ -705,7 +684,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 ## Verification Strategy
 
 After each phase, verify with:
-1. **Playwright E2E tests** - All scenarios pass (18 existing + 4 new CRUD)
+1. **E2E tests (Vitest + agent-browser)** - All tests pass (18 existing + 4 new CRUD)
 2. **Manual smoke test** - Login, create tournament, view results
 3. **API check** - `/api/tournaments`, `/api/entries` return correct data
 4. **Admin functions** - Card sync, user management work
