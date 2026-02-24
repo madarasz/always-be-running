@@ -1,0 +1,13 @@
+{
+  "name": "abr-e2e-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "agent-browser": "^0.13.0",
+    "vitest": "^2.0.0"
+  }
+}
