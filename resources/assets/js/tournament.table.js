@@ -441,4 +441,4 @@ Vue.component('tournament-table', {
             }
         }
     }
-})
+});

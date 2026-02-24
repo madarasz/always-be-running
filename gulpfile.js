@@ -35,7 +35,7 @@ elixir(function(mix) {
         .copy('node_modules/axios/dist/axios.min.js', 'resources/assets/js')
         .copy(toastrPath + '/toastr.min.css', 'resources/assets/css')
         .copy(toastrPath + '/toastr.min.js', 'resources/assets/js')
-        .copy('node_modules/marked/lib/marked.js', 'resources/assets/js')
+        .copy('node_modules/marked/lib/marked.umd.js', 'resources/assets/js/marked.js')
         .copy('node_modules/v-autocomplete/dist/v-autocomplete.js', 'resources/assets/js')
         .copy('node_modules/vue-lazyload/vue-lazyload.js', 'resources/assets/js')
         .sass('app.scss')
