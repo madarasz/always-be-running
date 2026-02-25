@@ -56,7 +56,7 @@ export async function loginUser(
   await page.goto('http://localhost:8000/oauth2/redirect');
 
   // Wait until we land on netrunnerdb.com
-  await page.waitForURL(/netrunnerdb\.com/, { timeout: 15000 });
+  await page.waitForURL(/netrunnerdb\.com/, { timeout: 30000 });
 
   // Fill login form (fields: _username, _password)
   await page.fill('[name="_username"]', username);
@@ -79,7 +79,7 @@ export async function loginUser(
   }
 
   // Wait until we're back on our app
-  await page.waitForURL('http://localhost:8000/**', { timeout: 30000 });
+  await page.waitForURL('http://localhost:8000/**', { timeout: 60000 });
 }
 
 export async function clearSession(browser: BrowserManager): Promise<void> {

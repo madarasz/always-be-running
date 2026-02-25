@@ -48,7 +48,10 @@ Migrate AlwaysBeRunning from Laravel 5.2/PHP 5.5/Gulp to Laravel 11/PHP 8.2/Vite
 ### Validation
 - [X] `docker-compose up` starts all services
 - [X] `php artisan migrate` runs successfully
-- [X] `gulp` builds assets
+- [X] `gulp` builds assets — run via Docker (Node 10 + Python 2, required for `node-sass@3`):
+  ```bash
+  docker compose --profile build run --rm node
+  ```
 - [X] OAuth login with NetrunnerDB works 
   - **we need localhost redirect URL from NetrunnerDB**
 - [X] Application serves at localhost:8000
@@ -61,8 +64,8 @@ Migrate AlwaysBeRunning from Laravel 5.2/PHP 5.5/Gulp to Laravel 11/PHP 8.2/Vite
 
 ### Current Test Coverage (18 scenarios)
 - `auth.feature` (3 scenarios): Login flows, access control
-- `upcoming.feature` (5 scenarios): Tournament table, filtering, calendar, map
-- `results.feature` (9 scenarios): Results display, pagination, filtering, statistics
+- `upcoming.feature` (6 scenarios): Tournament table, filtering, calendar, map
+- `results.feature` (8 scenarios): Results display, pagination, filtering, statistics
 - `legal.feature` (1 scenario): Cookie consent
 
 ### Test Framework: Vitest + agent-browser
@@ -70,7 +73,7 @@ Migrate AlwaysBeRunning from Laravel 5.2/PHP 5.5/Gulp to Laravel 11/PHP 8.2/Vite
 - **Vitest**: Fast, modern test runner with native ESM support
 - **agent-browser**: Headless browser automation from Vercel Labs
 
-See **[`e2e/PRACTICES.md`](e2e/PRACTICES.md)** for setup notes, page object patterns, locator rules, OAuth login helper, parameterized tests, API mocking, visual regression, and the Cypress → agent-browser migration table.
+See **[`.claude/skills/e2e/SKILL.md`](.claude/skills/e2e/SKILL.md)** for setup notes, page object patterns, locator rules, OAuth login helper, parameterized tests, API mocking, visual regression, and the Cypress → agent-browser migration table.
 
 ### Tasks
 
@@ -91,12 +94,14 @@ See **[`e2e/PRACTICES.md`](e2e/PRACTICES.md)** for setup notes, page object patt
    ```
 
 ### Validation
-- [ ] All 18 scenarios pass as Vitest tests
-- [ ] OAuth login works for regular and admin users
-- [ ] API mocking works via network routes
-- [ ] Page objects encapsulate all page interactions
-- [ ] Parameterized tests cover filter combinations
-- [ ] Visual snapshots match for maps and charts
+- [ ] All 18 scenarios pass as Vitest tests — **14/18 done**; missing:
+  - `upcoming`: Upcoming map (requires visual regression)
+  - `results`: Featured box, User's default country (requires auth + profile edit flow), Know the Meta stats (requires visual regression)
+- [X] OAuth login works for regular and admin users (`auth.test.ts`: 3/3 scenarios pass)
+- [ ] API mocking works via network routes — not yet used; tests run against live dev server
+- [X] Page objects encapsulate all page interactions (`BasePage`, `UpcomingPage`, `ResultsPage`, `LegalPage`, `OrganizePage`, `AdminPage`)
+- [ ] Parameterized tests cover filter combinations — filters tested individually, not via `it.each`
+- [ ] Visual snapshots match for maps and charts — not yet implemented
 
 ---
 
