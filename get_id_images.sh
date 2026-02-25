@@ -20,29 +20,31 @@ do
         # download if not already present
         if [ ! -f "public/img/ids/$card.png" ]; then
             echo "Downloading card image: $title"
-            imgurl="${imgtemplate/\{code\}/"$card"}"
+            imgurl="${imgtemplate/\{code\}/$card}"
             echo "Downloading from url: $imgurl"
-            curl "$imgurl" > "public/img/ids/$card.png"
-            # crop and resize
+            curl "$imgurl" > "public/img/ids/$card.jpg"
+            # crop, resize, and convert to PNG
             if [ $card -lt 26000 ]; then
                 # old FFG ID templates
                 if [ ${sides[$i]} == "corp" ]; then
                     echo corp
-                    mogrify -crop 215x215+43+68 -resize 80x80 "public/img/ids/$card.png"
+                    mogrify -format png -crop 215x215+43+68 -resize 80x80 "public/img/ids/$card.jpg"
                 else
                     echo runner
-                    mogrify -crop 232x232+33+56 -resize 80x80 "public/img/ids/$card.png"
+                    mogrify -format png -crop 232x232+33+56 -resize 80x80 "public/img/ids/$card.jpg"
                 fi
             else
                 # new NISEI ID templates
                 if [ ${sides[$i]} == "corp" ]; then
                     echo corp
-                    mogrify -crop 237x237+30+46 -resize 80x80 "public/img/ids/$card.png"
+                    mogrify -format png -crop 237x237+30+46 -resize 80x80 "public/img/ids/$card.jpg"
                 else
                     echo runner
-                    mogrify -crop 226x226+39+56 -resize 80x80 "public/img/ids/$card.png"
+                    mogrify -format png -crop 226x226+39+56 -resize 80x80 "public/img/ids/$card.jpg"
                 fi
             fi
+            # remove source jpg
+            rm -f "public/img/ids/$card.jpg"
         fi
     fi
     ((i++))
