@@ -87,7 +87,7 @@
             </td>
             {{--Claim button--}}
             <td class="text-right" style="white-space: nowrap;">
-            @if ((!$user_entry || $user_entry->type < 3) && $entry->type != 3 && $entry->type != 4)
+            @if ($user && (!$user_entry || $user_entry->type < 3) && $entry->type != 3 && $entry->type != 4)
                 <button class="btn btn-claim btn-xs" data-toggle="modal"
                         data-players-number="{{$tournament->players_number}}"
                         data-top-number="{{$tournament->top_number}}"
@@ -127,7 +127,7 @@
                 <td colspan="2"><em><small>unclaimed</small></em></td>
                 <td colspan="2"><em><small>unclaimed</small></em></td>
                 <td>
-                    @if (!$user_entry || $user_entry->type < 3)
+                    @if ($user && (!$user_entry || $user_entry->type < 3))
                         <button class="btn btn-claim btn-xs" data-toggle="modal"
                                 data-players-number="{{$tournament->players_number}}"
                                 data-top-number="{{$tournament->top_number}}"

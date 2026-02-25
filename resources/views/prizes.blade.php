@@ -215,7 +215,7 @@
                     if (description == null || description.length == 0) {
                         return '';
                     }
-                    return marked(description, {sanitize: true, gfm: true, breaks: true})
+                    return marked.parse(description, {gfm: true, breaks: true})
                 }
             }
         });

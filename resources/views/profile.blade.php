@@ -81,7 +81,7 @@
                     if (this.extraText == '' || this.extraText == null) {
                         return '';
                     }
-                    return marked(this.extraText, { sanitize: true, gfm: true, breaks: true })
+                    return marked.parse(this.extraText, { gfm: true, breaks: true })
                 }
             },
             methods: {
@@ -164,13 +164,13 @@
                     if (this.user.about == '' || this.user.about == null) {
                         return '';
                     }
-                    return marked(this.user.about, { sanitize: true, gfm: true, breaks: true })
+                    return marked.parse(this.user.about, { gfm: true, breaks: true })
                 },
                 markdownArtistDescription: function () {
                     if (this.artist.description == '' || this.artist.description == null) {
                         return '';
                     }
-                    return marked(this.artist.description, { sanitize: true, gfm: true, breaks: true })
+                    return marked.parse(this.artist.description, { gfm: true, breaks: true })
                 }
             },
             mounted: function () {
