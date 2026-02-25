@@ -311,7 +311,7 @@
                 if (this.selectedPrize == '' || this.selectedPrize.description == null) {
                     return '';
                 }
-                return marked(this.selectedPrize.description, {sanitize: true, gfm: true, breaks: true})
+                return marked.parse(this.selectedPrize.description, {gfm: true, breaks: true})
             }
         },
         mounted: function () {

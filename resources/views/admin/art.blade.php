@@ -204,7 +204,7 @@
                 if (this.selectedArtist.id == 0 || this.selectedArtist.description == null) {
                     return '';
                 }
-                return marked(this.selectedArtist.description, {sanitize: true, gfm: true, breaks: true})
+                return marked.parse(this.selectedArtist.description, {gfm: true, breaks: true})
             }
         },
         methods: {
