@@ -34,8 +34,13 @@ export class ResultsPage extends BasePage {
   readonly concludeLoginWarning = this.page.locator('#warning-conclude');
   readonly concludeButton = this.page.locator('.btn-conclude').first();
 
-  // Featured
-  readonly featuredBoxes = this.page.locator('.featured-box');
+  // Featured section
+  readonly featuredBracket = this.page.locator('#bracket-featured');
+  readonly featuredTournaments = this.page.locator('#bracket-featured a[href*="/tournaments/"]');
+  readonly supportMeBox = this.page.locator('.support-bg');
+
+  // Default country label (shown when user has autofilter enabled)
+  readonly defaultCountryLabel = this.page.locator('#label-default-country');
 
   // Stats
   readonly statsChartRunner = this.page.locator('#stat-chart-runner');
@@ -101,5 +106,28 @@ export class ResultsPage extends BasePage {
 
   async getPagingText(): Promise<string> {
     return (await this.resultsPagingSection.textContent() || '').trim();
+  }
+
+  async getFeaturedTournamentCount(): Promise<number> {
+    return await this.featuredTournaments.count();
+  }
+
+  async getFeaturedTournamentNames(): Promise<string[]> {
+    const names: string[] = [];
+    const count = await this.featuredTournaments.count();
+    for (let i = 0; i < count; i++) {
+      const text = await this.featuredTournaments.nth(i).textContent();
+      if (text) names.push(text.trim());
+    }
+    return names;
+  }
+
+  async isDefaultCountryLabelVisible(): Promise<boolean> {
+    // The label exists but may be hidden via hidden-xs-up class
+    const label = this.defaultCountryLabel;
+    const exists = await label.count() > 0;
+    if (!exists) return false;
+    const className = await label.getAttribute('class') || '';
+    return !className.includes('hidden-xs-up');
   }
 }

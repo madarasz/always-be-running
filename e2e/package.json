@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:no-mocks": "USE_MOCKS=false vitest run"
   },
   "devDependencies": {
     "agent-browser": "^0.13.0",

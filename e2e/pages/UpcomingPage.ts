@@ -161,6 +161,44 @@ export class UpcomingPage extends BasePage {
     return mapContent.length > 0;
   }
 
+  async waitForMapLoaded(): Promise<void> {
+    // Wait for Google Maps to fully load (gm-style class indicates Google Maps content)
+    await this.page.waitForFunction(() => {
+      const map = document.querySelector('#map');
+      return map && map.innerHTML.includes('gm-style');
+    }, { timeout: 15000 });
+  }
+
+  async getMapMarkerCount(): Promise<number> {
+    // Markers are role=button elements with aria-label containing tournament links
+    return await this.map.locator('[role="button"][aria-label*="/tournaments/"]').count();
+  }
+
+  async getMapMarkerNames(): Promise<string[]> {
+    const markers = await this.map.locator('[role="button"][aria-label*="/tournaments/"]').all();
+    const names: string[] = [];
+    for (const marker of markers) {
+      const label = await marker.getAttribute('aria-label') || '';
+      const match = label.match(/<strong>([^<]+)<\/strong>/);
+      if (match) {
+        names.push(match[1]);
+      }
+    }
+    return names;
+  }
+
+  async getCountryMarkerCount(country: string): Promise<number> {
+    const markers = await this.map.locator('[role="button"][aria-label*="/tournaments/"]').all();
+    let count = 0;
+    for (const marker of markers) {
+      const label = await marker.getAttribute('aria-label') || '';
+      if (label.includes(country)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
   async getRecurringEventCount(): Promise<number> {
     return await this.recurringTableRows.count();
   }

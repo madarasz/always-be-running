@@ -121,27 +121,39 @@ describe('Upcoming page', () => {
   });
 
   describe('Filtering', () => {
-    it('filters by tournament type', async () => {
+    it.each([
+      { filterType: 'type', filterMethod: 'filterByType', value: 'GNK / seasonal' },
+      { filterType: 'type', filterMethod: 'filterByType', value: 'players circuit' },
+      { filterType: 'country', filterMethod: 'filterByCountry', value: 'Germany' },
+      { filterType: 'country', filterMethod: 'filterByCountry', value: 'United Kingdom' },
+    ])('filters by $filterType = $value reduces or maintains count', async ({ filterMethod, value }) => {
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 
       const initialCount = await upcomingPage.getTotalCount();
-      await upcomingPage.filterByType('GNK / seasonal');
+      await (upcomingPage as any)[filterMethod](value);
       await browser.getPage().waitForTimeout(500);
       const filteredCount = await upcomingPage.getTotalCount();
-      // Filtered count should be less than or equal to initial
       expect(filteredCount).toBeLessThanOrEqual(initialCount);
     });
 
-    it('filters by country', async () => {
+    it.each([
+      { filter1: 'type', method1: 'filterByType', value1: 'GNK / seasonal', filter2: 'country', method2: 'filterByCountry', value2: 'Germany' },
+      { filter1: 'country', method1: 'filterByCountry', value1: 'United States', filter2: 'type', method2: 'filterByType', value2: 'players circuit' },
+    ])('combines $filter1 + $filter2 filters', async ({ method1, value1, method2, value2 }) => {
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 
       const initialCount = await upcomingPage.getTotalCount();
-      await upcomingPage.filterByCountry('Germany');
-      await browser.getPage().waitForTimeout(500);
-      const filteredCount = await upcomingPage.getTotalCount();
-      expect(filteredCount).toBeLessThanOrEqual(initialCount);
+      await (upcomingPage as any)[method1](value1);
+      await browser.getPage().waitForTimeout(300);
+      const afterFirstFilter = await upcomingPage.getTotalCount();
+      await (upcomingPage as any)[method2](value2);
+      await browser.getPage().waitForTimeout(300);
+      const afterBothFilters = await upcomingPage.getTotalCount();
+
+      expect(afterFirstFilter).toBeLessThanOrEqual(initialCount);
+      expect(afterBothFilters).toBeLessThanOrEqual(afterFirstFilter);
     });
 
     it('shows US state filter when US is selected', async () => {
@@ -187,6 +199,57 @@ describe('Upcoming page', () => {
       // Calendar should be visible
       await upcomingPage.calendar.waitFor({ state: 'visible' });
       expect(await upcomingPage.calendar.isVisible()).toBe(true);
+    });
+  });
+
+  describe('Map', () => {
+    it('loads Google Maps with tournament markers when Show Map is clicked', async () => {
+      await upcomingPage.open();
+      await upcomingPage.waitForTableLoaded();
+
+      // Click "Show map" button
+      await upcomingPage.showMap();
+
+      // Wait for Google Maps to load
+      await upcomingPage.waitForMapLoaded();
+
+      // Verify map is visible with content
+      expect(await upcomingPage.isMapVisible()).toBe(true);
+
+      // Verify markers are present (should have multiple tournament markers)
+      const markerCount = await upcomingPage.getMapMarkerCount();
+      expect(markerCount).toBeGreaterThan(0);
+
+      // Verify we can get marker names (confirms markers have tournament data)
+      const markerNames = await upcomingPage.getMapMarkerNames();
+      expect(markerNames.length).toBeGreaterThan(0);
+      expect(markerNames[0].length).toBeGreaterThan(0);
+    });
+
+    it('filters map markers by country', async () => {
+      await upcomingPage.open();
+      await upcomingPage.waitForTableLoaded();
+
+      // Show the map first
+      await upcomingPage.showMap();
+      await upcomingPage.waitForMapLoaded();
+
+      // Get initial marker count
+      const initialMarkerCount = await upcomingPage.getMapMarkerCount();
+      expect(initialMarkerCount).toBeGreaterThan(0);
+
+      // Filter by Germany
+      await upcomingPage.filterByCountry('Germany');
+      await browser.getPage().waitForTimeout(1000);
+
+      // Marker count should be reduced and all should be German
+      const filteredMarkerCount = await upcomingPage.getMapMarkerCount();
+      expect(filteredMarkerCount).toBeLessThan(initialMarkerCount);
+      expect(filteredMarkerCount).toBeGreaterThan(0);
+
+      // All markers should be from Germany
+      const germanMarkerCount = await upcomingPage.getCountryMarkerCount('Germany');
+      expect(germanMarkerCount).toBe(filteredMarkerCount);
     });
   });
 });
