@@ -1,0 +1,318 @@
+[
+  {
+    "id": 5254,
+    "title": "Taiwan January Meetup - Standard",
+    "date": "2026.01.18.",
+    "location_country": "Taiwan",
+    "players_number": 8,
+    "charity": 0,
+    "seoUrl": "/tournaments/5254/taiwan-january-meetup-standard",
+    "videos": [
+      {
+        "id": 988,
+        "video_id": "ZJmjtKKWptI",
+        "video_title": "Taiwan 2026 January Standard R1",
+        "thumbnail_url": "https://i.ytimg.com/vi/ZJmjtKKWptI/default.jpg",
+        "channel_name": "Chris Yang",
+        "type": 1,
+        "length": "25:56",
+        "flag_removed": 0,
+        "video_tags": []
+      },
+      {
+        "id": 989,
+        "video_id": "s8jj2y5s1-8",
+        "video_title": "Taiwan 2026 January Standard R2",
+        "thumbnail_url": "https://i.ytimg.com/vi/s8jj2y5s1-8/default.jpg",
+        "channel_name": "Chris Yang",
+        "type": 1,
+        "length": "33:28",
+        "flag_removed": 0,
+        "video_tags": []
+      }
+    ],
+    "cardpool": { "id": "elev", "name": "Elevation" },
+    "tournament_type": { "type_name": "GNK / seasonal" },
+    "tournament_format": { "format_name": "standard" }
+  },
+  {
+    "id": 5253,
+    "title": "Taiwan January Meetup - Startup",
+    "date": "2026.01.04.",
+    "location_country": "Taiwan",
+    "players_number": 8,
+    "charity": 0,
+    "seoUrl": "/tournaments/5253/taiwan-january-meetup-startup",
+    "videos": [
+      {
+        "id": 982,
+        "video_id": "N4SOyD8qYMI",
+        "video_title": "Taiwan 2026 January Startup R1",
+        "thumbnail_url": "https://i.ytimg.com/vi/N4SOyD8qYMI/default.jpg",
+        "channel_name": "Chris Yang",
+        "type": 1,
+        "length": "31:38",
+        "flag_removed": 0,
+        "video_tags": []
+      },
+      {
+        "id": 983,
+        "video_id": "po1H0DvursA",
+        "video_title": "Taiwan 2026 January Startup R2",
+        "thumbnail_url": "https://i.ytimg.com/vi/po1H0DvursA/default.jpg",
+        "channel_name": "Chris Yang",
+        "type": 1,
+        "length": "30:17",
+        "flag_removed": 0,
+        "video_tags": []
+      },
+      {
+        "id": 984,
+        "video_id": "fqB6fBbakHE",
+        "video_title": "Taiwan 2026 January Startup R3",
+        "thumbnail_url": "https://i.ytimg.com/vi/fqB6fBbakHE/default.jpg",
+        "channel_name": "Chris Yang",
+        "type": 1,
+        "length": "15:41",
+        "flag_removed": 0,
+        "video_tags": []
+      }
+    ],
+    "cardpool": { "id": "elev", "name": "Elevation" },
+    "tournament_type": { "type_name": "GNK / seasonal" },
+    "tournament_format": { "format_name": "startup" }
+  },
+  {
+    "id": 4858,
+    "title": "2025 Americas Continental Championship - Montreal",
+    "date": "2025.08.22.",
+    "location_country": "Canada",
+    "players_number": 92,
+    "charity": 0,
+    "seoUrl": "/tournaments/4858/2025-americas-continental-championship-montral",
+    "videos": [
+      {
+        "id": 972,
+        "video_id": "kON3v2_VJME",
+        "video_title": "2025 American Continentals Day 1",
+        "thumbnail_url": "https://i.ytimg.com/vi/kON3v2_VJME/default.jpg",
+        "channel_name": "Null Signal Games",
+        "type": 1,
+        "length": "04:04:32",
+        "flag_removed": 0,
+        "video_tags": []
+      },
+      {
+        "id": 973,
+        "video_id": "vryizfZvCHA",
+        "video_title": "2025 American Continentals Day 2",
+        "thumbnail_url": "https://i.ytimg.com/vi/vryizfZvCHA/default.jpg",
+        "channel_name": "Null Signal Games",
+        "type": 1,
+        "length": "06:59:36",
+        "flag_removed": 0,
+        "video_tags": []
+      }
+    ],
+    "cardpool": { "id": "elev", "name": "Elevation" },
+    "tournament_type": { "type_name": "continental championship" },
+    "tournament_format": { "format_name": "standard" }
+  },
+  {
+    "id": 4715,
+    "title": "2025 Nordic Megacity Championship - Stockholm",
+    "date": "2025.07.19.",
+    "location_country": "Sweden",
+    "players_number": 17,
+    "charity": 0,
+    "seoUrl": "/tournaments/4715/2025-nordic-megacity-championship-stockholm",
+    "videos": [
+      {
+        "id": 963,
+        "video_id": "RBwBUa6hgHg",
+        "video_title": "2025 Nordic Megacity Championship round 2",
+        "thumbnail_url": "https://i.ytimg.com/vi/RBwBUa6hgHg/default.jpg",
+        "channel_name": "Harald Nautsch",
+        "type": 1,
+        "length": "34:25",
+        "flag_removed": 0,
+        "video_tags": []
+      }
+    ],
+    "cardpool": { "id": "elev", "name": "Elevation" },
+    "tournament_type": { "type_name": "megacity championship" },
+    "tournament_format": { "format_name": "standard" }
+  },
+  {
+    "id": 4822,
+    "title": "Philippines Megacity Championship",
+    "date": "2025.06.28.",
+    "location_country": "Philippines",
+    "players_number": 12,
+    "charity": 0,
+    "seoUrl": "/tournaments/4822/philippines-megacity-championship",
+    "videos": [
+      {
+        "id": 959,
+        "video_id": "7ch3kH2iXTY",
+        "video_title": "Netrunner Philippines Megacity Championships 2025",
+        "thumbnail_url": "https://i.ytimg.com/vi/7ch3kH2iXTY/default.jpg",
+        "channel_name": "profwacko",
+        "type": 1,
+        "length": "06:18:55",
+        "flag_removed": 0,
+        "video_tags": []
+      }
+    ],
+    "cardpool": { "id": "elev", "name": "Elevation" },
+    "tournament_type": { "type_name": "megacity championship" },
+    "tournament_format": { "format_name": "standard" }
+  },
+  {
+    "id": 4878,
+    "title": "Eternal Shipment to Cologne",
+    "date": "2025.06.22.",
+    "location_country": "Germany",
+    "players_number": 11,
+    "charity": 0,
+    "seoUrl": "/tournaments/4878/eternal-shipment-to-cologne",
+    "videos": [
+      {
+        "id": 955,
+        "video_id": "xC_vviQATW4",
+        "video_title": "[STREAMED] Eternal shipment to Cologne",
+        "thumbnail_url": "https://i.ytimg.com/vi/xC_vviQATW4/default.jpg",
+        "channel_name": "OF15-15",
+        "type": 1,
+        "length": null,
+        "flag_removed": 0,
+        "video_tags": []
+      }
+    ],
+    "cardpool": { "id": "rwr", "name": "Rebellion Without Rehearsal" },
+    "tournament_type": { "type_name": "community tournament" },
+    "tournament_format": { "format_name": "eternal" }
+  },
+  {
+    "id": 4935,
+    "title": "Muenster Game Day - UpGr8",
+    "date": "2025.06.19.",
+    "location_country": "Germany",
+    "players_number": 12,
+    "charity": 0,
+    "seoUrl": "/tournaments/4935/muenster-game-day-upgr8-no-proxies-needed",
+    "videos": [
+      {
+        "id": 957,
+        "video_id": "Zw-igtv06vs",
+        "video_title": "[STREAMED] UPGR8 Muenster",
+        "thumbnail_url": "https://i.ytimg.com/vi/Zw-igtv06vs/default.jpg",
+        "channel_name": "OF15-15",
+        "type": 1,
+        "length": "06:22:38",
+        "flag_removed": 0,
+        "video_tags": []
+      }
+    ],
+    "cardpool": { "id": "elev", "name": "Elevation" },
+    "tournament_type": { "type_name": "GNK / seasonal" },
+    "tournament_format": { "format_name": "standard" }
+  },
+  {
+    "id": 4875,
+    "title": "1st Standard Shipment to Cologne",
+    "date": "2025.06.15.",
+    "location_country": "Germany",
+    "players_number": 20,
+    "charity": 0,
+    "seoUrl": "/tournaments/4875/1st-standard-shipment-to-cologne",
+    "videos": [
+      {
+        "id": 956,
+        "video_id": "L5BLqWDgR9w",
+        "video_title": "[STREAMED] Top Cut 1st Standard Shipment to Cologne",
+        "thumbnail_url": "https://i.ytimg.com/vi/L5BLqWDgR9w/default.jpg",
+        "channel_name": "OF15-15",
+        "type": 1,
+        "length": "45:21",
+        "flag_removed": 0,
+        "video_tags": []
+      }
+    ],
+    "cardpool": { "id": "elev", "name": "Elevation" },
+    "tournament_type": { "type_name": "community tournament" },
+    "tournament_format": { "format_name": "standard" }
+  },
+  {
+    "id": 4795,
+    "title": "Pittsburgh Megacity Championship",
+    "date": "2025.06.14.",
+    "location_country": "United States",
+    "players_number": 22,
+    "charity": 0,
+    "seoUrl": "/tournaments/4795/pittsburgh-megacity-championship",
+    "videos": [
+      {
+        "id": 953,
+        "video_id": "hFAtuDhU4eY",
+        "video_title": "Netrunner Pittsburgh Megacity Day 1",
+        "thumbnail_url": "https://i.ytimg.com/vi/hFAtuDhU4eY/default.jpg",
+        "channel_name": "Steel City Grid",
+        "type": 1,
+        "length": "07:11:09",
+        "flag_removed": 0,
+        "video_tags": []
+      },
+      {
+        "id": 954,
+        "video_id": "w_R2yYwONDI",
+        "video_title": "Netrunner Pittsburgh Megacity Top Cut",
+        "thumbnail_url": "https://i.ytimg.com/vi/w_R2yYwONDI/default.jpg",
+        "channel_name": "Steel City Grid",
+        "type": 1,
+        "length": "04:27:14",
+        "flag_removed": 0,
+        "video_tags": []
+      }
+    ],
+    "cardpool": { "id": "rwr", "name": "Rebellion Without Rehearsal" },
+    "tournament_type": { "type_name": "megacity championship" },
+    "tournament_format": { "format_name": "standard" }
+  },
+  {
+    "id": 4803,
+    "title": "Denver Megacity 2025",
+    "date": "2025.05.31.",
+    "location_country": "United States",
+    "players_number": 22,
+    "charity": 0,
+    "seoUrl": "/tournaments/4803/denver-megacity-2025-the-wizards-chest",
+    "videos": [
+      {
+        "id": 951,
+        "video_id": "GUmhZ491wiQ",
+        "video_title": "Netrunner Denver Megacity Tournament Day 1",
+        "thumbnail_url": "https://i.ytimg.com/vi/GUmhZ491wiQ/default.jpg",
+        "channel_name": "Colorado Netrunner",
+        "type": 1,
+        "length": "07:31:26",
+        "flag_removed": 0,
+        "video_tags": []
+      },
+      {
+        "id": 952,
+        "video_id": "wULc3CpWj-4",
+        "video_title": "Netrunner Denver Megacity Tournament Day 2",
+        "thumbnail_url": "https://i.ytimg.com/vi/wULc3CpWj-4/default.jpg",
+        "channel_name": "Colorado Netrunner",
+        "type": 1,
+        "length": "07:05:49",
+        "flag_removed": 0,
+        "video_tags": []
+      }
+    ],
+    "cardpool": { "id": "rwr", "name": "Rebellion Without Rehearsal" },
+    "tournament_type": { "type_name": "megacity championship" },
+    "tournament_format": { "format_name": "standard" }
+  }
+]
