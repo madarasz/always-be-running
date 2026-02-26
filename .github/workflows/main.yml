@@ -79,6 +79,15 @@ jobs:
       - name: Build frontend assets
         run: docker compose run --rm node
 
+      - name: Debug environment
+        run: |
+          echo "=== Checking .env file (without secrets) ==="
+          docker compose exec -T php cat .env | grep -v PASSWORD | grep -v SECRET | grep -v KEY
+          echo "=== Testing artisan ==="
+          docker compose exec -T php php artisan --version || echo "Artisan failed"
+          echo "=== Testing route list ==="
+          docker compose exec -T php php artisan route:list --path=oauth2 2>&1 | head -20 || echo "Route list failed"
+
       - name: Verify app is running
         run: |
           echo "Testing homepage..."
@@ -87,10 +96,14 @@ jobs:
             echo "Homepage returned HTTP $HTTP_CODE"
             echo "=== Response body ==="
             cat /tmp/response.html | head -100
+            echo "=== Nginx error log ==="
+            docker compose exec -T nginx cat /var/log/nginx/error.log 2>/dev/null | tail -20 || echo "No nginx error log"
             echo "=== PHP-FPM logs ==="
-            docker compose logs php
+            docker compose logs php --tail=50
             echo "=== Laravel logs ==="
             docker compose exec -T php cat storage/logs/laravel.log 2>/dev/null | tail -100 || echo "No Laravel logs"
+            echo "=== PHP error test ==="
+            docker compose exec -T php php -r "require 'vendor/autoload.php'; echo 'Autoload OK\n';" 2>&1 || echo "PHP autoload failed"
             exit 1
           fi
           echo "Homepage OK"
