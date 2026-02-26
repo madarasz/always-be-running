@@ -21,6 +21,12 @@ jobs:
           cp docker/.env.docker .env
           # Inject NetrunnerDB OAuth secret
           sed -i "s/NETRUNNERDB_CLIENT_SECRET=ASK_NECRO/NETRUNNERDB_CLIENT_SECRET=${{ secrets.NETRUNNERDB_CLIENT_SECRET }}/" .env
+          # Verify secrets are set (without printing values)
+          if grep -q "NETRUNNERDB_CLIENT_SECRET=ASK_NECRO" .env; then
+            echo "::error::NETRUNNERDB_CLIENT_SECRET GitHub secret is not set!"
+            exit 1
+          fi
+          echo "Laravel environment configured with OAuth secrets"
 
       # Cache Composer dependencies
       - name: Cache Composer dependencies
