@@ -19,6 +19,37 @@ jobs:
       - name: Setup Laravel environment
         run: cp docker/.env.docker .env
 
+      # Cache Composer dependencies
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      # Cache root node_modules (for gulp build)
+      - name: Cache root node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-root-${{ hashFiles('package-lock.json') }}
+          restore-keys: node-root-
+
+      # Cache Docker layers
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: docker-${{ hashFiles('docker/Dockerfile.php', 'docker/Dockerfile.node') }}
+          restore-keys: docker-
+
+      - name: Build Docker images
+        run: |
+          docker compose build --build-arg BUILDKIT_INLINE_CACHE=1
+
       - name: Start Docker services
         run: |
           docker compose up -d php nginx mysql
@@ -38,16 +69,31 @@ jobs:
       - name: Build frontend assets
         run: docker compose run --rm node
 
+      # Setup Node.js for e2e tests
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: e2e/package-lock.json
+
+      # Cache e2e node_modules
+      - name: Cache e2e node_modules
+        uses: actions/cache@v4
+        with:
+          path: e2e/node_modules
+          key: node-e2e-${{ hashFiles('e2e/package-lock.json') }}
+          restore-keys: node-e2e-
 
       - name: Install e2e dependencies
         working-directory: e2e
         run: npm ci
+
+      # Cache Playwright browsers
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('e2e/package-lock.json') }}
+          restore-keys: playwright-
 
       - name: Install Playwright Chromium
         working-directory: e2e

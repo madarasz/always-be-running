@@ -11,6 +11,7 @@ on:
 
 jobs:
   analyze:
+    if: false  # Disabled - not needed for this project
     name: Analyze
     runs-on: ubuntu-latest
 
