@@ -17,7 +17,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Laravel environment
-        run: cp docker/.env.docker .env
+        run: |
+          cp docker/.env.docker .env
+          # Inject NetrunnerDB OAuth secret
+          sed -i "s/NETRUNNERDB_CLIENT_SECRET=ASK_NECRO/NETRUNNERDB_CLIENT_SECRET=${{ secrets.NETRUNNERDB_CLIENT_SECRET }}/" .env
 
       # Cache Composer dependencies
       - name: Cache Composer dependencies
