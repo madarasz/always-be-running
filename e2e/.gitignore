@@ -1,0 +1,5 @@
+# Auth session states (regenerated on demand)
+.auth/
+
+# Environment file with credentials
+.env

@@ -113,12 +113,13 @@ class TournamentRequest extends Request
         }
 
         // non-tournament has no conclusion
+        $end_date_selector = isset($input['end_date_selector']) ? $input['end_date_selector'] : 'single';
         if ($input['tournament_type_id'] == 8)
         {
             $input['concluded'] = 0;
             $input['players_number'] = null;
             $input['top_number'] = null;
-            if ($input['end_date_selector'] != 'recurring') {
+            if ($end_date_selector != 'recurring') {
                 $input['recur_weekly'] = null;
             } else {    // recurring event
                 $input['date'] = null;
@@ -135,7 +136,7 @@ class TournamentRequest extends Request
         }
 
         // end date not necessary
-        if ($input['end_date_selector'] != 'multiple') {
+        if ($end_date_selector != 'multiple') {
             $input['end_date'] = null;
         }
 

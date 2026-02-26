@@ -1,9 +1,112 @@
-import { readFileSync } from 'fs';
+import { readFileSync, mkdirSync, statSync, existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { BrowserManager } from 'agent-browser/dist/browser.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirnameResolved = dirname(__filename);
+
+// Storage state configuration
+export const AUTH_STATE_DIR = join(__dirnameResolved, '../.auth');
+export const REGULAR_USER_STATE = join(AUTH_STATE_DIR, 'regular.json');
+export const ADMIN_USER_STATE = join(AUTH_STATE_DIR, 'admin.json');
+export const CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+
+export function getStorageStatePath(userType: 'regular' | 'admin'): string {
+  return userType === 'admin' ? ADMIN_USER_STATE : REGULAR_USER_STATE;
+}
+
+/**
+ * Checks if a valid storage state exists for the given user type.
+ * Returns false if file doesn't exist or is older than maxAge.
+ */
+export function hasValidStorageState(
+  userType: 'regular' | 'admin',
+  maxAgeMs: number = 24 * 60 * 60 * 1000 // 24 hours default
+): boolean {
+  const statePath = getStorageStatePath(userType);
+  try {
+    const stats = statSync(statePath);
+    const age = Date.now() - stats.mtimeMs;
+    return age < maxAgeMs;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Saves the current browser session to a storage state file.
+ */
+export async function saveSession(
+  browser: BrowserManager,
+  userType: 'regular' | 'admin'
+): Promise<void> {
+  const page = browser.getPage();
+  const statePath = getStorageStatePath(userType);
+  mkdirSync(AUTH_STATE_DIR, { recursive: true });
+  await page.context().storageState({ path: statePath });
+}
+
+/**
+ * Performs login and saves the session state.
+ * Called by global setup.
+ */
+export async function loginAndSaveSession(userType: 'regular' | 'admin'): Promise<void> {
+  const browser = new BrowserManager();
+  try {
+    await browser.launch({
+      id: 'auth-setup',
+      action: 'launch',
+      headless: true,
+      executablePath: CHROME_PATH,
+    });
+    await browser.ensurePage();
+    await loginUser(browser, userType);
+    await saveSession(browser, userType);
+  } finally {
+    await browser.close();
+  }
+}
+
+/**
+ * Creates a BrowserManager with pre-loaded authentication state.
+ * Use this instead of manually calling loginUser() in tests.
+ */
+export async function createAuthenticatedBrowser(
+  userType: 'regular' | 'admin' | 'none' = 'none'
+): Promise<BrowserManager> {
+  const browser = new BrowserManager();
+
+  await browser.launch({
+    id: 'launch',
+    action: 'launch',
+    headless: true,
+    executablePath: CHROME_PATH,
+  });
+  await browser.ensurePage();
+
+  // Load storage state if authenticated session is requested
+  if (userType !== 'none') {
+    const statePath = getStorageStatePath(userType);
+    if (!existsSync(statePath)) {
+      throw new Error(
+        `Storage state not found for ${userType} user. ` +
+        `Run tests with global setup or call loginAndSaveSession('${userType}') first.`
+      );
+    }
+    // Load cookies from storage state
+    const page = browser.getPage();
+    const stateData = JSON.parse(readFileSync(statePath, 'utf-8'));
+    if (stateData.cookies) {
+      await page.context().addCookies(stateData.cookies);
+    }
+    // Navigate to home page so the authenticated state is visible
+    await page.goto('http://localhost:8000');
+    await page.waitForLoadState('domcontentloaded');
+  }
+
+  return browser;
+}
 
 function parseEnvFile(path: string): Record<string, string> {
   const result: Record<string, string> = {};
@@ -23,7 +126,7 @@ function parseEnvFile(path: string): Record<string, string> {
 }
 
 function credentials(userType: 'regular' | 'admin') {
-  const env = parseEnvFile(join(__dirname, '../.env'));
+  const env = parseEnvFile(join(__dirnameResolved, '../.env'));
   const username = env[`${userType.toUpperCase()}_USERNAME`];
   const password = env[`${userType.toUpperCase()}_PASSWORD`];
   if (!username || !password) {
@@ -85,4 +188,55 @@ export async function loginUser(
 export async function clearSession(browser: BrowserManager): Promise<void> {
   const page = browser.getPage();
   await page.context().clearCookies();
+}
+
+/**
+ * Safely closes a browser instance, handling cases where browser is undefined
+ * or already closed. Use this in afterAll hooks to prevent timeout issues.
+ */
+export async function closeBrowserSafely(browser: BrowserManager | undefined): Promise<void> {
+  if (!browser) return;
+  try {
+    await browser.close();
+  } catch (e) {
+    console.warn('Browser close error (ignored):', e);
+  }
+}
+
+/**
+ * Mocks the browser's Date to a fixed value.
+ * Must be called BEFORE navigating to any page where you want the mock to apply.
+ * The mock affects Date.now() and new Date() calls in the browser context.
+ *
+ * @param browser - The BrowserManager instance
+ * @param dateString - ISO date string (e.g., '2026-02-25') or full ISO datetime
+ */
+export async function mockBrowserDate(browser: BrowserManager, dateString: string): Promise<void> {
+  const page = browser.getPage();
+  const timestamp = new Date(dateString).getTime();
+
+  await page.addInitScript(`{
+    const OriginalDate = Date;
+    const mockTimestamp = ${timestamp};
+
+    class MockDate extends OriginalDate {
+      constructor(...args) {
+        if (args.length === 0) {
+          super(mockTimestamp);
+        } else {
+          super(...args);
+        }
+      }
+
+      static now() {
+        return mockTimestamp;
+      }
+    }
+
+    // Copy static methods
+    MockDate.parse = OriginalDate.parse;
+    MockDate.UTC = OriginalDate.UTC;
+
+    window.Date = MockDate;
+  }`);
 }

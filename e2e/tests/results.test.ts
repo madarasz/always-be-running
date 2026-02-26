@@ -1,9 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { BrowserManager } from 'agent-browser/dist/browser.js';
 import { ResultsPage } from '../pages/ResultsPage';
-import { clearSession, loginUser } from '../helpers/auth';
-
-const CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+import { clearSession, closeBrowserSafely, createAuthenticatedBrowser, CHROME_PATH } from '../helpers/auth';
 
 describe('Results page', () => {
   let browser: BrowserManager;
@@ -23,7 +21,7 @@ describe('Results page', () => {
   });
 
   afterAll(async () => {
-    await browser.close();
+    await closeBrowserSafely(browser);
   });
 
   describe('Loading tournament results', () => {
@@ -286,34 +284,44 @@ describe('Results page', () => {
   });
 
   describe('User default country', () => {
-    it('applies user default country filter and allows manual override', async () => {
-      // Login as regular user (has autofilter_results enabled with Germany as default)
-      await loginUser(browser, 'regular');
+    let authBrowser: BrowserManager;
+    let authResultsPage: ResultsPage;
 
-      // Navigate to results page
-      await resultsPage.open();
-      await resultsPage.waitForResultsLoaded();
+    beforeAll(async () => {
+      // Use pre-authenticated browser with regular user cookies
+      authBrowser = await createAuthenticatedBrowser('regular');
+      authResultsPage = new ResultsPage(authBrowser);
+    });
+
+    afterAll(async () => {
+      await closeBrowserSafely(authBrowser);
+    });
+
+    it('applies user default country filter and allows manual override', async () => {
+      // Navigate to results page (already logged in as regular user)
+      await authResultsPage.open();
+      await authResultsPage.waitForResultsLoaded();
 
       // Default country label should be visible
-      expect(await resultsPage.isDefaultCountryLabelVisible()).toBe(true);
+      expect(await authResultsPage.isDefaultCountryLabelVisible()).toBe(true);
 
       // Country filter should have Germany selected
-      const selectedCountry = await resultsPage.countryFilter.inputValue();
+      const selectedCountry = await authResultsPage.countryFilter.inputValue();
       expect(selectedCountry).toBe('Germany');
 
       // URL should contain country=Germany
-      let url = await resultsPage.getCurrentUrl();
+      let url = await authResultsPage.getCurrentUrl();
       expect(url).toContain('country=Germany');
 
       // Change the country filter to a different value
-      await resultsPage.filterByCountry('United Kingdom');
-      await browser.getPage().waitForTimeout(500);
+      await authResultsPage.filterByCountry('United Kingdom');
+      await authBrowser.getPage().waitForTimeout(500);
 
       // Default country label should now be hidden
-      expect(await resultsPage.isDefaultCountryLabelVisible()).toBe(false);
+      expect(await authResultsPage.isDefaultCountryLabelVisible()).toBe(false);
 
       // URL should now have United Kingdom
-      url = await resultsPage.getCurrentUrl();
+      url = await authResultsPage.getCurrentUrl();
       expect(url).toContain('country=United');
     });
   });
