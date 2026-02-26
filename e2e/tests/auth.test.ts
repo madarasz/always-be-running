@@ -2,61 +2,84 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { BrowserManager } from 'agent-browser/dist/browser.js';
 import { OrganizePage } from '../pages/OrganizePage';
 import { AdminPage } from '../pages/AdminPage';
-import { loginUser, clearSession } from '../helpers/auth';
-
-const CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+import { createAuthenticatedBrowser, closeBrowserSafely, CHROME_PATH } from '../helpers/auth';
 
 describe('Authentication', () => {
-  let browser: BrowserManager;
-  let organizePage: OrganizePage;
-  let adminPage: AdminPage;
+  describe('Logged out user', () => {
+    let browser: BrowserManager;
+    let organizePage: OrganizePage;
+    let adminPage: AdminPage;
 
-  beforeAll(async () => {
-    browser = new BrowserManager();
-    await browser.launch({
-      id: 'launch',
-      action: 'launch',
-      headless: true,
-      executablePath: CHROME_PATH,
+    beforeAll(async () => {
+      browser = await createAuthenticatedBrowser('none');
+      organizePage = new OrganizePage(browser);
+      adminPage = new AdminPage(browser);
     });
-    await browser.ensurePage();
-    organizePage = new OrganizePage(browser);
-    adminPage = new AdminPage(browser);
+
+    afterAll(async () => {
+      await closeBrowserSafely(browser);
+    });
+
+    it('shows login prompt and blocks access', async () => {
+      await organizePage.open();
+      await organizePage.waitForLoginRequired();
+      await organizePage.waitForLoginButton();
+      expect(await organizePage.hasLogoutButton()).toBe(false);
+
+      await adminPage.open();
+      await adminPage.waitForAccessDenied();
+    });
   });
 
-  afterAll(async () => {
-    await browser.close();
+  describe('Regular user', () => {
+    let browser: BrowserManager;
+    let organizePage: OrganizePage;
+    let adminPage: AdminPage;
+
+    beforeAll(async () => {
+      browser = await createAuthenticatedBrowser('regular');
+      organizePage = new OrganizePage(browser);
+      adminPage = new AdminPage(browser);
+    });
+
+    afterAll(async () => {
+      await closeBrowserSafely(browser);
+    });
+
+    it('can access organize page', async () => {
+      await organizePage.open();
+      await organizePage.waitForMyTournaments();
+    });
+
+    it('cannot access admin page', async () => {
+      await adminPage.open();
+      await adminPage.waitForAccessDenied();
+    });
   });
 
-  it('Logged out: shows login prompt and blocks access', async () => {
-    await clearSession(browser);
+  describe('Admin user', () => {
+    let browser: BrowserManager;
+    let organizePage: OrganizePage;
+    let adminPage: AdminPage;
 
-    await organizePage.open();
-    await organizePage.waitForLoginRequired();
-    await organizePage.waitForLoginButton();
-    expect(await organizePage.hasLogoutButton()).toBe(false);
+    beforeAll(async () => {
+      browser = await createAuthenticatedBrowser('admin');
+      organizePage = new OrganizePage(browser);
+      adminPage = new AdminPage(browser);
+    });
 
-    await adminPage.open();
-    await adminPage.waitForAccessDenied();
-  });
+    afterAll(async () => {
+      await closeBrowserSafely(browser);
+    });
 
-  it('Logging in with regular user: can access organize, cannot access admin', async () => {
-    await loginUser(browser, 'regular');
+    it('can access organize page', async () => {
+      await organizePage.open();
+      await organizePage.waitForMyTournaments();
+    });
 
-    await organizePage.open();
-    await organizePage.waitForMyTournaments();
-
-    await adminPage.open();
-    await adminPage.waitForAccessDenied();
-  });
-
-  it('Logging in with admin user: can access organize and admin', async () => {
-    await loginUser(browser, 'admin');
-
-    await organizePage.open();
-    await organizePage.waitForMyTournaments();
-
-    await adminPage.open();
-    await adminPage.waitForAdminContent();
+    it('can access admin page', async () => {
+      await adminPage.open();
+      await adminPage.waitForAdminContent();
+    });
   });
 });

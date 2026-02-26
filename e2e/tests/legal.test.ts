@@ -1,9 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { BrowserManager } from 'agent-browser/dist/browser.js';
 import { LegalPage } from '../pages/LegalPage';
-import { clearSession } from '../helpers/auth';
-
-const CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+import { clearSession, closeBrowserSafely, CHROME_PATH } from '../helpers/auth';
 
 describe('Legal', () => {
   let browser: BrowserManager;
@@ -22,7 +20,7 @@ describe('Legal', () => {
   });
 
   afterAll(async () => {
-    await browser.close();
+    await closeBrowserSafely(browser);
   });
 
   describe('Cookie banner', () => {

@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { BrowserManager } from 'agent-browser/dist/browser.js';
 import { PrizesPage } from '../pages/PrizesPage';
-
-const CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+import { closeBrowserSafely, CHROME_PATH } from '../helpers/auth';
 
 describe('Prizes page', () => {
   let browser: BrowserManager;
@@ -21,7 +20,7 @@ describe('Prizes page', () => {
   });
 
   afterAll(async () => {
-    await browser.close();
+    await closeBrowserSafely(browser);
   });
 
   it('displays information on the Official kits tab', async () => {

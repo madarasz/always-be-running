@@ -1,33 +1,22 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { BrowserManager } from 'agent-browser/dist/browser.js';
 import { ProfilePage } from '../pages/ProfilePage';
-import { loginUser } from '../helpers/auth';
-
-const CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+import { createAuthenticatedBrowser, closeBrowserSafely } from '../helpers/auth';
 
 describe('Profile Page', () => {
   let browser: BrowserManager;
   let profilePage: ProfilePage;
 
   beforeAll(async () => {
-    browser = new BrowserManager();
-    await browser.launch({
-      id: 'launch',
-      action: 'launch',
-      headless: true,
-      executablePath: CHROME_PATH,
-    });
-    await browser.ensurePage();
+    browser = await createAuthenticatedBrowser('admin');
     profilePage = new ProfilePage(browser);
   });
 
   afterAll(async () => {
-    await browser.close();
+    await closeBrowserSafely(browser);
   });
 
   it('Admin user: profile page displays all UI sections', async () => {
-    // Login as admin user
-    await loginUser(browser, 'admin');
 
     // Navigate to profile page via navbar
     await profilePage.open();

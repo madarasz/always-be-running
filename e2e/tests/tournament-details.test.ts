@@ -1,9 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { BrowserManager } from 'agent-browser/dist/browser.js';
 import { TournamentDetailsPage } from '../pages/TournamentDetailsPage';
-import { clearSession, loginUser } from '../helpers/auth';
-
-const CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+import { clearSession, closeBrowserSafely, createAuthenticatedBrowser, CHROME_PATH } from '../helpers/auth';
 const TOURNAMENT_PATH = '5313/pawnshop-now-playing-in-a-game-store-near-you';
 
 describe('Tournament details page', () => {
@@ -23,7 +21,7 @@ describe('Tournament details page', () => {
   });
 
   afterAll(async () => {
-    await browser.close();
+    await closeBrowserSafely(browser);
   });
 
   describe('Page components (generic)', () => {
@@ -163,70 +161,86 @@ describe('Tournament details page', () => {
   });
 
   describe('User logged in (regular user)', () => {
+    let regularBrowser: BrowserManager;
+    let regularPage: TournamentDetailsPage;
+
     beforeAll(async () => {
-      await loginUser(browser, 'regular');
-      await tournamentPage.open(TOURNAMENT_PATH);
-      await tournamentPage.waitForPageLoaded();
+      regularBrowser = await createAuthenticatedBrowser('regular');
+      regularPage = new TournamentDetailsPage(regularBrowser);
+      await regularPage.open(TOURNAMENT_PATH);
+      await regularPage.waitForPageLoaded();
+    });
+
+    afterAll(async () => {
+      await closeBrowserSafely(regularBrowser);
     });
 
     it('shows authenticated UI elements and hides login messages', async () => {
       // Should see add buttons
-      expect(await tournamentPage.hasAddPhotosButton()).toBe(true);
-      expect(await tournamentPage.hasAddVideosButton()).toBe(true);
+      expect(await regularPage.hasAddPhotosButton()).toBe(true);
+      expect(await regularPage.hasAddVideosButton()).toBe(true);
 
       // Should NOT see login suggestion messages
-      expect(await tournamentPage.hasSuggestLoginClaim()).toBe(false);
-      expect(await tournamentPage.hasSuggestLoginMedia()).toBe(false);
+      expect(await regularPage.hasSuggestLoginClaim()).toBe(false);
+      expect(await regularPage.hasSuggestLoginMedia()).toBe(false);
 
       // Claim buttons should be available (suggest login message gone)
-      const hasClaimButtons = await tournamentPage.hasClaimButtons();
-      const hasSuggestLogin = await tournamentPage.hasSuggestLoginClaim();
+      const hasClaimButtons = await regularPage.hasClaimButtons();
+      const hasSuggestLogin = await regularPage.hasSuggestLoginClaim();
       expect(hasClaimButtons || !hasSuggestLogin).toBe(true);
     });
 
     it('does not show control buttons for non-creator user', async () => {
-      expect(await tournamentPage.hasControlButtons()).toBe(false);
+      expect(await regularPage.hasControlButtons()).toBe(false);
     });
 
     it('does not show admin-only features', async () => {
-      const count = await tournamentPage.viewingAsAdmin.count();
+      const count = await regularPage.viewingAsAdmin.count();
       expect(count).toBe(0);
-      expect(await tournamentPage.hasApproveButton()).toBe(false);
-      expect(await tournamentPage.hasRejectButton()).toBe(false);
-      expect(await tournamentPage.hasRevertConclusionButton()).toBe(false);
+      expect(await regularPage.hasApproveButton()).toBe(false);
+      expect(await regularPage.hasRejectButton()).toBe(false);
+      expect(await regularPage.hasRevertConclusionButton()).toBe(false);
     });
   });
 
   describe('User logged in (admin user)', () => {
+    let adminBrowser: BrowserManager;
+    let adminPage: TournamentDetailsPage;
+
     beforeAll(async () => {
-      await loginUser(browser, 'admin');
-      await tournamentPage.open(TOURNAMENT_PATH);
-      await tournamentPage.waitForPageLoaded();
+      adminBrowser = await createAuthenticatedBrowser('admin');
+      adminPage = new TournamentDetailsPage(adminBrowser);
+      await adminPage.open(TOURNAMENT_PATH);
+      await adminPage.waitForPageLoaded();
+    });
+
+    afterAll(async () => {
+      await closeBrowserSafely(adminBrowser);
     });
 
     it('shows admin control buttons', async () => {
-      expect(await tournamentPage.hasControlButtons()).toBe(true);
-      expect(await tournamentPage.editButton.isVisible()).toBe(true);
-      expect(await tournamentPage.transferButton.isVisible()).toBe(true);
-      expect(await tournamentPage.deleteButton.isVisible()).toBe(true);
-      expect(await tournamentPage.viewingAsAdmin.isVisible()).toBe(true);
-      expect(await tournamentPage.hasRejectButton()).toBe(true);
+      expect(await adminPage.hasControlButtons()).toBe(true);
+      expect(await adminPage.editButton.isVisible()).toBe(true);
+      expect(await adminPage.transferButton.isVisible()).toBe(true);
+      expect(await adminPage.deleteButton.isVisible()).toBe(true);
+      expect(await adminPage.viewingAsAdmin.isVisible()).toBe(true);
+      expect(await adminPage.hasRejectButton()).toBe(true);
     });
 
     it('shows admin content management UI', async () => {
-      expect(await tournamentPage.hasAddPhotosButton()).toBe(true);
-      expect(await tournamentPage.hasAddVideosButton()).toBe(true);
-      expect(await tournamentPage.hasConcludedBySection()).toBe(true);
-      expect(await tournamentPage.hasRevertConclusionButton()).toBe(true);
+      expect(await adminPage.hasAddPhotosButton()).toBe(true);
+      expect(await adminPage.hasAddVideosButton()).toBe(true);
+      expect(await adminPage.hasConcludedBySection()).toBe(true);
+      expect(await adminPage.hasRevertConclusionButton()).toBe(true);
 
-      const concludedText = await tournamentPage.getConcludedByText();
+      const concludedText = await adminPage.getConcludedByText();
       expect(concludedText).toContain('concluded by');
     });
 
     it('shows claim buttons and hides login messages', async () => {
-      const hasClaimButtons = await tournamentPage.hasClaimButtons();
-      const hasSuggestLoginClaim = await tournamentPage.hasSuggestLoginClaim();
-      const hasSuggestLoginMedia = await tournamentPage.hasSuggestLoginMedia();
+      const hasClaimButtons = await adminPage.hasClaimButtons();
+      const hasSuggestLoginClaim = await adminPage.hasSuggestLoginClaim();
+      const hasSuggestLoginMedia = await adminPage.hasSuggestLoginMedia();
 
       // Suggest login should NOT be shown for logged in admin
       expect(hasSuggestLoginClaim).toBe(false);

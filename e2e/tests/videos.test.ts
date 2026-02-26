@@ -3,8 +3,7 @@ import { BrowserManager } from 'agent-browser/dist/browser.js';
 import { VideosPage } from '../pages/VideosPage';
 import { setupApiMock } from '../helpers/mocks';
 import videosFixture from '../fixtures/videos.json';
-
-const CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+import { closeBrowserSafely, CHROME_PATH } from '../helpers/auth';
 
 describe('Videos page', () => {
   let browser: BrowserManager;
@@ -23,7 +22,7 @@ describe('Videos page', () => {
   });
 
   afterAll(async () => {
-    await browser.close();
+    await closeBrowserSafely(browser);
   });
 
   beforeEach(async () => {

@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { BrowserManager } from 'agent-browser/dist/browser.js';
 import { UpcomingPage } from '../pages/UpcomingPage';
-
-const CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+import { closeBrowserSafely, CHROME_PATH } from '../helpers/auth';
 
 describe('Upcoming page', () => {
   let browser: BrowserManager;
@@ -21,7 +20,7 @@ describe('Upcoming page', () => {
   });
 
   afterAll(async () => {
-    await browser.close();
+    await closeBrowserSafely(browser);
   });
 
   describe('Loading upcoming tournaments table', () => {
