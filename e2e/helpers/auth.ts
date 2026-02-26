@@ -162,7 +162,16 @@ export async function loginUser(
   await page.goto('http://localhost:8000/oauth2/redirect');
 
   // Wait until we land on netrunnerdb.com
-  await page.waitForURL(/netrunnerdb\.com/, { timeout: 30000 });
+  try {
+    await page.waitForURL(/netrunnerdb\.com/, { timeout: 30000 });
+  } catch (e) {
+    // Capture debug info on failure
+    const currentUrl = page.url();
+    const pageContent = await page.content().catch(() => 'Failed to get content');
+    console.error(`OAuth redirect failed. Current URL: ${currentUrl}`);
+    console.error(`Page content preview: ${pageContent.substring(0, 1000)}`);
+    throw e;
+  }
 
   // Fill login form (fields: _username, _password)
   await page.fill('[name="_username"]', username);
