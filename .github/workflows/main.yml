@@ -91,7 +91,7 @@ jobs:
       - name: Verify app is running
         run: |
           echo "Testing homepage..."
-          HTTP_CODE=$(curl -s -o /tmp/response.html -w "%{http_code}" http://localhost:8000/)
+          HTTP_CODE=$(curl -s --max-time 30 -o /tmp/response.html -w "%{http_code}" http://localhost:8000/)
           if [ "$HTTP_CODE" != "200" ]; then
             echo "Homepage returned HTTP $HTTP_CODE"
             echo "=== Response body ==="
@@ -108,7 +108,7 @@ jobs:
           fi
           echo "Homepage OK"
           echo "Testing OAuth redirect endpoint..."
-          REDIRECT_URL=$(curl -s -o /dev/null -w "%{redirect_url}" http://localhost:8000/oauth2/redirect)
+          REDIRECT_URL=$(curl -s --max-time 30 -o /dev/null -w "%{redirect_url}" http://localhost:8000/oauth2/redirect)
           echo "Redirect URL: $REDIRECT_URL"
           if [ -z "$REDIRECT_URL" ]; then
             echo "OAuth redirect not working! Checking logs..."
