@@ -101,6 +101,24 @@ See **[`.claude/skills/e2e/SKILL.md`](.claude/skills/e2e/SKILL.md)** for setup n
 - [X] Parameterized tests cover filter combinations — using `it.each` for type/country/cardpool/format filters
 - [X] Map tests verify Google Maps loads with tournament markers (replaced visual snapshots with DOM assertions)
 
+### CI/CD: GitHub Actions - ✅ DONE
+
+E2E tests run automatically on every push to `master`/`migration` branches and on pull requests to `master`.
+
+**What it does:**
+- Spins up the full Docker stack (PHP, nginx, MySQL)
+- Loads a lightweight test database (filtered to recent tournaments and test users only)
+- Builds frontend assets
+- Runs all E2E tests with Playwright/Chromium
+
+**Setup required:**
+- GitHub Secrets for NetrunnerDB OAuth test credentials (E2E_REGULAR_USERNAME, E2E_REGULAR_PASSWORD, E2E_ADMIN_USERNAME, E2E_ADMIN_PASSWORD)
+
+**Files:**
+- `.github/workflows/main.yml` — Workflow definition
+- `scripts/export-test-db.sh` — Database extraction script
+- `e2e/fixtures/test-seed.sql` — Lightweight test database (~1.2MB)
+
 ---
 
 ## Phase 1b: Add Tournament CRUD Tests
@@ -175,6 +193,81 @@ describe('Tournament Management', () => {
 - [ ] All new CRUD tests pass
 - [ ] Tournament appears in Results after conclusion
 - [ ] Soft-delete works correctly
+
+---
+
+## Phase 1c: API Tests with Schema Validation
+
+**Goal:** Validate API response contracts before, during, and after Laravel upgrade. Catch regressions instantly without browser overhead.
+
+**Why now:** API contract breakages during migration cascade to UI failures. Catching them at the API layer is faster (10s vs 90s) and pinpoints the issue.
+
+### Approach
+
+Use **native `fetch` + Zod schemas**:
+- `fetch` is built into Node 20 (no extra deps)
+- Zod provides TypeScript-first schema validation (~50KB)
+- Can generate OpenAPI 3.x from Zod later (via `zod-openapi`)
+
+### Directory Structure
+
+```
+e2e/
+├── tests/
+│   ├── api/                        # API tests (fast, no browser)
+│   │   ├── tournaments.api.test.ts
+│   │   ├── videos.api.test.ts
+│   │   ├── entries.api.test.ts
+│   │   └── artists.api.test.ts
+│   └── *.test.ts                   # Browser E2E tests
+├── schemas/                        # Zod schemas
+│   ├── common.schema.ts
+│   ├── tournament.schema.ts
+│   ├── video.schema.ts
+│   ├── entry.schema.ts
+│   └── artist.schema.ts
+└── helpers/
+    └── api-client.ts               # fetch wrapper with schema validation
+```
+
+### Priority Endpoints
+
+| Endpoint | Tests |
+|----------|-------|
+| `GET /api/videos` | Schema validation, video presence, date ordering |
+| `GET /api/tournaments/upcoming` | Schema, date >= today, recurring events |
+| `GET /api/tournaments/results` | Schema, concluded flag, pagination |
+| `GET /api/entries?id=X` | Schema, rank ordering, error responses |
+| `GET /api/artists` | Schema, endorsed ordering |
+
+### Laravel 11 Reusability
+
+The Zod schemas validate the **JSON wire format**, not PHP implementation:
+
+| Phase | Action | Benefit |
+|-------|--------|---------|
+| **Now** | Define Zod schemas from current API | Establish contract baseline |
+| **Phase 2-3** | Run `npm run test:api` after each upgrade | Catch regressions instantly |
+| **Post-migration** | Generate OpenAPI from Zod | API docs for Laravel 11 |
+
+When rewriting controllers in Laravel 11, Zod schemas serve as the spec for API Resources.
+
+### Implementation Tasks
+
+1. Install `zod` in `e2e/`
+2. Create `e2e/schemas/` with 5 schema files (derived from PHP controllers)
+3. Create `e2e/helpers/api-client.ts` (fetch wrapper)
+4. Update `e2e/vitest.config.ts` with workspace projects (api vs e2e)
+5. Create `e2e/tests/api/` with 4 test files
+6. Add npm scripts: `test:api`, `test:e2e`
+
+### Validation
+- [ ] `npm run test:api` passes (all schema tests)
+- [ ] API tests run fast (~10s) without browser
+- [ ] Schema validation catches intentional type change (proof test)
+- [ ] `npm test` runs both API and E2E tests
+
+**Full implementation details:** See `~/.claude/plans/purring-seeking-sparrow.md`
 
 ---
 
@@ -399,7 +492,8 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 - [ ] All routes accessible
 - [ ] OAuth login works with new Socialite provider
 - [ ] All CRUD operations function
-- [ ] E2E tests pass (all 22 tests)
+- [ ] API tests pass (`npm run test:api`)
+- [ ] E2E tests pass (`npm run test:e2e`)
 
 ---
 
@@ -556,8 +650,8 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 - [ ] Application boots without errors
 - [ ] PHP 8.2 features working
 - [ ] Admin panel functions
-- [ ] All API endpoints respond
-- [ ] E2E tests pass (all 22 tests)
+- [ ] API tests pass (`npm run test:api` - schema contracts preserved)
+- [ ] E2E tests pass (`npm run test:e2e`)
 
 ---
 
@@ -619,7 +713,8 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 - [ ] `npm run build` produces production assets
 - [ ] All styles render correctly
 - [ ] JavaScript functionality works
-- [ ] E2E tests pass
+- [ ] API tests pass (`npm run test:api`)
+- [ ] E2E tests pass (`npm run test:e2e`)
 
 ---
 
@@ -640,6 +735,8 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 | `gulpfile.js` | 4 | Replace with `vite.config.js` |
 | `resources/views/layout/general.blade.php` | 4 | Update asset references |
 | `cypress/` | 1 | Migrate to `e2e/` (agent-browser) |
+| `e2e/schemas/` | 1c | Zod schemas for API contracts |
+| `e2e/tests/api/` | 1c | API schema validation tests |
 
 ---
 
@@ -687,7 +784,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 ## Verification Strategy
 
 After each phase, verify with:
-1. **E2E tests (Vitest + agent-browser)** - All tests pass (18 existing + 4 new CRUD)
-2. **Manual smoke test** - Login, create tournament, view results
-3. **API check** - `/api/tournaments`, `/api/entries` return correct data
+1. **API tests** - `npm run test:api` (schema validation, ~10s)
+2. **E2E tests** - `npm run test:e2e` (browser tests, 18 existing + 4 CRUD)
+3. **Manual smoke test** - Login, create tournament, view results
 4. **Admin functions** - Card sync, user management work
