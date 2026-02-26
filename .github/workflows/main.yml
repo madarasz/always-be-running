@@ -82,13 +82,23 @@ jobs:
       - name: Verify app is running
         run: |
           echo "Testing homepage..."
-          curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/ | grep -q "200" || (echo "Homepage failed" && docker compose logs php && exit 1)
+          HTTP_CODE=$(curl -s -o /tmp/response.html -w "%{http_code}" http://localhost:8000/)
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "Homepage returned HTTP $HTTP_CODE"
+            echo "=== Response body ==="
+            cat /tmp/response.html | head -100
+            echo "=== PHP-FPM logs ==="
+            docker compose logs php
+            echo "=== Laravel logs ==="
+            docker compose exec -T php cat storage/logs/laravel.log 2>/dev/null | tail -100 || echo "No Laravel logs"
+            exit 1
+          fi
+          echo "Homepage OK"
           echo "Testing OAuth redirect endpoint..."
           REDIRECT_URL=$(curl -s -o /dev/null -w "%{redirect_url}" http://localhost:8000/oauth2/redirect)
           echo "Redirect URL: $REDIRECT_URL"
           if [ -z "$REDIRECT_URL" ]; then
-            echo "OAuth redirect not working! Checking PHP logs..."
-            docker compose logs php
+            echo "OAuth redirect not working! Checking logs..."
             docker compose exec -T php cat storage/logs/laravel.log 2>/dev/null | tail -50 || echo "No Laravel logs"
             exit 1
           fi
