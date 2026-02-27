@@ -70,6 +70,15 @@ jobs:
       - name: Install Composer dependencies
         run: docker compose exec -T php composer install --no-interaction --prefer-dist
 
+      - name: Clear Laravel caches and set permissions
+        run: |
+          docker compose exec -T php php artisan config:clear
+          docker compose exec -T php php artisan cache:clear
+          docker compose exec -T php php artisan view:clear
+          docker compose exec -T php chmod -R 777 storage bootstrap/cache
+          echo "=== Verify OAuth config is loaded correctly ==="
+          docker compose exec -T php php artisan tinker --execute="echo 'CLIENT_ID: ' . (config('oauth-5-laravel.consumers.NetrunnerDB.client_id') ? 'SET' : 'NOT SET');"
+
       - name: Run database migrations
         run: docker compose exec -T php php artisan migrate --force
 
