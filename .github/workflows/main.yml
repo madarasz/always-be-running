@@ -90,6 +90,33 @@ jobs:
 
       - name: Verify app is running
         run: |
+          # First, test if PHP-FPM works with a simple test
+          echo "=== Creating PHP test file ==="
+          docker compose exec -T php sh -c 'echo "<?php phpinfo();" > public/phptest.php'
+
+          echo "=== Testing simple PHP file ==="
+          curl -s -o /tmp/phptest.html http://localhost:8000/phptest.php
+          if grep -q "PHP Version" /tmp/phptest.html; then
+            echo "PHP-FPM is working"
+          else
+            echo "PHP-FPM test failed!"
+            cat /tmp/phptest.html
+          fi
+
+          echo "=== Checking database sessions table ==="
+          docker compose exec -T mysql mysql -u root -prootsecret netrunner -e "SHOW TABLES LIKE 'sessions'; SELECT COUNT(*) as session_count FROM sessions;" 2>&1 || echo "Sessions table check failed"
+
+          echo "=== Testing Laravel bootstrap via CLI ==="
+          docker compose exec -T php php -r "
+            require 'vendor/autoload.php';
+            \$app = require 'bootstrap/app.php';
+            \$kernel = \$app->make('Illuminate\Contracts\Http\Kernel');
+            echo 'Kernel created successfully\n';
+          " 2>&1 || echo "Laravel bootstrap failed"
+
+          echo "=== Testing index.php via CLI ==="
+          docker compose exec -T php php public/index.php 2>&1 | head -50 || echo "index.php CLI test failed"
+
           echo "Testing homepage..."
           HTTP_CODE=$(curl -s --max-time 30 -o /tmp/response.html -w "%{http_code}" http://localhost:8000/)
           if [ "$HTTP_CODE" != "200" ]; then
@@ -98,15 +125,22 @@ jobs:
             cat /tmp/response.html | head -100
             echo "=== Nginx error log ==="
             docker compose exec -T nginx cat /var/log/nginx/error.log 2>/dev/null | tail -20 || echo "No nginx error log"
-            echo "=== PHP-FPM logs ==="
+            echo "=== PHP-FPM error log ==="
+            docker compose exec -T php cat /usr/local/var/log/php-fpm.log 2>/dev/null | tail -50 || echo "No php-fpm log at default location"
+            echo "=== PHP-FPM container logs ==="
             docker compose logs php --tail=50
             echo "=== Laravel logs ==="
             docker compose exec -T php cat storage/logs/laravel.log 2>/dev/null | tail -100 || echo "No Laravel logs"
-            echo "=== PHP error test ==="
-            docker compose exec -T php php -r "require 'vendor/autoload.php'; echo 'Autoload OK\n';" 2>&1 || echo "PHP autoload failed"
+            echo "=== Checking file permissions ==="
+            docker compose exec -T php ls -la storage/logs/ 2>&1 || echo "Cannot list storage/logs"
+            docker compose exec -T php ls -la bootstrap/cache/ 2>&1 || echo "Cannot list bootstrap/cache"
             exit 1
           fi
           echo "Homepage OK"
+
+          # Clean up test file
+          docker compose exec -T php rm -f public/phptest.php
+
           echo "Testing OAuth redirect endpoint..."
           REDIRECT_URL=$(curl -s --max-time 30 -o /dev/null -w "%{redirect_url}" http://localhost:8000/oauth2/redirect)
           echo "Redirect URL: $REDIRECT_URL"
