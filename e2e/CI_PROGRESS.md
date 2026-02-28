@@ -5,7 +5,8 @@ Get E2E tests running on GitHub Actions with at least 90% pass rate.
 
 ## Current Status
 **Date**: 2026-02-28
-**Status**: 🔴 Failing - Workflow setup issues
+**Branch**: `migration-e2e-workflow` (split from `migration`)
+**Status**: 🔴 Failing - API endpoint returns error page
 
 ## Test Files (9 total)
 - auth.test.ts

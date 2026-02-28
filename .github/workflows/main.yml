@@ -2,7 +2,7 @@ name: E2E Tests
 
 on:
   push:
-    branches: [master, migration]
+    branches: [master, migration, migration-e2e-workflow]
   pull_request:
     branches: [master]
   workflow_dispatch:
@@ -130,7 +130,16 @@ jobs:
           echo "=== Testing route list ==="
           docker compose exec -T php php artisan route:list --path=oauth2 2>&1 | head -20 || echo "Route list failed"
           echo "=== Testing API endpoint for upcoming tournaments ==="
-          curl -s http://localhost:8000/api/tournaments/upcoming 2>&1 | head -500 || echo "API call failed"
+          API_RESPONSE=$(curl -s http://localhost:8000/api/tournaments/upcoming 2>&1)
+          if echo "$API_RESPONSE" | head -1 | grep -q "<!DOCTYPE"; then
+            echo "API returned HTML error page!"
+            echo "$API_RESPONSE" | head -100
+            echo "=== Checking Laravel logs for API error ==="
+            docker compose exec -T php cat storage/logs/laravel.log 2>/dev/null | tail -50 || echo "No Laravel logs"
+          else
+            echo "API returned JSON (first 500 chars):"
+            echo "$API_RESPONSE" | head -c 500
+          fi
 
       - name: Verify app is running
         run: |
