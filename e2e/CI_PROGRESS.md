@@ -30,12 +30,28 @@ Get E2E tests running on GitHub Actions with at least 90% pass rate.
 
 **Root Cause**: Uncommitted local changes in `.github/workflows/main.yml` that use inline PHP instead of tinker.
 
-**Action**: Push the local fix that uses inline PHP script instead of tinker.
+**Action**: Pushed fix using inline PHP script instead of tinker.
+
+**Result**: ✅ Tinker issue fixed, but revealed new OAuth issue.
+
+---
+
+### Iteration 2 - 2026-02-28
+
+**Problem**: OAuth redirect endpoint returns HTTP 500
+- Error: `Call to a member function getAuthorizationUri() on null`
+- `OAuth2::consumer('NetrunnerDB', ...)` returns `null`
+
+**Root Cause**:
+- Custom `NetrunnerDB.php` OAuth service file is tracked in git (in vendor/lusitanian/oauth/...)
+- But `composer install` overwrites the vendor directory, removing the custom file
+- The OAuth service factory can't find 'NetrunnerDB' service
+
+**Action**: Added workflow step to restore the custom OAuth service file after composer install.
 
 **Previous Failed Runs**:
+- `22515493565` (2026-02-28) - OAuth null pointer
 - `22492042013` (2026-02-27) - tinker --execute failure
-- `22486279179` (2026-02-27) - OAuth debugging issues
-- `22484208987` (2026-02-27) - PHP/Laravel debugging
 
 ---
 
