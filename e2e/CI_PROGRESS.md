@@ -77,10 +77,65 @@ Get E2E tests running on GitHub Actions with at least 90% pass rate.
 
 **Action**: Added SQL UPDATE step in workflow to set some tournament dates to future dates (+7, +30, +60 days from current date).
 
+**Result**: ✅ SQL update worked (61 upcoming tournaments). But tests still fail.
+
+---
+
+### Iteration 5 - 2026-02-28
+
+**Discovery**: The `/api/tournaments/upcoming` API endpoint returns a **Symfony error page**, NOT JSON data!
+
+**Evidence from CI logs**:
+```
+Testing API endpoint for upcoming tournaments ===
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="robots" content="noindex,nofollow" />
+        <style>
+            /* Copyright (c) 2010, Yahoo! Inc...
+```
+
+**This explains why all upcoming/results tests fail** - the table never loads because the AJAX call fails.
+
 **Previous Failed Runs**:
-- `22515725746` (2026-02-28) - 17 passed, 42 failed (29% pass rate)
+- `22526933427` (2026-02-28) - API returns error page
+- `22520421592` (2026-02-28) - 17/42 (same - API issue)
+- `22515725746` (2026-02-28) - 17/42 (same)
 - `22515493565` (2026-02-28) - OAuth null pointer
 - `22492042013` (2026-02-27) - tinker --execute failure
+
+---
+
+## Current Evaluation Summary
+
+### Test Results: 17 passed, 42 failed, 21 skipped (out of 80)
+- **Pass rate**: ~29% (17/59 non-skipped)
+- **Target**: 90%
+
+### Working Tests (4 test files pass)
+- `legal.test.ts` - 5 tests (cookie banner, privacy page)
+- `videos.test.ts` - 2 tests (video list, switching)
+- `personal.test.ts` - 2 tests (photos, videos tabs)
+- `auth.test.ts` - 4 tests (login, access control)
+- `prizes.test.ts` - 3 tests (prize kits)
+- `profile.test.ts` - 1 test (profile page)
+
+### Failing Tests (5 test files fail)
+- `upcoming.test.ts` - ALL tests fail (table never loads - API broken)
+- `results.test.ts` - Most tests fail (same API issue)
+- `tournament-details.test.ts` - Some tests fail
+- Plus various auth-dependent tests skipped
+
+### Root Cause Analysis
+**The `/api/tournaments/upcoming` endpoint returns an error page instead of JSON.**
+
+This is a **Laravel/PHP error**, not a test issue. The API endpoint needs to be investigated.
+
+### Next Steps (To reach 90%)
+1. **Debug the API error** - Check Laravel logs, TournamentsController
+2. **Fix the API** - Resolve whatever exception is being thrown
+3. **Re-run tests** - Once API works, the 42 failing tests should pass
 
 ---
 
