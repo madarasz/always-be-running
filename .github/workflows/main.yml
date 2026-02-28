@@ -129,6 +129,8 @@ jobs:
           docker compose exec -T php php artisan --version || echo "Artisan failed"
           echo "=== Testing route list ==="
           docker compose exec -T php php artisan route:list --path=oauth2 2>&1 | head -20 || echo "Route list failed"
+          echo "=== Testing API endpoint for upcoming tournaments ==="
+          curl -s http://localhost:8000/api/tournaments/upcoming 2>&1 | head -500 || echo "API call failed"
 
       - name: Verify app is running
         run: |
