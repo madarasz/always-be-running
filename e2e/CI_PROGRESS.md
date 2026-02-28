@@ -49,7 +49,24 @@ Get E2E tests running on GitHub Actions with at least 90% pass rate.
 
 **Action**: Added workflow step to restore the custom OAuth service file after composer install.
 
+**Result**: ✅ OAuth service restored successfully. Tests now reach the test execution phase.
+
+---
+
+### Iteration 3 - 2026-02-28
+
+**Problem**: Tests reach execution but fail (17 passed, 42 failed, 21 skipped)
+- Main failures in `upcoming.test.ts` - timeout waiting for `#discover-table tbody tr`
+- The upcoming page shows only future tournaments
+- Test seed data has tournaments dated 2017-2025
+- Current date (2026-02-28) means all seed tournaments are in the past
+
+**Root Cause**: No date mocking in tests - upcoming page shows no data because seed tournaments are all past.
+
+**Action**: Added `mockBrowserDate(browser, '2025-01-01')` to upcoming tests so seed data appears as "upcoming".
+
 **Previous Failed Runs**:
+- `22515725746` (2026-02-28) - 17 passed, 42 failed (29% pass rate)
 - `22515493565` (2026-02-28) - OAuth null pointer
 - `22492042013` (2026-02-27) - tinker --execute failure
 
