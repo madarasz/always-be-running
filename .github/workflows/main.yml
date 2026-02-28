@@ -77,7 +77,14 @@ jobs:
           docker compose exec -T php php artisan view:clear
           docker compose exec -T php chmod -R 777 storage bootstrap/cache
           echo "=== Verify OAuth config is loaded correctly ==="
-          docker compose exec -T php php artisan tinker --execute="echo 'CLIENT_ID: ' . (config('oauth-5-laravel.consumers.NetrunnerDB.client_id') ? 'SET' : 'NOT SET');"
+          docker compose exec -T php php -r "
+            require 'bootstrap/autoload.php';
+            \$app = require 'bootstrap/app.php';
+            \$app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
+            echo 'CLIENT_ID: ' . (config('oauth-5-laravel.consumers.NetrunnerDB.client_id') ? 'SET (' . strlen(config('oauth-5-laravel.consumers.NetrunnerDB.client_id')) . ' chars)' : 'NOT SET') . PHP_EOL;
+            echo 'CLIENT_SECRET: ' . (config('oauth-5-laravel.consumers.NetrunnerDB.client_secret') ? 'SET' : 'NOT SET') . PHP_EOL;
+            echo 'REDIRECT_URL env: ' . env('NETRUNNERDB_REDIRECT_URL') . PHP_EOL;
+          "
 
       - name: Run database migrations
         run: docker compose exec -T php php artisan migrate --force
