@@ -73,8 +73,11 @@ jobs:
       - name: Restore custom OAuth service file
         run: |
           # The NetrunnerDB.php OAuth service is tracked in git but gets overwritten by composer install
-          # Restore it from git after composer install
-          git checkout vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/NetrunnerDB.php
+          # First, save it before composer install recreates vendor dir
+          # Copy from git show since file was overwritten
+          git show HEAD:vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/NetrunnerDB.php > /tmp/NetrunnerDB.php
+          docker compose exec -T php mkdir -p vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/
+          docker cp /tmp/NetrunnerDB.php abr-php:/var/www/html/vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/NetrunnerDB.php
           docker compose exec -T php ls -la vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/NetrunnerDB.php
           echo "NetrunnerDB OAuth service file restored"
 
