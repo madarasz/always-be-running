@@ -260,14 +260,13 @@ jobs:
         env:
           CHROME_PATH: ''
 
-      - name: Capture test failure screenshots
+      - name: Capture test failure info
         if: always()
         working-directory: e2e
         run: |
-          # Copy any existing screenshots/traces
-          cp -r .auth test-results/ 2>/dev/null || true
-          # Take a screenshot of the app state if docker is still up
+          # Capture the app state if docker is still up (for debugging)
           curl -s http://localhost:8000/ -o test-results/homepage-final.html 2>/dev/null || true
+          curl -s http://localhost:8000/api/tournaments/upcoming -o test-results/api-upcoming.json 2>/dev/null || true
           echo "=== Test artifacts collected ==="
           ls -la test-results/ 2>/dev/null || echo "No test-results dir"
 
@@ -276,9 +275,7 @@ jobs:
         if: always()
         with:
           name: e2e-test-results
-          path: |
-            e2e/test-results/
-            e2e/.auth/
+          path: e2e/test-results/
           retention-days: 7
           if-no-files-found: ignore
 
