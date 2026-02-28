@@ -103,6 +103,21 @@ jobs:
       - name: Load test seed data
         run: docker compose exec -T mysql mysql -u root -prootsecret netrunner < e2e/fixtures/test-seed.sql
 
+      - name: Update tournament dates for e2e tests
+        run: |
+          # Update some tournaments to have future dates so they appear on "Upcoming" page
+          # The date field format is 'YYYY.MM.DD.'
+          FUTURE_DATE=$(date -d "+30 days" +%Y.%m.%d.)
+          NEXT_WEEK=$(date -d "+7 days" +%Y.%m.%d.)
+          NEXT_MONTH=$(date -d "+60 days" +%Y.%m.%d.)
+          echo "Setting tournament dates to: $FUTURE_DATE, $NEXT_WEEK, $NEXT_MONTH"
+          docker compose exec -T mysql mysql -u root -prootsecret netrunner -e "
+            UPDATE tournaments SET date = '$FUTURE_DATE' WHERE id IN (886, 2850, 3264);
+            UPDATE tournaments SET date = '$NEXT_WEEK' WHERE id IN (5313, 5400, 5500);
+            UPDATE tournaments SET date = '$NEXT_MONTH' WHERE id IN (5600, 5700, 5800);
+            SELECT COUNT(*) as upcoming_count FROM tournaments WHERE date >= CURDATE();
+          "
+
       - name: Build frontend assets
         run: docker compose run --rm node
 
@@ -232,20 +247,45 @@ jobs:
           ADMIN_PASSWORD=${{ secrets.E2E_ADMIN_PASSWORD }}
           EOF
 
+      - name: Create test artifacts directory
+        run: mkdir -p e2e/test-results
+
       - name: Run E2E tests
+        id: e2e-tests
         working-directory: e2e
+        continue-on-error: true
         run: npm test
         env:
           CHROME_PATH: ''
 
+      - name: Capture test failure screenshots
+        if: always()
+        working-directory: e2e
+        run: |
+          # Copy any existing screenshots/traces
+          cp -r .auth test-results/ 2>/dev/null || true
+          # Take a screenshot of the app state if docker is still up
+          curl -s http://localhost:8000/ -o test-results/homepage-final.html 2>/dev/null || true
+          echo "=== Test artifacts collected ==="
+          ls -la test-results/ 2>/dev/null || echo "No test-results dir"
+
       - name: Upload test artifacts on failure
         uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
           name: e2e-test-results
-          path: e2e/.auth/
+          path: |
+            e2e/test-results/
+            e2e/.auth/
           retention-days: 7
+          if-no-files-found: ignore
 
       - name: Stop Docker services
         if: always()
         run: docker compose down -v
+
+      - name: Check test results
+        if: steps.e2e-tests.outcome == 'failure'
+        run: |
+          echo "E2E tests failed"
+          exit 1

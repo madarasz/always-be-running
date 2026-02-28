@@ -63,7 +63,19 @@ Get E2E tests running on GitHub Actions with at least 90% pass rate.
 
 **Root Cause**: No date mocking in tests - upcoming page shows no data because seed tournaments are all past.
 
-**Action**: Added `mockBrowserDate(browser, '2025-01-01')` to upcoming tests so seed data appears as "upcoming".
+**Action**: Initial attempt - browser date mocking. Didn't work because filtering is server-side.
+
+**Result**: ❌ Still failing - date filtering happens in PHP, not JavaScript.
+
+---
+
+### Iteration 4 - 2026-02-28
+
+**Problem**: Browser date mocking doesn't help - tournament filtering is server-side (PHP)
+
+**Root Cause**: The "upcoming" tournaments are filtered in PHP using the server's date, not the browser's date.
+
+**Action**: Added SQL UPDATE step in workflow to set some tournament dates to future dates (+7, +30, +60 days from current date).
 
 **Previous Failed Runs**:
 - `22515725746` (2026-02-28) - 17 passed, 42 failed (29% pass rate)

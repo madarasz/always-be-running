@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { BrowserManager } from 'agent-browser/dist/browser.js';
 import { UpcomingPage } from '../pages/UpcomingPage';
-import { closeBrowserSafely, CHROME_PATH, mockBrowserDate } from '../helpers/auth';
+import { closeBrowserSafely, CHROME_PATH } from '../helpers/auth';
 
 describe('Upcoming page', () => {
   let browser: BrowserManager;
@@ -16,8 +16,6 @@ describe('Upcoming page', () => {
       executablePath: CHROME_PATH,
     });
     await browser.ensurePage();
-    // Mock date to 2025-01-01 so seed data tournaments appear as "upcoming"
-    await mockBrowserDate(browser, '2025-01-01');
     upcomingPage = new UpcomingPage(browser);
   });
 
