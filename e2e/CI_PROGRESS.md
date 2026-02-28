@@ -6,7 +6,7 @@ Get E2E tests running on GitHub Actions with at least 90% pass rate.
 ## Current Status
 **Date**: 2026-02-28
 **Branch**: `migration-e2e-workflow` (split from `migration`)
-**Status**: 🔴 Failing - API endpoint returns error page
+**Status**: 🟡 Pending - null user fix pushed, waiting for CI
 
 ## Test Files (9 total)
 - auth.test.ts
@@ -105,6 +105,28 @@ Testing API endpoint for upcoming tournaments ===
 - `22515725746` (2026-02-28) - 17/42 (same)
 - `22515493565` (2026-02-28) - OAuth null pointer
 - `22492042013` (2026-02-27) - tinker --execute failure
+
+---
+
+### Iteration 6 - 2026-02-28
+
+**Problem**: API returns error "Trying to get property of non-object"
+
+**Root Cause**: In `TournamentsController.php` line 391, when building the API response:
+```php
+$user = $tournament->user;
+'creator_name' => $user->displayUsername,  // Error here - $user is null
+```
+When a tournament's creator has been deleted, `$tournament->user` returns `null`.
+
+**Action**: Added null checks in `TournamentsController.php`:
+```php
+'creator_name' => $user ? $user->displayUsername : '[deleted]',
+'creator_supporter' => $user ? $user->supporter : 0,
+'creator_class' => $user ? $user->linkClass : '',
+```
+
+**Result**: ⏳ Pushed fix, waiting for CI run...
 
 ---
 
