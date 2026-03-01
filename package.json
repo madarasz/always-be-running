@@ -23,8 +23,5 @@
     "v-autocomplete": "^1.8.2",
     "vue": "^2.5.17",
     "vue-lazyload": "^1.3.3"
-  },
-  "cypress-cucumber-preprocessor": {
-    "nonGlobalStepDefinitions": true
   }
 }

@@ -26,9 +26,6 @@
 !/storage/logs/.gitignore
 
 # Testing
-/cypress
-cypress.json
-cypress.env.json
 test-package.json
 test-package-lock.json
 
