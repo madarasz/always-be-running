@@ -1,25 +1,25 @@
 ---
 name: e2e
 description: >
-  Activate for any work in the e2e/ directory: creating or editing test files
+  Activate for any work in the tests/e2e/ directory: creating or editing test files
   (tests/*.test.ts), page objects (pages/), helpers (helpers/), or vitest config.
   Enforces agent-browser conventions specific to this project.
 user-invocable: false
-allowed-tools: Bash(cd e2e && npm test)
+allowed-tools: Bash(cd tests && npm test)
 ---
 
 # E2E Test Conventions
 
 ## Setup Notes
 
-- **Separate `e2e/package.json`**: Root package.json uses Node 10/npm 6 for Gulp builds. E2E tests live in `e2e/` with their own `package.json` (Node 20 / modern npm). Run tests from inside `e2e/` with `npm test`.
+- **Separate `tests/package.json`**: Root package.json uses Node 10/npm 6 for Gulp builds. Tests live in `tests/` with their own `package.json` (Node 20 / modern npm). Run tests from inside `tests/` with `npm test`.
 - **BrowserManager import**: `import { BrowserManager } from 'agent-browser/dist/browser.js'` (no exports map in the package, so the direct path import is required)
 - **System Chrome**: `executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'` — no need to install Playwright browsers separately
-- **Credentials**: Copy `e2e/.env.template` to `e2e/.env` and fill in NetrunnerDB usernames/passwords. The `.env` file is gitignored.
+- **Credentials**: Copy `tests/e2e/.env.template` to `tests/e2e/.env` and fill in NetrunnerDB usernames/passwords. The `.env` file is gitignored.
 
 ## Rules — always apply these
 
-1. **Run tests after every change**: `cd e2e && npm test`. Never leave the session with failing tests.
+1. **Run tests after every change**: `cd tests && npm test`. Never leave the session with failing tests.
 
 2. **Playwright strict mode** — throws if a locator matches more than one element:
    - Use `.first()` when the same text appears in navbar and body
@@ -48,7 +48,7 @@ Pass `BrowserManager`, not `Page`, into page objects. Do not import or type agai
 Resolve `page` once in `BasePage`'s constructor so all subclasses access `this.page` without repeating the call:
 
 ```typescript
-// e2e/pages/BasePage.ts
+// tests/e2e/pages/BasePage.ts
 import { BrowserManager } from 'agent-browser/dist/browser.js';
 
 export class BasePage {
@@ -106,7 +106,7 @@ it.each([
 ## API Mocking
 
 ```typescript
-// e2e/helpers/mockApi.ts
+// tests/e2e/helpers/mockApi.ts
 export async function mockResultsApi(browser: BrowserManager) {
   await browser.execute('network route "**/api/tournaments/results" --body',
     JSON.stringify(resultsFixture));
@@ -116,7 +116,7 @@ export async function mockResultsApi(browser: BrowserManager) {
 ## Visual Regression Testing
 
 ```typescript
-// e2e/helpers/visualTest.ts
+// tests/e2e/helpers/visualTest.ts
 import { compare } from 'resemblejs';
 import { BrowserManager } from 'agent-browser/dist/browser.js';
 
@@ -127,8 +127,8 @@ export async function matchScreenshot(
 ) {
   const { threshold = 0.03, fullPage = false } = options;
   const page = browser.getPage();
-  const actualPath = `e2e/screenshots/actual/${name}.png`;
-  const baselinePath = `e2e/screenshots/baseline/${name}.png`;
+  const actualPath = `tests/e2e/screenshots/actual/${name}.png`;
+  const baselinePath = `tests/e2e/screenshots/baseline/${name}.png`;
 
   await page.screenshot({ path: actualPath, fullPage });
   // Compare with baseline using resemblejs

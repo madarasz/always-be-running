@@ -1,6 +1,34 @@
 # AlwaysBeRunning.net (ABR)
 
-### Installation (Linux/Mac)
+## Docker Development Environment (Recommended)
+
+The easiest way to run ABR locally is using Docker:
+
+```bash
+# Start all services
+docker compose up -d
+
+# Build frontend assets (first time and after JS/CSS changes)
+docker compose --profile build run --rm node
+
+# Run database migrations
+docker compose exec php php artisan migrate
+
+# Import seed data
+docker compose exec -T mysql mysql -u root -prootsecret netrunner < seed.sql
+```
+
+**Services:**
+- App: http://localhost:8000
+- phpMyAdmin: http://localhost:8080 (root/rootsecret)
+- MySQL: localhost:3307 (abr/secret)
+
+**Environment setup:**
+1. Copy `docker/.env.docker` to `.env`
+2. Add NetrunnerDB OAuth keys (ask main dev)
+3. Add Google Maps API keys
+
+### Manual Installation (Linux/Mac)
 
 You will need the following in order to run ABR locally:
 - MySQL (preferably)
@@ -46,28 +74,37 @@ Google API keys, you can create yourself.
 
 13. You are done :)
 
-### Automated tests via **Cypress**
-Due to dependency conflicts, you have to have a seperate environment to test and build :(
+## Automated E2E Tests (Vitest + Playwright)
 
-##### Requires
-- nodejs 14
+Tests are in the `tests/` directory with their own dependencies (Node.js 20+).
 
-##### Making the test environment
-- delete the `node-modules` folder
-- overwrite `package.json` with `test-package.json`
-- overwrite `package-lock.json` with `test-package-lock.json`
-- install cypress globally with `npm install -g cypress`
-- `npm install`
+```bash
+# Install test dependencies (first time)
+cd tests && npm install
 
-##### Running tests via UI
-Open Cypress with `npx cypress open` command.
+# Run all E2E tests
+cd tests && npm test
 
-##### Running via command line (headless)
-*image snapshots will be probably different, disabling such fails*
-Run: `npx cypress run --env failOnSnapshotDiff=false`
+# Run tests in watch mode
+cd tests && npm run test:watch
+```
 
-##### Running via Github actions
-under development
+**Setup for authenticated tests:**
+1. Copy `tests/e2e/.env.template` to `tests/e2e/.env`
+2. Add NetrunnerDB test user credentials (REGULAR_USERNAME, REGULAR_PASSWORD)
+3. Add admin credentials (ADMIN_USERNAME, ADMIN_PASSWORD)
 
-*nvm is a nice tool to run multiple versions of npm. example: `nvm exec 10 npm install`*
-*Previous Nigthwatch tests were deprecated. Files are still found in `/tests/nightwatch/`*
+Tests run automatically via GitHub Actions on push to `master` or `migration` branches.
+
+**Test structure:**
+```
+tests/
+├── package.json          # Test dependencies
+├── vitest.config.ts
+├── e2e/                  # Browser E2E tests
+│   ├── tests/            # Test files (*.test.ts)
+│   ├── pages/            # Page objects
+│   ├── helpers/          # Auth helpers, mocks
+│   └── fixtures/         # Test data, SQL seeds
+└── api/                  # API tests (future)
+```

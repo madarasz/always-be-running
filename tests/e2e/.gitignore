@@ -3,3 +3,6 @@
 
 # Environment file with credentials
 .env
+
+# Test artifacts
+test-results/
