@@ -52,23 +52,31 @@ export async function saveSession(
 
 /**
  * Performs login and saves the session state.
- * Called by global setup.
+ * Called by global setup. Includes retry logic for flaky OAuth flows.
  */
-export async function loginAndSaveSession(userType: 'regular' | 'admin'): Promise<void> {
-  const browser = new BrowserManager();
-  try {
-    await browser.launch({
-      id: 'auth-setup',
-      action: 'launch',
-      headless: true,
-      executablePath: CHROME_PATH,
-    });
-    await browser.ensurePage();
-    await loginUser(browser, userType);
-    await saveSession(browser, userType);
-  } finally {
-    await browser.close();
+export async function loginAndSaveSession(userType: 'regular' | 'admin', maxRetries = 2): Promise<void> {
+  let lastError: Error | null = null;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    const browser = new BrowserManager();
+    try {
+      await browser.launch({
+        id: 'auth-setup',
+        action: 'launch',
+        headless: true,
+        executablePath: CHROME_PATH,
+      });
+      await browser.ensurePage();
+      await loginUser(browser, userType);
+      await saveSession(browser, userType);
+      return; // Success
+    } catch (e) {
+      lastError = e as Error;
+      console.error(`Login attempt ${attempt}/${maxRetries} failed for ${userType}: ${lastError.message}`);
+    } finally {
+      await browser.close();
+    }
   }
+  throw lastError!;
 }
 
 /**
@@ -194,7 +202,13 @@ export async function loginUser(
   }
 
   // Wait until we're back on our app
-  await page.waitForURL('http://localhost:8000/**', { timeout: 60000 });
+  try {
+    await page.waitForURL('http://localhost:8000/**', { timeout: 60000 });
+  } catch (e) {
+    const currentUrl = page.url();
+    console.error(`Final redirect failed. Current URL: ${currentUrl}`);
+    throw e;
+  }
 }
 
 export async function clearSession(browser: BrowserManager): Promise<void> {
