@@ -37,7 +37,11 @@ allowed-tools: Bash(cd tests && npm test)
 
 6. **External redirects**: after submitting a form that navigates to an external site, call `page.waitForLoadState('domcontentloaded')` before interacting with the next page. Use 30 s for `waitForURL` that waits for an OAuth callback.
 
-7. **Add small waits after JS actions**: Use `waitForTimeout(300-500)` after clicks that trigger JavaScript state changes (paging, filtering, toggles).
+7. **Never use explicit waits**: Never use `waitForTimeout()`. Instead, wait for elements to appear or disappear:
+   - `await locator.waitFor({ state: 'visible' })` — wait for element to appear
+   - `await locator.waitFor({ state: 'hidden' })` — wait for element to disappear
+   - `await page.waitForFunction(() => condition)` — wait for arbitrary JS condition
+   - After filtering/paging, wait for the table row count to change or loading indicator to disappear
 
 8. **Use Chrome DevTools MCP to inspect DOM**: Before writing locators, use `take_snapshot` or `evaluate_script` to understand actual element IDs, classes, and structure. Page controls often use `<span onclick>` not anchor tags.
 

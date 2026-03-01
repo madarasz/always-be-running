@@ -89,6 +89,13 @@ export class UpcomingPage extends BasePage {
     await this.countryFilter.selectOption(country);
   }
 
+  async clearCountryFilter() {
+    // Click first to ensure focus, then select the "---" (all countries) option
+    await this.countryFilter.click();
+    await this.countryFilter.selectOption('---');
+    await this.page.waitForTimeout(500);
+  }
+
   async filterByState(state: string) {
     await this.stateFilter.selectOption(state);
   }
@@ -227,5 +234,15 @@ export class UpcomingPage extends BasePage {
       location: await cells.nth(1).textContent(),
       day: await cells.nth(2).textContent(),
     };
+  }
+
+  /**
+   * Check if a tournament with the given title is visible in the upcoming table.
+   * @param title Partial or full tournament title to search for
+   */
+  async hasTournamentInTable(title: string): Promise<boolean> {
+    // Look for a row containing the title
+    const matchingRow = this.upcomingTableRows.filter({ hasText: title });
+    return (await matchingRow.count()) > 0;
   }
 }
