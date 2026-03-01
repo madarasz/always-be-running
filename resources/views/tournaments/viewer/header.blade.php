@@ -42,13 +42,17 @@
         <span id="tournament-type">{{ $type }}</span> -
         <em>
             created by
-            {{--Patreon sysop goal--}}
-            @if ($tournament->user->supporter > 2)
-                <img class="img-patron-o" title="Patreon Sysop/Executive supporter"/>
+            @if ($tournament->user)
+                {{--Patreon sysop goal--}}
+                @if ($tournament->user->supporter > 2)
+                    <img class="img-patron-o" title="Patreon Sysop/Executive supporter"/>
+                @endif
+                <span id="tournament-creator">
+                    <a href="/profile/{{ $tournament->user->id }}" class="{{ $tournament->user->linkClass() }}">{{ $tournament->user->displayUsername() }}</a>
+                </span>
+            @else
+                <span id="tournament-creator">[deleted]</span>
             @endif
-            <span id="tournament-creator">
-                <a href="/profile/{{ $tournament->user->id }}" class="{{ $tournament->user->linkClass() }}">{{ $tournament->user->displayUsername() }}</a>
-            </span>
         </em>
         {{--Charity--}}
         @if ($tournament->charity)

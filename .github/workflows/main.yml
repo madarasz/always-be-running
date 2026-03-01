@@ -105,6 +105,8 @@ jobs:
             UPDATE tournaments SET date = '$FUTURE_DATE' WHERE id IN (886, 2850, 3264);
             UPDATE tournaments SET date = '$NEXT_WEEK' WHERE id IN (5313, 5354, 5400, 5500);
             UPDATE tournaments SET date = '$NEXT_MONTH' WHERE id IN (5600, 5700, 5800);
+            -- Set some concluded tournaments as featured for Results page tests
+            UPDATE tournaments SET featured = 1 WHERE concluded = 1 AND approved = 1 LIMIT 3;
           "
 
       - name: Build frontend assets
