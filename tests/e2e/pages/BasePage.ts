@@ -12,4 +12,11 @@ export class BasePage {
   protected async navigate(path: string, options?: { waitUntil?: string }) {
     await this.page.goto(`${BASE_URL}${path}`, options as any);
   }
+
+  /**
+   * Get the current page URL.
+   */
+  getUrl(): string {
+    return this.page.url();
+  }
 }

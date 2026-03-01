@@ -1,13 +1,13 @@
 #!/bin/bash
 # export-test-db.sh - Export lightweight test database for E2E testing
-# Usage: ./scripts/export-test-db.sh [output_file]
+# Usage: ./tests/e2e/fixtures/export-test-db.sh [output_file]
 #
 # Runs mysqldump via Docker container against the abr-mysql service
 
 set -e
 set -o pipefail
 
-OUTPUT_FILE="${1:-e2e/fixtures/test-seed.sql.gz}"
+OUTPUT_FILE="${1:-tests/e2e/fixtures/test-seed.sql.gz}"
 DB_HOST="mysql"
 DB_USER="root"
 DB_PASS="rootsecret"

@@ -27,6 +27,7 @@ export class ResultsPage extends BasePage {
   readonly resultsPagingSection = this.page.locator('#results-paging');
   readonly resultsOption50 = this.page.locator('#results-option-50');
   readonly resultsOption100 = this.page.locator('#results-option-100');
+  readonly resultsOption500 = this.page.locator('#results-option-500');
   readonly resultsOptionFlag = this.page.locator('#results-option-flag');
   readonly resultsOptionText = this.page.locator('#results-option-text');
 
@@ -47,6 +48,13 @@ export class ResultsPage extends BasePage {
 
   async open(query?: string) {
     await this.navigate(query ? `/results?${query}` : '/results');
+  }
+
+  /**
+   * Alias for waitForResultsLoaded - waits for the results table to load.
+   */
+  async waitForTable() {
+    await this.waitForResultsLoaded();
   }
 
   async waitForResultsLoaded() {
@@ -100,6 +108,13 @@ export class ResultsPage extends BasePage {
     await this.page.waitForTimeout(500);
   }
 
+  async clearCountryFilter() {
+    // Click first to ensure focus, then select the "---" (all countries) option
+    await this.countryFilter.click();
+    await this.countryFilter.selectOption('---');
+    await this.page.waitForTimeout(500);
+  }
+
   async getCurrentUrl(): Promise<string> {
     return this.page.url();
   }
@@ -129,5 +144,23 @@ export class ResultsPage extends BasePage {
     if (!exists) return false;
     const className = await label.getAttribute('class') || '';
     return !className.includes('hidden-xs-up');
+  }
+
+  /**
+   * Select 500 results per page option.
+   */
+  async select500PerPage() {
+    await this.resultsOption500.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  /**
+   * Check if a tournament with the given title is visible in the results table.
+   * @param title Partial or full tournament title to search for
+   */
+  async hasTournamentInTable(title: string): Promise<boolean> {
+    // Look for a row containing the title in the results table
+    const matchingRow = this.resultsTableRows.filter({ hasText: title });
+    return (await matchingRow.count()) > 0;
   }
 }
