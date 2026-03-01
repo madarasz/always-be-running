@@ -10,6 +10,29 @@ AlwaysBeRunning (ABR) is a tournament management platform for the Netrunner card
 
 ## Common Commands
 
+### Docker Development (Recommended)
+
+```bash
+# Start all services
+docker compose up -d
+
+# Build frontend assets (first time and after JS/CSS changes)
+docker compose --profile build run --rm node
+
+# Run database migrations
+docker compose exec php php artisan migrate
+
+# Stop all services
+docker compose down
+```
+
+**Docker services:**
+- App: http://localhost:8000
+- phpMyAdmin: http://localhost:8080 (root/rootsecret)
+- MySQL: localhost:3307 (abr/secret)
+
+### Manual Development
+
 ```bash
 # Install dependencies
 npm install && npm install -g gulp
@@ -36,23 +59,33 @@ php artisan migrate
 
 ## Testing
 
-Cypress tests require a separate environment due to dependency conflicts (Node.js 14 required):
+E2E tests use Vitest + Playwright (via agent-browser). Tests are in `tests/` with separate dependencies (Node.js 20+):
 
 ```bash
-# Setup test environment (one-time)
-# 1. Delete node_modules
-# 2. Replace package.json with test-package.json
-# 3. Replace package-lock.json with test-package-lock.json
-# 4. npm install -g cypress && npm install
+# Install test dependencies
+cd tests && npm install
 
-# Run tests with UI
-npx cypress open
+# Run all E2E tests
+cd tests && npm test
 
-# Run headless (ignores snapshot diffs)
-npx cypress run --env failOnSnapshotDiff=false
+# Run in watch mode
+cd tests && npm run test:watch
 ```
 
-Test files are in `cypress/integration/` using Cucumber feature files.
+**Test credentials:** Copy `tests/e2e/.env.template` to `tests/e2e/.env` and fill in NetrunnerDB test user credentials.
+
+**Test structure:**
+```
+tests/
+├── package.json          # Test dependencies (Vitest, agent-browser)
+├── vitest.config.ts
+├── e2e/                  # Browser E2E tests
+│   ├── tests/            # Test files (*.test.ts)
+│   ├── pages/            # Page objects (BasePage, UpcomingPage, etc.)
+│   ├── helpers/          # Auth helpers, mocks
+│   └── fixtures/         # Test data, SQL seeds
+└── api/                  # API tests (future)
+```
 
 ## Architecture
 

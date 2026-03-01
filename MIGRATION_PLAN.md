@@ -77,20 +77,23 @@ See **[`.claude/skills/e2e/SKILL.md`](.claude/skills/e2e/SKILL.md)** for setup n
 
 ### Tasks
 
-1. **Install dependencies** (in `e2e/` subdirectory)
+1. **Install dependencies** (in `tests/` subdirectory)
    ```bash
-   cd e2e && npm install
+   cd tests && npm install
    ```
 
 2. **Directory structure**
    ```
-   e2e/
+   tests/
+   ├── package.json         # Test dependencies (Vitest, agent-browser)
    ├── vitest.config.ts
-   ├── pages/          # BasePage, UpcomingPage, ResultsPage, OrganizePage, AdminPage, LegalPage
-   ├── helpers/        # auth.ts
-   ├── fixtures/       # JSON test data (copied from cypress/fixtures)
-   ├── screenshots/    # baseline/ and actual/
-   └── tests/          # *.test.ts files
+   ├── e2e/
+   │   ├── pages/           # BasePage, UpcomingPage, ResultsPage, OrganizePage, AdminPage, LegalPage
+   │   ├── helpers/         # auth.ts
+   │   ├── fixtures/        # JSON test data, SQL seed files
+   │   ├── setup/           # global-setup.ts
+   │   └── tests/           # *.test.ts files
+   └── api/                  # Future: API schema validation tests
    ```
 
 ### Validation
@@ -217,22 +220,28 @@ Use **native `fetch` + Zod schemas**:
 ### Directory Structure
 
 ```
-e2e/
-├── tests/
-│   ├── api/                        # API tests (fast, no browser)
-│   │   ├── tournaments.api.test.ts
-│   │   ├── videos.api.test.ts
-│   │   ├── entries.api.test.ts
-│   │   └── artists.api.test.ts
-│   └── *.test.ts                   # Browser E2E tests
-├── schemas/                        # Zod schemas
-│   ├── common.schema.ts
-│   ├── tournament.schema.ts
-│   ├── video.schema.ts
-│   ├── entry.schema.ts
-│   └── artist.schema.ts
-└── helpers/
-    └── api-client.ts               # fetch wrapper with schema validation
+tests/
+├── package.json                     # Shared test dependencies
+├── vitest.config.ts                 # Vitest configuration
+├── api/                             # API tests (fast, no browser)
+│   ├── schemas/                     # Zod schemas
+│   │   ├── common.schema.ts
+│   │   ├── tournament.schema.ts
+│   │   ├── video.schema.ts
+│   │   ├── entry.schema.ts
+│   │   └── artist.schema.ts
+│   ├── helpers/
+│   │   └── api-client.ts            # fetch wrapper with schema validation
+│   └── tests/
+│       ├── tournaments.api.test.ts
+│       ├── videos.api.test.ts
+│       ├── entries.api.test.ts
+│       └── artists.api.test.ts
+└── e2e/                             # Browser E2E tests
+    ├── pages/
+    ├── helpers/
+    ├── fixtures/
+    └── tests/
 ```
 
 ### Priority Endpoints
@@ -259,11 +268,11 @@ When rewriting controllers in Laravel 11, Zod schemas serve as the spec for API 
 
 ### Implementation Tasks
 
-1. Install `zod` in `e2e/`
-2. Create `e2e/schemas/` with 5 schema files (derived from PHP controllers)
-3. Create `e2e/helpers/api-client.ts` (fetch wrapper)
-4. Update `e2e/vitest.config.ts` with workspace projects (api vs e2e)
-5. Create `e2e/tests/api/` with 4 test files
+1. Install `zod` in `tests/`
+2. Create `tests/api/schemas/` with 5 schema files (derived from PHP controllers)
+3. Create `tests/api/helpers/api-client.ts` (fetch wrapper)
+4. Update `tests/vitest.config.ts` with workspace projects (api vs e2e)
+5. Create `tests/api/tests/` with 4 test files
 6. Add npm scripts: `test:api`, `test:e2e`
 
 ### Validation
@@ -739,9 +748,9 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 | `app/*.php` (models) | 2 | Move to `app/Models/` |
 | `gulpfile.js` | 4 | Replace with `vite.config.js` |
 | `resources/views/layout/general.blade.php` | 4 | Update asset references |
-| `cypress/` | 1 | Migrate to `e2e/` (agent-browser) |
-| `e2e/schemas/` | 1c | Zod schemas for API contracts |
-| `e2e/tests/api/` | 1c | API schema validation tests |
+| `tests/e2e/` | 1 | E2E tests (Vitest + agent-browser) |
+| `tests/api/schemas/` | 1c | Zod schemas for API contracts |
+| `tests/api/tests/` | 1c | API schema validation tests |
 
 ---
 

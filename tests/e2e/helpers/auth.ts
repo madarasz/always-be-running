@@ -140,7 +140,7 @@ function credentials(userType: 'regular' | 'admin') {
   const password = env[`${userType.toUpperCase()}_PASSWORD`];
   if (!username || !password) {
     throw new Error(
-      `Missing ${userType} credentials. Copy e2e/.env.template to e2e/.env and fill in the values.`
+      `Missing ${userType} credentials. Copy tests/e2e/.env.template to tests/e2e/.env and fill in the values.`
     );
   }
   return { username, password };

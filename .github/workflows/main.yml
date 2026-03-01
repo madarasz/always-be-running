@@ -94,7 +94,7 @@ jobs:
 
       - name: Load test seed data
         run: |
-          gunzip -c e2e/fixtures/test-seed.sql.gz | docker compose exec -T mysql mysql -u root -prootsecret netrunner
+          gunzip -c tests/e2e/fixtures/test-seed.sql.gz | docker compose exec -T mysql mysql -u root -prootsecret netrunner
 
       - name: Update tournament dates for e2e tests
         run: |
@@ -139,16 +139,16 @@ jobs:
         with:
           node-version: '20'
 
-      # Cache e2e node_modules
-      - name: Cache e2e node_modules
+      # Cache tests node_modules
+      - name: Cache tests node_modules
         uses: actions/cache@v4
         with:
-          path: e2e/node_modules
-          key: node-e2e-${{ hashFiles('e2e/package-lock.json') }}
-          restore-keys: node-e2e-
+          path: tests/node_modules
+          key: node-tests-${{ hashFiles('tests/package-lock.json') }}
+          restore-keys: node-tests-
 
-      - name: Install e2e dependencies
-        working-directory: e2e
+      - name: Install test dependencies
+        working-directory: tests
         run: npm ci
 
       # Cache Playwright browsers
@@ -156,15 +156,15 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ hashFiles('e2e/package-lock.json') }}
+          key: playwright-${{ hashFiles('tests/package-lock.json') }}
           restore-keys: playwright-
 
       - name: Install Playwright Chromium
-        working-directory: e2e
+        working-directory: tests
         run: npx playwright install chromium
 
       - name: Setup e2e credentials
-        working-directory: e2e
+        working-directory: tests/e2e
         run: |
           cat > .env << EOF
           REGULAR_USERNAME=${{ secrets.E2E_REGULAR_USERNAME }}
@@ -176,11 +176,11 @@ jobs:
           EOF
 
       - name: Create test artifacts directory
-        run: mkdir -p e2e/test-results
+        run: mkdir -p tests/e2e/test-results
 
       - name: Run E2E tests
         id: e2e-tests
-        working-directory: e2e
+        working-directory: tests
         continue-on-error: true
         run: npm test
         env:
@@ -188,7 +188,7 @@ jobs:
 
       - name: Capture test failure info
         if: always()
-        working-directory: e2e
+        working-directory: tests/e2e
         run: |
           # Capture the app state if docker is still up (for debugging)
           curl -s http://localhost:8000/ -o test-results/homepage-final.html 2>/dev/null || true
@@ -201,7 +201,7 @@ jobs:
         if: always()
         with:
           name: e2e-test-results
-          path: e2e/test-results/
+          path: tests/e2e/test-results/
           retention-days: 7
           if-no-files-found: ignore
 
