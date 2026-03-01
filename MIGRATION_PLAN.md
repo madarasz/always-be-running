@@ -103,21 +103,26 @@ See **[`.claude/skills/e2e/SKILL.md`](.claude/skills/e2e/SKILL.md)** for setup n
 
 ### CI/CD: GitHub Actions - ✅ DONE
 
-E2E tests run automatically on every push to `master`/`migration` branches and on pull requests to `master`.
+E2E tests run automatically on every push to `master`/`migration`/`migration-e2e-workflow` branches and on pull requests to `master`.
+
+**Status:** ✅ **100% pass rate (80/80 tests)**
 
 **What it does:**
 - Spins up the full Docker stack (PHP, nginx, MySQL)
-- Loads a lightweight test database (filtered to recent tournaments and test users only)
+- Loads a lightweight test database (recent tournaments + all referenced users)
+- Updates tournament dates for "upcoming" page tests
 - Builds frontend assets
 - Runs all E2E tests with Playwright/Chromium
 
 **Setup required:**
-- GitHub Secrets for NetrunnerDB OAuth test credentials (E2E_REGULAR_USERNAME, E2E_REGULAR_PASSWORD, E2E_ADMIN_USERNAME, E2E_ADMIN_PASSWORD)
+- GitHub Secrets: E2E_REGULAR_USERNAME, E2E_REGULAR_PASSWORD, E2E_ADMIN_USERNAME, E2E_ADMIN_PASSWORD
+- GitHub Secrets: NETRUNNERDB_CLIENT_ID, NETRUNNERDB_CLIENT_SECRET
+- GitHub Secrets: GOOGLE_MAPS_API, GOOGLE_FRONTEND_API
 
 **Files:**
 - `.github/workflows/main.yml` — Workflow definition
-- `scripts/export-test-db.sh` — Database extraction script
-- `e2e/fixtures/test-seed.sql` — Lightweight test database (~1.2MB)
+- `scripts/export-test-db.sh` — Database extraction script (exports users referenced by tournaments/entries)
+- `e2e/fixtures/test-seed.sql` — Lightweight test database (~1.4MB, 700+ users)
 
 ---
 

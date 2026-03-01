@@ -6,7 +6,7 @@ Get E2E tests running on GitHub Actions with at least 90% pass rate.
 ## Current Status
 **Date**: 2026-03-01
 **Branch**: `migration-e2e-workflow` (split from `migration`)
-**Status**: 🟢 Passing - 96.875% pass rate (62/64) - exceeds 90% target
+**Status**: 🟢 **COMPLETE** - 100% pass rate (80/80 tests)
 
 ## Test Files (9 total)
 - auth.test.ts
@@ -169,40 +169,30 @@ When a tournament's creator has been deleted, `$tournament->user` returns `null`
 - All users referenced by `entries.user` (from recent entries)
 - Result: 700+ users now exported (was 2)
 
-**Result**: 🔄 Pending CI run
+**Result**: ✅ **SUCCESS!** 80 passed, 0 failed, 0 skipped (100% pass rate)
 
 ---
 
 ## Final Evaluation Summary
 
-### Test Results: 62 passed, 2 failed, 16 skipped (out of 80)
-- **Pass rate**: 96.875% (62/64 non-skipped)
-- **Target**: 90% ✅ **ACHIEVED**
+### Test Results: 80 passed, 0 failed, 0 skipped
+- **Pass rate**: 100% (80/80)
+- **Target**: 90% ✅ **EXCEEDED**
 
-### Fully Passing Test Files (7/9)
+### All Test Files Passing (9/9)
+- `auth.test.ts` - 5 tests ✅
 - `legal.test.ts` - 5 tests ✅
-- `videos.test.ts` - 2 tests ✅
 - `personal.test.ts` - 3 tests ✅
 - `prizes.test.ts` - 3 tests ✅
 - `profile.test.ts` - 1 test ✅
-- `auth.test.ts` - 5 tests ✅ (fixed: admin check via navbar)
-- `results.test.ts` - 28 tests ✅ (fixed: featured tournaments)
+- `results.test.ts` - 28 tests ✅
+- `tournament-details.test.ts` - 16 tests ✅ (fixed: users now in test seed)
+- `upcoming.test.ts` - 19 tests ✅ (fixed: GOOGLE_FRONTEND_API)
+- `videos.test.ts` - 2 tests ✅ (includes video absence check - no recent videos)
 
-### Mostly Working Test Files
-- `upcoming.test.ts` - 17/19 tests (Google Maps API issues)
-
-### Remaining Failing Tests (2)
-1. `upcoming.test.ts` > "loads Google Maps with tournament markers" - API key not working in CI frontend
-2. `upcoming.test.ts` > "filters map markers by country" - depends on above test
-
-### Skipped Tests (16)
-- `tournament-details.test.ts` - All 16 tests skipped (beforeAll hook timeout)
-  - Root cause: Page returns 500 error when tournament creator user doesn't exist
-  - The test seed doesn't include users table data
-
-### Known Issues (Non-blocking)
-- Google Maps tests: ✅ Fixed in iteration 8 - workflow now sets GOOGLE_FRONTEND_API
-- Tournament details tests: ✅ Fixed in iteration 8 - export script now includes referenced users
+### Issues Resolved
+- ✅ Google Maps tests: workflow now sets GOOGLE_FRONTEND_API (iteration 8)
+- ✅ Tournament details tests: export script now includes referenced users (iteration 8)
 
 ---
 
