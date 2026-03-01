@@ -170,33 +170,46 @@ export class UpcomingPage extends BasePage {
   }
 
   async getMapMarkerCount(): Promise<number> {
-    // Markers are role=button elements with aria-label containing tournament links
-    return await this.map.locator('[role="button"][aria-label*="/tournaments/"]').count();
+    // Access the global map.markers array directly via JavaScript
+    // The markers array is populated by codeAddress() in abr-map.js
+    return await this.page.evaluate(() => {
+      const mapObj = (window as unknown as { map?: { markers?: unknown[] } }).map;
+      return mapObj?.markers?.length ?? 0;
+    });
   }
 
   async getMapMarkerNames(): Promise<string[]> {
-    const markers = await this.map.locator('[role="button"][aria-label*="/tournaments/"]').all();
-    const names: string[] = [];
-    for (const marker of markers) {
-      const label = await marker.getAttribute('aria-label') || '';
-      const match = label.match(/<strong>([^<]+)<\/strong>/);
-      if (match) {
-        names.push(match[1]);
+    // Get marker titles from the global map.markers array
+    // Each marker's title contains HTML with tournament name in <strong> tags
+    return await this.page.evaluate(() => {
+      const mapObj = (window as unknown as { map?: { markers?: { getTitle?: () => string }[] } }).map;
+      const markers = mapObj?.markers ?? [];
+      const names: string[] = [];
+      for (const marker of markers) {
+        const title = marker.getTitle?.() ?? '';
+        const match = title.match(/<strong>([^<]+)<\/strong>/);
+        if (match) {
+          names.push(match[1]);
+        }
       }
-    }
-    return names;
+      return names;
+    });
   }
 
   async getCountryMarkerCount(country: string): Promise<number> {
-    const markers = await this.map.locator('[role="button"][aria-label*="/tournaments/"]').all();
-    let count = 0;
-    for (const marker of markers) {
-      const label = await marker.getAttribute('aria-label') || '';
-      if (label.includes(country)) {
-        count++;
+    // Count markers whose title contains the specified country
+    return await this.page.evaluate((countryName) => {
+      const mapObj = (window as unknown as { map?: { markers?: { getTitle?: () => string }[] } }).map;
+      const markers = mapObj?.markers ?? [];
+      let count = 0;
+      for (const marker of markers) {
+        const title = marker.getTitle?.() ?? '';
+        if (title.includes(countryName)) {
+          count++;
+        }
       }
-    }
-    return count;
+      return count;
+    }, country);
   }
 
   async getRecurringEventCount(): Promise<number> {
