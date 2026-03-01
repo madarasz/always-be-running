@@ -1,44 +1,216 @@
-name: CI Integration tests
+name: E2E Tests
 
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master ]
+    branches: [master, migration, migration-e2e-workflow]
   pull_request:
-    branches: [ master ]
-
-  # Allows you to run this workflow manually from the Actions tab
+    branches: [master]
   workflow_dispatch:
 
 jobs:
-  build:
+  e2e-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      
-      # Set up php 7.1
-      #- name: Setup PHP with PECL extension
-      #  uses: shivammathur/setup-php@v2
-      #  with:
-      #    php-version: '7.1'
-      #    tools: composer:v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      # Install nodejs v14
-      #- name: Install nodejs v14
-      #  run: |
-      #    curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-      #    sudo apt-get install -y nodejs
+      - name: Setup Laravel environment
+        run: |
+          cp docker/.env.docker .env
+          # Inject secrets into .env
+          sed -i "s/NETRUNNERDB_CLIENT_ID=.*/NETRUNNERDB_CLIENT_ID=${{ secrets.NETRUNNERDB_CLIENT_ID }}/" .env
+          sed -i "s/NETRUNNERDB_CLIENT_SECRET=.*/NETRUNNERDB_CLIENT_SECRET=${{ secrets.NETRUNNERDB_CLIENT_SECRET }}/" .env
+          sed -i "s/GOOGLE_MAPS_API=.*/GOOGLE_MAPS_API=${{ secrets.GOOGLE_MAPS_API }}/" .env
+          sed -i "s/GOOGLE_FRONTEND_API=.*/GOOGLE_FRONTEND_API=${{ secrets.GOOGLE_FRONTEND_API }}/" .env
+          # Verify OAuth secrets are set
+          if grep -q "NETRUNNERDB_CLIENT_SECRET=ASK_NECRO" .env || grep -q "NETRUNNERDB_CLIENT_SECRET=$" .env; then
+            echo "::error::NETRUNNERDB_CLIENT_SECRET GitHub secret is not set!"
+            exit 1
+          fi
 
-      # Check nodejs, npm, php version
-      #- name: Check versions
-      #  run: |
-      #    php -v
-      #    node -v
-      #    npm -v
+      # Cache Composer dependencies
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
 
-      # Install dependencies
-      #- name: Install dependencies
-      #  run: |
-      #    composer install
-      #    npm install
+      # Cache root node_modules (for gulp build)
+      - name: Cache root node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-root-${{ hashFiles('package-lock.json') }}
+          restore-keys: node-root-
+
+      # Cache Docker layers
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: docker-${{ hashFiles('docker/Dockerfile.php', 'docker/Dockerfile.node') }}
+          restore-keys: docker-
+
+      - name: Build Docker images
+        run: |
+          docker compose build --build-arg BUILDKIT_INLINE_CACHE=1
+
+      - name: Start Docker services
+        run: |
+          docker compose up -d php nginx mysql
+          echo "Waiting for MySQL to be healthy..."
+          timeout 120 bash -c 'until docker compose exec -T mysql mysqladmin ping -h localhost -u root -prootsecret --silent; do sleep 2; done'
+          echo "MySQL is ready"
+
+      - name: Install Composer dependencies
+        run: docker compose exec -T php composer install --no-interaction --prefer-dist
+
+      - name: Restore custom OAuth service file
+        run: |
+          # The NetrunnerDB.php OAuth service is tracked in git but gets overwritten by composer install
+          # First, save it before composer install recreates vendor dir
+          # Copy from git show since file was overwritten
+          git show HEAD:vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/NetrunnerDB.php > /tmp/NetrunnerDB.php
+          docker compose exec -T php mkdir -p vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/
+          docker cp /tmp/NetrunnerDB.php abr-php:/var/www/html/vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/NetrunnerDB.php
+          docker compose exec -T php ls -la vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/NetrunnerDB.php
+          echo "NetrunnerDB OAuth service file restored"
+
+      - name: Clear Laravel caches and set permissions
+        run: |
+          docker compose exec -T php php artisan config:clear
+          docker compose exec -T php php artisan cache:clear
+          docker compose exec -T php php artisan view:clear
+          docker compose exec -T php chmod -R 777 storage bootstrap/cache
+
+      - name: Run database migrations
+        run: docker compose exec -T php php artisan migrate --force
+
+      - name: Load test seed data
+        run: |
+          gunzip -c e2e/fixtures/test-seed.sql.gz | docker compose exec -T mysql mysql -u root -prootsecret netrunner
+
+      - name: Update tournament dates for e2e tests
+        run: |
+          # Update some tournaments to have future dates so they appear on "Upcoming" page
+          # The date field format is 'YYYY.MM.DD.'
+          FUTURE_DATE=$(date -d "+30 days" +%Y.%m.%d.)
+          NEXT_WEEK=$(date -d "+7 days" +%Y.%m.%d.)
+          NEXT_MONTH=$(date -d "+60 days" +%Y.%m.%d.)
+          docker compose exec -T mysql mysql -u root -prootsecret netrunner -e "
+            UPDATE tournaments SET date = '$FUTURE_DATE' WHERE id IN (886, 2850, 3264);
+            UPDATE tournaments SET date = '$NEXT_WEEK' WHERE id IN (5313, 5354, 5400, 5500);
+            UPDATE tournaments SET date = '$NEXT_MONTH' WHERE id IN (5600, 5700, 5800);
+            -- Set some concluded tournaments as featured for Results page tests
+            UPDATE tournaments SET featured = 1 WHERE concluded = 1 AND approved = 1 LIMIT 3;
+          "
+
+      - name: Build frontend assets
+        run: docker compose run --rm node
+
+      - name: Verify app is running
+        run: |
+          HTTP_CODE=$(curl -s --max-time 30 -o /dev/null -w "%{http_code}" http://localhost:8000/)
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "Homepage returned HTTP $HTTP_CODE"
+            docker compose logs php --tail=30
+            exit 1
+          fi
+          echo "Homepage OK (HTTP $HTTP_CODE)"
+
+          # Verify API endpoint works
+          API_CODE=$(curl -s --max-time 10 -o /dev/null -w "%{http_code}" http://localhost:8000/api/tournaments/upcoming)
+          if [ "$API_CODE" != "200" ]; then
+            echo "::error::API endpoint /api/tournaments/upcoming returned HTTP $API_CODE (expected 200)"
+            docker compose logs php --tail=30
+            exit 1
+          fi
+          echo "API endpoint OK (HTTP $API_CODE)"
+
+      # Setup Node.js for e2e tests
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Cache e2e node_modules
+      - name: Cache e2e node_modules
+        uses: actions/cache@v4
+        with:
+          path: e2e/node_modules
+          key: node-e2e-${{ hashFiles('e2e/package-lock.json') }}
+          restore-keys: node-e2e-
+
+      - name: Install e2e dependencies
+        working-directory: e2e
+        run: npm ci
+
+      # Cache Playwright browsers
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('e2e/package-lock.json') }}
+          restore-keys: playwright-
+
+      - name: Install Playwright Chromium
+        working-directory: e2e
+        run: npx playwright install chromium
+
+      - name: Setup e2e credentials
+        working-directory: e2e
+        run: |
+          cat > .env << EOF
+          REGULAR_USERNAME=${{ secrets.E2E_REGULAR_USERNAME }}
+          REGULAR_PASSWORD=${{ secrets.E2E_REGULAR_PASSWORD }}
+          ADMIN_USERNAME=${{ secrets.E2E_ADMIN_USERNAME }}
+          ADMIN_PASSWORD=${{ secrets.E2E_ADMIN_PASSWORD }}
+          GOOGLE_MAPS_API=${{ secrets.GOOGLE_MAPS_API }}
+          GOOGLE_FRONTEND_API=${{ secrets.GOOGLE_FRONTEND_API }}
+          EOF
+
+      - name: Create test artifacts directory
+        run: mkdir -p e2e/test-results
+
+      - name: Run E2E tests
+        id: e2e-tests
+        working-directory: e2e
+        continue-on-error: true
+        run: npm test
+        env:
+          CHROME_PATH: ''
+
+      - name: Capture test failure info
+        if: always()
+        working-directory: e2e
+        run: |
+          # Capture the app state if docker is still up (for debugging)
+          curl -s http://localhost:8000/ -o test-results/homepage-final.html 2>/dev/null || true
+          curl -s http://localhost:8000/api/tournaments/upcoming -o test-results/api-upcoming.json 2>/dev/null || true
+          echo "=== Test artifacts collected ==="
+          ls -la test-results/ 2>/dev/null || echo "No test-results dir"
+
+      - name: Upload test artifacts on failure
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-results
+          path: e2e/test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Stop Docker services
+        if: always()
+        run: docker compose down -v
+
+      - name: Check test results
+        if: steps.e2e-tests.outcome == 'failure'
+        run: |
+          echo "E2E tests failed"
+          exit 1

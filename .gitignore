@@ -41,7 +41,6 @@ resources/assets/js/v-autocomplete.js
 resources/assets/js/vue-lazyload.js
 resources/assets/*/toastr.min.*
 phantomjsdriver.log
-app/Http/Controllers/ASController.php
 jquery.bracket.min.js
 jquery.bracket.min.css
 resources/views/partials/wanted-alt.blade.php
@@ -59,8 +58,8 @@ cypress/screenshots
 cypress.env.json
 node-gyp
 e2e/node_modules
-e2e/package-lock.json
 e2e/.env
+e2e/fixtures/test-seed.sql
 npm-debug.log
 abr*.sql
 .codemie
