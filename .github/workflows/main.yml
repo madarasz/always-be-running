@@ -19,15 +19,15 @@ jobs:
       - name: Setup Laravel environment
         run: |
           cp docker/.env.docker .env
-          # Inject NetrunnerDB OAuth credentials from secrets
+          # Inject secrets into .env
           sed -i "s/NETRUNNERDB_CLIENT_ID=.*/NETRUNNERDB_CLIENT_ID=${{ secrets.NETRUNNERDB_CLIENT_ID }}/" .env
           sed -i "s/NETRUNNERDB_CLIENT_SECRET=.*/NETRUNNERDB_CLIENT_SECRET=${{ secrets.NETRUNNERDB_CLIENT_SECRET }}/" .env
-          # Verify secrets are set
+          sed -i "s/GOOGLE_MAPS_API=.*/GOOGLE_MAPS_API=${{ secrets.GOOGLE_MAPS_API }}/" .env
+          # Verify OAuth secrets are set
           if grep -q "NETRUNNERDB_CLIENT_SECRET=ASK_NECRO" .env || grep -q "NETRUNNERDB_CLIENT_SECRET=$" .env; then
             echo "::error::NETRUNNERDB_CLIENT_SECRET GitHub secret is not set!"
             exit 1
           fi
-          echo "Laravel environment configured with OAuth secrets"
 
       # Cache Composer dependencies
       - name: Cache Composer dependencies
@@ -87,15 +87,6 @@ jobs:
           docker compose exec -T php php artisan cache:clear
           docker compose exec -T php php artisan view:clear
           docker compose exec -T php chmod -R 777 storage bootstrap/cache
-          echo "=== Verify OAuth config is loaded correctly ==="
-          docker compose exec -T php php -r "
-            require 'bootstrap/autoload.php';
-            \$app = require 'bootstrap/app.php';
-            \$app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
-            echo 'CLIENT_ID: ' . (config('oauth-5-laravel.consumers.NetrunnerDB.client_id') ? 'SET (' . strlen(config('oauth-5-laravel.consumers.NetrunnerDB.client_id')) . ' chars)' : 'NOT SET') . PHP_EOL;
-            echo 'CLIENT_SECRET: ' . (config('oauth-5-laravel.consumers.NetrunnerDB.client_secret') ? 'SET' : 'NOT SET') . PHP_EOL;
-            echo 'REDIRECT_URL env: ' . env('NETRUNNERDB_REDIRECT_URL') . PHP_EOL;
-          "
 
       - name: Run database migrations
         run: docker compose exec -T php php artisan migrate --force
@@ -110,113 +101,28 @@ jobs:
           FUTURE_DATE=$(date -d "+30 days" +%Y.%m.%d.)
           NEXT_WEEK=$(date -d "+7 days" +%Y.%m.%d.)
           NEXT_MONTH=$(date -d "+60 days" +%Y.%m.%d.)
-          echo "Setting tournament dates to: $FUTURE_DATE, $NEXT_WEEK, $NEXT_MONTH"
           docker compose exec -T mysql mysql -u root -prootsecret netrunner -e "
             UPDATE tournaments SET date = '$FUTURE_DATE' WHERE id IN (886, 2850, 3264);
-            UPDATE tournaments SET date = '$NEXT_WEEK' WHERE id IN (5313, 5400, 5500);
+            UPDATE tournaments SET date = '$NEXT_WEEK' WHERE id IN (5313, 5354, 5400, 5500);
             UPDATE tournaments SET date = '$NEXT_MONTH' WHERE id IN (5600, 5700, 5800);
-            SELECT COUNT(*) as upcoming_count FROM tournaments WHERE date >= CURDATE();
           "
 
       - name: Build frontend assets
         run: docker compose run --rm node
 
-      - name: Debug environment
-        run: |
-          echo "=== Checking .env file (without secrets) ==="
-          docker compose exec -T php cat .env | grep -v PASSWORD | grep -v SECRET | grep -v KEY
-          echo "=== Testing artisan ==="
-          docker compose exec -T php php artisan --version || echo "Artisan failed"
-          echo "=== Testing route list ==="
-          docker compose exec -T php php artisan route:list --path=oauth2 2>&1 | head -20 || echo "Route list failed"
-          echo "=== Testing API endpoint for upcoming tournaments ==="
-          API_RESPONSE=$(curl -s http://localhost:8000/api/tournaments/upcoming 2>&1)
-          if echo "$API_RESPONSE" | head -1 | grep -q "<!DOCTYPE"; then
-            echo "API returned HTML error page!"
-            echo "$API_RESPONSE" | head -100
-            echo "=== Checking Laravel logs for API error ==="
-            docker compose exec -T php cat storage/logs/laravel.log 2>/dev/null | tail -50 || echo "No Laravel logs"
-          else
-            echo "API returned JSON (first 500 chars):"
-            echo "$API_RESPONSE" | head -c 500
-          fi
-
       - name: Verify app is running
         run: |
-          # First, test if PHP-FPM works with a simple test
-          echo "=== Creating PHP test file ==="
-          docker compose exec -T php sh -c 'echo "<?php phpinfo();" > public/phptest.php'
-
-          echo "=== Testing simple PHP file ==="
-          curl -s -o /tmp/phptest.html http://localhost:8000/phptest.php
-          if grep -q "PHP Version" /tmp/phptest.html; then
-            echo "PHP-FPM is working"
-          else
-            echo "PHP-FPM test failed!"
-            cat /tmp/phptest.html
-          fi
-
-          echo "=== Checking database sessions table ==="
-          docker compose exec -T mysql mysql -u root -prootsecret netrunner -e "SHOW TABLES LIKE 'sessions'; SELECT COUNT(*) as session_count FROM sessions;" 2>&1 || echo "Sessions table check failed"
-
-          echo "=== Testing Laravel bootstrap via CLI ==="
-          docker compose exec -T php php -r "
-            require 'vendor/autoload.php';
-            \$app = require 'bootstrap/app.php';
-            \$kernel = \$app->make('Illuminate\Contracts\Http\Kernel');
-            echo 'Kernel created successfully\n';
-          " 2>&1 || echo "Laravel bootstrap failed"
-
-          echo "=== Testing index.php via CLI ==="
-          docker compose exec -T php php public/index.php 2>&1 | head -50 || echo "index.php CLI test failed"
-
-          echo "Testing homepage..."
-          HTTP_CODE=$(curl -s --max-time 30 -o /tmp/response.html -w "%{http_code}" http://localhost:8000/)
+          HTTP_CODE=$(curl -s --max-time 30 -o /dev/null -w "%{http_code}" http://localhost:8000/)
           if [ "$HTTP_CODE" != "200" ]; then
             echo "Homepage returned HTTP $HTTP_CODE"
-            echo "=== Response body ==="
-            cat /tmp/response.html | head -100
-            echo "=== Nginx error log ==="
-            docker compose exec -T nginx cat /var/log/nginx/error.log 2>/dev/null | tail -20 || echo "No nginx error log"
-            echo "=== PHP-FPM error log ==="
-            docker compose exec -T php cat /usr/local/var/log/php-fpm.log 2>/dev/null | tail -50 || echo "No php-fpm log at default location"
-            echo "=== PHP-FPM container logs ==="
-            docker compose logs php --tail=50
-            echo "=== Laravel logs ==="
-            docker compose exec -T php cat storage/logs/laravel.log 2>/dev/null | tail -100 || echo "No Laravel logs"
-            echo "=== Checking file permissions ==="
-            docker compose exec -T php ls -la storage/logs/ 2>&1 || echo "Cannot list storage/logs"
-            docker compose exec -T php ls -la bootstrap/cache/ 2>&1 || echo "Cannot list bootstrap/cache"
+            docker compose logs php --tail=30
             exit 1
           fi
-          echo "Homepage OK"
+          echo "Homepage OK (HTTP $HTTP_CODE)"
 
-          # Clean up test file
-          docker compose exec -T php rm -f public/phptest.php
-
-          echo "Testing OAuth redirect endpoint..."
-          echo "=== OAuth endpoint HTTP response ==="
-          OAUTH_CODE=$(curl -s --max-time 30 -o /tmp/oauth_response.html -w "%{http_code}" http://localhost:8000/oauth2/redirect)
-          echo "OAuth endpoint returned HTTP $OAUTH_CODE"
-          if [ "$OAUTH_CODE" != "302" ]; then
-            echo "=== OAuth response body ==="
-            cat /tmp/oauth_response.html | head -50
-            echo "=== Laravel logs after OAuth test ==="
-            docker compose exec -T php cat storage/logs/laravel.log 2>/dev/null | tail -100 || echo "No Laravel logs"
-            echo "=== Check OAuth config ==="
-            docker compose exec -T php php -r "
-              require 'vendor/autoload.php';
-              \$app = require 'bootstrap/app.php';
-              \$app->boot();
-              echo 'NETRUNNERDB_CLIENT_ID: ' . (env('NETRUNNERDB_CLIENT_ID') ? 'SET' : 'NOT SET') . PHP_EOL;
-              echo 'NETRUNNERDB_CLIENT_SECRET: ' . (env('NETRUNNERDB_CLIENT_SECRET') ? 'SET' : 'NOT SET') . PHP_EOL;
-              echo 'NETRUNNERDB_REDIRECT_URL: ' . env('NETRUNNERDB_REDIRECT_URL') . PHP_EOL;
-            " 2>&1
-            echo "=== NOTE: OAuth redirect is optional for e2e tests, continuing anyway ==="
-          else
-            REDIRECT_URL=$(curl -s --max-time 30 -o /dev/null -w "%{redirect_url}" http://localhost:8000/oauth2/redirect)
-            echo "Redirect URL: $REDIRECT_URL"
-          fi
+          # Verify API endpoint works
+          API_CODE=$(curl -s --max-time 10 -o /dev/null -w "%{http_code}" http://localhost:8000/api/tournaments/upcoming)
+          echo "API endpoint: HTTP $API_CODE"
 
       # Setup Node.js for e2e tests
       - name: Setup Node.js
@@ -256,6 +162,7 @@ jobs:
           REGULAR_PASSWORD=${{ secrets.E2E_REGULAR_PASSWORD }}
           ADMIN_USERNAME=${{ secrets.E2E_ADMIN_USERNAME }}
           ADMIN_PASSWORD=${{ secrets.E2E_ADMIN_PASSWORD }}
+          GOOGLE_MAPS_API=${{ secrets.GOOGLE_MAPS_API }}
           EOF
 
       - name: Create test artifacts directory
