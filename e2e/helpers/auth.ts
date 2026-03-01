@@ -10,10 +10,8 @@ const __dirnameResolved = dirname(__filename);
 export const AUTH_STATE_DIR = join(__dirnameResolved, '../.auth');
 export const REGULAR_USER_STATE = join(AUTH_STATE_DIR, 'regular.json');
 export const ADMIN_USER_STATE = join(AUTH_STATE_DIR, 'admin.json');
-// In CI, set CHROME_PATH='' to use Playwright's bundled Chromium
-export const CHROME_PATH = process.env.CHROME_PATH !== undefined
-  ? process.env.CHROME_PATH || undefined  // Empty string becomes undefined (use bundled browser)
-  : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+// Set CHROME_PATH env var to use a custom browser, otherwise bundled Chromium is used
+export const CHROME_PATH = process.env.CHROME_PATH || undefined;
 
 export function getStorageStatePath(userType: 'regular' | 'admin'): string {
   return userType === 'admin' ? ADMIN_USER_STATE : REGULAR_USER_STATE;
@@ -73,7 +71,7 @@ export async function loginAndSaveSession(userType: 'regular' | 'admin', maxRetr
       lastError = e as Error;
       console.error(`Login attempt ${attempt}/${maxRetries} failed for ${userType}: ${lastError.message}`);
     } finally {
-      await browser.close();
+      await closeBrowserSafely(browser);
     }
   }
   throw lastError!;

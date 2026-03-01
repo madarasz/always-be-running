@@ -93,7 +93,8 @@ jobs:
         run: docker compose exec -T php php artisan migrate --force
 
       - name: Load test seed data
-        run: docker compose exec -T mysql mysql -u root -prootsecret netrunner < e2e/fixtures/test-seed.sql
+        run: |
+          gunzip -c e2e/fixtures/test-seed.sql.gz | docker compose exec -T mysql mysql -u root -prootsecret netrunner
 
       - name: Update tournament dates for e2e tests
         run: |
@@ -125,7 +126,12 @@ jobs:
 
           # Verify API endpoint works
           API_CODE=$(curl -s --max-time 10 -o /dev/null -w "%{http_code}" http://localhost:8000/api/tournaments/upcoming)
-          echo "API endpoint: HTTP $API_CODE"
+          if [ "$API_CODE" != "200" ]; then
+            echo "::error::API endpoint /api/tournaments/upcoming returned HTTP $API_CODE (expected 200)"
+            docker compose logs php --tail=30
+            exit 1
+          fi
+          echo "API endpoint OK (HTTP $API_CODE)"
 
       # Setup Node.js for e2e tests
       - name: Setup Node.js

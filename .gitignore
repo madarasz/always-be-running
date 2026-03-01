@@ -59,6 +59,7 @@ cypress.env.json
 node-gyp
 e2e/node_modules
 e2e/.env
+e2e/fixtures/test-seed.sql
 npm-debug.log
 abr*.sql
 .codemie
