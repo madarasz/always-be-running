@@ -78,12 +78,32 @@ for table in "${FULL_TABLES[@]}"; do
 done
 
 # ====================
-# USERS TABLE - Filter by test user IDs
+# USERS TABLE - Export test users + users referenced by tournaments and entries
 # ====================
-echo "Exporting users (test users only)..."
-mysqldump_docker --no-create-info --single-transaction --skip-lock-tables \
-    --where="id IN ($TEST_USER_IDS)" \
-    "$DB_NAME" users >> "$OUTPUT_FILE"
+echo "Finding users referenced by exported data..."
+# Get user IDs from tournaments (creator) and entries (user) that match our export criteria
+REFERENCED_USERS=$(docker compose exec -T mysql mysql -N -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" -e "
+    SELECT DISTINCT id FROM (
+        -- Test users
+        SELECT id FROM users WHERE id IN ($TEST_USER_IDS)
+        UNION
+        -- Tournament creators (recent tournaments)
+        SELECT DISTINCT creator AS id FROM tournaments WHERE updated_at >= '$CUTOFF_DATE' AND creator IS NOT NULL
+        UNION
+        -- Entry users (test users + recent entries)
+        SELECT DISTINCT user AS id FROM entries WHERE (user IN ($TEST_USER_IDS) OR updated_at >= '$CUTOFF_DATE') AND user IS NOT NULL
+    ) AS all_users;
+" 2>/dev/null | tr '\n' ',' | sed 's/,$//')
+
+echo "Exporting users (referenced by tournaments/entries)..."
+echo "  User IDs: $REFERENCED_USERS"
+if [ -n "$REFERENCED_USERS" ]; then
+    mysqldump_docker --no-create-info --single-transaction --skip-lock-tables \
+        --where="id IN ($REFERENCED_USERS)" \
+        "$DB_NAME" users >> "$OUTPUT_FILE"
+else
+    echo "  (no users found)"
+fi
 
 # ====================
 # BADGE_USER - Only test users

@@ -23,6 +23,7 @@ jobs:
           sed -i "s/NETRUNNERDB_CLIENT_ID=.*/NETRUNNERDB_CLIENT_ID=${{ secrets.NETRUNNERDB_CLIENT_ID }}/" .env
           sed -i "s/NETRUNNERDB_CLIENT_SECRET=.*/NETRUNNERDB_CLIENT_SECRET=${{ secrets.NETRUNNERDB_CLIENT_SECRET }}/" .env
           sed -i "s/GOOGLE_MAPS_API=.*/GOOGLE_MAPS_API=${{ secrets.GOOGLE_MAPS_API }}/" .env
+          sed -i "s/GOOGLE_FRONTEND_API=.*/GOOGLE_FRONTEND_API=${{ secrets.GOOGLE_FRONTEND_API }}/" .env
           # Verify OAuth secrets are set
           if grep -q "NETRUNNERDB_CLIENT_SECRET=ASK_NECRO" .env || grep -q "NETRUNNERDB_CLIENT_SECRET=$" .env; then
             echo "::error::NETRUNNERDB_CLIENT_SECRET GitHub secret is not set!"
@@ -165,6 +166,7 @@ jobs:
           ADMIN_USERNAME=${{ secrets.E2E_ADMIN_USERNAME }}
           ADMIN_PASSWORD=${{ secrets.E2E_ADMIN_PASSWORD }}
           GOOGLE_MAPS_API=${{ secrets.GOOGLE_MAPS_API }}
+          GOOGLE_FRONTEND_API=${{ secrets.GOOGLE_FRONTEND_API }}
           EOF
 
       - name: Create test artifacts directory
