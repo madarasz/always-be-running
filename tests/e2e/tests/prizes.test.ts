@@ -1,29 +1,9 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { BrowserManager } from 'agent-browser/dist/browser.js';
-import { PrizesPage } from '../pages/PrizesPage';
-import { closeBrowserSafely, CHROME_PATH } from '../helpers/auth';
+import { createBrowserSuite, it, expect } from '../helpers/test-fixture';
 
-describe('Prizes page', () => {
-  let browser: BrowserManager;
-  let prizesPage: PrizesPage;
-
-  beforeAll(async () => {
-    browser = new BrowserManager();
-    await browser.launch({
-      id: 'launch',
-      action: 'launch',
-      headless: true,
-      executablePath: CHROME_PATH,
-    });
-    await browser.ensurePage();
-    prizesPage = new PrizesPage(browser);
-  });
-
-  afterAll(async () => {
-    await closeBrowserSafely(browser);
-  });
-
+createBrowserSuite('Prizes page', { userType: 'none' }, (ctx) => {
   it('displays information on the Official kits tab', async () => {
+    const { prizesPage } = ctx.pages;
+
     await prizesPage.open();
     await prizesPage.waitForPrizesLoaded();
 
@@ -37,6 +17,8 @@ describe('Prizes page', () => {
   });
 
   it('filters prize kits on the Official kits tab', async () => {
+    const { prizesPage } = ctx.pages;
+
     await prizesPage.open();
     await prizesPage.waitForPrizesLoaded();
 
@@ -54,6 +36,8 @@ describe('Prizes page', () => {
   });
 
   it('displays information on the Other art tab', async () => {
+    const { prizesPage } = ctx.pages;
+
     await prizesPage.open();
     await prizesPage.waitForPrizesLoaded();
 

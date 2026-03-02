@@ -1,30 +1,10 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { BrowserManager } from 'agent-browser/dist/browser.js';
-import { UpcomingPage } from '../pages/UpcomingPage';
-import { closeBrowserSafely, CHROME_PATH } from '../helpers/auth';
+import { createBrowserSuite, it, expect, describe } from '../helpers/test-fixture';
 
-describe('Upcoming page', () => {
-  let browser: BrowserManager;
-  let upcomingPage: UpcomingPage;
-
-  beforeAll(async () => {
-    browser = new BrowserManager();
-    await browser.launch({
-      id: 'launch',
-      action: 'launch',
-      headless: true,
-      executablePath: CHROME_PATH,
-    });
-    await browser.ensurePage();
-    upcomingPage = new UpcomingPage(browser);
-  });
-
-  afterAll(async () => {
-    await closeBrowserSafely(browser);
-  });
-
+createBrowserSuite('Upcoming page', { userType: 'none' }, (ctx) => {
   describe('Loading upcoming tournaments table', () => {
     it('displays tournaments with all required fields populated', async () => {
+      const { upcomingPage } = ctx.pages;
+
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 
@@ -41,6 +21,8 @@ describe('Upcoming page', () => {
     });
 
     it('shows total tournament count', async () => {
+      const { upcomingPage } = ctx.pages;
+
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 
@@ -51,6 +33,8 @@ describe('Upcoming page', () => {
 
   describe('Table controls', () => {
     it('initially shows a subset of tournaments with paging', async () => {
+      const { upcomingPage } = ctx.pages;
+
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 
@@ -65,12 +49,16 @@ describe('Upcoming page', () => {
     });
 
     it('shows country flags by default', async () => {
+      const { upcomingPage } = ctx.pages;
+
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
       expect(await upcomingPage.hasCountryFlag()).toBe(true);
     });
 
     it('switches between flag and text mode', async () => {
+      const { upcomingPage } = ctx.pages;
+
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 
@@ -88,6 +76,8 @@ describe('Upcoming page', () => {
     });
 
     it('forward pager advances the view', async () => {
+      const { upcomingPage } = ctx.pages;
+
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 
@@ -104,6 +94,8 @@ describe('Upcoming page', () => {
     });
 
     it('all pager shows all tournaments', async () => {
+      const { upcomingPage } = ctx.pages;
+
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 
@@ -123,6 +115,8 @@ describe('Upcoming page', () => {
       { filterType: 'country', filterMethod: 'filterByCountry', value: 'Germany' },
       { filterType: 'country', filterMethod: 'filterByCountry', value: 'United Kingdom' },
     ])('filters by $filterType = $value reduces or maintains count', async ({ filterMethod, value }) => {
+      const { upcomingPage } = ctx.pages;
+
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 
@@ -136,6 +130,8 @@ describe('Upcoming page', () => {
       { filter1: 'type', method1: 'filterByType', value1: 'GNK / seasonal', filter2: 'country', method2: 'filterByCountry', value2: 'Germany' },
       { filter1: 'country', method1: 'filterByCountry', value1: 'United States', filter2: 'type', method2: 'filterByType', value2: 'players circuit' },
     ])('combines $filter1 + $filter2 filters', async ({ method1, value1, method2, value2 }) => {
+      const { upcomingPage } = ctx.pages;
+
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 
@@ -150,6 +146,8 @@ describe('Upcoming page', () => {
     });
 
     it('shows US state filter when US is selected', async () => {
+      const { upcomingPage } = ctx.pages;
+
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 
@@ -163,6 +161,8 @@ describe('Upcoming page', () => {
 
   describe('Recurring events table', () => {
     it('displays recurring events', async () => {
+      const { upcomingPage } = ctx.pages;
+
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 
@@ -171,6 +171,8 @@ describe('Upcoming page', () => {
     });
 
     it('recurring events have all required fields populated', async () => {
+      const { upcomingPage } = ctx.pages;
+
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 
@@ -185,6 +187,8 @@ describe('Upcoming page', () => {
 
   describe('Calendar', () => {
     it('displays calendar', async () => {
+      const { upcomingPage } = ctx.pages;
+
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 
@@ -196,6 +200,8 @@ describe('Upcoming page', () => {
 
   describe('Map', () => {
     it('loads Google Maps with tournament markers when Show Map is clicked', async () => {
+      const { upcomingPage } = ctx.pages;
+
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 
@@ -219,6 +225,8 @@ describe('Upcoming page', () => {
     });
 
     it('filters map markers by country', async () => {
+      const { upcomingPage } = ctx.pages;
+
       await upcomingPage.open();
       await upcomingPage.waitForTableLoaded();
 

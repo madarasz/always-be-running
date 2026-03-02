@@ -96,6 +96,11 @@ cd tests && npm run test:watch
 
 Tests run automatically via GitHub Actions on push to `master` or `migration` branches.
 
+**Debugging failed tests:**
+- Failure screenshots and Playwright traces are saved to `tests/e2e/test-results/`
+- View traces: `npx playwright show-trace tests/e2e/test-results/{trace}.zip`
+- In GitHub Actions, artifacts are uploaded and available for download
+
 **Test structure:**
 ```
 tests/

@@ -1,27 +1,19 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { BrowserManager } from 'agent-browser/dist/browser.js';
-import { PersonalPage } from '../pages/PersonalPage';
-import { createAuthenticatedBrowser, closeBrowserSafely, mockBrowserDate } from '../helpers/auth';
+import { createBrowserSuite, it, expect } from '../helpers/test-fixture';
+import { mockBrowserDate } from '../helpers/auth';
 
 // Fixed date to ensure tournament on 2026-02-28 is always in the future
 const MOCK_DATE = '2026-02-25';
 
-describe('Personal Page', () => {
-  let browser: BrowserManager;
-  let personalPage: PersonalPage;
-
-  beforeAll(async () => {
-    browser = await createAuthenticatedBrowser('regular');
-    // Mock the browser date so tournament on 2026-02-28 is always in the future
+createBrowserSuite('Personal Page', {
+  userType: 'regular',
+  beforeInit: async (browser) => {
+    // Mock the browser date BEFORE authentication navigates to the app
     await mockBrowserDate(browser, MOCK_DATE);
-    personalPage = new PersonalPage(browser);
-  });
-
-  afterAll(async () => {
-    await closeBrowserSafely(browser);
-  });
-
+  },
+}, (ctx) => {
   it('Tournaments tab: calendar, map with markers, and tournaments table with going/claim/claimed', async () => {
+    const { personalPage } = ctx.pages;
+
     await personalPage.open();
 
     // Verify page header contains "Personal"
@@ -47,6 +39,8 @@ describe('Personal Page', () => {
   });
 
   it('Photos tab: photos are visible', async () => {
+    const { personalPage } = ctx.pages;
+
     await personalPage.open();
 
     // Navigate to Photos tab
@@ -61,6 +55,8 @@ describe('Personal Page', () => {
   });
 
   it('Videos tab: at least one video is listed', async () => {
+    const { personalPage } = ctx.pages;
+
     await personalPage.open();
 
     // Navigate to Videos tab

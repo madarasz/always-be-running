@@ -196,7 +196,20 @@ jobs:
           echo "=== Test artifacts collected ==="
           ls -la test-results/ 2>/dev/null || echo "No test-results dir"
 
-      - name: Upload test artifacts on failure
+      - name: Summarize test artifacts
+        if: always()
+        run: |
+          echo "### E2E Test Artifacts" >> $GITHUB_STEP_SUMMARY
+          if [ -d "tests/e2e/test-results" ] && [ "$(ls -A tests/e2e/test-results 2>/dev/null)" ]; then
+            echo "**Screenshots and traces from failed tests:**" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            ls -la tests/e2e/test-results/ >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "_No failure artifacts (all tests passed or no artifacts generated)_" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload test artifacts (screenshots and traces)
         uses: actions/upload-artifact@v4
         if: always()
         with:

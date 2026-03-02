@@ -1,36 +1,16 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
-import { BrowserManager } from 'agent-browser/dist/browser.js';
-import { VideosPage } from '../pages/VideosPage';
+import { createBrowserSuite, it, expect, beforeEach } from '../helpers/test-fixture';
 import { setupApiMock } from '../helpers/mocks';
 import videosFixture from '../fixtures/videos.json';
-import { closeBrowserSafely, CHROME_PATH } from '../helpers/auth';
 
-describe('Videos page', () => {
-  let browser: BrowserManager;
-  let videosPage: VideosPage;
-
-  beforeAll(async () => {
-    browser = new BrowserManager();
-    await browser.launch({
-      id: 'launch',
-      action: 'launch',
-      headless: true,
-      executablePath: CHROME_PATH,
-    });
-    await browser.ensurePage();
-    videosPage = new VideosPage(browser);
-  });
-
-  afterAll(async () => {
-    await closeBrowserSafely(browser);
-  });
-
+createBrowserSuite('Videos page', { userType: 'none' }, (ctx) => {
   beforeEach(async () => {
-    const page = browser.getPage();
+    const page = ctx.browser.getPage();
     await setupApiMock(page, '**/api/videos', videosFixture);
   });
 
   it('loads tournament list with videos and titles', async () => {
+    const { videosPage } = ctx.pages;
+
     await videosPage.open();
     await videosPage.waitForTournamentsLoaded();
 
@@ -45,6 +25,8 @@ describe('Videos page', () => {
   });
 
   it('switches tournaments and plays videos', async () => {
+    const { videosPage } = ctx.pages;
+
     await videosPage.open();
     await videosPage.waitForTournamentsLoaded();
 
