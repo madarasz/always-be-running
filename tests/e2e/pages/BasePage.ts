@@ -19,4 +19,20 @@ export class BasePage {
   getUrl(): string {
     return this.page.url();
   }
+
+  /**
+   * Dismiss the cookie consent banner if visible.
+   * The banner can interfere with dropdowns and autocomplete.
+   */
+  async dismissCookieBanner(): Promise<void> {
+    try {
+      const allowButton = this.page.locator('button:has-text("Allow cookies")');
+      // Give banner time to render, but don't fail if it doesn't appear
+      await allowButton.waitFor({ state: 'visible', timeout: 2000 });
+      await allowButton.click();
+      await allowButton.waitFor({ state: 'hidden', timeout: 3000 });
+    } catch {
+      // Banner not present or already dismissed - continue
+    }
+  }
 }

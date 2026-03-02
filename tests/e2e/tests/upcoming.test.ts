@@ -80,13 +80,11 @@ describe('Upcoming page', () => {
 
       // Switch to text mode
       await upcomingPage.switchToTextMode();
-      await browser.getPage().waitForTimeout(300);
-      expect(await upcomingPage.textButton.getAttribute('class')).toContain('label-active');
+      await expect.poll(async () => await upcomingPage.textButton.getAttribute('class')).toContain('label-active');
 
       // Switch back to flag mode
       await upcomingPage.switchToFlagMode();
-      await browser.getPage().waitForTimeout(300);
-      expect(await flagButton.getAttribute('class')).toContain('label-active');
+      await expect.poll(async () => await flagButton.getAttribute('class')).toContain('label-active');
     });
 
     it('forward pager advances the view', async () => {
@@ -100,9 +98,8 @@ describe('Upcoming page', () => {
       // Only test paging if there are more items than currently shown
       if (total > showingTo) {
         await upcomingPage.clickForwardPager();
-        await browser.getPage().waitForTimeout(300);
-        const newFrom = await upcomingPage.getShowingFrom();
-        expect(newFrom).toBeGreaterThan(initialFrom);
+        // Wait for paging to update
+        await expect.poll(async () => await upcomingPage.getShowingFrom()).toBeGreaterThan(initialFrom);
       }
     });
 
@@ -111,9 +108,9 @@ describe('Upcoming page', () => {
       await upcomingPage.waitForTableLoaded();
 
       await upcomingPage.clickAllPager();
-      await browser.getPage().waitForTimeout(300);
-
+      // Wait for paging to update - showingTo should equal total
       const total = await upcomingPage.getTotalCount();
+      await expect.poll(async () => await upcomingPage.getShowingTo()).toBe(total);
       const showingTo = await upcomingPage.getShowingTo();
       expect(showingTo).toBe(total);
     });
@@ -131,9 +128,8 @@ describe('Upcoming page', () => {
 
       const initialCount = await upcomingPage.getTotalCount();
       await (upcomingPage as any)[filterMethod](value);
-      await browser.getPage().waitForTimeout(500);
-      const filteredCount = await upcomingPage.getTotalCount();
-      expect(filteredCount).toBeLessThanOrEqual(initialCount);
+      // Wait for filter to be applied (total count updates)
+      await expect.poll(async () => await upcomingPage.getTotalCount()).toBeLessThanOrEqual(initialCount);
     });
 
     it.each([
@@ -145,14 +141,12 @@ describe('Upcoming page', () => {
 
       const initialCount = await upcomingPage.getTotalCount();
       await (upcomingPage as any)[method1](value1);
-      await browser.getPage().waitForTimeout(300);
+      // Wait for first filter to be applied
+      await expect.poll(async () => await upcomingPage.getTotalCount()).toBeLessThanOrEqual(initialCount);
       const afterFirstFilter = await upcomingPage.getTotalCount();
       await (upcomingPage as any)[method2](value2);
-      await browser.getPage().waitForTimeout(300);
-      const afterBothFilters = await upcomingPage.getTotalCount();
-
-      expect(afterFirstFilter).toBeLessThanOrEqual(initialCount);
-      expect(afterBothFilters).toBeLessThanOrEqual(afterFirstFilter);
+      // Wait for second filter to be applied
+      await expect.poll(async () => await upcomingPage.getTotalCount()).toBeLessThanOrEqual(afterFirstFilter);
     });
 
     it('shows US state filter when US is selected', async () => {
@@ -160,7 +154,6 @@ describe('Upcoming page', () => {
       await upcomingPage.waitForTableLoaded();
 
       await upcomingPage.filterByCountry('United States');
-      await browser.getPage().waitForTimeout(500);
       // State filter should become visible
       const stateFilter = upcomingPage.stateFilter;
       await stateFilter.waitFor({ state: 'visible', timeout: 5000 });
@@ -239,7 +232,9 @@ describe('Upcoming page', () => {
 
       // Filter by Germany
       await upcomingPage.filterByCountry('Germany');
-      await browser.getPage().waitForTimeout(1000);
+      // Wait for markers to be filtered (count should decrease)
+      await expect.poll(async () => await upcomingPage.getMapMarkerCount(), { timeout: 10000 })
+        .toBeLessThan(initialMarkerCount);
 
       // Marker count should be reduced and all should be German
       const filteredMarkerCount = await upcomingPage.getMapMarkerCount();

@@ -8,6 +8,7 @@ const __dirnameResolved = dirname(__filename);
 
 // Storage state configuration
 export const AUTH_STATE_DIR = join(__dirnameResolved, '../.auth');
+export const TEST_RESULTS_DIR = join(__dirnameResolved, '../test-results');
 export const REGULAR_USER_STATE = join(AUTH_STATE_DIR, 'regular.json');
 export const ADMIN_USER_STATE = join(AUTH_STATE_DIR, 'admin.json');
 // Set CHROME_PATH env var to use a custom browser, otherwise bundled Chromium is used
@@ -263,4 +264,59 @@ export async function mockBrowserDate(browser: BrowserManager, dateString: strin
 
     window.Date = MockDate;
   }`);
+}
+
+/**
+ * Start Playwright tracing for a browser instance.
+ * Call this at the start of a test to capture traces on failure.
+ */
+export async function startTracing(browser: BrowserManager, testName: string): Promise<void> {
+  const page = browser.getPage();
+  const context = page.context();
+  mkdirSync(TEST_RESULTS_DIR, { recursive: true });
+  await context.tracing.start({
+    screenshots: true,
+    snapshots: true,
+    sources: true,
+  });
+}
+
+/**
+ * Stop tracing and save to file.
+ * @param browser - The browser instance
+ * @param testName - Name of the test (used for filename)
+ * @param failed - If true, saves the trace; if false, discards it
+ */
+export async function stopTracing(
+  browser: BrowserManager,
+  testName: string,
+  failed: boolean
+): Promise<string | null> {
+  const page = browser.getPage();
+  const context = page.context();
+
+  if (failed) {
+    const safeName = testName.replace(/[^a-zA-Z0-9-_]/g, '_').substring(0, 100);
+    const tracePath = join(TEST_RESULTS_DIR, `${safeName}-${Date.now()}.zip`);
+    await context.tracing.stop({ path: tracePath });
+    console.log(`Trace saved: ${tracePath}`);
+    return tracePath;
+  } else {
+    // Discard trace if test passed
+    await context.tracing.stop();
+    return null;
+  }
+}
+
+/**
+ * Take a screenshot and save to test-results directory.
+ */
+export async function takeScreenshot(browser: BrowserManager, name: string): Promise<string> {
+  const page = browser.getPage();
+  mkdirSync(TEST_RESULTS_DIR, { recursive: true });
+  const safeName = name.replace(/[^a-zA-Z0-9-_]/g, '_').substring(0, 100);
+  const screenshotPath = join(TEST_RESULTS_DIR, `${safeName}-${Date.now()}.png`);
+  await page.screenshot({ path: screenshotPath, fullPage: true });
+  console.log(`Screenshot saved: ${screenshotPath}`);
+  return screenshotPath;
 }

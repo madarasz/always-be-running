@@ -37,11 +37,24 @@ allowed-tools: Bash(cd tests && npm test)
 
 6. **External redirects**: after submitting a form that navigates to an external site, call `page.waitForLoadState('domcontentloaded')` before interacting with the next page. Use 30 s for `waitForURL` that waits for an OAuth callback.
 
-7. **Never use explicit waits**: Never use `waitForTimeout()`. Instead, wait for elements to appear or disappear:
+7. **Avoid explicit waits; use waitForFunction only when necessary**: Never use `waitForTimeout()`. Avoid `waitForFunction()` when simpler solutions exist:
    - `await locator.waitFor({ state: 'visible' })` — wait for element to appear
    - `await locator.waitFor({ state: 'hidden' })` — wait for element to disappear
-   - `await page.waitForFunction(() => condition)` — wait for arbitrary JS condition
-   - After filtering/paging, wait for the table row count to change or loading indicator to disappear
+   - `await page.waitForURL(/param=/)` — wait for URL to match pattern
+   - `await expect.poll(async () => getValue()).toBe(expected)` — poll until assertion passes
+
+   **Why waitForFunction is bad**:
+   - Mixes raw DOM selectors with Playwright locators — harder to maintain
+   - Bypasses Playwright's auto-waiting and retry logic
+   - Often indicates you're waiting for the wrong thing (implementation detail vs user-visible change)
+
+   **Key insight**: Most UI updates happen instantly without network calls. Only add waits when there's actual async behavior:
+   - **Tab clicks**: No wait needed if tab content is already in DOM - just wait for an element on the tab
+   - **Client-side filters**: No wait needed - results update instantly via Vue reactivity
+   - **Form submission with redirect**: `await page.waitForURL(/pattern/)`
+   - **AJAX-loaded content**: Wait for the loader to disappear or content to appear
+   - **Negative assertions**: `expect(await el.isVisible()).toBe(false)` after `waitForLoadState`
+   - **Hidden input values**: Prefer visible side effects, but `waitForFunction` is acceptable when there's no visible alternative
 
 8. **Use Chrome DevTools MCP to inspect DOM**: Before writing locators, use `take_snapshot` or `evaluate_script` to understand actual element IDs, classes, and structure. Page controls often use `<span onclick>` not anchor tags.
 

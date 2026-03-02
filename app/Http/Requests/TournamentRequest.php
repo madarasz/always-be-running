@@ -140,7 +140,7 @@ class TournamentRequest extends Request
             $input['end_date'] = null;
         }
 
-        if ($input['prize_id'] == 0) {
+        if (!isset($input['prize_id']) || $input['prize_id'] == 0) {
             $input['prize_id'] = null;
         }
 

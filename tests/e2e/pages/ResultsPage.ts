@@ -58,21 +58,21 @@ export class ResultsPage extends BasePage {
   }
 
   async waitForResultsLoaded() {
-    // Wait until the cardpool filter becomes enabled (proxy for resultsLoaded = true)
-    await this.cardpoolFilter.waitFor({ state: 'visible', timeout: 10000 });
-    await this.page.waitForFunction(
-      () => {
-        const sel = document.querySelector('#cardpool') as HTMLSelectElement | null;
-        return sel && !sel.disabled;
-      },
-      { timeout: 15000 }
-    );
-    // Also wait for at least one row to appear
+    // Wait for results table to have data
     await this.resultsTableRows.first().waitFor({ state: 'visible', timeout: 15000 });
   }
 
   async waitForToConcludedLoaded() {
     await this.toConcludedTableRows.first().waitFor({ state: 'visible', timeout: 10000 });
+  }
+
+  /**
+   * Wait for more tournaments to appear in the results table.
+   * @param previousCount The count before the action that should trigger more rows
+   */
+  async waitForTournamentNumberToChange(previousCount: number) {
+    // Wait for the next row to appear (indicating count increased)
+    await this.resultsTableRows.nth(previousCount).waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
   }
 
   async getResultsCount(): Promise<number> {
@@ -85,34 +85,38 @@ export class ResultsPage extends BasePage {
 
   async clickWaitingForConclusionTab() {
     await this.waitingForConclusionTab.click();
-    await this.page.waitForTimeout(500);
+    // Wait for tab content to be visible
+    await this.page.locator('#tab-to-be-concluded').waitFor({ state: 'visible' });
   }
 
   async clickTournamentResultsTab() {
     await this.tournamentResultsTab.click();
-    await this.page.waitForTimeout(300);
+    // Wait for tab content to be visible
+    await this.page.locator('#tab-results').waitFor({ state: 'visible' });
   }
 
   async filterByCardpool(value: string) {
     await this.cardpoolFilter.selectOption(value);
-    await this.page.waitForTimeout(500);
+    // Wait for URL to update with cardpool parameter
+    await this.page.waitForURL(/cardpool=/, { timeout: 5000 });
   }
 
   async filterByCountry(value: string) {
     await this.countryFilter.selectOption(value);
-    await this.page.waitForTimeout(500);
+    // Wait for URL to update with country parameter
+    await this.page.waitForURL(/country=/, { timeout: 5000 });
   }
 
   async filterByFormat(value: string) {
     await this.formatFilter.selectOption(value);
-    await this.page.waitForTimeout(500);
+    // Wait for URL to update with format parameter
+    await this.page.waitForURL(/format=/, { timeout: 5000 });
   }
 
   async clearCountryFilter() {
-    // Click first to ensure focus, then select the "---" (all countries) option
-    await this.countryFilter.click();
     await this.countryFilter.selectOption('---');
-    await this.page.waitForTimeout(500);
+    // Wait for URL to no longer contain a country filter (or show country=---)
+    await this.page.waitForURL((url) => !url.searchParams.has('country') || url.searchParams.get('country') === '---', { timeout: 5000 }).catch(() => {});
   }
 
   async getCurrentUrl(): Promise<string> {
@@ -150,8 +154,9 @@ export class ResultsPage extends BasePage {
    * Select 500 results per page option.
    */
   async select500PerPage() {
+    const currentCount = await this.resultsTableRows.count();
     await this.resultsOption500.click();
-    await this.page.waitForTimeout(500);
+    await this.waitForTournamentNumberToChange(currentCount);
   }
 
   /**

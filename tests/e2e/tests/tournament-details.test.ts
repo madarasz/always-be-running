@@ -129,10 +129,8 @@ describe('Tournament details page', () => {
 
     it('can switch to faction charts', async () => {
       await tournamentPage.statsButtonFaction.click();
-      await browser.getPage().waitForTimeout(300);
-
-      const factionButtonClass = await tournamentPage.statsButtonFaction.getAttribute('class');
-      expect(factionButtonClass).toContain('active');
+      // Wait for faction button to become active
+      await expect.poll(async () => await tournamentPage.statsButtonFaction.getAttribute('class')).toContain('active');
 
       const idButtonClass = await tournamentPage.statsButtonId.getAttribute('class');
       expect(idButtonClass).not.toContain('active');

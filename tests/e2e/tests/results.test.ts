@@ -124,10 +124,8 @@ describe('Results page', () => {
       if (!validOption) return;
 
       await (resultsPage as any)[filterMethod](validOption.trim());
-      await browser.getPage().waitForTimeout(500);
-
-      const filteredCount = await resultsPage.getResultsCount();
-      expect(filteredCount).toBeLessThanOrEqual(initialCount);
+      // Wait for filter to be applied (count should change or stay same)
+      await expect.poll(async () => await resultsPage.getResultsCount()).toBeLessThanOrEqual(initialCount);
     });
 
     it.each([
@@ -187,10 +185,8 @@ describe('Results page', () => {
       const hasBackButton = await resultsPage.resultsPagingBack.isVisible();
       if (hasBackButton) {
         await resultsPage.resultsPagingBack.click();
-        await browser.getPage().waitForTimeout(300);
-
-        const newPagingText = await resultsPage.getPagingText();
-        expect(newPagingText).not.toBe(pagingText);
+        // Wait for paging text to change
+        await expect.poll(async () => await resultsPage.getPagingText()).not.toBe(pagingText);
       }
     });
 
@@ -200,20 +196,17 @@ describe('Results page', () => {
 
       // Test 100 per page
       await resultsPage.resultsOption100.click();
-      await browser.getPage().waitForTimeout(500);
-      expect(await resultsPage.resultsOption100.getAttribute('class')).toContain('label-active');
+      await expect.poll(async () => await resultsPage.resultsOption100.getAttribute('class')).toContain('label-active');
       expect(await resultsPage.resultsOption50.getAttribute('class')).not.toContain('label-active');
 
       // Test text mode toggle
       await resultsPage.resultsOptionText.click();
-      await browser.getPage().waitForTimeout(300);
-      expect(await resultsPage.resultsOptionText.getAttribute('class')).toContain('label-active');
+      await expect.poll(async () => await resultsPage.resultsOptionText.getAttribute('class')).toContain('label-active');
       expect(await resultsPage.resultsOptionFlag.getAttribute('class')).not.toContain('label-active');
 
       // Switch back to flag mode
       await resultsPage.resultsOptionFlag.click();
-      await browser.getPage().waitForTimeout(300);
-      expect(await resultsPage.resultsOptionFlag.getAttribute('class')).toContain('label-active');
+      await expect.poll(async () => await resultsPage.resultsOptionFlag.getAttribute('class')).toContain('label-active');
     });
   });
 
@@ -315,7 +308,8 @@ describe('Results page', () => {
 
       // Change the country filter to a different value
       await authResultsPage.filterByCountry('United Kingdom');
-      await authBrowser.getPage().waitForTimeout(500);
+      // Wait for URL to update with new country
+      await authBrowser.getPage().waitForURL(/country=United/, { timeout: 5000 });
 
       // Default country label should now be hidden
       expect(await authResultsPage.isDefaultCountryLabelVisible()).toBe(false);

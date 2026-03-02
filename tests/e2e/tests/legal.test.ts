@@ -82,9 +82,9 @@ describe('Legal', () => {
       // Previous test left the consent cookie set — banner should not appear
       await legalPage.openUpcoming();
 
-      // Give the page time to initialise cookieconsent
-      await browser.getPage().waitForTimeout(1000);
-
+      // Wait for page to fully load before checking banner visibility
+      await browser.getPage().waitForLoadState('domcontentloaded');
+      // The banner should not be visible (consent cookie is set from previous test)
       expect(await legalPage.cookieBanner.isVisible()).toBe(false);
     });
   });
