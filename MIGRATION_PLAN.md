@@ -108,7 +108,7 @@ See **[`.claude/skills/e2e/SKILL.md`](.claude/skills/e2e/SKILL.md)** for setup n
 
 E2E tests run automatically on every push to `master`/`migration`/`migration-e2e-workflow` branches and on pull requests to `master`.
 
-**Status:** ✅ **100% pass rate (80/80 tests)**
+**Status:** ✅ **100% pass rate (90/90 tests)**
 
 **What it does:**
 - Spins up the full Docker stack (PHP, nginx, MySQL)
@@ -147,71 +147,6 @@ Created `tests/e2e/tests/tournament-crud.test.ts` with 4 passing tests:
 - Location search using Google Places Autocomplete
 - Cleanup script removes all test data: `tests/e2e/fixtures/cleanup-test-data.sh`
 
-**Run tests:**
-```bash
-cd tests && npm run test:crud   # Run only CRUD tests
-cd tests && npm run cleanup      # Clean up test data
-```
-
-### Original Test Plan (for reference)
-
-Create `e2e/tests/tournament-crud.test.ts`:
-
-```typescript
-import { describe, it, expect, beforeEach } from 'vitest';
-import { OrganizePage } from '../pages/OrganizePage';
-
-describe('Tournament Management', () => {
-  let organizePage: OrganizePage;
-
-  beforeEach(async () => {
-    await loginAsRegularUser();
-  });
-
-  it('creates a new tournament', async () => {
-    await organizePage.open();
-    await organizePage.clickCreateTournament();
-    await organizePage.fillTournamentDetails({
-      title: 'Test Tournament',
-      date: '2025-06-01',
-      type: 'GNK / seasonal',
-      format: 'standard',
-    });
-    await organizePage.submitForm();
-
-    expect(await organizePage.hasMessage('Tournament created')).toBe(true);
-    expect(await organizePage.hasTournament('Test Tournament')).toBe(true);
-  });
-
-  it('edits an existing tournament', async () => {
-    // Setup: create tournament via API or seed
-    await organizePage.openEditPage('My Test Event');
-    await organizePage.changeTitle('Updated Event Name');
-    await organizePage.saveChanges();
-
-    expect(await organizePage.hasMessage('Tournament updated')).toBe(true);
-  });
-
-  it('deletes a tournament', async () => {
-    await organizePage.deleteTournament('Tournament to Delete');
-    await organizePage.confirmDeletion();
-
-    expect(await organizePage.hasTournament('Tournament to Delete')).toBe(false);
-  });
-
-  it('concludes a tournament with results', async () => {
-    await organizePage.openTournament('Finished Tournament');
-    await organizePage.clickConclude();
-    await organizePage.enterTopCutResults();
-    await organizePage.submitConclusion();
-
-    const resultsPage = new ResultsPage(browser);
-    await resultsPage.open();
-    expect(await resultsPage.hasTournament('Finished Tournament')).toBe(true);
-  });
-});
-```
-
 ### Implementation Notes
 - Tests create their own data during execution (no seeding required)
 - Dynamic dates relative to today's date (no mocking needed)
@@ -224,6 +159,41 @@ describe('Tournament Management', () => {
 - [X] Tournament edit works
 - [X] Tournament delete works (soft-delete)
 - [X] Tournament conclusion works
+
+---
+
+## Phase 1b.2: Tournament Entries Tests - ✅ DONE
+
+**Goal:** Test tournament entry management including claims, registration, manual imports, conflicts, and merging.
+
+### Implementation
+
+Created `tests/e2e/tests/tournament-entries.test.ts` with 6 passing tests:
+- **claims spot with decklist** - Claims a concluded tournament spot with deck selection from NetrunnerDB
+- **claims spot without decklist** - Claims using identity selection only (no deck links)
+- **register and unregister** - Registration for upcoming tournaments
+- **manual import and delete** - Tournament creator importing claims manually
+- **claim conflict** - Detects conflicts when multiple claims at same rank with different identities
+- **claim merging** - Merges user claim with imported entry when identities match
+
+**Key Features:**
+- Tests both claim workflows (with/without decks)
+- Validates merge logic (same identities = merge, different = conflict)
+- Page object methods added to `TournamentDetailsPage.ts`:
+  - `clickClaimButton()`, `waitForDecksLoaded()`, `submitClaimWithDecks()`, `submitClaimWithoutDecks()`
+  - `hasPlayerClaim()`, `removeClaim()`
+  - `clickRegister()`, `clickUnregister()`
+  - `openManualImportForm()`, `addManualClaim()`, `hasImportedEntry()`, `deleteImportedEntry()`
+  - `hasConflictWarning()`, `getEntryCountAtRank()`
+
+### Validation
+- [X] All new entry tests pass (6/6)
+- [X] Claiming with decks works
+- [X] Claiming without decks works
+- [X] Registration/unregistration works
+- [X] Manual import works
+- [X] Conflict detection works
+- [X] Claim merging works
 
 ---
 
@@ -305,6 +275,85 @@ When rewriting controllers in Laravel 11, Zod schemas serve as the spec for API 
 - [ ] `npm test` runs both API and E2E tests
 
 **Full implementation details:** See `~/.claude/plans/purring-seeking-sparrow.md`
+
+---
+
+## Phase 1d: Performance Tests for API Endpoints and Admin Page
+
+**Goal:** Establish performance baselines before migration to detect regressions during Laravel upgrade.
+
+### Background
+
+The admin page (`/admin`) is known to be slow (1-10+ seconds) due to:
+- Synchronous external HTTP call to `alwaysberunning.net/ktm/metas.json`
+- N+1 queries for VIP users (communityCount() method)
+- Multiple separate COUNT queries
+
+API endpoints also lack pagination and have complex relationships that may degrade during migration.
+
+### Directory Structure
+
+```
+tests/
+├── package.json              # Add test:perf scripts
+├── vitest.config.ts          # Add perf project to workspace
+└── perf/                     # NEW
+    ├── thresholds.ts         # Centralized threshold configuration
+    ├── helpers/
+    │   └── perf-client.ts    # HTTP client with timing measurement
+    ├── tests/
+    │   ├── api-endpoints.perf.test.ts
+    │   └── admin-page.perf.test.ts
+    └── reports/              # Gitignored - baseline JSON files
+        └── .gitkeep
+```
+
+### Performance Thresholds
+
+| Endpoint | Warn | Fail |
+|----------|------|------|
+| `/api/tournaments/upcoming` | 2s | 5s |
+| `/api/tournaments/results` | 2.5s | 6s |
+| `/api/tournaments` | 3s | 8s |
+| `/api/adminstats` | 3s | 10s |
+| `/api/entries` | 2s | 5s |
+| `/api/prizes` | 3s | 8s |
+| `/admin` page | 5s | 15s |
+
+### Implementation
+
+1. **API endpoint tests** (`api-endpoints.perf.test.ts`)
+   - Test public endpoints with 3 iterations each
+   - Warmup request before measurement
+   - Calculate mean, p75, p95 statistics
+
+2. **Admin page test** (`admin-page.perf.test.ts`)
+   - Browser-based using existing auth helper
+   - Reuse `createAuthenticatedBrowser('admin')` from E2E tests
+   - Measure `networkidle` timing
+   - 2 iterations (expensive browser test)
+
+### Run Commands
+
+```bash
+# Run performance tests
+cd tests && npm run test:perf
+
+# Save baseline before migration
+cd tests && npm run test:perf:baseline
+
+# Run all tests (e2e + perf)
+cd tests && npm test
+```
+
+### Validation
+
+- [ ] `npm run test:perf` passes with all endpoints under warn thresholds
+- [ ] Admin page test completes (establishes baseline even if slow)
+- [ ] Baseline JSON saved to `tests/perf/reports/`
+- [ ] Tests run in < 60 seconds total (API ~30s, Admin ~30s)
+
+**Full implementation details:** See `~/.claude/plans/cryptic-greeting-pascal.md`
 
 ---
 
@@ -774,6 +823,8 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 | `tests/e2e/` | 1 | E2E tests (Vitest + agent-browser) |
 | `tests/api/schemas/` | 1c | Zod schemas for API contracts |
 | `tests/api/tests/` | 1c | API schema validation tests |
+| `tests/perf/` | 1d | Performance baseline tests |
+| `tests/perf/thresholds.ts` | 1d | Endpoint threshold configuration |
 
 ---
 
@@ -822,6 +873,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 
 After each phase, verify with:
 1. **API tests** - `npm run test:api` (schema validation, ~10s)
-2. **E2E tests** - `npm run test:e2e` (browser tests, 18 existing + 4 CRUD)
-3. **Manual smoke test** - Login, create tournament, view results
-4. **Admin functions** - Card sync, user management work
+2. **E2E tests** - `npm run test:e2e` (browser tests, 90 tests: auth, pages, CRUD, entries)
+3. **Performance tests** - `npm run test:perf` (baseline comparison, ~60s)
+4. **Manual smoke test** - Login, create tournament, view results
+5. **Admin functions** - Card sync, user management work
