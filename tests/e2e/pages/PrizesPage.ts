@@ -39,30 +39,25 @@ export class PrizesPage extends BasePage {
   }
 
   async waitForPrizesLoaded() {
-    // Wait for filter dropdown to have more than just the default option
-    // This indicates Vue has loaded the prizes data
-    await this.page.waitForFunction(
-      () => document.querySelectorAll('#tab-official .custom-select option').length > 1,
-      { timeout: 10000 }
-    );
+    // Wait for filter dropdown to have options (Vue has loaded prizes data)
+    await this.filterDropdown.locator('option').nth(1).waitFor({ state: 'attached', timeout: 10000 });
   }
 
   async waitForArtistsLoaded() {
     // Wait for at least one artist section to appear
-    await this.page.waitForFunction(
-      () => document.querySelectorAll('#tab-other .bracket').length > 0,
-      { timeout: 10000 }
-    );
+    await this.artistSections.first().waitFor({ state: 'visible', timeout: 10000 });
   }
 
   async clickOfficialTab() {
     await this.officialTab.click();
-    await this.page.waitForTimeout(300);
+    // Wait for tab content to be visible
+    await this.officialTabContent.waitFor({ state: 'visible' });
   }
 
   async clickOtherArtTab() {
     await this.otherArtTab.click();
-    await this.page.waitForTimeout(300);
+    // Wait for tab content to be visible
+    await this.otherArtTabContent.waitFor({ state: 'visible' });
   }
 
   async getVisibleKitCount() {
@@ -77,8 +72,8 @@ export class PrizesPage extends BasePage {
   }
 
   async selectFilterOption(value: string) {
+    // No wait needed - filter updates instantly via Vue reactivity
     await this.filterDropdown.selectOption(value);
-    await this.page.waitForTimeout(300);
   }
 
   async getFilterOptions() {

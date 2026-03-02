@@ -90,10 +90,8 @@ export class UpcomingPage extends BasePage {
   }
 
   async clearCountryFilter() {
-    // Click first to ensure focus, then select the "---" (all countries) option
-    await this.countryFilter.click();
+    // No wait needed - filter updates instantly via Vue reactivity
     await this.countryFilter.selectOption('---');
-    await this.page.waitForTimeout(500);
   }
 
   async filterByState(state: string) {
@@ -169,11 +167,8 @@ export class UpcomingPage extends BasePage {
   }
 
   async waitForMapLoaded(): Promise<void> {
-    // Wait for Google Maps to fully load (gm-style class indicates Google Maps content)
-    await this.page.waitForFunction(() => {
-      const map = document.querySelector('#map');
-      return map && map.innerHTML.includes('gm-style');
-    }, { timeout: 15000 });
+    // Wait for Google Maps to fully load (gm-style element appears)
+    await this.page.locator('#map .gm-style').waitFor({ state: 'attached', timeout: 15000 });
   }
 
   async getMapMarkerCount(): Promise<number> {

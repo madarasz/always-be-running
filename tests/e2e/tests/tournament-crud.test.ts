@@ -1,10 +1,5 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { BrowserManager } from 'agent-browser/dist/browser.js';
-import { TournamentPage, E2E_TEST_PREFIX } from '../pages/TournamentPage';
-import { OrganizePage } from '../pages/OrganizePage';
-import { UpcomingPage } from '../pages/UpcomingPage';
-import { ResultsPage } from '../pages/ResultsPage';
-import { createAuthenticatedBrowser, closeBrowserSafely } from '../helpers/auth';
+import { createBrowserSuite, it, expect } from '../helpers/test-fixture';
+import { E2E_TEST_PREFIX } from '../pages/TournamentPage';
 
 /**
  * Tournament CRUD Tests
@@ -43,29 +38,12 @@ function getPastDate(daysAgo: number): string {
   return formatDate(date);
 }
 
-describe('Tournament Management', () => {
-  let browser: BrowserManager;
-  let tournamentPage: TournamentPage;
-  let organizePage: OrganizePage;
-  let upcomingPage: UpcomingPage;
-  let resultsPage: ResultsPage;
-
+createBrowserSuite('Tournament Management', { userType: 'regular' }, (ctx) => {
   // Generate unique timestamp for test isolation
   const timestamp = Date.now();
 
-  beforeAll(async () => {
-    browser = await createAuthenticatedBrowser('regular');
-    tournamentPage = new TournamentPage(browser);
-    organizePage = new OrganizePage(browser);
-    upcomingPage = new UpcomingPage(browser);
-    resultsPage = new ResultsPage(browser);
-  });
-
-  afterAll(async () => {
-    await closeBrowserSafely(browser);
-  });
-
   it('creates new tournament', async () => {
+    const { tournamentPage, upcomingPage } = ctx.pages;
     const tournamentTitle = `${E2E_TEST_PREFIX} Create Test ${timestamp}`;
 
     await tournamentPage.openCreateForm();
@@ -100,6 +78,7 @@ describe('Tournament Management', () => {
   });
 
   it('edits an existing tournament', async () => {
+    const { tournamentPage } = ctx.pages;
     const originalTitle = `${E2E_TEST_PREFIX} Edit Test ${timestamp}`;
     const editTimestamp = Date.now();
     const newTitle = `${E2E_TEST_PREFIX} Edited Test ${editTimestamp}`;
@@ -136,6 +115,7 @@ describe('Tournament Management', () => {
   });
 
   it('deletes a tournament', async () => {
+    const { tournamentPage, organizePage } = ctx.pages;
     const tournamentTitle = `${E2E_TEST_PREFIX} Delete Test ${timestamp}`;
 
     // First create a tournament to delete
@@ -167,6 +147,7 @@ describe('Tournament Management', () => {
   });
 
   it('concludes a tournament with results', async () => {
+    const { tournamentPage, resultsPage } = ctx.pages;
     const tournamentTitle = `${E2E_TEST_PREFIX} Conclude Test ${timestamp}`;
 
     // Create a tournament to conclude
@@ -195,11 +176,17 @@ describe('Tournament Management', () => {
     await resultsPage.open();
     await resultsPage.waitForResultsLoaded();
 
+    // Get count before changing filters, then wait for count to change after
+    const countBeforeFilters = await resultsPage.getResultsCount();
+
     // Clear country filter (user preference may have auto-filter enabled)
     await resultsPage.clearCountryFilter();
 
     // Select 500/page to avoid paging issues
     await resultsPage.select500PerPage();
+
+    // Wait for the table to update with more results
+    await resultsPage.waitForTournamentNumberToChange(countBeforeFilters);
 
     // Check that the concluded tournament appears in results
     expect(await resultsPage.hasTournamentInTable(tournamentTitle)).toBe(true);

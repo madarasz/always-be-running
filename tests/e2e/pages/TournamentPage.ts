@@ -42,8 +42,7 @@ export class TournamentPage extends BasePage {
   async openCreateForm() {
     await this.navigate('/tournaments/create');
     await this.submitButton.waitFor({ state: 'visible', timeout: 10000 });
-    // Wait for Vue to initialize the form (prize kit loads via AJAX)
-    await this.page.waitForTimeout(500);
+    await this.waitForPrizesLoaded();
   }
 
   /**
@@ -60,6 +59,7 @@ export class TournamentPage extends BasePage {
   async openEdit(tournamentId: number) {
     await this.navigate(`/tournaments/${tournamentId}/edit`);
     await this.submitButton.waitFor({ state: 'visible' });
+    await this.waitForPrizesLoaded();
   }
 
   /**
@@ -101,15 +101,50 @@ export class TournamentPage extends BasePage {
    * Search for a location using Google Places Autocomplete and select the first result.
    */
   async searchLocation(query: string) {
+    // Dismiss cookie banner if present - it can interfere with the autocomplete dropdown
+    await this.dismissCookieBanner();
+
+    // Fill the input to trigger autocomplete
     await this.locationSearchInput.fill(query);
 
-    const autocompleteContainer = this.page.locator('.pac-container');
-    await autocompleteContainer.waitFor({ state: 'visible', timeout: 10000 });
-
+    // Wait for autocomplete suggestions to appear
     const firstSuggestion = this.page.locator('.pac-item').first();
+    await firstSuggestion.waitFor({ state: 'visible', timeout: 10000 });
+
+    // Click the first suggestion
     await firstSuggestion.click();
 
-    await this.page.waitForTimeout(500);
+    // Wait for autocomplete dropdown to close
+    await this.page.locator('.pac-container').waitFor({ state: 'hidden', timeout: 5000 });
+
+    // Wait for location country to be populated
+    await this.waitForInputToHaveValue('input[name="location_country"]');
+  }
+
+  /**
+   * Wait for the prize select to have options loaded from the API.
+   * The select is conditionally rendered by Vue.js only when prizes exist.
+   */
+  async waitForPrizesLoaded(timeout = 10000) {
+    // Wait for the second option in prize select (first is "--- none ---", second is actual prize)
+    const prizeSelectOption = this.page.locator('select[name="prize_id"] option:nth-child(2)');
+    await prizeSelectOption.waitFor({ state: 'attached', timeout }).catch(() => {
+      // If no prizes exist, the select won't render - that's OK
+    });
+  }
+
+  /**
+   * Wait for an input element to have a non-empty value.
+   */
+  async waitForInputToHaveValue(selector: string, timeout = 5000) {
+    await this.page.waitForFunction(
+      (sel) => {
+        const input = document.querySelector(sel) as HTMLInputElement;
+        return input && input.value.length > 0;
+      },
+      selector,
+      { timeout }
+    );
   }
 
   /**
@@ -126,12 +161,28 @@ export class TournamentPage extends BasePage {
    */
   async submitForm() {
     const currentUrl = this.getUrl();
-    await this.submitButton.click();
-    await this.page.waitForLoadState('domcontentloaded');
-    await this.page.waitForTimeout(500);
+    const isCreatePage = currentUrl.includes('/create');
 
+    await this.submitButton.click();
+
+    // Wait for navigation after form submission
+    // For create: wait for URL to change from /create to /tournaments/id
+    // For edit: wait for URL to change from /edit to /tournaments/id
+    if (isCreatePage || currentUrl.includes('/edit')) {
+      await this.page.waitForURL(
+        (url) => /\/tournaments\/\d+/.test(url.pathname) && !url.pathname.includes('/edit') && !url.pathname.includes('/create'),
+        { timeout: 15000 }
+      ).catch(async () => {
+        // URL didn't change to view page - check for errors
+        await this.page.waitForLoadState('domcontentloaded');
+      });
+    } else {
+      await this.page.waitForLoadState('domcontentloaded');
+    }
+
+    // Check for validation errors if still on form page
     const newUrl = this.getUrl();
-    if (newUrl === currentUrl || newUrl.includes('/create')) {
+    if (newUrl === currentUrl || newUrl.includes('/create') || newUrl.includes('/edit')) {
       const errorAlert = this.page.locator('.alert-danger');
       if (await errorAlert.count() > 0) {
         const errorText = await errorAlert.textContent();
@@ -192,7 +243,8 @@ export class TournamentPage extends BasePage {
       await this.concludedCheckbox.check();
     }
 
-    await this.page.waitForTimeout(300);
+    // Wait for players_number input to become enabled
+    await this.playersNumberInput.waitFor({ state: 'visible' });
     await this.playersNumberInput.fill(playersNumber.toString());
 
     if (topCut > 0) {

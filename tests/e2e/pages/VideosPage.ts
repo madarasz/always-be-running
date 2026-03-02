@@ -60,8 +60,8 @@ export class VideosPage extends BasePage {
   async clickTournament(index: number) {
     const row = await this.getTournamentRow(index);
     await row.click();
-    // Wait for videos table to update
-    await this.page.waitForTimeout(500);
+    // Wait for videos table to be populated
+    await this.videosTable.locator('tbody tr').first().waitFor({ state: 'attached', timeout: 5000 });
   }
 
   async getVideosCount() {
@@ -82,8 +82,16 @@ export class VideosPage extends BasePage {
     const row = await this.getVideoRow(index);
     const link = row.locator('td:nth-child(2) b a');
     await link.click();
-    // Wait for video player to appear
-    await this.page.waitForTimeout(1000);
+    // Wait for video player section to become visible (hidden-xs-up class removed)
+    await this.page.waitForFunction(
+      () => {
+        const section = document.querySelector('#section-watch-video');
+        return section && !section.classList.contains('hidden-xs-up');
+      },
+      { timeout: 5000 }
+    );
+    // Wait for iframe to be created
+    await this.videoPlayer.waitFor({ state: 'attached', timeout: 5000 });
   }
 
   async isVideoPlayerVisible() {
