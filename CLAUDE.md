@@ -74,6 +74,15 @@ cd tests && npm run test:watch
 
 **Test credentials:** Copy `tests/e2e/.env.template` to `tests/e2e/.env` and fill in NetrunnerDB test user credentials.
 
+**Test fixture:** All tests must use `createBrowserSuite` from `tests/e2e/helpers/test-fixture.ts`:
+- Automatic tracing for each test
+- Failure screenshots captured automatically
+- All page objects pre-instantiated via `ctx.pages`
+
+**Debugging artifacts:** On test failure, screenshots and Playwright traces are saved to `tests/e2e/test-results/`:
+- Screenshots: `{test-name}-failure-{timestamp}.png`
+- Traces: `{test-name}-{timestamp}.zip` (open with `npx playwright show-trace trace.zip`)
+
 **Test structure:**
 ```
 tests/

@@ -79,11 +79,20 @@ export async function loginAndSaveSession(userType: 'regular' | 'admin', maxRetr
 }
 
 /**
+ * Options for createAuthenticatedBrowser
+ */
+export interface AuthenticatedBrowserOptions {
+  /** Callback to run after browser launch but before loading auth state/navigation */
+  beforeInit?: (browser: BrowserManager) => Promise<void>;
+}
+
+/**
  * Creates a BrowserManager with pre-loaded authentication state.
  * Use this instead of manually calling loginUser() in tests.
  */
 export async function createAuthenticatedBrowser(
-  userType: 'regular' | 'admin' | 'none' = 'none'
+  userType: 'regular' | 'admin' | 'none' = 'none',
+  options?: AuthenticatedBrowserOptions
 ): Promise<BrowserManager> {
   const browser = new BrowserManager();
 
@@ -94,6 +103,11 @@ export async function createAuthenticatedBrowser(
     executablePath: CHROME_PATH,
   });
   await browser.ensurePage();
+
+  // Call beforeInit callback (e.g., for date mocking that must happen before navigation)
+  if (options?.beforeInit) {
+    await options.beforeInit(browser);
+  }
 
   // Load storage state if authenticated session is requested
   if (userType !== 'none') {

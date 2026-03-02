@@ -1,248 +1,247 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { BrowserManager } from 'agent-browser/dist/browser.js';
-import { TournamentDetailsPage } from '../pages/TournamentDetailsPage';
-import { clearSession, closeBrowserSafely, createAuthenticatedBrowser, CHROME_PATH } from '../helpers/auth';
+import { createBrowserSuite, it, expect, describe, beforeAll } from '../helpers/test-fixture';
+import { clearSession } from '../helpers/auth';
+
 const TOURNAMENT_PATH = '5313/pawnshop-now-playing-in-a-game-store-near-you';
 
-describe('Tournament details page', () => {
-  let browser: BrowserManager;
-  let tournamentPage: TournamentDetailsPage;
-
-  beforeAll(async () => {
-    browser = new BrowserManager();
-    await browser.launch({
-      id: 'launch',
-      action: 'launch',
-      headless: true,
-      executablePath: CHROME_PATH,
-    });
-    await browser.ensurePage();
-    tournamentPage = new TournamentDetailsPage(browser);
-  });
-
-  afterAll(async () => {
-    await closeBrowserSafely(browser);
-  });
-
+createBrowserSuite('Tournament details - Logged out', { userType: 'none' }, (ctx) => {
   describe('Page components (generic)', () => {
     beforeAll(async () => {
-      await clearSession(browser);
-      await tournamentPage.open(TOURNAMENT_PATH);
-      await tournamentPage.waitForPageLoaded();
+      const { tournamentDetailsPage } = ctx.pages;
+      await clearSession(ctx.browser);
+      await tournamentDetailsPage.open(TOURNAMENT_PATH);
+      await tournamentDetailsPage.waitForPageLoaded();
     });
 
     it('displays tournament basic info (title, type, creator, location, date)', async () => {
-      const title = await tournamentPage.getTitle();
+      const { tournamentDetailsPage } = ctx.pages;
+
+      const title = await tournamentDetailsPage.getTitle();
       expect(title.length).toBeGreaterThan(0);
       expect(title.toLowerCase()).toContain('pawnshop');
 
-      const type = await tournamentPage.getType();
+      const type = await tournamentDetailsPage.getType();
       expect(type.length).toBeGreaterThan(0);
 
-      const creator = await tournamentPage.getCreator();
+      const creator = await tournamentDetailsPage.getCreator();
       expect(creator.length).toBeGreaterThan(0);
 
-      const location = await tournamentPage.getLocation();
+      const location = await tournamentDetailsPage.getLocation();
       expect(location.length).toBeGreaterThan(0);
 
-      const date = await tournamentPage.getDate();
+      const date = await tournamentDetailsPage.getDate();
       expect(date.length).toBeGreaterThan(0);
     });
 
     it('displays cardpool and MWL information', async () => {
-      const cardpool = await tournamentPage.getCardpool();
+      const { tournamentDetailsPage } = ctx.pages;
+
+      const cardpool = await tournamentDetailsPage.getCardpool();
       expect(cardpool.length).toBeGreaterThan(0);
 
-      const mwl = await tournamentPage.getMwl();
+      const mwl = await tournamentDetailsPage.getMwl();
       expect(mwl.length).toBeGreaterThan(0);
     });
 
     it('displays results, entries, photos and videos sections', async () => {
-      expect(await tournamentPage.hasResultsSection()).toBe(true);
-      expect(await tournamentPage.hasEntriesTable()).toBe(true);
+      const { tournamentDetailsPage } = ctx.pages;
 
-      await tournamentPage.photosHeader.waitFor({ state: 'visible' });
-      expect(await tournamentPage.photosHeader.isVisible()).toBe(true);
+      expect(await tournamentDetailsPage.hasResultsSection()).toBe(true);
+      expect(await tournamentDetailsPage.hasEntriesTable()).toBe(true);
 
-      await tournamentPage.videosHeader.waitFor({ state: 'visible' });
-      expect(await tournamentPage.videosHeader.isVisible()).toBe(true);
+      await tournamentDetailsPage.photosHeader.waitFor({ state: 'visible' });
+      expect(await tournamentDetailsPage.photosHeader.isVisible()).toBe(true);
+
+      await tournamentDetailsPage.videosHeader.waitFor({ state: 'visible' });
+      expect(await tournamentDetailsPage.videosHeader.isVisible()).toBe(true);
     });
   });
 
   describe('Map display', () => {
     beforeAll(async () => {
-      await clearSession(browser);
-      await tournamentPage.open(TOURNAMENT_PATH);
-      await tournamentPage.waitForPageLoaded();
+      const { tournamentDetailsPage } = ctx.pages;
+      await clearSession(ctx.browser);
+      await tournamentDetailsPage.open(TOURNAMENT_PATH);
+      await tournamentDetailsPage.waitForPageLoaded();
     });
 
     it('shows enabled "Show Map" button when Google Maps API is loaded', async () => {
-      await tournamentPage.showMapButton.waitFor({ state: 'visible' });
-      expect(await tournamentPage.showMapButton.isVisible()).toBe(true);
+      const { tournamentDetailsPage } = ctx.pages;
 
-      await tournamentPage.waitForMapButtonEnabled();
-      const isDisabled = await tournamentPage.showMapButton.isDisabled();
+      await tournamentDetailsPage.showMapButton.waitFor({ state: 'visible' });
+      expect(await tournamentDetailsPage.showMapButton.isVisible()).toBe(true);
+
+      await tournamentDetailsPage.waitForMapButtonEnabled();
+      const isDisabled = await tournamentDetailsPage.showMapButton.isDisabled();
       expect(isDisabled).toBe(false);
     });
 
     it('displays map with marker after clicking "Show Map"', async () => {
-      await tournamentPage.clickShowMap();
-      await tournamentPage.waitForMapDisplayed();
+      const { tournamentDetailsPage } = ctx.pages;
+
+      await tournamentDetailsPage.clickShowMap();
+      await tournamentDetailsPage.waitForMapDisplayed();
 
       // Button should be hidden
-      const buttonClass = await tournamentPage.showMapButton.getAttribute('class');
+      const buttonClass = await tournamentDetailsPage.showMapButton.getAttribute('class');
       expect(buttonClass).toContain('hidden-xs-up');
 
       // Map should have content (Google Maps renders child elements)
-      const mapHasContent = await tournamentPage.mapContainer.evaluate((el) => el.children.length > 0);
+      const mapHasContent = await tournamentDetailsPage.mapContainer.evaluate((el) => el.children.length > 0);
       expect(mapHasContent).toBe(true);
     });
   });
 
   describe('Statistics charts', () => {
     beforeAll(async () => {
-      await clearSession(browser);
-      await tournamentPage.open(TOURNAMENT_PATH);
-      await tournamentPage.waitForPageLoaded();
-      await tournamentPage.waitForChartsLoaded();
+      const { tournamentDetailsPage } = ctx.pages;
+      await clearSession(ctx.browser);
+      await tournamentDetailsPage.open(TOURNAMENT_PATH);
+      await tournamentDetailsPage.waitForPageLoaded();
+      await tournamentDetailsPage.waitForChartsLoaded();
     });
 
     it('displays statistics section with runner and corp ID charts', async () => {
-      const statsSection = browser.getPage().locator('h5:has(.fa-bar-chart)');
+      const { tournamentDetailsPage } = ctx.pages;
+
+      const statsSection = ctx.browser.getPage().locator('h5:has(.fa-bar-chart)');
       await statsSection.waitFor({ state: 'visible', timeout: 10000 });
       expect(await statsSection.isVisible()).toBe(true);
 
-      const hasRunnerChart = await tournamentPage.isChartVisible('#stat-chart-runner');
+      const hasRunnerChart = await tournamentDetailsPage.isChartVisible('#stat-chart-runner');
       expect(hasRunnerChart).toBe(true);
 
-      const hasCorpChart = await tournamentPage.isChartVisible('#stat-chart-corp');
+      const hasCorpChart = await tournamentDetailsPage.isChartVisible('#stat-chart-corp');
       expect(hasCorpChart).toBe(true);
     });
 
     it('has ID/faction toggle with ID active by default', async () => {
-      expect(await tournamentPage.statsButtonId.isVisible()).toBe(true);
-      expect(await tournamentPage.statsButtonFaction.isVisible()).toBe(true);
+      const { tournamentDetailsPage } = ctx.pages;
 
-      const idButtonClass = await tournamentPage.statsButtonId.getAttribute('class');
+      expect(await tournamentDetailsPage.statsButtonId.isVisible()).toBe(true);
+      expect(await tournamentDetailsPage.statsButtonFaction.isVisible()).toBe(true);
+
+      const idButtonClass = await tournamentDetailsPage.statsButtonId.getAttribute('class');
       expect(idButtonClass).toContain('active');
     });
 
     it('can switch to faction charts', async () => {
-      await tournamentPage.statsButtonFaction.click();
-      // Wait for faction button to become active
-      await expect.poll(async () => await tournamentPage.statsButtonFaction.getAttribute('class')).toContain('active');
+      const { tournamentDetailsPage } = ctx.pages;
 
-      const idButtonClass = await tournamentPage.statsButtonId.getAttribute('class');
+      await tournamentDetailsPage.statsButtonFaction.click();
+      // Wait for faction button to become active
+      await expect.poll(async () => await tournamentDetailsPage.statsButtonFaction.getAttribute('class')).toContain('active');
+
+      const idButtonClass = await tournamentDetailsPage.statsButtonId.getAttribute('class');
       expect(idButtonClass).not.toContain('active');
     });
   });
 
   describe('User not logged in', () => {
     beforeAll(async () => {
-      await clearSession(browser);
-      await tournamentPage.open(TOURNAMENT_PATH);
-      await tournamentPage.waitForPageLoaded();
+      const { tournamentDetailsPage } = ctx.pages;
+      await clearSession(ctx.browser);
+      await tournamentDetailsPage.open(TOURNAMENT_PATH);
+      await tournamentDetailsPage.waitForPageLoaded();
     });
 
     it('does not show authenticated user features', async () => {
-      expect(await tournamentPage.hasClaimButtons()).toBe(false);
-      expect(await tournamentPage.hasAddPhotosButton()).toBe(false);
-      expect(await tournamentPage.hasAddVideosButton()).toBe(false);
-      expect(await tournamentPage.hasRegisterButton()).toBe(false);
-      expect(await tournamentPage.hasControlButtons()).toBe(false);
+      const { tournamentDetailsPage } = ctx.pages;
+
+      expect(await tournamentDetailsPage.hasClaimButtons()).toBe(false);
+      expect(await tournamentDetailsPage.hasAddPhotosButton()).toBe(false);
+      expect(await tournamentDetailsPage.hasAddVideosButton()).toBe(false);
+      expect(await tournamentDetailsPage.hasRegisterButton()).toBe(false);
+      expect(await tournamentDetailsPage.hasControlButtons()).toBe(false);
     });
 
     it('shows login suggestion messages', async () => {
-      expect(await tournamentPage.hasSuggestLoginClaim()).toBe(true);
-      expect(await tournamentPage.hasSuggestLoginMedia()).toBe(true);
+      const { tournamentDetailsPage } = ctx.pages;
+
+      expect(await tournamentDetailsPage.hasSuggestLoginClaim()).toBe(true);
+      expect(await tournamentDetailsPage.hasSuggestLoginMedia()).toBe(true);
     });
   });
+});
 
-  describe('User logged in (regular user)', () => {
-    let regularBrowser: BrowserManager;
-    let regularPage: TournamentDetailsPage;
-
-    beforeAll(async () => {
-      regularBrowser = await createAuthenticatedBrowser('regular');
-      regularPage = new TournamentDetailsPage(regularBrowser);
-      await regularPage.open(TOURNAMENT_PATH);
-      await regularPage.waitForPageLoaded();
-    });
-
-    afterAll(async () => {
-      await closeBrowserSafely(regularBrowser);
-    });
-
-    it('shows authenticated UI elements and hides login messages', async () => {
-      // Should see add buttons
-      expect(await regularPage.hasAddPhotosButton()).toBe(true);
-      expect(await regularPage.hasAddVideosButton()).toBe(true);
-
-      // Should NOT see login suggestion messages
-      expect(await regularPage.hasSuggestLoginClaim()).toBe(false);
-      expect(await regularPage.hasSuggestLoginMedia()).toBe(false);
-
-      // Claim buttons should be available (suggest login message gone)
-      const hasClaimButtons = await regularPage.hasClaimButtons();
-      const hasSuggestLogin = await regularPage.hasSuggestLoginClaim();
-      expect(hasClaimButtons || !hasSuggestLogin).toBe(true);
-    });
-
-    it('does not show control buttons for non-creator user', async () => {
-      expect(await regularPage.hasControlButtons()).toBe(false);
-    });
-
-    it('does not show admin-only features', async () => {
-      const count = await regularPage.viewingAsAdmin.count();
-      expect(count).toBe(0);
-      expect(await regularPage.hasApproveButton()).toBe(false);
-      expect(await regularPage.hasRejectButton()).toBe(false);
-      expect(await regularPage.hasRevertConclusionButton()).toBe(false);
-    });
+createBrowserSuite('Tournament details - Regular user', { userType: 'regular' }, (ctx) => {
+  beforeAll(async () => {
+    const { tournamentDetailsPage } = ctx.pages;
+    await tournamentDetailsPage.open(TOURNAMENT_PATH);
+    await tournamentDetailsPage.waitForPageLoaded();
   });
 
-  describe('User logged in (admin user)', () => {
-    let adminBrowser: BrowserManager;
-    let adminPage: TournamentDetailsPage;
+  it('shows authenticated UI elements and hides login messages', async () => {
+    const { tournamentDetailsPage } = ctx.pages;
 
-    beforeAll(async () => {
-      adminBrowser = await createAuthenticatedBrowser('admin');
-      adminPage = new TournamentDetailsPage(adminBrowser);
-      await adminPage.open(TOURNAMENT_PATH);
-      await adminPage.waitForPageLoaded();
-    });
+    // Should see add buttons
+    expect(await tournamentDetailsPage.hasAddPhotosButton()).toBe(true);
+    expect(await tournamentDetailsPage.hasAddVideosButton()).toBe(true);
 
-    afterAll(async () => {
-      await closeBrowserSafely(adminBrowser);
-    });
+    // Should NOT see login suggestion messages
+    expect(await tournamentDetailsPage.hasSuggestLoginClaim()).toBe(false);
+    expect(await tournamentDetailsPage.hasSuggestLoginMedia()).toBe(false);
 
-    it('shows admin control buttons', async () => {
-      expect(await adminPage.hasControlButtons()).toBe(true);
-      expect(await adminPage.editButton.isVisible()).toBe(true);
-      expect(await adminPage.transferButton.isVisible()).toBe(true);
-      expect(await adminPage.deleteButton.isVisible()).toBe(true);
-      expect(await adminPage.viewingAsAdmin.isVisible()).toBe(true);
-      expect(await adminPage.hasRejectButton()).toBe(true);
-    });
+    // Claim buttons should be available (suggest login message gone)
+    const hasClaimButtons = await tournamentDetailsPage.hasClaimButtons();
+    const hasSuggestLogin = await tournamentDetailsPage.hasSuggestLoginClaim();
+    expect(hasClaimButtons || !hasSuggestLogin).toBe(true);
+  });
 
-    it('shows admin content management UI', async () => {
-      expect(await adminPage.hasAddPhotosButton()).toBe(true);
-      expect(await adminPage.hasAddVideosButton()).toBe(true);
-      expect(await adminPage.hasConcludedBySection()).toBe(true);
-      expect(await adminPage.hasRevertConclusionButton()).toBe(true);
+  it('does not show control buttons for non-creator user', async () => {
+    const { tournamentDetailsPage } = ctx.pages;
 
-      const concludedText = await adminPage.getConcludedByText();
-      expect(concludedText).toContain('concluded by');
-    });
+    expect(await tournamentDetailsPage.hasControlButtons()).toBe(false);
+  });
 
-    it('shows claim buttons and hides login messages', async () => {
-      const hasClaimButtons = await adminPage.hasClaimButtons();
-      const hasSuggestLoginClaim = await adminPage.hasSuggestLoginClaim();
-      const hasSuggestLoginMedia = await adminPage.hasSuggestLoginMedia();
+  it('does not show admin-only features', async () => {
+    const { tournamentDetailsPage } = ctx.pages;
 
-      // Suggest login should NOT be shown for logged in admin
-      expect(hasSuggestLoginClaim).toBe(false);
-      expect(hasSuggestLoginMedia).toBe(false);
-    });
+    const count = await tournamentDetailsPage.viewingAsAdmin.count();
+    expect(count).toBe(0);
+    expect(await tournamentDetailsPage.hasApproveButton()).toBe(false);
+    expect(await tournamentDetailsPage.hasRejectButton()).toBe(false);
+    expect(await tournamentDetailsPage.hasRevertConclusionButton()).toBe(false);
+  });
+});
+
+createBrowserSuite('Tournament details - Admin user', { userType: 'admin' }, (ctx) => {
+  beforeAll(async () => {
+    const { tournamentDetailsPage } = ctx.pages;
+    await tournamentDetailsPage.open(TOURNAMENT_PATH);
+    await tournamentDetailsPage.waitForPageLoaded();
+  });
+
+  it('shows admin control buttons', async () => {
+    const { tournamentDetailsPage } = ctx.pages;
+
+    expect(await tournamentDetailsPage.hasControlButtons()).toBe(true);
+    expect(await tournamentDetailsPage.editButton.isVisible()).toBe(true);
+    expect(await tournamentDetailsPage.transferButton.isVisible()).toBe(true);
+    expect(await tournamentDetailsPage.deleteButton.isVisible()).toBe(true);
+    expect(await tournamentDetailsPage.viewingAsAdmin.isVisible()).toBe(true);
+    expect(await tournamentDetailsPage.hasRejectButton()).toBe(true);
+  });
+
+  it('shows admin content management UI', async () => {
+    const { tournamentDetailsPage } = ctx.pages;
+
+    expect(await tournamentDetailsPage.hasAddPhotosButton()).toBe(true);
+    expect(await tournamentDetailsPage.hasAddVideosButton()).toBe(true);
+    expect(await tournamentDetailsPage.hasConcludedBySection()).toBe(true);
+    expect(await tournamentDetailsPage.hasRevertConclusionButton()).toBe(true);
+
+    const concludedText = await tournamentDetailsPage.getConcludedByText();
+    expect(concludedText).toContain('concluded by');
+  });
+
+  it('shows claim buttons and hides login messages', async () => {
+    const { tournamentDetailsPage } = ctx.pages;
+
+    const hasSuggestLoginClaim = await tournamentDetailsPage.hasSuggestLoginClaim();
+    const hasSuggestLoginMedia = await tournamentDetailsPage.hasSuggestLoginMedia();
+
+    // Suggest login should NOT be shown for logged in admin
+    expect(hasSuggestLoginClaim).toBe(false);
+    expect(hasSuggestLoginMedia).toBe(false);
   });
 });

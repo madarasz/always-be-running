@@ -1,36 +1,21 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { BrowserManager } from 'agent-browser/dist/browser.js';
-import { ResultsPage } from '../pages/ResultsPage';
-import { clearSession, closeBrowserSafely, createAuthenticatedBrowser, CHROME_PATH } from '../helpers/auth';
+import { createBrowserSuite, it, expect, describe, beforeAll } from '../helpers/test-fixture';
+import { clearSession } from '../helpers/auth';
 
-describe('Results page', () => {
-  let browser: BrowserManager;
-  let resultsPage: ResultsPage;
-
+createBrowserSuite('Results page', { userType: 'none' }, (ctx) => {
   beforeAll(async () => {
-    browser = new BrowserManager();
-    await browser.launch({
-      id: 'launch',
-      action: 'launch',
-      headless: true,
-      executablePath: CHROME_PATH,
-    });
-    await browser.ensurePage();
-    resultsPage = new ResultsPage(browser);
-    await clearSession(browser);
-  });
-
-  afterAll(async () => {
-    await closeBrowserSafely(browser);
+    await clearSession(ctx.browser);
   });
 
   describe('Loading tournament results', () => {
     beforeAll(async () => {
+      const { resultsPage } = ctx.pages;
       await resultsPage.open();
       await resultsPage.waitForResultsLoaded();
     });
 
     it('displays tournament results with required fields', async () => {
+      const { resultsPage } = ctx.pages;
+
       const count = await resultsPage.getResultsCount();
       expect(count).toBeGreaterThan(0);
 
@@ -44,6 +29,8 @@ describe('Results page', () => {
     });
 
     it('shows paging controls and page size options', async () => {
+      const { resultsPage } = ctx.pages;
+
       await resultsPage.resultsPagingSection.waitFor({ state: 'visible' });
       const pagingText = await resultsPage.getPagingText();
       expect(pagingText).toMatch(/showing \d+-\d+ of/);
@@ -53,6 +40,8 @@ describe('Results page', () => {
     });
 
     it('shows flag mode toggle with flag active by default', async () => {
+      const { resultsPage } = ctx.pages;
+
       expect(await resultsPage.resultsOptionFlag.isVisible()).toBe(true);
       expect(await resultsPage.resultsOptionText.isVisible()).toBe(true);
       expect(await resultsPage.resultsOptionFlag.getAttribute('class')).toContain('label-active');
@@ -61,12 +50,14 @@ describe('Results page', () => {
 
   describe('Waiting for conclusion tab', () => {
     it('switches to tab and shows login warning when not logged in', async () => {
+      const { resultsPage } = ctx.pages;
+
       await resultsPage.open();
       await resultsPage.waitForResultsLoaded();
 
       await resultsPage.clickWaitingForConclusionTab();
 
-      const tabPane = browser.getPage().locator('#tab-to-be-concluded');
+      const tabPane = ctx.browser.getPage().locator('#tab-to-be-concluded');
       await tabPane.waitFor({ state: 'visible' });
       expect(await tabPane.getAttribute('class')).toContain('active');
 
@@ -75,6 +66,8 @@ describe('Results page', () => {
     });
 
     it('loads tournaments and hides conclude button when not logged in', async () => {
+      const { resultsPage } = ctx.pages;
+
       await resultsPage.open();
       await resultsPage.waitForResultsLoaded();
       await resultsPage.clickWaitingForConclusionTab();
@@ -84,7 +77,7 @@ describe('Results page', () => {
       expect(count).toBeGreaterThan(0);
 
       // Only check inside the to-be-concluded table — the modal has static .btn-conclude buttons
-      const concludeButton = browser.getPage().locator('#to-be-concluded .btn-conclude');
+      const concludeButton = ctx.browser.getPage().locator('#to-be-concluded .btn-conclude');
       expect(await concludeButton.count()).toBe(0);
     });
   });
@@ -95,6 +88,8 @@ describe('Results page', () => {
       { filterName: 'country', filterLocator: 'countryFilter', filterMethod: 'filterByCountry', urlParam: 'country=' },
       { filterName: 'format', filterLocator: 'formatFilter', filterMethod: 'filterByFormat', urlParam: 'format=' },
     ])('filter by $filterName updates URL with $urlParam', async ({ filterLocator, filterMethod, urlParam }) => {
+      const { resultsPage } = ctx.pages;
+
       await resultsPage.open();
       await resultsPage.waitForResultsLoaded();
 
@@ -113,6 +108,8 @@ describe('Results page', () => {
       { filterName: 'country', filterLocator: 'countryFilter', filterMethod: 'filterByCountry' },
       { filterName: 'format', filterLocator: 'formatFilter', filterMethod: 'filterByFormat' },
     ])('filter by $filterName reduces or maintains result count', async ({ filterLocator, filterMethod }) => {
+      const { resultsPage } = ctx.pages;
+
       await resultsPage.open();
       await resultsPage.waitForResultsLoaded();
 
@@ -133,6 +130,8 @@ describe('Results page', () => {
       { filters: ['country', 'format'], methods: ['filterByCountry', 'filterByFormat'], locators: ['countryFilter', 'formatFilter'], params: ['country=', 'format='] },
       { filters: ['cardpool', 'format'], methods: ['filterByCardpool', 'filterByFormat'], locators: ['cardpoolFilter', 'formatFilter'], params: ['cardpool=', 'format='] },
     ])('combines $filters filters in URL', async ({ methods, locators, params }) => {
+      const { resultsPage } = ctx.pages;
+
       await resultsPage.open();
       await resultsPage.waitForResultsLoaded();
 
@@ -152,6 +151,8 @@ describe('Results page', () => {
     });
 
     it('conclusion tab also filters when filter is applied', async () => {
+      const { resultsPage } = ctx.pages;
+
       await resultsPage.open();
       await resultsPage.waitForResultsLoaded();
 
@@ -166,18 +167,21 @@ describe('Results page', () => {
       await resultsPage.clickWaitingForConclusionTab();
 
       // The tab should be active and show filtered results (possibly empty)
-      const tabPane = browser.getPage().locator('#tab-to-be-concluded');
+      const tabPane = ctx.browser.getPage().locator('#tab-to-be-concluded');
       expect(await tabPane.getAttribute('class')).toContain('active');
     });
   });
 
   describe('Paging', () => {
     beforeAll(async () => {
+      const { resultsPage } = ctx.pages;
       await resultsPage.open();
       await resultsPage.waitForResultsLoaded();
     });
 
     it('displays paging text and navigates with back button', async () => {
+      const { resultsPage } = ctx.pages;
+
       await resultsPage.resultsPagingSection.waitFor({ state: 'visible' });
       const pagingText = await resultsPage.getPagingText();
       expect(pagingText).toMatch(/showing 1-\d+ of/);
@@ -191,6 +195,8 @@ describe('Results page', () => {
     });
 
     it('page size and flag/text mode toggles work', async () => {
+      const { resultsPage } = ctx.pages;
+
       await resultsPage.open();
       await resultsPage.waitForResultsLoaded();
 
@@ -212,6 +218,8 @@ describe('Results page', () => {
 
   describe('Featured', () => {
     it('displays featured tournaments section with tournaments and support box', async () => {
+      const { resultsPage } = ctx.pages;
+
       await resultsPage.open();
       await resultsPage.waitForResultsLoaded();
 
@@ -236,6 +244,8 @@ describe('Results page', () => {
       { param: 'country', value: 'United Kingdom', filterLocator: 'countryFilter', urlValue: 'United+Kingdom' },
       { param: 'format', value: 'startup', filterLocator: 'formatFilter' },
     ])('applies $param=$value filter from URL param', async ({ param, value, filterLocator, urlValue }) => {
+      const { resultsPage } = ctx.pages;
+
       const queryValue = urlValue || value;
       await resultsPage.open(`${param}=${queryValue}`);
       await resultsPage.waitForResultsLoaded();
@@ -249,6 +259,8 @@ describe('Results page', () => {
       { query: 'format=standard', description: 'format filter' },
       { query: 'country=Germany', description: 'country filter' },
     ])('results are filtered when URL contains $description', async ({ query }) => {
+      const { resultsPage } = ctx.pages;
+
       await resultsPage.open(query);
       await resultsPage.waitForResultsLoaded();
 
@@ -260,6 +272,8 @@ describe('Results page', () => {
       { query: 'format=standard&matchdata=true', expectations: [{ filterLocator: 'formatFilter', value: 'standard' }], checkboxes: [{ locator: 'matchdataCheckbox', checked: true }] },
       { query: 'format=standard&videos=true', expectations: [{ filterLocator: 'formatFilter', value: 'standard' }], checkboxes: [{ locator: 'videosCheckbox', checked: true }] },
     ])('URL with multiple params applies all filters ($query)', async ({ query, expectations, checkboxes }) => {
+      const { resultsPage } = ctx.pages;
+
       await resultsPage.open(query);
       await resultsPage.waitForResultsLoaded();
 
@@ -275,48 +289,37 @@ describe('Results page', () => {
       }
     });
   });
+});
 
-  describe('User default country', () => {
-    let authBrowser: BrowserManager;
-    let authResultsPage: ResultsPage;
+createBrowserSuite('Results page - User default country', { userType: 'regular' }, (ctx) => {
+  it('applies user default country filter and allows manual override', async () => {
+    const { resultsPage } = ctx.pages;
 
-    beforeAll(async () => {
-      // Use pre-authenticated browser with regular user cookies
-      authBrowser = await createAuthenticatedBrowser('regular');
-      authResultsPage = new ResultsPage(authBrowser);
-    });
+    // Navigate to results page (already logged in as regular user)
+    await resultsPage.open();
+    await resultsPage.waitForResultsLoaded();
 
-    afterAll(async () => {
-      await closeBrowserSafely(authBrowser);
-    });
+    // Default country label should be visible
+    expect(await resultsPage.isDefaultCountryLabelVisible()).toBe(true);
 
-    it('applies user default country filter and allows manual override', async () => {
-      // Navigate to results page (already logged in as regular user)
-      await authResultsPage.open();
-      await authResultsPage.waitForResultsLoaded();
+    // Country filter should have Germany selected
+    const selectedCountry = await resultsPage.countryFilter.inputValue();
+    expect(selectedCountry).toBe('Germany');
 
-      // Default country label should be visible
-      expect(await authResultsPage.isDefaultCountryLabelVisible()).toBe(true);
+    // URL should contain country=Germany
+    let url = await resultsPage.getCurrentUrl();
+    expect(url).toContain('country=Germany');
 
-      // Country filter should have Germany selected
-      const selectedCountry = await authResultsPage.countryFilter.inputValue();
-      expect(selectedCountry).toBe('Germany');
+    // Change the country filter to a different value
+    await resultsPage.filterByCountry('United Kingdom');
+    // Wait for URL to update with new country
+    await ctx.browser.getPage().waitForURL(/country=United/, { timeout: 5000 });
 
-      // URL should contain country=Germany
-      let url = await authResultsPage.getCurrentUrl();
-      expect(url).toContain('country=Germany');
+    // Default country label should now be hidden
+    expect(await resultsPage.isDefaultCountryLabelVisible()).toBe(false);
 
-      // Change the country filter to a different value
-      await authResultsPage.filterByCountry('United Kingdom');
-      // Wait for URL to update with new country
-      await authBrowser.getPage().waitForURL(/country=United/, { timeout: 5000 });
-
-      // Default country label should now be hidden
-      expect(await authResultsPage.isDefaultCountryLabelVisible()).toBe(false);
-
-      // URL should now have United Kingdom
-      url = await authResultsPage.getCurrentUrl();
-      expect(url).toContain('country=United');
-    });
+    // URL should now have United Kingdom
+    url = await resultsPage.getCurrentUrl();
+    expect(url).toContain('country=United');
   });
 });

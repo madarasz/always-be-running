@@ -84,6 +84,9 @@ export function useTracing(getBrowser: () => BrowserManager | undefined) {
 export interface BrowserSuiteOptions {
   userType: 'regular' | 'admin' | 'none';
   tracing?: boolean; // default: true
+  /** Callback to run after browser launch but before loading auth state/navigation.
+   *  Use this for setup that must happen before the first page load (e.g., date mocking). */
+  beforeInit?: (browser: BrowserManager) => Promise<void>;
 }
 
 /**
@@ -146,7 +149,9 @@ export function createBrowserSuite(
     };
 
     beforeAll(async () => {
-      _browser = await createAuthenticatedBrowser(options.userType);
+      _browser = await createAuthenticatedBrowser(options.userType, {
+        beforeInit: options.beforeInit,
+      });
       _pages = {
         tournamentPage: new TournamentPage(_browser),
         upcomingPage: new UpcomingPage(_browser),

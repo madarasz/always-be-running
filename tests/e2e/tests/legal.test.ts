@@ -1,32 +1,13 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { BrowserManager } from 'agent-browser/dist/browser.js';
-import { LegalPage } from '../pages/LegalPage';
-import { clearSession, closeBrowserSafely, CHROME_PATH } from '../helpers/auth';
+import { createBrowserSuite, it, expect, describe } from '../helpers/test-fixture';
+import { clearSession } from '../helpers/auth';
 
-describe('Legal', () => {
-  let browser: BrowserManager;
-  let legalPage: LegalPage;
-
-  beforeAll(async () => {
-    browser = new BrowserManager();
-    await browser.launch({
-      id: 'launch',
-      action: 'launch',
-      headless: true,
-      executablePath: CHROME_PATH,
-    });
-    await browser.ensurePage();
-    legalPage = new LegalPage(browser);
-  });
-
-  afterAll(async () => {
-    await closeBrowserSafely(browser);
-  });
-
+createBrowserSuite('Legal', { userType: 'none' }, (ctx) => {
   describe('Cookie banner', () => {
     it('shows cookie banner on first visit with no consent cookie', async () => {
+      const { legalPage } = ctx.pages;
+
       // Clear all cookies so no cookieconsent_status exists
-      await clearSession(browser);
+      await clearSession(ctx.browser);
 
       await legalPage.openUpcoming();
 
@@ -35,7 +16,9 @@ describe('Legal', () => {
     });
 
     it('Privacy and Cookie Policy link points to /privacy', async () => {
-      await clearSession(browser);
+      const { legalPage } = ctx.pages;
+
+      await clearSession(ctx.browser);
       await legalPage.openUpcoming();
       await legalPage.cookieBanner.waitFor({ state: 'visible', timeout: 10000 });
 
@@ -45,23 +28,27 @@ describe('Legal', () => {
     });
 
     it('privacy page contains GDPR content', async () => {
+      const { legalPage } = ctx.pages;
+
       // Navigate directly — the link uses target=_blank which would open a new tab
       await legalPage.openPrivacy();
-      await browser.getPage().waitForLoadState('domcontentloaded');
+      await ctx.browser.getPage().waitForLoadState('domcontentloaded');
 
-      const gdprText = browser.getPage().locator('text=GDPR').first();
+      const gdprText = ctx.browser.getPage().locator('text=GDPR').first();
       await gdprText.waitFor({ state: 'visible', timeout: 10000 });
       expect(await gdprText.isVisible()).toBe(true);
     });
 
     it('clicking Allow cookies dismisses the banner and shows polite policy tab', async () => {
-      await clearSession(browser);
+      const { legalPage } = ctx.pages;
+
+      await clearSession(ctx.browser);
       await legalPage.openUpcoming();
       await legalPage.cookieBanner.waitFor({ state: 'visible', timeout: 10000 });
 
       // Navigate to privacy page via the learn-more link (as in the Cypress scenario)
       await legalPage.privacyAndCookieLink.click();
-      await browser.getPage().waitForLoadState('domcontentloaded');
+      await ctx.browser.getPage().waitForLoadState('domcontentloaded');
 
       // Banner is still present on the privacy page (no consent yet)
       await legalPage.cookieBanner.waitFor({ state: 'visible', timeout: 10000 });
@@ -79,11 +66,13 @@ describe('Legal', () => {
     });
 
     it('banner does not show on subsequent visits after consent given', async () => {
+      const { legalPage } = ctx.pages;
+
       // Previous test left the consent cookie set — banner should not appear
       await legalPage.openUpcoming();
 
       // Wait for page to fully load before checking banner visibility
-      await browser.getPage().waitForLoadState('domcontentloaded');
+      await ctx.browser.getPage().waitForLoadState('domcontentloaded');
       // The banner should not be visible (consent cookie is set from previous test)
       expect(await legalPage.cookieBanner.isVisible()).toBe(false);
     });

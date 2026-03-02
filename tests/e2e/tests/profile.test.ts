@@ -1,22 +1,8 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { BrowserManager } from 'agent-browser/dist/browser.js';
-import { ProfilePage } from '../pages/ProfilePage';
-import { createAuthenticatedBrowser, closeBrowserSafely } from '../helpers/auth';
+import { createBrowserSuite, it, expect } from '../helpers/test-fixture';
 
-describe('Profile Page', () => {
-  let browser: BrowserManager;
-  let profilePage: ProfilePage;
-
-  beforeAll(async () => {
-    browser = await createAuthenticatedBrowser('admin');
-    profilePage = new ProfilePage(browser);
-  });
-
-  afterAll(async () => {
-    await closeBrowserSafely(browser);
-  });
-
+createBrowserSuite('Profile Page', { userType: 'admin' }, (ctx) => {
   it('Admin user: profile page displays all UI sections', async () => {
+    const { profilePage } = ctx.pages;
 
     // Navigate to profile page via navbar
     await profilePage.open();

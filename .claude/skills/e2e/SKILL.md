@@ -58,6 +58,29 @@ allowed-tools: Bash(cd tests && npm test)
 
 8. **Use Chrome DevTools MCP to inspect DOM**: Before writing locators, use `take_snapshot` or `evaluate_script` to understand actual element IDs, classes, and structure. Page controls often use `<span onclick>` not anchor tags.
 
+9. **Use the test fixture**: All tests must use `createBrowserSuite` from `test-fixture.ts`:
+   ```typescript
+   import { createBrowserSuite, it, expect } from '../helpers/test-fixture';
+
+   createBrowserSuite('Suite Name', { userType: 'regular' }, (ctx) => {
+     it('test', async () => {
+       const { upcomingPage, resultsPage } = ctx.pages;
+       await upcomingPage.open();
+     });
+   });
+   ```
+
+   Benefits:
+   - Automatic tracing per test
+   - Failure screenshots captured automatically
+   - All page objects pre-instantiated in `ctx.pages`
+   - Proper browser cleanup
+
+10. **Debugging artifacts**: On failure, find screenshots and traces in `tests/e2e/test-results/`:
+    - Screenshots: `{test-name}-failure-{timestamp}.png`
+    - Traces: `{test-name}-{timestamp}.zip`
+    - View traces: `npx playwright show-trace {trace}.zip`
+
 ## Page Object Pattern
 
 Pass `BrowserManager`, not `Page`, into page objects. Do not import or type against `playwright-core` directly — `agent-browser` wraps it.
@@ -130,47 +153,3 @@ export async function mockResultsApi(browser: BrowserManager) {
 }
 ```
 
-## Visual Regression Testing
-
-```typescript
-// tests/e2e/helpers/visualTest.ts
-import { compare } from 'resemblejs';
-import { BrowserManager } from 'agent-browser/dist/browser.js';
-
-export async function matchScreenshot(
-  browser: BrowserManager,
-  name: string,
-  options: { threshold?: number; fullPage?: boolean } = {}
-) {
-  const { threshold = 0.03, fullPage = false } = options;
-  const page = browser.getPage();
-  const actualPath = `tests/e2e/screenshots/actual/${name}.png`;
-  const baselinePath = `tests/e2e/screenshots/baseline/${name}.png`;
-
-  await page.screenshot({ path: actualPath, fullPage });
-  // Compare with baseline using resemblejs
-}
-```
-
-Usage:
-
-```typescript
-it('displays Google map with markers', async () => {
-  await upcomingPage.showMap();
-  await matchScreenshot(browser, 'map-worldwide');
-});
-```
-
-## Cypress → agent-browser Migration
-
-| Cypress | Playwright / agent-browser |
-|---------|---------------------------|
-| `cy.visit(url)` | `page.goto(url)` |
-| `cy.get(sel)` | `page.locator(sel)` |
-| `cy.intercept()` | `page.route()` |
-| `cy.wait('@alias')` | `page.waitForResponse()` |
-| `.should('be.visible')` | `locator.waitFor({ state: 'visible' })` |
-| `.should('have.length', n)` | `expect(await locator.count()).toBe(n)` |
-| `cy.clock()` | Manual date mocking in test setup |
-| `cy.clearCookies()` | `page.context().clearCookies()` |
-| `cy.readFile('.env')` | `readFileSync` in helpers |
