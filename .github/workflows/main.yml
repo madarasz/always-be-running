@@ -10,11 +10,7 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
-    strategy:
-      fail-fast: false
-      matrix:
-        type: [api, e2e]
+    timeout-minutes: 30
 
     steps:
       - name: Checkout code
@@ -139,7 +135,6 @@ jobs:
         run: npm ci
 
       - name: Cache Playwright browsers
-        if: matrix.type == 'e2e'
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
@@ -147,12 +142,10 @@ jobs:
           restore-keys: playwright-
 
       - name: Install Playwright Chromium
-        if: matrix.type == 'e2e'
         working-directory: tests
         run: npx playwright install chromium
 
       - name: Setup e2e credentials
-        if: matrix.type == 'e2e'
         working-directory: tests/e2e
         run: |
           cat > .env << EOF
@@ -167,44 +160,68 @@ jobs:
       - name: Create test artifacts directory
         run: mkdir -p tests/e2e/test-results tests/api/test-results
 
-      - name: Run ${{ matrix.type }} tests
-        id: run-tests
+      # Run API tests first (faster)
+      - name: Run API tests
+        id: api-tests
         working-directory: tests
-        run: npm run test:${{ matrix.type }}
+        continue-on-error: true
+        run: npm run test:api
+
+      # Run E2E tests second
+      - name: Run E2E tests
+        id: e2e-tests
+        working-directory: tests
+        continue-on-error: true
+        run: npm run test:e2e
         env:
           CHROME_PATH: ''
 
       - name: Capture failure info
         if: always()
         run: |
-          curl -s http://localhost:8000/ -o tests/${{ matrix.type }}/test-results/homepage-final.html 2>/dev/null || true
-          curl -s http://localhost:8000/api/tournaments/upcoming -o tests/${{ matrix.type }}/test-results/api-upcoming.json 2>/dev/null || true
-          echo "=== Test artifacts collected ==="
-          ls -la tests/${{ matrix.type }}/test-results/ 2>/dev/null || echo "No test-results dir"
+          curl -s http://localhost:8000/ -o tests/e2e/test-results/homepage-final.html 2>/dev/null || true
+          curl -s http://localhost:8000/api/tournaments/upcoming -o tests/e2e/test-results/api-upcoming.json 2>/dev/null || true
 
-      - name: Summarize test artifacts
+      - name: Summarize test results
         if: always()
         run: |
-          echo "### ${{ matrix.type }} Test Results" >> $GITHUB_STEP_SUMMARY
-          RESULTS_DIR="tests/${{ matrix.type }}/test-results"
-          if [ -d "$RESULTS_DIR" ] && [ "$(ls -A $RESULTS_DIR 2>/dev/null)" ]; then
-            echo "**Artifacts:**" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            ls -la $RESULTS_DIR >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "### Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.api-tests.outcome }}" == "success" ]; then
+            echo "✅ **API tests**: Passed" >> $GITHUB_STEP_SUMMARY
           else
-            echo "_No failure artifacts_" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **API tests**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ steps.e2e-tests.outcome }}" == "success" ]; then
+            echo "✅ **E2E tests**: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **E2E tests**: Failed" >> $GITHUB_STEP_SUMMARY
           fi
 
-      - name: Upload test artifacts
+      - name: Upload API test artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: ${{ matrix.type }}-test-results
-          path: tests/${{ matrix.type }}/test-results/
+          name: api-test-results
+          path: tests/api/test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload E2E test artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-results
+          path: tests/e2e/test-results/
           retention-days: 7
           if-no-files-found: ignore
 
       - name: Stop Docker services
         if: always()
         run: docker compose down -v
+
+      - name: Check test results
+        if: steps.api-tests.outcome == 'failure' || steps.e2e-tests.outcome == 'failure'
+        run: |
+          echo "One or more test suites failed"
+          exit 1
