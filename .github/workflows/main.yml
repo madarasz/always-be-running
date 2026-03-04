@@ -1,14 +1,14 @@
-name: E2E Tests
+name: Tests
 
 on:
   push:
-    branches: [master, migration, migration-e2e-workflow]
+    branches: [master, migration, migration-e2e-workflow, migration-api-tests]
   pull_request:
     branches: [master]
   workflow_dispatch:
 
 jobs:
-  e2e-tests:
+  tests:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -19,18 +19,15 @@ jobs:
       - name: Setup Laravel environment
         run: |
           cp docker/.env.docker .env
-          # Inject secrets into .env
           sed -i "s/NETRUNNERDB_CLIENT_ID=.*/NETRUNNERDB_CLIENT_ID=${{ secrets.NETRUNNERDB_CLIENT_ID }}/" .env
           sed -i "s/NETRUNNERDB_CLIENT_SECRET=.*/NETRUNNERDB_CLIENT_SECRET=${{ secrets.NETRUNNERDB_CLIENT_SECRET }}/" .env
           sed -i "s/GOOGLE_MAPS_API=.*/GOOGLE_MAPS_API=${{ secrets.GOOGLE_MAPS_API }}/" .env
           sed -i "s/GOOGLE_FRONTEND_API=.*/GOOGLE_FRONTEND_API=${{ secrets.GOOGLE_FRONTEND_API }}/" .env
-          # Verify OAuth secrets are set
           if grep -q "NETRUNNERDB_CLIENT_SECRET=ASK_NECRO" .env || grep -q "NETRUNNERDB_CLIENT_SECRET=$" .env; then
             echo "::error::NETRUNNERDB_CLIENT_SECRET GitHub secret is not set!"
             exit 1
           fi
 
-      # Cache Composer dependencies
       - name: Cache Composer dependencies
         uses: actions/cache@v4
         with:
@@ -38,7 +35,6 @@ jobs:
           key: composer-${{ hashFiles('composer.lock') }}
           restore-keys: composer-
 
-      # Cache root node_modules (for gulp build)
       - name: Cache root node_modules
         uses: actions/cache@v4
         with:
@@ -46,7 +42,6 @@ jobs:
           key: node-root-${{ hashFiles('package-lock.json') }}
           restore-keys: node-root-
 
-      # Cache Docker layers
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -58,8 +53,7 @@ jobs:
           restore-keys: docker-
 
       - name: Build Docker images
-        run: |
-          docker compose build --build-arg BUILDKIT_INLINE_CACHE=1
+        run: docker compose build --build-arg BUILDKIT_INLINE_CACHE=1
 
       - name: Start Docker services
         run: |
@@ -73,13 +67,9 @@ jobs:
 
       - name: Restore custom OAuth service file
         run: |
-          # The NetrunnerDB.php OAuth service is tracked in git but gets overwritten by composer install
-          # First, save it before composer install recreates vendor dir
-          # Copy from git show since file was overwritten
           git show HEAD:vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/NetrunnerDB.php > /tmp/NetrunnerDB.php
           docker compose exec -T php mkdir -p vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/
           docker cp /tmp/NetrunnerDB.php abr-php:/var/www/html/vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/NetrunnerDB.php
-          docker compose exec -T php ls -la vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/NetrunnerDB.php
           echo "NetrunnerDB OAuth service file restored"
 
       - name: Clear Laravel caches and set permissions
@@ -96,10 +86,8 @@ jobs:
         run: |
           gunzip -c tests/e2e/fixtures/test-seed.sql.gz | docker compose exec -T mysql mysql -u root -prootsecret netrunner
 
-      - name: Update tournament dates for e2e tests
+      - name: Update tournament dates for tests
         run: |
-          # Update some tournaments to have future dates so they appear on "Upcoming" page
-          # The date field format is 'YYYY.MM.DD.'
           FUTURE_DATE=$(date -d "+30 days" +%Y.%m.%d.)
           NEXT_WEEK=$(date -d "+7 days" +%Y.%m.%d.)
           NEXT_MONTH=$(date -d "+60 days" +%Y.%m.%d.)
@@ -107,7 +95,6 @@ jobs:
             UPDATE tournaments SET date = '$FUTURE_DATE' WHERE id IN (886, 2850, 3264);
             UPDATE tournaments SET date = '$NEXT_WEEK' WHERE id IN (5313, 5354, 5400, 5500);
             UPDATE tournaments SET date = '$NEXT_MONTH' WHERE id IN (5600, 5700, 5800);
-            -- Set some concluded tournaments as featured for Results page tests
             UPDATE tournaments SET featured = 1 WHERE concluded = 1 AND approved = 1 LIMIT 3;
           "
 
@@ -123,23 +110,19 @@ jobs:
             exit 1
           fi
           echo "Homepage OK (HTTP $HTTP_CODE)"
-
-          # Verify API endpoint works
           API_CODE=$(curl -s --max-time 10 -o /dev/null -w "%{http_code}" http://localhost:8000/api/tournaments/upcoming)
           if [ "$API_CODE" != "200" ]; then
-            echo "::error::API endpoint /api/tournaments/upcoming returned HTTP $API_CODE (expected 200)"
+            echo "::error::API endpoint returned HTTP $API_CODE"
             docker compose logs php --tail=30
             exit 1
           fi
           echo "API endpoint OK (HTTP $API_CODE)"
 
-      # Setup Node.js for e2e tests
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # Cache tests node_modules
       - name: Cache tests node_modules
         uses: actions/cache@v4
         with:
@@ -151,7 +134,6 @@ jobs:
         working-directory: tests
         run: npm ci
 
-      # Cache Playwright browsers
       - name: Cache Playwright browsers
         uses: actions/cache@v4
         with:
@@ -176,40 +158,56 @@ jobs:
           EOF
 
       - name: Create test artifacts directory
-        run: mkdir -p tests/e2e/test-results
+        run: mkdir -p tests/e2e/test-results tests/api/test-results
 
+      # Run API tests first (faster)
+      - name: Run API tests
+        id: api-tests
+        working-directory: tests
+        continue-on-error: true
+        run: npm run test:api
+
+      # Run E2E tests second
       - name: Run E2E tests
         id: e2e-tests
         working-directory: tests
         continue-on-error: true
-        run: npm test
+        run: npm run test:e2e
         env:
           CHROME_PATH: ''
 
-      - name: Capture test failure info
+      - name: Capture failure info
         if: always()
-        working-directory: tests/e2e
         run: |
-          # Capture the app state if docker is still up (for debugging)
-          curl -s http://localhost:8000/ -o test-results/homepage-final.html 2>/dev/null || true
-          curl -s http://localhost:8000/api/tournaments/upcoming -o test-results/api-upcoming.json 2>/dev/null || true
-          echo "=== Test artifacts collected ==="
-          ls -la test-results/ 2>/dev/null || echo "No test-results dir"
+          curl -s http://localhost:8000/ -o tests/e2e/test-results/homepage-final.html 2>/dev/null || true
+          curl -s http://localhost:8000/api/tournaments/upcoming -o tests/e2e/test-results/api-upcoming.json 2>/dev/null || true
 
-      - name: Summarize test artifacts
+      - name: Summarize test results
         if: always()
         run: |
-          echo "### E2E Test Artifacts" >> $GITHUB_STEP_SUMMARY
-          if [ -d "tests/e2e/test-results" ] && [ "$(ls -A tests/e2e/test-results 2>/dev/null)" ]; then
-            echo "**Screenshots and traces from failed tests:**" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            ls -la tests/e2e/test-results/ >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "### Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.api-tests.outcome }}" == "success" ]; then
+            echo "✅ **API tests**: Passed" >> $GITHUB_STEP_SUMMARY
           else
-            echo "_No failure artifacts (all tests passed or no artifacts generated)_" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **API tests**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ steps.e2e-tests.outcome }}" == "success" ]; then
+            echo "✅ **E2E tests**: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **E2E tests**: Failed" >> $GITHUB_STEP_SUMMARY
           fi
 
-      - name: Upload test artifacts (screenshots and traces)
+      - name: Upload API test artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-test-results
+          path: tests/api/test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload E2E test artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -223,7 +221,7 @@ jobs:
         run: docker compose down -v
 
       - name: Check test results
-        if: steps.e2e-tests.outcome == 'failure'
+        if: steps.api-tests.outcome == 'failure' || steps.e2e-tests.outcome == 'failure'
         run: |
-          echo "E2E tests failed"
+          echo "One or more test suites failed"
           exit 1
