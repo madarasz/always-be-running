@@ -387,8 +387,12 @@ export class TournamentDetailsPage extends BasePage {
     await this.menuIdsTab.click();
     await this.tabWithoutDecks.waitFor({ state: 'visible', timeout: 5000 });
 
-    // Select rank
+    // Select rank - this triggers setIdentities() which auto-populates identity selects
     await this.rankNoDeckSelect.selectOption({ value: rank.toString() });
+
+    // Wait for setIdentities() JavaScript to complete DOM updates
+    // This prevents race conditions on slower CI environments
+    await this.page.waitForTimeout(100);
 
     // Select corp identity if provided (by label)
     if (corpIdentityLabel) {
@@ -400,9 +404,9 @@ export class TournamentDetailsPage extends BasePage {
       await this.runnerDeckIdentitySelect.selectOption({ label: runnerIdentityLabel });
     }
 
-    // Submit
+    // Submit and wait for full page reload after redirect
     await this.submitIdClaimButton.click();
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForLoadState('networkidle');
   }
 
   /**
