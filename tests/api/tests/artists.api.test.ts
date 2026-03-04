@@ -15,8 +15,8 @@ describe('GET /api/artists', () => {
 
     for (const artist of data) {
       expect(artist.id).toBeTypeOf('number');
-      expect(artist.displayArtistName).toBeTypeOf('string');
-      // description and url can be null
+      // displayArtistName, description and url can be null
+      expect(artist.displayArtistName === null || typeof artist.displayArtistName === 'string').toBe(true);
       expect(artist.description === null || typeof artist.description === 'string').toBe(true);
       expect(artist.url === null || typeof artist.url === 'string').toBe(true);
     }

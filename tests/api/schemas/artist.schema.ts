@@ -19,7 +19,7 @@ export const ArtistSchema = z.object({
   id: z.number(),
   description: z.string().nullable(),
   url: z.string().nullable(),
-  displayArtistName: z.string(),
+  displayArtistName: z.string().nullable(),
   items: z.array(PrizeItemSchema).optional(),
   user: ArtistUserSchema.nullable().optional(),
 });
