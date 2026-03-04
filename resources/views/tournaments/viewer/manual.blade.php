@@ -36,6 +36,7 @@
             {!! Form::open(['method' => 'POST', 'url' => "/entries/anonym",
                 'class' => 'form-inline']) !!}
             {!! Form::hidden('tournament_id', $tournament->id) !!}
+            {!! Form::hidden('user', 0) !!}
             {!! Form::hidden('corp_deck_title', '', ['id' => 'corp_deck_title_manual']) !!}
             {!! Form::hidden('runner_deck_title', '', ['id' => 'runner_deck_title_manual']) !!}
             @if ($tournament->top_number)

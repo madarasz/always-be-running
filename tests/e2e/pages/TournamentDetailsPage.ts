@@ -394,12 +394,6 @@ export class TournamentDetailsPage extends BasePage {
     // This prevents race conditions on slower CI environments
     await this.page.waitForTimeout(100);
 
-    // DEBUG: Log identity values after setIdentities() runs
-    const corpIdAfterSetIdentities = await this.corpDeckIdentitySelect.inputValue();
-    const runnerIdAfterSetIdentities = await this.runnerDeckIdentitySelect.inputValue();
-    console.log('[DEBUG submitClaimWithoutDecks] After setIdentities() - Corp ID:', corpIdAfterSetIdentities);
-    console.log('[DEBUG submitClaimWithoutDecks] After setIdentities() - Runner ID:', runnerIdAfterSetIdentities);
-
     // Select corp identity if provided (by label)
     if (corpIdentityLabel) {
       await this.corpDeckIdentitySelect.selectOption({ label: corpIdentityLabel });
@@ -409,14 +403,6 @@ export class TournamentDetailsPage extends BasePage {
     if (runnerIdentityLabel) {
       await this.runnerDeckIdentitySelect.selectOption({ label: runnerIdentityLabel });
     }
-
-    // DEBUG: Log final identity values before submission
-    const corpIdFinal = await this.corpDeckIdentitySelect.inputValue();
-    const runnerIdFinal = await this.runnerDeckIdentitySelect.inputValue();
-    const corpIdText = await this.corpDeckIdentitySelect.locator('option:checked').textContent();
-    const runnerIdText = await this.runnerDeckIdentitySelect.locator('option:checked').textContent();
-    console.log('[DEBUG submitClaimWithoutDecks] Final Corp ID:', corpIdFinal, '| Label:', corpIdText);
-    console.log('[DEBUG submitClaimWithoutDecks] Final Runner ID:', runnerIdFinal, '| Label:', runnerIdText);
 
     // Submit and wait for full page reload after redirect
     await this.submitIdClaimButton.click();
@@ -527,14 +513,6 @@ export class TournamentDetailsPage extends BasePage {
     if (options.runnerIdentityLabel) {
       await this.manualRunnerIdentitySelect.selectOption({ label: options.runnerIdentityLabel });
     }
-
-    // DEBUG: Log selected identity values before submission
-    const corpIdValue = await this.manualCorpIdentitySelect.inputValue();
-    const runnerIdValue = await this.manualRunnerIdentitySelect.inputValue();
-    const corpIdText = await this.manualCorpIdentitySelect.locator('option:checked').textContent();
-    const runnerIdText = await this.manualRunnerIdentitySelect.locator('option:checked').textContent();
-    console.log('[DEBUG addManualClaim] Corp ID:', corpIdValue, '| Label:', corpIdText);
-    console.log('[DEBUG addManualClaim] Runner ID:', runnerIdValue, '| Label:', runnerIdText);
 
     // Submit
     await this.addClaimButton.click();
