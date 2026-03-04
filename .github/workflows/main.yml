@@ -2,7 +2,7 @@ name: Tests
 
 on:
   push:
-    branches: [master, migration, migration-e2e-workflow, migration-api-tests]
+    branches: [master, migration]
   pull_request:
     branches: [master]
   workflow_dispatch:
