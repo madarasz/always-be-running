@@ -366,7 +366,7 @@ cd tests && npm test
 
 ---
 
-### Step 2.1: Laravel 5.2 → 5.3
+### Step 2.1: Laravel 5.2 → 5.3 - ✅ DONE
 **Guide:** https://laravel.com/docs/5.3/upgrade
 
 **PHP Requirement:** >= 5.6.4
@@ -376,6 +376,7 @@ cd tests && npm test
    - Create `routes/web.php` and `routes/api.php`
    - Move routes from `app/Http/routes.php`
    - Update `app/Providers/RouteServiceProvider.php` to load new route files
+   - **Note:** API routes keep `web` middleware (not `api`) because they use session-based auth
 
 2. **User model changes**
    ```php
@@ -387,16 +388,71 @@ cd tests && npm test
    }
    ```
 
-3. **Query builder returns Collections**
+3. **Service Provider boot() signatures (BREAKING)**
+   - `EventServiceProvider::boot()` - remove `DispatcherContract $events` parameter
+   - `AuthServiceProvider::boot()` - remove `GateContract $gate` parameter
+   - `registerPolicies()` no longer takes a parameter
+
+4. **Controller trait changes (BREAKING)**
+   - `AuthorizesResources` trait merged into `AuthorizesRequests`
+   - Remove `use AuthorizesResources` from `app/Http/Controllers/Controller.php`
+
+5. **Query builder returns Collections**
    - `DB::table()->get()` returns `Collection` instead of array
    - Add `->all()` if array needed
 
-4. **composer.json**
-   ```json
-   "laravel/framework": "5.3.*"
-   ```
+6. **`lists()` renamed to `pluck()` (BREAKING)**
+   - `->lists('column')` → `->pluck('column')`
+   - Fixed in `UserController.php` and `AdminController.php`
 
-**Validation checkpoint:** Run E2E tests
+7. **composer.json**
+   ```json
+   "php": ">=5.6.4",
+   "laravel/framework": "5.3.*",
+   "laravelcollective/html": "^5.3",
+   "webpatser/laravel-countries": "1.5.4"
+   ```
+   - Pin `webpatser/laravel-countries` to 1.5.4 (dev-master now requires PHP 8.2)
+   - Remove explicit `symfony/http-foundation` constraint (Laravel 5.3 needs 3.1.*)
+   - Update dev dependencies: `symfony/css-selector` and `symfony/dom-crawler` to `3.1.*`
+
+8. **Composer 2 required**
+   - Packagist shutdown Composer 1 support (September 2025)
+   - Run `composer self-update --2` in Docker container
+
+9. **config/app.php updates**
+   - Add `'name'` key (new in 5.3): `'name' => env('APP_NAME', 'AlwaysBeRunning'),`
+   - Register `Illuminate\Notifications\NotificationServiceProvider::class` (required for Notifiable trait)
+   - Add `Notification` facade alias
+
+10. **Middleware updates (app/Http/Kernel.php)**
+   - Add `SubstituteBindings` middleware to `web` middleware group
+   - Add `'bindings'` alias to `api` middleware group
+   - Register `'bindings'` route middleware
+   - Update `'can'` middleware from `\Illuminate\Foundation\Http\Middleware\Authorize::class` to `\Illuminate\Auth\Middleware\Authorize::class`
+
+**Files Modified:**
+- `routes/web.php` - Created (68 web routes)
+- `routes/api.php` - Created (32 API routes, prefix added by RouteServiceProvider)
+- `app/Providers/RouteServiceProvider.php` - Rewritten for 5.3 pattern
+- `app/Providers/EventServiceProvider.php` - boot() signature updated
+- `app/Providers/AuthServiceProvider.php` - boot() signature updated
+- `app/Http/Controllers/Controller.php` - Removed AuthorizesResources trait
+- `app/Http/Controllers/PagesController.php` - Added elimination() method
+- `app/Http/Controllers/UserController.php` - `lists()` → `pluck()`
+- `app/Http/Controllers/AdminController.php` - `lists()` → `pluck()`
+- `app/User.php` - Added Notifiable trait
+- `composer.json` - Updated versions and Symfony dev dependencies to 3.1.*
+- `config/app.php` - Added 'name' key, NotificationServiceProvider, Notification facade
+- `app/Http/Kernel.php` - Added SubstituteBindings middleware, updated 'can' middleware class
+- `app/Http/routes.php` - Renamed to `.bak`
+
+**Validation:**
+- [X] 116 routes registered (`php artisan route:list`)
+- [X] API tests pass (26/26)
+- [X] E2E tests pass
+
+**Validation checkpoint:** Run API and E2E tests
 
 ---
 
@@ -422,7 +478,7 @@ cd tests && npm test
    "laravel/framework": "5.4.*"
    ```
 
-**Validation checkpoint:** Run E2E tests
+**Validation checkpoint:** Run API and E2E tests
 
 ---
 
@@ -446,7 +502,7 @@ cd tests && npm test
    "php": ">=7.0.0"
    ```
 
-**Validation checkpoint:** Run E2E tests
+**Validation checkpoint:** Run API and E2E tests
 
 ---
 
@@ -469,7 +525,7 @@ cd tests && npm test
    "php": ">=7.1.3"
    ```
 
-**Validation checkpoint:** Run E2E tests
+**Validation checkpoint:** Run API and E2E tests
 
 ---
 
@@ -490,7 +546,7 @@ cd tests && npm test
    "laravel/framework": "5.7.*"
    ```
 
-**Validation checkpoint:** Run E2E tests
+**Validation checkpoint:** Run API and E2E tests
 
 ---
 
@@ -511,7 +567,7 @@ cd tests && npm test
    "laravel/framework": "5.8.*"
    ```
 
-**Validation checkpoint:** Run E2E tests
+**Validation checkpoint:** Run API and E2E tests
 
 ---
 
@@ -541,7 +597,7 @@ cd tests && npm test
    "php": ">=7.2.0"
    ```
 
-**Validation checkpoint:** Run E2E tests
+**Validation checkpoint:** Run API and E2E tests
 
 ---
 
@@ -609,7 +665,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
    "laravel/framework": "^7.0"
    ```
 
-**Validation checkpoint:** Run E2E tests
+**Validation checkpoint:** Run API and E2E tests
 
 ---
 
@@ -638,7 +694,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
    "php": ">=7.3.0"
    ```
 
-**Validation checkpoint:** Run E2E tests
+**Validation checkpoint:** Run API and E2E tests
 
 ---
 
@@ -665,7 +721,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
    "php": ">=8.0.2"
    ```
 
-**Validation checkpoint:** Run E2E tests
+**Validation checkpoint:** Run API and E2E tests
 
 ---
 
@@ -687,7 +743,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
    "php": ">=8.1.0"
    ```
 
-**Validation checkpoint:** Run E2E tests
+**Validation checkpoint:** Run API and E2E tests
 
 ---
 
@@ -719,7 +775,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
    "php": ">=8.2.0"
    ```
 
-**Validation checkpoint:** Run E2E tests
+**Validation checkpoint:** Run API and E2E tests
 
 ---
 

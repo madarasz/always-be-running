@@ -28,6 +28,14 @@ createBrowserSuite('Authentication - Regular user', { userType: 'regular' }, (ct
     await adminPage.open();
     await adminPage.waitForAccessDenied();
   });
+
+  it('user cannot edit other user\'s tournament', async () => {
+    const { tournamentDetailsPage } = ctx.pages;
+
+    await tournamentDetailsPage.open('3022/budapest-startup');
+    await tournamentDetailsPage.waitForPageLoaded();
+    expect(await tournamentDetailsPage.hasEditButton()).toBe(false);
+  });
 });
 
 createBrowserSuite('Authentication - Admin user', { userType: 'admin' }, (ctx) => {

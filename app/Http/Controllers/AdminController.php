@@ -76,7 +76,7 @@ class AdminController extends Controller
         $tournament_types->put(0,'other'); // adding 'other' to prize types
         $art_types = PrizeElement::groupBy('type')
             ->orderBy(\DB::raw('count(type)'), 'DESC')
-            ->lists('type')
+            ->pluck('type')
             ->all();
         // VIP information
         $vips = [];
