@@ -74,7 +74,7 @@ Google API keys, you can create yourself.
 
 13. You are done :)
 
-## Automated E2E Tests (Vitest + Playwright)
+## Automated Tests (Vitest + Playwright)
 
 Tests are in the `tests/` directory with their own dependencies (Node.js 20+).
 
@@ -82,8 +82,16 @@ Tests are in the `tests/` directory with their own dependencies (Node.js 20+).
 # Install test dependencies (first time)
 cd tests && npm install
 
-# Run all E2E tests
+# Run all tests (E2E + API + Performance)
 cd tests && npm test
+
+# Run specific test suites
+cd tests && npm run test:e2e      # Browser E2E tests
+cd tests && npm run test:api      # API schema validation tests
+cd tests && npm run test:perf     # Performance baseline tests
+
+# Save performance baseline (before migration)
+cd tests && npm run test:perf:baseline
 
 # Run tests in watch mode
 cd tests && npm run test:watch
@@ -105,11 +113,19 @@ Tests run automatically via GitHub Actions on push to `master` or `migration` br
 ```
 tests/
 ├── package.json          # Test dependencies
-├── vitest.config.ts
+├── vitest.workspace.ts   # Workspace config (e2e, api, perf projects)
 ├── e2e/                  # Browser E2E tests
 │   ├── tests/            # Test files (*.test.ts)
 │   ├── pages/            # Page objects
 │   ├── helpers/          # Auth helpers, mocks
 │   └── fixtures/         # Test data, SQL seeds
-└── api/                  # API tests (future)
+├── api/                  # API schema validation tests
+│   ├── schemas/          # Zod schemas for API contracts
+│   ├── helpers/          # API client utilities
+│   └── tests/            # API test files (*.api.test.ts)
+└── perf/                 # Performance baseline tests
+    ├── thresholds.ts     # Warn/fail thresholds per endpoint
+    ├── helpers/          # Timing utilities, baseline saving
+    ├── tests/            # Performance test files (*.perf.test.ts)
+    └── reports/          # Saved baseline JSON files
 ```

@@ -4,17 +4,24 @@ export default defineWorkspace([
   {
     test: {
       name: 'e2e',
-      include: ['e2e/tests/**/*.test.ts'],
-      testTimeout: 90000,
-      hookTimeout: 120000,
-      globalSetup: ['./e2e/setup/global-setup.ts'],
+      include: ['e2e/**/*.test.ts'],
+      testTimeout: 120000,
+      hookTimeout: 60000,
     },
   },
   {
     test: {
       name: 'api',
-      include: ['api/tests/**/*.test.ts'],
+      include: ['api/**/*.test.ts'],
       testTimeout: 30000,
+    },
+  },
+  {
+    test: {
+      name: 'perf',
+      include: ['perf/**/*.perf.test.ts'],
+      testTimeout: 180000,
+      hookTimeout: 60000,
     },
   },
 ]);
