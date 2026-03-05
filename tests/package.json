@@ -8,11 +8,15 @@
     "test:e2e": "vitest run --project e2e",
     "test:api": "vitest run --project api",
     "test:api:watch": "vitest --project api",
+    "test:perf": "vitest run --project perf",
+    "test:perf:watch": "vitest --project perf",
+    "test:perf:baseline": "npx tsx perf/save-baseline.ts",
     "test:no-mocks": "USE_MOCKS=false vitest run",
     "cleanup": "./e2e/fixtures/cleanup-test-data.sh"
   },
   "devDependencies": {
     "agent-browser": "^0.13.0",
+    "tsx": "^4.21.0",
     "vitest": "^2.0.0",
     "zod": "^3.23.0"
   }
