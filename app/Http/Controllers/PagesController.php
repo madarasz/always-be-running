@@ -225,4 +225,13 @@ class PagesController extends Controller
         $results['_mapping_problems'] = $googleMappingProblems;
         return response()->json($results);
     }
+
+    /**
+     * Returns the elimination bracket view (iframe).
+     * @return \Illuminate\View\View
+     */
+    public function elimination()
+    {
+        return view('layout.bracket');
+    }
 }

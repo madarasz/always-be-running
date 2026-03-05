@@ -38,7 +38,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $art_types = PrizeElement::groupBy('type')
             ->orderBy(\DB::raw('count(type)'), 'DESC')
-            ->lists('type')
+            ->pluck('type')
             ->all();
 
         $deleted_tournaments = Tournament::withTrashed()->whereNotNull('deleted_at')->pluck('id')->all();

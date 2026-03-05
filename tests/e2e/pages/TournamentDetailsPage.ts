@@ -241,6 +241,12 @@ export class TournamentDetailsPage extends BasePage {
     return await this.controlButtons.isVisible();
   }
 
+  async hasEditButton(): Promise<boolean> {
+    const count = await this.editButton.count();
+    if (count === 0) return false;
+    return await this.editButton.isVisible();
+  }
+
   async hasSuggestLoginClaim(): Promise<boolean> {
     const count = await this.suggestLoginClaim.count();
     if (count === 0) return false;
