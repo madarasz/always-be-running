@@ -292,8 +292,11 @@
                     } else {
                         if (count($entries_swiss[$i]) &&
                             ($entries_swiss[$i][0]->type == 3 || $entries_swiss[$i][0]->type == 4)) {
-                                $claim_player = $entries_swiss[$i][0]->player;
-                                $claim_username = $claim_player ? $claim_player->displayUsername() : 'unknown user #'.$entries_swiss[$i][0]->user;
+                                $claim_username = \App\Support\UserViewPresenter::displayName(
+                                    $entries_swiss[$i][0]->player,
+                                    $entries_swiss[$i][0]->user,
+                                    $entries_swiss[$i][0]->import_username
+                                );
                                 $import_user = ' - '.$claim_username.' (already claimed)';
                         } else {
                             $import_user = '';
@@ -327,8 +330,11 @@
                         } else {
                             if (count($entries_top[$i]) &&
                                 ($entries_top[$i][0]->type == 3 || $entries_top[$i][0]->type == 4)) {
-                                    $claim_player = $entries_top[$i][0]->player;
-                                    $claim_username = $claim_player ? $claim_player->displayUsername() : 'unknown user #'.$entries_top[$i][0]->user;
+                                    $claim_username = \App\Support\UserViewPresenter::displayName(
+                                        $entries_top[$i][0]->player,
+                                        $entries_top[$i][0]->user,
+                                        $entries_top[$i][0]->import_username
+                                    );
                                     $import_user = ' - '.$claim_username.' (already claimed)';
                             } else {
                                 $import_user = '';

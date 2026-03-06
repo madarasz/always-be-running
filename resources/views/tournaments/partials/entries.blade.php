@@ -21,10 +21,15 @@
                     <td class="text-right">#{{ $i+1 }}</td>
             @endif
 
-            @if ($entry->player)
-                <td><a href="/profile/{{ $entry->player->id }}" class="{{ $entry->player->linkClass() }}">{{ $entry->player->displayUsername() }}</a></td>
-            @elseif ($entry->import_username)
-                <td class="import-user">{{ $entry->import_username }}</td>
+            @php
+                $entry_player_name = \App\Support\UserViewPresenter::displayName($entry->player, $entry->user, $entry->import_username);
+                $entry_player_link = \App\Support\UserViewPresenter::profileUrl($entry->player);
+                $entry_player_class = \App\Support\UserViewPresenter::linkClass($entry->player);
+            @endphp
+            @if ($entry_player_link)
+                <td><a href="{{ $entry_player_link }}" class="{{ $entry_player_class }}">{{ $entry_player_name }}</a></td>
+            @elseif ($entry->import_username || $entry->user)
+                <td class="{{ $entry->import_username ? 'import-user' : '' }}">{{ $entry_player_name }}</td>
             @else
                 <td></td>
             @endif

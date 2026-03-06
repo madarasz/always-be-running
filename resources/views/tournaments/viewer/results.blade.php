@@ -28,10 +28,17 @@
         @if ($tournament->concluded_by || $tournament->concluded_at)
             <div id="concluded-by" class="small-text m-t-1" style="line-height: 2">
                 <strong>concluded by:</strong>
-                @if ($tournament->concluded_by && $tournament->concluder)
-                    <a href="/profile/{{ $tournament->concluded_by }}" class="{{ $tournament->concluder->linkClass() }}">{{ $tournament->concluder->displayUsername() }}</a>
-                @elseif ($tournament->concluded_by)
-                    <em>unknown user #{{ $tournament->concluded_by }}</em>
+                @if ($tournament->concluded_by)
+                    @php
+                        $concluder_name = \App\Support\UserViewPresenter::displayName($tournament->concluder, $tournament->concluded_by);
+                        $concluder_link = \App\Support\UserViewPresenter::profileUrl($tournament->concluder);
+                        $concluder_class = \App\Support\UserViewPresenter::linkClass($tournament->concluder);
+                    @endphp
+                    @if ($concluder_link)
+                        <a href="{{ $concluder_link }}" class="{{ $concluder_class }}">{{ $concluder_name }}</a>
+                    @else
+                        <em>{{ $concluder_name }}</em>
+                    @endif
                 @else
                     <em>NRTM user</em>
                 @endif
