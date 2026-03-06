@@ -5,6 +5,7 @@ export default defineWorkspace([
     test: {
       name: 'e2e',
       include: ['e2e/**/*.test.ts'],
+      globalSetup: ['e2e/setup/global-setup.ts'],
       testTimeout: 120000,
       hookTimeout: 60000,
     },
