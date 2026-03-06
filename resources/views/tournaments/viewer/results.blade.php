@@ -28,8 +28,10 @@
         @if ($tournament->concluded_by || $tournament->concluded_at)
             <div id="concluded-by" class="small-text m-t-1" style="line-height: 2">
                 <strong>concluded by:</strong>
-                @if ($tournament->concluded_by)
+                @if ($tournament->concluded_by && $tournament->concluder)
                     <a href="/profile/{{ $tournament->concluded_by }}" class="{{ $tournament->concluder->linkClass() }}">{{ $tournament->concluder->displayUsername() }}</a>
+                @elseif ($tournament->concluded_by)
+                    <em>unknown user #{{ $tournament->concluded_by }}</em>
                 @else
                     <em>NRTM user</em>
                 @endif
