@@ -68,7 +68,7 @@
                         @endif
                         {{--user name--}}
                         @if ($tag->user)
-                            <a href="/profile/{{ $tag->user->id }}">{{ $tag->user->displayUsername() }}</a>
+                            <a href="{{ \App\Support\UserViewPresenter::profileUrl($tag->user) }}">{{ \App\Support\UserViewPresenter::displayName($tag->user, $tag->user_id, $tag->import_player_name) }}</a>
                         @endif
                         {{--player name--}}
                         @if (strlen($tag->import_player_name))

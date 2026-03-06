@@ -24,7 +24,7 @@
                                         @if($regcount)
                                             <optgroup label="users taking part">
                                                 @foreach ($registered as $player)
-                                                    <option value="{{ $player->id }}">{{ $player->displayUsername() }}</option>
+                                                    <option value="{{ $player->id }}">{{ \App\Support\UserViewPresenter::displayName($player, $player->id) }}</option>
                                                 @endforeach
                                             </optgroup>
                                             <optgroup label="all users">

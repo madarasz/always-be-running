@@ -3,7 +3,7 @@
 @if ($regcount)
     <ul id="registered-players">
         @foreach ($registered as $player)
-            <li><a href="/profile/{{ $player->id }}" class="{{ $player->linkClass() }}">{{ $player->displayUsername() }}</a></li>
+            <li><a href="{{ \App\Support\UserViewPresenter::profileUrl($player) }}" class="{{ \App\Support\UserViewPresenter::linkClass($player) }}">{{ \App\Support\UserViewPresenter::displayName($player, $player->id) }}</a></li>
         @endforeach
     </ul>
 @else

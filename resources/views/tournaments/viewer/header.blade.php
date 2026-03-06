@@ -48,7 +48,7 @@
                     <img class="img-patron-o" title="Patreon Sysop/Executive supporter"/>
                 @endif
                 <span id="tournament-creator">
-                    <a href="/profile/{{ $tournament->user->id }}" class="{{ $tournament->user->linkClass() }}">{{ $tournament->user->displayUsername() }}</a>
+                    <a href="{{ \App\Support\UserViewPresenter::profileUrl($tournament->user) }}" class="{{ \App\Support\UserViewPresenter::linkClass($tournament->user) }}">{{ \App\Support\UserViewPresenter::displayName($tournament->user, $tournament->creator) }}</a>
                 </span>
             @else
                 <span id="tournament-creator">[deleted]</span>

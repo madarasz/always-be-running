@@ -57,10 +57,14 @@
                     <tr>
                         <td><i class="fa fa-trophy" aria-hidden="true"></i></td>
                         <td>
-                            @if ($ft->winner->player)
-                                <a href="/profile/{{ $ft->winner->player->id }}">{{ $ft->winner->player->displayUsername() }}</a>
+                            @php
+                                $winner_name = \App\Support\UserViewPresenter::displayName($ft->winner->player, $ft->winner->user, $ft->winner->import_username);
+                                $winner_link = \App\Support\UserViewPresenter::profileUrl($ft->winner->player);
+                            @endphp
+                            @if ($winner_link)
+                                <a href="{{ $winner_link }}">{{ $winner_name }}</a>
                             @else
-                                {{  $ft->winner->import_username }}
+                                {{ $winner_name }}
                             @endif
                         </td>
                         <td class="text-xs-right cell-winner" nowrap="">
@@ -77,8 +81,15 @@
                 @if (isset($ft->photos) && count($ft->photos))
                     <div class="featured-images">
                         @foreach($ft->photos as $index => $photo)
+                            @php
+                                $uploader_name = \App\Support\UserViewPresenter::displayName($photo->user, $photo->user_id);
+                                $uploader_link = \App\Support\UserViewPresenter::profileUrl($photo->user);
+                                $uploader_footer = $uploader_link
+                                    ? 'uploaded by <a href="'.$uploader_link.'">'.$uploader_name.'</a>'
+                                    : 'uploaded by '.$uploader_name;
+                            @endphp
                             <a href="{{ $photo->url() }}" data-toggle="lightbox" data-gallery="gallery" data-title="{{ $photo->title }}"
-                               data-footer="{{ 'uploaded by <a href="/profile/'.$photo->user->id.'">'.$photo->user->displayUsername().'</a>' }}">
+                               data-footer="{{ $uploader_footer }}">
                                 <img data-src="{{ $photo->urlThumb() }}" alt="photo thumbnail"/>
                             </a>
                         @endforeach
