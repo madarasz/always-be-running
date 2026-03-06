@@ -141,6 +141,14 @@ mysqldump_docker --no-create-info --single-transaction --skip-lock-tables \
 # ====================
 # TOURNAMENTS - Recent OR created by test users
 # ====================
+MYSQL_OUTPUT=$(docker compose exec -T mysql mysql -N -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" -e "
+    SELECT DISTINCT id FROM tournaments WHERE updated_at >= '$CUTOFF_DATE' OR creator IN ($TEST_USER_IDS);
+" 2>/dev/null)
+
+REFERENCED_TOURNAMENTS=$(echo "$MYSQL_OUTPUT" | tr '\n' ',' | sed 's/,$//')
+echo "Referenced tournament IDs: $REFERENCED_TOURNAMENTS"
+
+
 echo "Exporting tournaments (recent + test-user-created)..."
 mysqldump_docker --no-create-info --single-transaction --skip-lock-tables \
     --where="updated_at >= '$CUTOFF_DATE' OR creator IN ($TEST_USER_IDS)" \
