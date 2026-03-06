@@ -168,12 +168,13 @@ return [
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
+        App\Providers\MarkdownServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
         'Webpatser\Countries\CountriesServiceProvider',
         Collective\Html\HtmlServiceProvider::class,
         Artdarek\OAuth\OAuthServiceProvider::class,
-        Haleks\Markdown\MarkdownServiceProvider::class,
+        Laravel\Tinker\TinkerServiceProvider::class,
         Alaouy\Youtube\YoutubeServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
         SammyK\LaravelFacebookSdk\LaravelFacebookSdkServiceProvider::class
@@ -227,7 +228,7 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'OAuth2' => Artdarek\OAuth\Facade\OAuth::class,
-        'Markdown' => Haleks\Markdown\Facades\Markdown::class,
+        'Markdown' => App\Support\Facades\Markdown::class,
         'Youtube'=> Alaouy\Youtube\Facades\Youtube::class,
         'Image' => Intervention\Image\Facades\Image::class,
         'Facebook' => SammyK\LaravelFacebookSdk\FacebookFacade::class,

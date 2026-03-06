@@ -456,29 +456,51 @@ cd tests && npm test
 
 ---
 
-### Step 2.2: Laravel 5.3 → 5.4
+### Step 2.2: Laravel 5.3 → 5.4 - ✅ DONE
 **Guide:** https://laravel.com/docs/5.4/upgrade
 
 **PHP Requirement:** >= 5.6.4
 
-**Key Changes:**
-1. **Route helper changes**
-   - `Route::controller()` removed - convert to explicit routes
+**Implementation (2026-03-06):**
+1. **Dependency updates**
+   - `laravel/framework`: `5.3.*` → `5.4.*`
+   - `laravelcollective/html`: `^5.3` → `^5.4`
+   - `phpunit/phpunit`: `~4.0` → `~5.7`
+   - Added `laravel/tinker` (`~1.0`) and explicitly registered `Laravel\Tinker\TinkerServiceProvider` (5.4 has no package auto-discovery).
+   - Updated Symfony dev constraints to `3.2.*` and ran `composer update -W` in Docker.
 
-2. **Middleware changes**
-   - Review custom middleware signatures
+2. **Markdown blocker resolved with compatibility adapter**
+   - Removed `haleks/laravel-markdown` (hard blocker for 5.4).
+   - Added `erusev/parsedown`.
+   - Implemented app-local markdown facade adapter so existing `Markdown::convertToHtml(...)` call sites remain unchanged.
 
-3. **Tinker extracted**
-   ```bash
-   composer require laravel/tinker
-   ```
+3. **Required framework/config housekeeping**
+   - Removed legacy compiled class include from `bootstrap/autoload.php`.
+   - Added 5.4 `markdown` config section to `config/mail.php`.
+   - Renamed queue timeout keys in `config/queue.php`: `expire`/`ttr` → `retry_after`.
+   - Removed deprecated `fetch` setting from `config/database.php`.
 
-4. **composer.json**
-   ```json
-   "laravel/framework": "5.4.*"
-   ```
+**Files Modified:**
+- `composer.json`
+- `composer.lock`
+- `bootstrap/autoload.php`
+- `config/app.php`
+- `config/mail.php`
+- `config/queue.php`
+- `config/database.php`
+- `app/Providers/MarkdownServiceProvider.php` (new)
+- `app/Support/Facades/Markdown.php` (new)
+- `app/Support/Markdown/MarkdownRenderer.php` (new)
 
-**Validation checkpoint:** Run API and E2E tests
+**Validation:**
+- [X] `composer update -W` succeeds in Docker with Laravel `5.4.*`
+- [X] `php artisan` commands run (`route:list`, `tinker` available)
+- [X] `php artisan view:clear` and `php artisan route:clear` run cleanly
+- [X] API tests pass (`npm run test:api`) — 26/26
+- [X] E2E tests pass (`npm run test:e2e`) — 91/91
+
+**Notes:**
+- Abandoned package warnings remain for legacy dependencies (e.g., `sammyk/laravel-facebook-sdk`, `laravelcollective/html`), but they are non-blocking for this step.
 
 ---
 
