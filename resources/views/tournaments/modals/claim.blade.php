@@ -292,7 +292,9 @@
                     } else {
                         if (count($entries_swiss[$i]) &&
                             ($entries_swiss[$i][0]->type == 3 || $entries_swiss[$i][0]->type == 4)) {
-                                $import_user = ' - '.$entries_swiss[$i][0]->player->displayUsername().' (already claimed)';
+                                $claim_player = $entries_swiss[$i][0]->player;
+                                $claim_username = $claim_player ? $claim_player->displayUsername() : 'unknown user #'.$entries_swiss[$i][0]->user;
+                                $import_user = ' - '.$claim_username.' (already claimed)';
                         } else {
                             $import_user = '';
                         }
@@ -325,7 +327,9 @@
                         } else {
                             if (count($entries_top[$i]) &&
                                 ($entries_top[$i][0]->type == 3 || $entries_top[$i][0]->type == 4)) {
-                                    $import_user = ' - '.$entries_top[$i][0]->player->displayUsername().' (already claimed)';
+                                    $claim_player = $entries_top[$i][0]->player;
+                                    $claim_username = $claim_player ? $claim_player->displayUsername() : 'unknown user #'.$entries_top[$i][0]->user;
+                                    $import_user = ' - '.$claim_username.' (already claimed)';
                             } else {
                                 $import_user = '';
                             }

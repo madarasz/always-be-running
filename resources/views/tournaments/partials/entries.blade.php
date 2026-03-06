@@ -109,9 +109,12 @@
                                 array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}
                         @else
                             {{--someone else's entry--}}
+                            <?php
+                                $claim_username = $entry->player ? $entry->player->displayUsername() : ($entry->import_username ?: 'unknown user #'.$entry->user);
+                            ?>
                             {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove',
                                 array('type' => 'submit', 'class' => 'btn btn-danger btn-xs',
-                                'onclick' => "return confirm('Are you sure you want to delete the claim of ".$entry->player->displayUsername()."?')")) !!}
+                                'onclick' => "return confirm('Are you sure you want to delete the claim of ".addslashes($claim_username)."?')")) !!}
                         @endif
                     {!! Form::close() !!}
             @elseif ($user && $entry->type > 4 && ($user->admin || $user->id == $creator || $user->id == $tournament->concluded_by))
