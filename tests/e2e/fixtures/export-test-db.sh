@@ -160,7 +160,7 @@ mysqldump_docker --no-create-info --single-transaction --skip-lock-tables \
 # ====================
 echo "Exporting entries (test users + recent)..."
 mysqldump_docker --no-create-info --single-transaction --skip-lock-tables \
-    --where="user IN ($TEST_USER_IDS) OR updated_at >= '$CUTOFF_DATE'" \
+    --where="user IN ($TEST_USER_IDS) OR updated_at >= '$CUTOFF_DATE' OR tournament_id IN ($REFERENCED_TOURNAMENTS)" \
     "$DB_NAME" entries >> "$UNCOMPRESSED_FILE"
 
 # ====================
