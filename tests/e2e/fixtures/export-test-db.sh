@@ -139,11 +139,11 @@ mysqldump_docker --no-create-info --single-transaction --skip-lock-tables \
     "$DB_NAME" prize_collections >> "$UNCOMPRESSED_FILE"
 
 # ====================
-# TOURNAMENTS - Only recent (last 120 days)
+# TOURNAMENTS - Recent OR created by test users
 # ====================
-echo "Exporting tournaments (recent only)..."
+echo "Exporting tournaments (recent + test-user-created)..."
 mysqldump_docker --no-create-info --single-transaction --skip-lock-tables \
-    --where="updated_at >= '$CUTOFF_DATE'" \
+    --where="updated_at >= '$CUTOFF_DATE' OR creator IN ($TEST_USER_IDS)" \
     "$DB_NAME" tournaments >> "$UNCOMPRESSED_FILE"
 
 # ====================
