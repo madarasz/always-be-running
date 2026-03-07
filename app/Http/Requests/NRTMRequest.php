@@ -25,7 +25,7 @@ class NRTMRequest extends Request
     {
         return [
             'jsonresults' => 'required_without_all:conclusion_code',
-            'conclusion_code' => 'conc_code:'.Request::get('conclusion_code'),
+            'conclusion_code' => 'conc_code:'.$this->input('conclusion_code'),
         ];
     }
 

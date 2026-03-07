@@ -173,11 +173,10 @@ return [
 
         'Webpatser\Countries\CountriesServiceProvider',
         Collective\Html\HtmlServiceProvider::class,
-        Artdarek\OAuth\OAuthServiceProvider::class,
+        App\Providers\OAuthServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
         Alaouy\Youtube\YoutubeServiceProvider::class,
-        Intervention\Image\ImageServiceProvider::class,
-        SammyK\LaravelFacebookSdk\LaravelFacebookSdkServiceProvider::class
+        Intervention\Image\ImageServiceProvider::class
     ],
 
     /*
@@ -231,7 +230,6 @@ return [
         'Markdown' => App\Support\Facades\Markdown::class,
         'Youtube'=> Alaouy\Youtube\Facades\Youtube::class,
         'Image' => Intervention\Image\Facades\Image::class,
-        'Facebook' => SammyK\LaravelFacebookSdk\FacebookFacade::class,
     ],
 
 ];

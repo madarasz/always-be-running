@@ -25,7 +25,7 @@ class ConcludeRequest extends Request
     {
         return [
             'players_number' => 'integer|between:1,1000|required',
-            'top_number' => 'integer|between:0,16|players_top:'.Request::get('players_number').','.Request::get('top_number')
+            'top_number' => 'integer|between:0,16|players_top:'.$this->input('players_number').','.$this->input('top_number')
         ];
     }
 

@@ -504,25 +504,85 @@ cd tests && npm test
 
 ---
 
-### Step 2.3: Laravel 5.4 → 5.5
+### Step 2.3: Laravel 5.4 → 5.5.42 (Security Release) - ✅ DONE
 **Guide:** https://laravel.com/docs/5.5/upgrade
 
-**PHP Requirement:** >= 7.0.0 (UPDATE DOCKER!)
+**PHP Requirement:** >= 7.0.0 (**already satisfied** with PHP 7.1+)
 
-**Key Changes:**
-1. **Package auto-discovery** - update service providers
+**Implementation (2026-03-07):**
+1. **Dependency and Composer script updates**
+   - Upgraded framework and core constraints:
+     - `laravel/framework`: `5.4.*` → `5.5.42` (pinned)
+     - `php`: `>=5.6.4` → `>=7.0.0`
+     - `laravelcollective/html`: `^5.4` → `^5.5`
+     - `phpunit/phpunit`: `~5.7` → `~6.0`
+     - Added `filp/whoops` `~2.0`
+   - Replaced optimize-era hooks with 5.5-style autoload discovery:
+     - Removed `php artisan optimize` hooks
+     - Added `post-autoload-dump` with `Illuminate\\Foundation\\ComposerScripts::postAutoloadDump` + `@php artisan package:discover`
 
-2. **Exception rendering**
-   - `render()` method signature changed
+2. **Package compatibility resolution**
+   - Replaced incompatible/deprecated Facebook wrapper package usage:
+     - Removed `sammyk/laravel-facebook-sdk`
+     - Added `facebook/graph-sdk` and app-local adapter `App\Support\Facebook\FacebookClient`
+     - Updated `FBController` to use adapter (controller behavior preserved)
+   - Removed auth-critical `dev-master` usage:
+     - `oriceon/oauth-5-laravel`: `dev-master` → `1.0.5`
+     - Added app-local `App\Providers\OAuthServiceProvider` to replace removed `Application::share()` behavior
+     - Added `config/oauth.php` compatibility mapping for package config lookup
+   - Removed non-critical `dev-master`:
+     - `alaouy/youtube`: `dev-master` → `^2.2.6`
 
-3. **Mail changes**
-   - `Mailable` class changes
+3. **Framework behavior alignment + future-prep refactors**
+   - Cookie serialization security change applied:
+     - `App\Http\Middleware\EncryptCookies::$serialize = false`
+   - Request semantics compatibility:
+     - Replaced security-sensitive `$request->has(...)` check with `$request->filled(...)` where non-empty semantics are required
+   - FormRequest cleanup:
+     - Replaced static `Request::get(...)` with instance `$this->input(...)` in request rule builders
+   - Safer write-path payload handling:
+     - Reduced raw `$request->all()` usage in prize item create/update to explicit field whitelist
+   - Config-backed access improvements:
+     - NetrunnerDB OAuth redirect URL moved to `config/services.php`
+     - FB geocode call switched to `config('services.google.backend_api')`
+   - Added Laravel 5.5 command auto-loading in `app/Console/Kernel.php`
 
-4. **composer.json**
-   ```json
-   "laravel/framework": "5.5.*",
-   "php": ">=7.0.0"
-   ```
+4. **Laravel 5.5.42 + Composer 2 compatibility fix**
+   - Patched `vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php` to support Composer 2 `installed.json` structure (`packages` key), so `package:discover` works on Laravel 5.5.42.
+
+**Files Modified (Step 2.3):**
+- `composer.json`
+- `composer.lock`
+- `config/app.php`
+- `config/services.php`
+- `config/oauth.php` (new)
+- `app/Providers/OAuthServiceProvider.php` (new)
+- `app/Support/Facebook/FacebookClient.php` (new)
+- `app/Http/Controllers/FBController.php`
+- `app/Http/Controllers/NetrunnerDBController.php`
+- `app/Http/Controllers/PrizeController.php`
+- `app/Http/Middleware/EncryptCookies.php`
+- `app/Http/Requests/TournamentRequest.php`
+- `app/Http/Requests/ConcludeRequest.php`
+- `app/Http/Requests/NRTMRequest.php`
+- `app/Console/Kernel.php`
+- `vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php`
+
+**Validation:**
+- [X] `composer update -W` succeeds with Laravel `5.5.42`
+- [X] `php artisan package:discover` succeeds
+- [X] cache clear commands succeed: `config:clear`, `cache:clear`, `route:clear`, `view:clear`
+- [X] App reports `Laravel Framework 5.5.42`
+- [X] API tests pass: `npm run test:api` (26/26)
+- [X] E2E tests pass: `npm run test:e2e` (91/91)
+- [X] OAuth login flow works end-to-end in E2E global setup; redirect URL contains expected `client_id`
+- [X] Facebook integration path responds via API (`/api/fb/event-title`) with Graph JSON error payload (no framework/runtime crash)
+- [~] Direct YouTube metadata smoke call in local env is blocked by invalid local API key (`Error 400 API key not valid`); integration wiring and videos page E2E remain functional
+- [X] Tournament create/edit/delete/conclude paths pass (`tournament-crud` E2E: 4/4)
+
+**Notes:**
+- This step intentionally causes one-time logout/session invalidation due Laravel 5.5.42 cookie serialization hardening.
+- No `dev-master` dependency remains on the auth-critical path.
 
 **Validation checkpoint:** Run API and E2E tests
 
