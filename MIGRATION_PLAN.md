@@ -588,24 +588,98 @@ cd tests && npm test
 
 ---
 
-### Step 2.4: Laravel 5.5 → 5.6
+### Step 2.4: Laravel 5.5 → 5.6 - ✅ DONE
 **Guide:** https://laravel.com/docs/5.6/upgrade
 
 **PHP Requirement:** >= 7.1.3
 
-**Key Changes:**
-1. **Logging configuration**
-   - New `config/logging.php` file
-   - Update logging calls
+**Key Changes (Official 5.6 Upgrade Guide):**
+1. **Dependency updates (required)**
+   - Update framework/runtime constraints:
+     ```json
+     "laravel/framework": "5.6.*",
+     "php": ">=7.1.3",
+     "fideloper/proxy": "^4.0"
+     ```
+   - Update `phpunit/phpunit` to `^7.0`.
+   - If installed, update first-party packages: BrowserKit `4.*`, Dusk `^3.0`, Passport `^6.0`, Scout `^4.0`.
 
-2. **Blade changes**
-   - `@parent` directive changes
+2. **Logging migration (required)**
+   - Add new `config/logging.php` and move logging config there.
+   - Remove `log` and `log_level` keys from `config/app.php`.
+   - If using `configureMonologUsing`, migrate to custom channels / taps.
+   - Update type hints from `Illuminate\Log\Writer` / `Illuminate\Contracts\Logging\Log` to `Psr\Log\LoggerInterface` (or `Illuminate\Log\Logger`).
 
-3. **composer.json**
-   ```json
-   "laravel/framework": "5.6.*",
-   "php": ">=7.1.3"
-   ```
+3. **Hashing migration (required)**
+   - Add new `config/hashing.php` from the Laravel 5.6 skeleton.
+   - Keep `bcrypt` default on PHP 7.1 baseline.
+
+4. **Trusted proxies middleware update (required)**
+   - Update `App\Http\Middleware\TrustProxies::$headers` from array style to Symfony bitmask constants (for example `Request::HEADER_X_FORWARDED_ALL`).
+
+5. **Blade / helper encoding behavior change (breaking)**
+   - Blade and `e()` now double-encode HTML entities by default.
+   - If needed for legacy behavior, use `Blade::withoutDoubleEncoding()` (global) or `e($value, false)` (localized).
+
+6. **Compatibility checks**
+   - Verify no remaining `php artisan optimize` usage in scripts (removed in Step 2.3).
+   - If tests assert status `200` for directly returned newly-created models from routes, update expectation to `201`.
+   - If custom code implements `ValidatesWhenResolved`, rename `validate` to `validateResolved`.
+
+**Implementation (2026-03-08):**
+1. **Dependency + lockfile upgrade**
+   - Updated runtime constraints in `composer.json`:
+     - `php`: `>=7.0.0` → `>=7.1.3`
+     - `laravel/framework`: `5.5.42` → `5.6.*`
+     - added `fideloper/proxy`: `^4.0`
+     - `phpunit/phpunit`: `~6.0` → `^7.0`
+   - Ran `composer update -W` in Docker and upgraded framework to `Laravel 5.6.40`.
+
+2. **Logging and hashing migration**
+   - Added `config/logging.php` (channel-based config with `stack` default).
+   - Removed legacy `'log'` key from `config/app.php`.
+   - Added `config/hashing.php` with `bcrypt` default.
+   - Added `LOG_CHANNEL=stack` to tracked env templates:
+     - `.example.env`
+     - `docker/.env.docker`
+
+3. **Trusted proxies middleware update**
+   - Added `app/Http/Middleware/TrustProxies.php` extending `Fideloper\Proxy\TrustProxies`.
+   - Set proxy headers to `Request::HEADER_X_FORWARDED_ALL`.
+   - Registered middleware globally in `app/Http/Kernel.php`.
+
+4. **Blade encoding compatibility guard**
+   - Added `Blade::withoutDoubleEncoding()` (guarded with `method_exists`) in `AppServiceProvider::boot()` to preserve legacy rendering behavior where values may already be encoded.
+
+5. **Compatibility checks**
+   - No app code uses `configureMonologUsing`, `Illuminate\Log\Writer`, or `Illuminate\Contracts\Logging\Log` type hints.
+   - No custom `ValidatesWhenResolved::validate()` implementations found.
+   - No active `php artisan optimize` script hooks remain.
+
+**Files Modified (Step 2.4):**
+- `composer.json`
+- `composer.lock`
+- `config/app.php`
+- `config/logging.php` (new)
+- `config/hashing.php` (new)
+- `app/Http/Middleware/TrustProxies.php` (new)
+- `app/Http/Kernel.php`
+- `app/Providers/AppServiceProvider.php`
+- `.example.env`
+- `docker/.env.docker`
+
+**Validation:**
+- [X] `composer update -W` succeeds with Laravel `5.6.40`
+- [X] `php artisan package:discover` succeeds
+- [X] cache clear commands succeed: `config:clear`, `cache:clear`, `route:clear`, `view:clear`
+- [X] `php artisan route:list` succeeds (routes register correctly)
+- [X] App reports `Laravel Framework 5.6.40`
+- [X] API tests pass: `npm run test:api` (26/26)
+- [X] E2E tests pass: `npm run test:e2e` (91/91)
+
+**Notes:**
+- E2E required a one-time refresh of cached auth storage state (`tests/e2e/.auth/*.json`) after the framework upgrade so global setup could re-login and persist fresh OAuth sessions.
+- Composer update reports legacy abandoned-package warnings (e.g. `laravelcollective/html`, `facebook/graph-sdk`), but they are non-blocking for this step.
 
 **Validation checkpoint:** Run API and E2E tests
 
@@ -971,10 +1045,10 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 | 2.1 | 5.2→5.3 | 5.6.4 | Routes restructure, Collections |
 | 2.2 | 5.3→5.4 | 5.6.4 | Route::controller removed |
 | 2.3 | 5.4→5.5 | **7.0** | Package auto-discovery |
-| 2.4 | 5.5→5.6 | 7.1.3 | Logging config |
-| 2.5 | 5.6→5.7 | 7.1.3 | Resources directory |
-| 2.6 | 5.7→5.8 | 7.1.3 | Cache TTL in seconds |
-| 2.7 | 5.8→6.0 | **7.2** | Carbon 2, policy changes |
+| 2.4 | 5.5→5.6 | 7.1.3 | Logging + hashing config, TrustProxies headers, Blade/e() encoding |
+| 2.5 | 5.6→5.7 | 7.1.3 | Blade `or` removed, cache `storage/framework/cache/data`, `Route::redirect` 302 default |
+| 2.6 | 5.7→5.8 | 7.1.3 | Cache TTL in seconds, env parsing changes, Markdown mail path + notification channel extraction |
+| 2.7 | 5.8→6.0 | **7.2** | Policies need `viewAny`, string/array helpers removed from core, queue retry default changed |
 | 3.1 | 6.0→7.0 | 7.2.5 | CORS config, Symfony 5 |
 | 3.2 | 7.0→8.0 | **7.3** | Models to app/Models/ |
 | 3.3 | 8.0→9.0 | **8.0** | Flysystem 3, Symfony Mailer |
