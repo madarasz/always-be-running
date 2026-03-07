@@ -5,23 +5,24 @@
     "license": "proprietary",
     "type": "project",
     "require": {
-        "php": ">=5.6.4",
-        "laravel/framework": "5.4.*",
+        "php": ">=7.0.0",
+        "laravel/framework": "5.5.42",
         "laravel/tinker": "~1.0",
         "webpatser/laravel-countries": "1.5.4",
-        "laravelcollective/html": "^5.4",
-        "oriceon/oauth-5-laravel": "dev-master",
+        "laravelcollective/html": "^5.5",
+        "oriceon/oauth-5-laravel": "1.0.5",
         "erusev/parsedown": "1.7.*",
-        "alaouy/youtube": "dev-master",
+        "alaouy/youtube": "^2.2.6",
+        "facebook/graph-sdk": "^5.7",
         "intervention/image": "^2.3",
-        "sammyk/laravel-facebook-sdk": "^3.4",
         "eluceo/ical": "^0.11.4",
         "doctrine/dbal": "^2.9"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~5.7",
+        "phpunit/phpunit": "~6.0",
+        "filp/whoops": "~2.0",
         "symfony/css-selector": "3.2.*",
         "symfony/dom-crawler": "3.2.*"
     },
@@ -37,16 +38,12 @@
         "post-root-package-install": [
             "php -r \"copy('.env.example', '.env');\""
         ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover"
+        ],
         "post-create-project-cmd": [
             "php artisan key:generate"
-        ],
-        "post-install-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postInstall",
-            "php artisan optimize"
-        ],
-        "post-update-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-            "php artisan optimize"
         ]
     },
     "config": {

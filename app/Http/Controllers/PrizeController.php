@@ -127,7 +127,9 @@ class PrizeController extends Controller
     public function createPrizeItem(Request $request) {
         $this->authPrizeItem($request);
 
-        $newItem = PrizeElement::create(array_merge($request->all(), [
+        $payload = $request->only(['prize_id', 'quantity', 'title', 'type', 'artist_id', 'official', 'proper', 'info']);
+
+        $newItem = PrizeElement::create(array_merge($payload, [
             'creator' => $request->user()->id
         ]));
 
@@ -138,7 +140,8 @@ class PrizeController extends Controller
         $item = PrizeElement::findOrFail($id);
         $this->authPrizeItem($request);
 
-        $item->update($request->all());
+        $payload = $request->only(['prize_id', 'quantity', 'title', 'type', 'artist_id', 'official', 'proper', 'info']);
+        $item->update($payload);
 
         return response()->json($item);
     }
@@ -163,7 +166,7 @@ class PrizeController extends Controller
 
     private function authPrizeItem(Request $request) {
         if (!$request->user()->admin && 
-            !($request->has('artist_id') && $request->input('artist_id') == $request->user()->artist_id)) {
+            !($request->filled('artist_id') && $request->input('artist_id') == $request->user()->artist_id)) {
             abort(403);
         }
     }

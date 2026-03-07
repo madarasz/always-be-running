@@ -24,18 +24,18 @@ class TournamentRequest extends Request
      */
     public function rules()
     {
-        $player_rules = is_null(Request::get('concluded')) ? '' : '|required'; // if concluded, players number is required
+        $player_rules = is_null($this->input('concluded')) ? '' : '|required'; // if concluded, players number is required
 
         $rules = [
             'date' => 'date_format:Y.m.d.',
             'players_number' => 'integer|between:1,1000'.$player_rules,
-            'top_number' => 'integer|between:0,1000|players_top:'.Request::get('players_number').','.Request::get('top_number'),
+            'top_number' => 'integer|between:0,1000|players_top:'.$this->input('players_number').','.$this->input('top_number'),
             'link_facebook' => ['regex:/https:\/\/.*facebook\.com\/((groups)|(events))/'],
-            'end_date' => 'date_later:'.Request::get('date').','.Request::get('end_date').
-                '|date_later_max_week:'.Request::get('date').','.Request::get('end_date').','.Request::get('tournament_type_id')
+            'end_date' => 'date_later:'.$this->input('date').','.$this->input('end_date').
+                '|date_later_max_week:'.$this->input('date').','.$this->input('end_date').','.$this->input('tournament_type_id')
         ];
 
-        if (!Request::get('online')) // non-online tournament requires location
+        if (!$this->input('online')) // non-online tournament requires location
         {
             $rules = array_merge($rules, [
                 'location_city' => 'required',

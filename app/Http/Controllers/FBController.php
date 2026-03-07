@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\Facebook\FacebookClient;
 use App\Tournament;
 use Illuminate\Http\Request;
 
@@ -10,6 +11,16 @@ use Illuminate\Support\Facades\Auth;
 
 class FBController extends Controller
 {
+    /**
+     * @var FacebookClient
+     */
+    protected $facebookClient;
+
+    public function __construct(FacebookClient $facebookClient)
+    {
+        $this->facebookClient = $facebookClient;
+    }
+
     /**
      * Gets FB event data from event ID or URL
      * @param $id
@@ -30,11 +41,8 @@ class FBController extends Controller
             }
         }
 
-        $fb = \App::make('SammyK\LaravelFacebookSdk\LaravelFacebookSdk');
-        $fb->setDefaultAccessToken($fb->getApp()->getAccessToken());
-
         try {
-            $eventData = json_decode($fb->get('/' . $id. '?fields='. $fields)->getBody(), true);
+            $eventData = $this->facebookClient->getGraphNode('/' . $id. '?fields='. $fields);
         } catch (\Exception $e) {
             return ['error' => $e->getMessage()];
         }
@@ -150,7 +158,7 @@ class FBController extends Controller
         // call google maps API
         $location_address = '';
         $location_place_id = '';
-        $du = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?language=en&key=".env('GOOGLE_BACKEND_API').
+        $du = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?language=en&key=".config('services.google.backend_api').
             "&address=".urlencode($location_country.", ".$location_state.", ".$location_city.", ".$street.", ".$location_store));
         $djd = json_decode($du,true);
 

@@ -41,5 +41,8 @@ return [
         'youtube_api' => env('GOOGLE_YOUTUBE_API'),
         'map_id' => env('GOOGLE_MAP_ID'),
     ],
+    'netrunnerdb' => [
+        'redirect_url' => env('NETRUNNERDB_REDIRECT_URL'),
+    ],
 
 ];
