@@ -373,7 +373,7 @@ class TournamentsController extends Controller
      * @return array
      */
     private function tournametDataFormat($data, $forUser = null) {
-        $appUrl = env('APP_URL');
+        $appUrl = config('app.url');
         $result = [];
         $tournament_types = TournamentType::get()->pluck('type_name', 'id');
         $tournament_formats = TournamentFormat::get()->pluck('format_name', 'id');

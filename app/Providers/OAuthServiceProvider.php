@@ -4,18 +4,12 @@ namespace App\Providers;
 
 use Artdarek\OAuth\OAuth;
 use Artdarek\OAuth\TokenStorage;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 use OAuth\ServiceFactory;
 
-class OAuthServiceProvider extends ServiceProvider
+class OAuthServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = true;
-
     /**
      * Bootstrap the application services.
      *

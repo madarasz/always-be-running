@@ -17,7 +17,7 @@
                 <h5 class="p-b-2">Endpoints</h5>
                 <p>
                     <strong>Upcoming tournaments and recurring events</strong>:
-                    <a href="<?php env('APP_URL')?>/api/tournaments/upcoming">https://alwaysberunning.net/api/tournaments/upcoming</a>
+                    <a href="{{ url('/api/tournaments/upcoming') }}">https://alwaysberunning.net/api/tournaments/upcoming</a>
                     <br/>
                     <em>Rejected events and tournaments with past dates are filtered out.</em>
                     <blockquote class="help-markdown m-b-3">
@@ -29,12 +29,12 @@
                 </p>
                 <p>
                     <strong>Concluded tournamets</strong> (tournaments with results):
-                    <a href="<?php env('APP_URL')?>/api/tournaments/results?limit=500">https://alwaysberunning.net/api/tournaments/results?limit=500</a>
+                    <a href="{{ url('/api/tournaments/results?limit=500') }}">https://alwaysberunning.net/api/tournaments/results?limit=500</a>
                     <br/>
                     <em>Only concluded tournaments are displayed. Rejected tournaments are filtered out.</em><br/>
                     <strong>Do not query more than 500 elemets, server memory will run out.</strong><br/>
                     Supports <strong>limit</strong> and <strong>offset</strong> parameters, example:
-                    <a href="<?php env('APP_URL')?>/api/tournaments/results?offset=20&limit=10">https://alwaysberunning.net/api/tournaments/results?offset=20&limit=10</a>
+                    <a href="{{ url('/api/tournaments/results?offset=20&limit=10') }}">https://alwaysberunning.net/api/tournaments/results?offset=20&limit=10</a>
                     <blockquote class="help-markdown m-b-3">
                         [<br/>
                         &nbsp;&nbsp;<em>event objects</em><br/>
@@ -48,7 +48,7 @@
                     You can query all tournaments and apply various filters.
                     Check out <a href="#filters">filter list</a> for available options.
                     Example:<br/>
-                    <a href="<?php env('APP_URL')?>/api/tournaments?country=United%20Kingdom&concluded=1&type=2">
+                    <a href="{{ url('/api/tournaments?country=United%20Kingdom&concluded=1&type=2') }}">
                         https://alwaysberunning.net/api/tournaments?country=United%20Kingdom&concluded=1&type=2
                     </a></br>
                     <em>(returns all concluded store championships from the UK)</em>
@@ -61,7 +61,7 @@
                 <p>
                     <strong>Tournament entries</strong>:
                     https://alwaysberunning.net/api/entries?id=<em>[tournament ID]</em>
-                    - <a href="<?php env('APP_URL')?>/api/entries?id=353">example</a>
+                    - <a href="{{ url('/api/entries?id=353') }}">example</a>
                     <br/>
                     <em>Returns claims and imported entries for a single tournament.</em>
                     <blockquote class="help-markdown m-b-3">
@@ -72,7 +72,7 @@
                 </p>
                 <p>
                     <strong>Videos</strong>:
-                    <a href="<?php env('APP_URL')?>/api/videos">https://alwaysberunning.net/api/videos</a>
+                    <a href="{{ url('/api/videos') }}">https://alwaysberunning.net/api/videos</a>
                     <br/>
                     <em>Returns all videos of approved tournaments.</em>
                 <blockquote class="help-markdown m-b-3">

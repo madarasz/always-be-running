@@ -39,7 +39,7 @@
                                 <i class="fa fa-copy" title="copy"></i>
                             </button>
                             <input id="url-subscribe" type="text" onclick="select()"
-                                   value="{{ env('APP_URL').'/calendar/user/'.$secret_id }}" size="60" readonly/>
+                                value="{{ url('/calendar/user/'.$secret_id) }}" size="60" readonly/>
                         </div>
                         <hr style="height: 1px"/>
                         <div class="small-text">

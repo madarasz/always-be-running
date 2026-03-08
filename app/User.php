@@ -109,7 +109,7 @@ class User extends Authenticatable
 
     public function getSecretId() {
         if (is_null($this->secret_id)) {
-            $this->secret_id = hash('md5', $this->id.env('APP_KEY'), false);
+            $this->secret_id = hash('md5', $this->id.config('app.key'), false);
             $this->save();
         }
         return $this->secret_id;
