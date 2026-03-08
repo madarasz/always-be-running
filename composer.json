@@ -6,11 +6,11 @@
     "type": "project",
     "require": {
         "php": ">=7.1.3",
-        "laravel/framework": "5.7.*",
+        "laravel/framework": "5.8.*",
         "laravel/tinker": "~1.0",
         "fideloper/proxy": "^4.0",
         "webpatser/laravel-countries": "1.5.4",
-        "laravelcollective/html": "^5.5",
+        "laravelcollective/html": "^5.8",
         "oriceon/oauth-5-laravel": "1.0.5",
         "erusev/parsedown": "1.7.*",
         "alaouy/youtube": "^2.2.6",

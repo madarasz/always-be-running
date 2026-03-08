@@ -54,6 +54,8 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'default_netrunnerdb_claim' => env('DEFAULT_NETRUNNERDB_CLAIM', false),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

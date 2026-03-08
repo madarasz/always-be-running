@@ -184,7 +184,7 @@ class VideosController extends Controller
             'http' => array(
                 'method' => "GET",
                 'header' => "Accept: application/vnd.twitchtv.v5+json\r\n" .
-                    "Client-ID:" . env('TWITCH_CLIENT_ID') . "\r\n"
+                    "Client-ID:" . config('services.twitch.client_id') . "\r\n"
             )
         );
         $context = stream_context_create($opts);

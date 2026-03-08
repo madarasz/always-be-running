@@ -753,22 +753,77 @@ cd tests && npm test
 
 ---
 
-### Step 2.6: Laravel 5.7 → 5.8
+### Step 2.6: Laravel 5.7 → 5.8 - ✅ DONE
 **Guide:** https://laravel.com/docs/5.8/upgrade
+**Release Notes:** https://laravel.com/docs/5.8/releases
 
 **PHP Requirement:** >= 7.1.3
 
-**Key Changes:**
-1. **Environment file changes**
-   - `putenv()` calls cached
+**Implementation (2026-03-08):**
+1. **Dependency + lockfile upgrade**
+   - Updated `composer.json`:
+     - `laravel/framework`: `5.7.*` → `5.8.*`
+     - `laravelcollective/html`: `^5.5` → `^5.8`
+   - Ran `docker compose exec php composer update -W` and upgraded to `Laravel 5.8.38`.
+   - Composer selected 5.8-compatible transitive updates (`nesbot/carbon` 2.x, `vlucas/phpdotenv` 3.x) and removed unused legacy notification-channel packages.
 
-2. **Cache TTL in seconds**
-   - Cache duration now in seconds (was minutes)
+2. **Runtime config/env hygiene for 5.8 immutable env behavior**
+   - Replaced runtime `env()` reads in app and Blade code with `config()` / `url()` access:
+     - `app/Tournament.php`
+     - `app/Http/Controllers/TournamentsController.php`
+     - `app/User.php`
+     - `app/Http/Controllers/VideosController.php`
+     - `resources/views/api.blade.php`
+     - `resources/views/personal/tournaments.blade.php`
+     - `resources/views/tournaments/modals/claim.blade.php`
+   - Added config-backed keys used by runtime code:
+     - `config/app.php`: `default_netrunnerdb_claim`
+     - `config/services.php`: `twitch.client_id`
 
-3. **composer.json**
-   ```json
-   "laravel/framework": "5.8.*"
-   ```
+3. **5.8 compatibility refactors from identified hotspots**
+   - Updated registration password rule to 5.8 default baseline:
+     - `app/Http/Controllers/Auth/AuthController.php`: `min:6` → `min:8`
+   - Modernized deferred provider pattern:
+     - `app/Providers/OAuthServiceProvider.php`: removed `$defer = true`, now implements `Illuminate\Contracts\Support\DeferrableProvider`
+   - Replaced deprecated helper usage:
+     - `database/factories/ModelFactory.php`: `str_random(...)` → `Illuminate\Support\Str::random(...)`
+
+4. **Required compatibility audits**
+   - Verified no app usage of `Cache::put/add/putMany/remember` with integer TTL values (no minute→second migration needed).
+   - Verified no app usage of `Cache::lock(...)` manual-release flows.
+   - Verified no custom `password.reset` route in active route files.
+   - Verified no published `resources/views/vendor/mail/markdown` directory.
+   - Verified no Slack/Nexmo notification channel usage in app code.
+
+**Files Modified (Step 2.6):**
+- `composer.json`
+- `composer.lock`
+- `app/Providers/OAuthServiceProvider.php`
+- `app/Http/Controllers/Auth/AuthController.php`
+- `database/factories/ModelFactory.php`
+- `app/Tournament.php`
+- `app/User.php`
+- `app/Http/Controllers/TournamentsController.php`
+- `app/Http/Controllers/VideosController.php`
+- `config/app.php`
+- `config/services.php`
+- `resources/views/api.blade.php`
+- `resources/views/personal/tournaments.blade.php`
+- `resources/views/tournaments/modals/claim.blade.php`
+
+**Validation:**
+- [X] `composer update -W` succeeds with Laravel `5.8.38`
+- [X] `php artisan package:discover` succeeds
+- [X] cache clear commands succeed: `config:clear`, `cache:clear`, `route:clear`, `view:clear`
+- [X] `php artisan route:list` succeeds (routes register correctly)
+- [X] App reports `Laravel Framework 5.8.38`
+- [X] API tests pass: `npm run test:api` (26/26)
+- [X] E2E tests pass: `npm run test:e2e` (91/91)
+- [~] Perf baseline comparison was skipped (optional for this step)
+
+**Notes:**
+- API tests include existing skip-based assertions for entries when local fixture data lacks a suitable concluded tournament; suite still passes fully.
+- Composer update reports legacy abandoned-package warnings (for example `laravelcollective/html`, `facebook/graph-sdk`), but they are non-blocking for this step.
 
 **Validation checkpoint:** Run API and E2E tests
 

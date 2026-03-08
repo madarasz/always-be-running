@@ -218,7 +218,7 @@ class Tournament extends Model
         if (is_null($this->timezone) && !$this->online) { // not online tournament
             // request timezone from google maps api
             $tzRequest = file_get_contents("https://maps.googleapis.com/maps/api/timezone/json?location=".
-                $this->location_lat.','. $this->location_long.'&timestamp='.time($this->date).'&key='.ENV('GOOGLE_BACKEND_API'));
+                $this->location_lat.','. $this->location_long.'&timestamp='.time($this->date).'&key='.config('services.google.backend_api'));
             try {
                 $timezoneString = json_decode($tzRequest, true)['timeZoneId'];
                 // save to DB
@@ -263,7 +263,7 @@ class Tournament extends Model
             'alarm_reminder' => $allday ? '-PT480M' : '-PT120M',
             'recurring' => is_null($this->recur_weekly) ? false : $days[$this->recur_weekly],
             'uid' => $this->id.'alwaysberunningnet',
-            'url' => env('APP_URL').$this->seoUrl(),
+            'url' => config('app.url').$this->seoUrl(),
             'filename' => $this->seoTitle().'.ics'
         ];
     }

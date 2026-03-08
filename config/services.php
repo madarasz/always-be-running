@@ -34,6 +34,9 @@ return [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
+    'twitch' => [
+        'client_id' => env('TWITCH_CLIENT_ID'),
+    ],
     'google' => [
         'frontend_api' => env('GOOGLE_FRONTEND_API'),
         'backend_api' => env('GOOGLE_BACKEND_API'),

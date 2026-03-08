@@ -151,7 +151,7 @@
                                 <hr class="hidden-xs-up"/>
                                 <div class="row hidden-xs-up">
                                     <div class="col-xs-12 text-xs-center">
-                                        {!! Form::checkbox('netrunnerdb_link', null, env('DEFAULT_NETRUNNERDB_CLAIM'), ['id' => 'netrunnerdb_link', 'disabled' => '', 'class' => 'hidden-xs-up']) !!}
+                                        {!! Form::checkbox('netrunnerdb_link', null, config('app.default_netrunnerdb_claim'), ['id' => 'netrunnerdb_link', 'disabled' => '', 'class' => 'hidden-xs-up']) !!}
                                         {!! Form::label('netrunnerdb_link', 'add claim to decklists on NetrunnerDB', ['class' => 'm-b-0 hidden-xs-up']) !!}
                                         @include('partials.popover', ['direction' => 'bottom', 'content' =>
                                             'Selecting this option will also add your claim to the decklist page of NetrunnerDB.
