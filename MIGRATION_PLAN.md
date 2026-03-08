@@ -685,22 +685,69 @@ cd tests && npm test
 
 ---
 
-### Step 2.5: Laravel 5.6 → 5.7
+### Step 2.5: Laravel 5.6 → 5.7 - ✅ DONE
 **Guide:** https://laravel.com/docs/5.7/upgrade
+**Release Notes:** https://laravel.com/docs/5.7/releases
+**Email Verification (optional feature):** https://laravel.com/docs/5.7/verification
 
 **PHP Requirement:** >= 7.1.3
 
-**Key Changes:**
-1. **Pagination**
-   - Default pagination views updated
+**Implementation (2026-03-08):**
+1. **Dependency + lockfile upgrade**
+   - Updated `composer.json` framework constraint from `5.6.*` to `5.7.*`.
+   - Ran `docker compose exec php composer update -W` and upgraded to `Laravel 5.7.29`.
 
-2. **Resources directory**
-   - `resources/assets` → `resources` (js, sass moved up)
+2. **Required filesystem/assets updates**
+   - Added `storage/framework/cache/data`.
+   - Updated `storage/framework/cache/.gitignore` to keep `data/` tracked.
+   - Added Laravel 5.7 default error SVG assets:
+     - `public/svg/403.svg`
+     - `public/svg/404.svg`
+     - `public/svg/500.svg`
+     - `public/svg/503.svg`
 
-3. **composer.json**
-   ```json
-   "laravel/framework": "5.7.*"
-   ```
+3. **Queue env modernization**
+   - Updated queue default to support 5.7 naming with backward compatibility:
+     - `config/queue.php`: `env('QUEUE_CONNECTION', env('QUEUE_DRIVER', 'sync'))`
+   - Updated templates/config for `QUEUE_CONNECTION`:
+     - `.example.env`
+     - `docker/.env.docker`
+     - `phpunit.xml`
+
+4. **Breaking-change compatibility checks**
+   - Verified no active Blade `{{ $foo or 'default' }}` syntax usage.
+   - Verified no `Route::redirect` usage in active routes.
+   - Verified no overrides of `authenticate`, `sendResetResponse`, `sendResetLinkResponse`.
+   - Verified no custom implementations of 5.7-changed framework contracts (`Gate`, `Validator`, `Filesystem`, `ConnectionInterface`).
+
+**Files Modified (Step 2.5):**
+- `composer.json`
+- `composer.lock`
+- `config/queue.php`
+- `.example.env`
+- `docker/.env.docker`
+- `phpunit.xml`
+- `storage/framework/cache/.gitignore`
+- `storage/framework/cache/data/.gitignore` (new)
+- `public/svg/403.svg` (new)
+- `public/svg/404.svg` (new)
+- `public/svg/500.svg` (new)
+- `public/svg/503.svg` (new)
+
+**Validation:**
+- [X] `composer update -W` succeeds with Laravel `5.7.29`
+- [X] `php artisan package:discover` succeeds
+- [X] cache clear commands succeed: `config:clear`, `cache:clear`, `route:clear`, `view:clear`
+- [X] `php artisan route:list` succeeds (routes register correctly)
+- [X] App reports `Laravel Framework 5.7.29`
+- [X] API tests pass: `npm run test:api` (26/26)
+- [X] E2E tests pass: `npm run test:e2e` (91/91)
+- [X] OAuth login flow works in E2E global setup (fresh regular/admin sessions saved)
+
+**Notes:**
+- E2E required a one-time refresh of cached auth storage state (`tests/e2e/.auth/*.json`) after the framework upgrade so global setup could re-login and persist fresh OAuth sessions.
+- Perf tests for this step were intentionally skipped per request.
+- Composer update reports legacy abandoned-package warnings (for example `laravelcollective/html`, `facebook/graph-sdk`), but they are non-blocking for this step.
 
 **Validation checkpoint:** Run API and E2E tests
 
@@ -1046,7 +1093,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 | 2.2 | 5.3→5.4 | 5.6.4 | Route::controller removed |
 | 2.3 | 5.4→5.5 | **7.0** | Package auto-discovery |
 | 2.4 | 5.5→5.6 | 7.1.3 | Logging + hashing config, TrustProxies headers, Blade/e() encoding |
-| 2.5 | 5.6→5.7 | 7.1.3 | Blade `or` removed, cache `storage/framework/cache/data`, `Route::redirect` 302 default |
+| 2.5 | 5.6→5.7 | 7.1.3 | Blade `or` removed, cache `storage/framework/cache/data`, add `public/svg` error assets, `Route::redirect` 302 default, queue key rename (`QUEUE_CONNECTION`) |
 | 2.6 | 5.7→5.8 | 7.1.3 | Cache TTL in seconds, env parsing changes, Markdown mail path + notification channel extraction |
 | 2.7 | 5.8→6.0 | **7.2** | Policies need `viewAny`, string/array helpers removed from core, queue retry default changed |
 | 3.1 | 6.0→7.0 | 7.2.5 | CORS config, Symfony 5 |
