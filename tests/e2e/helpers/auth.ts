@@ -37,6 +37,68 @@ export function hasValidStorageState(
 }
 
 /**
+ * Verifies that stored auth state still represents a logged-in session.
+ * This catches stale cookie files that are recent but no longer authenticated.
+ */
+export async function hasUsableStorageState(
+  userType: 'regular' | 'admin',
+  maxAgeMs: number = 24 * 60 * 60 * 1000
+): Promise<boolean> {
+  if (!hasValidStorageState(userType, maxAgeMs)) {
+    return false;
+  }
+
+  const statePath = getStorageStatePath(userType);
+  const browser = new BrowserManager();
+
+  try {
+    await browser.launch({
+      id: `auth-check-${userType}`,
+      action: 'launch',
+      headless: true,
+      executablePath: CHROME_PATH,
+    });
+    await browser.ensurePage();
+
+    const page = browser.getPage();
+    const stateData = JSON.parse(readFileSync(statePath, 'utf-8'));
+
+    if (Array.isArray(stateData.cookies) && stateData.cookies.length > 0) {
+      await page.context().addCookies(stateData.cookies);
+    }
+
+    await page.goto('http://localhost:8000/organize', { waitUntil: 'domcontentloaded' });
+
+    const createdTitle = page.locator('#created-title');
+    const loginRequired = page.locator('text=Login required');
+    const loginButton = page.locator('text=Login via NetrunnerDB').first();
+    const deadline = Date.now() + 8000;
+
+    while (Date.now() < deadline) {
+      if (await createdTitle.isVisible().catch(() => false)) {
+        return true;
+      }
+
+      const loggedOut =
+        (await loginRequired.isVisible().catch(() => false)) ||
+        (await loginButton.isVisible().catch(() => false));
+
+      if (loggedOut) {
+        return false;
+      }
+
+      await page.waitForTimeout(250);
+    }
+
+    return false;
+  } catch {
+    return false;
+  } finally {
+    await closeBrowserSafely(browser);
+  }
+}
+
+/**
  * Saves the current browser session to a storage state file.
  */
 export async function saveSession(

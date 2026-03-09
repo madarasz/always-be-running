@@ -10,18 +10,22 @@ use App\User;
 use App\Tournament;
 use App\Http\Requests;
 use App\Mwl;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\User as SocialiteUser;
 
 class NetrunnerDBController extends Controller
 {
 
-    protected $oauth;
+    protected $httpClient;
 
     public function __construct()
     {
-        $protocol = config('app.env') === 'local' ? 'http' : 'https';
-        $redirectUrl = config('services.netrunnerdb.redirect_url');
-        $this->oauth = \OAuth2::consumer('NetrunnerDB', $protocol.'://'.$redirectUrl.'/oauth2/redirect');
+        $this->httpClient = new Client([
+            'timeout' => 30,
+            'http_errors' => false,
+        ]);
     }
 
     /**
@@ -31,29 +35,61 @@ class NetrunnerDBController extends Controller
      */
     function login(Request $request)
     {
-        $code = $request->get('code');
-        if (!is_null($code))
-        {
-            $token = $this->oauth->requestAccessToken($code);
-            $user = $this->getUser();
-            if ($user > 0)
-            {
-                $auth_user = $this->findOrCreateUser($user);
-                Auth::login($auth_user, true);
+        if ($request->filled('code')) {
+            try {
+                $socialiteUser = Socialite::driver('netrunnerdb')->user();
+                $this->storeTokens($socialiteUser);
+            } catch (\Exception $e) {
+                \Log::warning('NetrunnerDB OAuth callback failed: '.$e->getMessage());
 
-                // redirect back to the original page
-                $login_url = $request->cookie('login_url');
-                if (is_null($login_url)) {
-                    return redirect()->action('PagesController@upcoming');
-                } else {
-                    return redirect($login_url)->with('getdeckdata', 1);
-                }
+                return redirect()->action('PagesController@upcoming')
+                    ->withErrors(['Authentication with NetrunnerDB failed.']);
             }
-        } else
-        {
-            $url = $this->oauth->getAuthorizationUri();
-            return redirect((string)$url)->withCookie('login_url', $request->headers->get('referer'), 10);
+
+            $userData = $socialiteUser->user;
+            if (!is_array($userData)) {
+                $userData = [];
+            }
+
+            if (!array_key_exists('id', $userData)) {
+                $userData['id'] = $socialiteUser->getId();
+            }
+
+            if (!array_key_exists('username', $userData) || empty($userData['username'])) {
+                $userData['username'] = $socialiteUser->getNickname() ?: $socialiteUser->getName();
+            }
+
+            if (!array_key_exists('email', $userData) || empty($userData['email'])) {
+                $userData['email'] = $socialiteUser->getEmail();
+            }
+
+            if (!array_key_exists('sharing', $userData)) {
+                $userData['sharing'] = 0;
+            }
+
+            if (!array_key_exists('reputation', $userData)) {
+                $userData['reputation'] = 0;
+            }
+
+            if (!array_key_exists('id', $userData) || empty($userData['id'])) {
+                return redirect()->action('PagesController@upcoming')
+                    ->withErrors(['Authentication with NetrunnerDB returned invalid user data.']);
+            }
+
+            $auth_user = $this->findOrCreateUser($userData);
+            Auth::login($auth_user, true);
+
+            // redirect back to the original page
+            $login_url = $request->cookie('login_url');
+            if (is_null($login_url)) {
+                return redirect()->action('PagesController@upcoming');
+            }
+
+            return redirect($login_url)->with('getdeckdata', 1);
         }
+
+        return Socialite::driver('netrunnerdb')->redirect()
+            ->withCookie(cookie('login_url', $request->headers->get('referer'), 10));
     }
 
     /**
@@ -63,6 +99,7 @@ class NetrunnerDBController extends Controller
     function logout(Request $request)
     {
         Auth::logout();
+        $this->clearTokens();
 
         // redirect back, if possible
         $logout_url = $request->headers->get('referer');
@@ -84,10 +121,10 @@ class NetrunnerDBController extends Controller
         $result = ['publicNetrunnerDB' => ['runner' => [], 'corp' => []], 'privateNetrunnerDB' => ['runner' => [], 'corp' => []]];
         $runner_ids = CardIdentity::where('runner', 1)->get()->pluck('id')->all();
         $corp_ids = CardIdentity::where('runner', 0)->get()->pluck('id')->all();
-        $public = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/private/decklists'), true);
+        $public = json_decode($this->requestNetrunnerDB('https://netrunnerdb.com/api/2.0/private/decklists'), true);
 
         // error handling
-        if (array_key_exists('error', $public)) {
+        if (!is_array($public) || array_key_exists('error', $public) || !array_key_exists('data', $public)) {
             return ['error' => 'NetrunnerDB session lost'];
         }
 
@@ -95,8 +132,10 @@ class NetrunnerDBController extends Controller
         // private deck data
         if (Auth::user() && Auth::user()->sharing)
         {
-            $private = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/private/decks'), true);
-            $this->sortDecks($private['data'], $result['privateNetrunnerDB'], $runner_ids, $corp_ids);
+            $private = json_decode($this->requestNetrunnerDB('https://netrunnerdb.com/api/2.0/private/decks'), true);
+            if (is_array($private) && array_key_exists('data', $private)) {
+                $this->sortDecks($private['data'], $result['privateNetrunnerDB'], $runner_ids, $corp_ids);
+            }
         }
 
         // update user with deck counts
@@ -202,8 +241,13 @@ class NetrunnerDBController extends Controller
      */
     function getUser()
     {
-        $result = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/private/account/info'), true);
-        return $result['data'][0];
+        $result = json_decode($this->requestNetrunnerDB('https://netrunnerdb.com/api/2.0/private/account/info'), true);
+
+        if (is_array($result) && array_key_exists('data', $result) && array_key_exists(0, $result['data'])) {
+            return $result['data'][0];
+        }
+
+        return [];
     }
 
     /**
@@ -231,6 +275,142 @@ class NetrunnerDBController extends Controller
         }
 
         return $user;
+    }
+
+    /**
+     * Store OAuth tokens in session.
+     *
+     * @param SocialiteUser $socialiteUser
+     */
+    private function storeTokens(SocialiteUser $socialiteUser)
+    {
+        session([
+            'netrunnerdb_access_token' => $socialiteUser->token,
+            'netrunnerdb_refresh_token' => $socialiteUser->refreshToken,
+            'netrunnerdb_token_expires_at' => $socialiteUser->expiresIn ? time() + $socialiteUser->expiresIn : null,
+        ]);
+    }
+
+    /**
+     * Remove OAuth tokens from session.
+     */
+    private function clearTokens()
+    {
+        session()->forget([
+            'netrunnerdb_access_token',
+            'netrunnerdb_refresh_token',
+            'netrunnerdb_token_expires_at',
+        ]);
+    }
+
+    /**
+     * Resolve redirect URI from new and legacy config keys.
+     *
+     * @return string
+     */
+    private function resolveRedirectUri()
+    {
+        $redirect = config('services.netrunnerdb.redirect');
+        if (!empty($redirect)) {
+            return $redirect;
+        }
+
+        $redirectHost = config('services.netrunnerdb.redirect_url');
+        if (empty($redirectHost)) {
+            return rtrim(config('app.url'), '/').'/oauth2/redirect';
+        }
+
+        if (strpos($redirectHost, 'http://') === 0 || strpos($redirectHost, 'https://') === 0) {
+            return rtrim($redirectHost, '/').'/oauth2/redirect';
+        }
+
+        $protocol = config('app.env') === 'local' ? 'http' : 'https';
+
+        return $protocol.'://'.trim($redirectHost, '/').'/oauth2/redirect';
+    }
+
+    /**
+     * Refresh OAuth access token with refresh token.
+     *
+     * @return bool
+     */
+    private function refreshAccessToken()
+    {
+        $refreshToken = session('netrunnerdb_refresh_token');
+        if (empty($refreshToken)) {
+            return false;
+        }
+
+        $response = $this->httpClient->request('POST', 'https://netrunnerdb.com/oauth/v2/token', [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+            'form_params' => [
+                'grant_type' => 'refresh_token',
+                'refresh_token' => $refreshToken,
+                'client_id' => config('services.netrunnerdb.client_id'),
+                'client_secret' => config('services.netrunnerdb.client_secret'),
+                'redirect_uri' => $this->resolveRedirectUri(),
+            ],
+        ]);
+
+        $payload = json_decode((string) $response->getBody(), true);
+        if (!is_array($payload) || !array_key_exists('access_token', $payload)) {
+            return false;
+        }
+
+        session([
+            'netrunnerdb_access_token' => $payload['access_token'],
+            'netrunnerdb_refresh_token' => array_key_exists('refresh_token', $payload) ? $payload['refresh_token'] : $refreshToken,
+            'netrunnerdb_token_expires_at' => array_key_exists('expires_in', $payload) ? time() + intval($payload['expires_in']) : null,
+        ]);
+
+        return true;
+    }
+
+    /**
+     * Send request to NetrunnerDB API.
+     *
+     * @param string $url
+     * @param string $method
+     * @param string|null $payload
+     * @return string
+     */
+    private function requestNetrunnerDB($url, $method = 'GET', $payload = null)
+    {
+        $options = [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+        ];
+
+        $accessToken = session('netrunnerdb_access_token');
+        if (!empty($accessToken)) {
+            $options['headers']['Authorization'] = 'Bearer '.$accessToken;
+        }
+
+        if (!is_null($payload)) {
+            $options['headers']['Content-Type'] = 'application/json';
+            $options['body'] = $payload;
+        }
+
+        try {
+            $response = $this->httpClient->request($method, $url, $options);
+
+            if ($response->getStatusCode() === 401 && $this->refreshAccessToken()) {
+                $refreshedToken = session('netrunnerdb_access_token');
+                if (!empty($refreshedToken)) {
+                    $options['headers']['Authorization'] = 'Bearer '.$refreshedToken;
+                    $response = $this->httpClient->request($method, $url, $options);
+                }
+            }
+
+            return (string) $response->getBody();
+        } catch (\Exception $e) {
+            \Log::warning('NetrunnerDB API request failed: '.$e->getMessage());
+
+            return json_encode(['error' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -291,7 +471,7 @@ class NetrunnerDBController extends Controller
      * @throws \Exception
      */
     public function addClaimToNRDB($decklistID, $tournamentName, $url, $rank, $playerNumber) {
-        $response = json_decode($this->oauth->requestWrapper(
+        $response = json_decode($this->requestNetrunnerDB(
             'https://netrunnerdb.com/api/2.1/private/decklists/'.$decklistID.'/claims',
             'POST', json_encode(['name' => $tournamentName, 'url' => $url, 'rank' => $rank,
             'participants' => $playerNumber])), true);
@@ -311,7 +491,7 @@ class NetrunnerDBController extends Controller
      * @return mixed response from NetrunnerDB
      */
     public function deleteClaimFromNRDB($claimID, $decklistID) {
-        $response = json_decode($this->oauth->requestWrapper(
+        $response = json_decode($this->requestNetrunnerDB(
             'https://netrunnerdb.com/api/2.1/private/decklists/'.$decklistID.'/claims/'.$claimID, 'DELETE'), true);
 
         // error logging
@@ -329,7 +509,7 @@ class NetrunnerDBController extends Controller
      * @throws \Exception NetrunnerDB error message
      */
     public function publishDeck($deckID) {
-        $response = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/private/deck/publish',
+        $response = json_decode($this->requestNetrunnerDB('https://netrunnerdb.com/api/2.0/private/deck/publish',
             'POST', '{"deck_id":"'.$deckID.'", "description": "*published by AlwaysBeRunning.net*"}'), true);
 
         if (array_key_exists('success', $response) && $response['success']) {
@@ -347,7 +527,11 @@ class NetrunnerDBController extends Controller
 
     private function updateIdentities()
     {
-        $raw = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/public/cards'), true);
+        $raw = json_decode($this->requestNetrunnerDB('https://netrunnerdb.com/api/2.0/public/cards'), true);
+        if (!is_array($raw) || !array_key_exists('data', $raw) || !is_array($raw['data'])) {
+            return 0;
+        }
+
         $added = 0;
         foreach ($raw['data'] as $card) {
             if ($card['type_code'] === 'identity') {
@@ -369,7 +553,11 @@ class NetrunnerDBController extends Controller
 
     private function updateCycles()
     {
-        $raw = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/public/cycles'), true);
+        $raw = json_decode($this->requestNetrunnerDB('https://netrunnerdb.com/api/2.0/public/cycles'), true);
+        if (!is_array($raw) || !array_key_exists('data', $raw) || !is_array($raw['data'])) {
+            return 0;
+        }
+
         $added = 0;
         foreach ($raw['data'] as $cycle) {
             $exists = CardCycle::find($cycle['code']);
@@ -387,7 +575,11 @@ class NetrunnerDBController extends Controller
 
     private function updatePacks()
     {
-        $raw = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/public/packs'), true);
+        $raw = json_decode($this->requestNetrunnerDB('https://netrunnerdb.com/api/2.0/public/packs'), true);
+        if (!is_array($raw) || !array_key_exists('data', $raw) || !is_array($raw['data'])) {
+            return 0;
+        }
+
         $added = 0;
         $nowdate = date('Y-m-d');
         foreach ($raw['data'] as $pack) {
@@ -404,7 +596,11 @@ class NetrunnerDBController extends Controller
 
     private function updateMWL()
     {
-        $raw = json_decode($this->oauth->requestWrapper('https://netrunnerdb.com/api/2.0/public/mwl'), true);
+        $raw = json_decode($this->requestNetrunnerDB('https://netrunnerdb.com/api/2.0/public/mwl'), true);
+        if (!is_array($raw) || !array_key_exists('data', $raw) || !is_array($raw['data'])) {
+            return 0;
+        }
+
         $added = 0;
         foreach ($raw['data'] as $mwl) {
             $exists = Mwl::find($mwl['id']);

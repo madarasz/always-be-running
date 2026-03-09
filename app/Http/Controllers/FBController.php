@@ -164,7 +164,7 @@ class FBController extends Controller
 
         //dd($djd);
 
-        if ($djd['status'] == 'OK' && count($djd['results'])) {
+        if (($djd['status'] ?? null) == 'OK' && array_key_exists('results', $djd) && is_array($djd['results']) && !empty($djd['results'])) {
             if (array_key_exists('formatted_address', $djd['results'][0])) {
                 $location_address = $djd['results'][0]['formatted_address'];
             }
