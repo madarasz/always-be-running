@@ -162,6 +162,7 @@ class TournamentsController extends Controller
         }
 
         // all usernames for transferring, IDs for adding entries
+        $all_users = null;
         if ($request->user()) {
             $all_users = User::orderBy('name')->pluck('name', 'id');
         }
