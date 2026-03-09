@@ -969,6 +969,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom NetrunnerDB pr
 ---
 
 ### Package Updates Required
+
 | Package | Current | Target (6.0) | Action |
 |---------|---------|--------------|--------|
 | laravelcollective/html | ^5.8 | ^6.0 | Update |

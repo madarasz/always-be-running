@@ -765,6 +765,7 @@ class TournamentsController extends Controller
                 $tournament = Tournament::find($tournamentId);
 
                 if (!is_null($tournament)) { // tournament found
+                    $this->authorize('logged_in', $tournament, $request->user());
                     // move from temp
                     rename('tjsons/nrtm/import_'.$code.'.json', 'tjsons/'.$tournamentId.'.json');
                     // process file
@@ -807,8 +808,14 @@ class TournamentsController extends Controller
      */
     private function processNRTMjson($json, &$tournament, &$errors, $user) {
 
-        if (array_key_exists('players', $json) && is_array($json['players']) && !empty($json['players'])) {
-
+        if (
+            is_array($json) &&
+            array_key_exists('players', $json) &&
+            is_array($json['players']) &&
+            !empty($json['players']) &&
+            isset($json['players'][0]) &&
+            is_array($json['players'][0])
+        ) {
             // error checking
             if (!array_key_exists('corpIdentity', $json['players'][0]) &&
                 (!array_key_exists('runnerIdentity', $json['players'][0]))) {

@@ -1,0 +1,1 @@
+export { BASE_URL, appUrl } from '../shared/base-url';

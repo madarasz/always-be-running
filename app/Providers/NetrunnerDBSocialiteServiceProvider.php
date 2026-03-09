@@ -20,36 +20,27 @@ class NetrunnerDBSocialiteServiceProvider extends ServiceProvider
 
             return new NetrunnerDBProvider(
                 $app['request'],
-                array_key_exists('client_id', $config) ? $config['client_id'] : null,
-                array_key_exists('client_secret', $config) ? $config['client_secret'] : null,
+                $config['client_id'] ?? null,
+                $config['client_secret'] ?? null,
                 $this->resolveRedirectUri($config)
             );
         });
     }
 
     /**
-     * Resolve redirect URI from new and legacy configuration keys.
+     * Resolve redirect URI from configuration.
      *
      * @param array $config
      * @return string
+     * @throws \RuntimeException
      */
     private function resolveRedirectUri(array $config)
     {
-        if (array_key_exists('redirect', $config) && !empty($config['redirect'])) {
-            return $config['redirect'];
+        $redirect = array_key_exists('redirect', $config) ? trim((string) $config['redirect']) : '';
+        if ($redirect === '') {
+            throw new \RuntimeException('NETRUNNERDB_REDIRECT_URI is not configured.');
         }
 
-        if (!array_key_exists('redirect_url', $config) || empty($config['redirect_url'])) {
-            return rtrim(config('app.url'), '/').'/oauth2/redirect';
-        }
-
-        $redirectHost = trim($config['redirect_url']);
-        if (strpos($redirectHost, 'http://') === 0 || strpos($redirectHost, 'https://') === 0) {
-            return rtrim($redirectHost, '/').'/oauth2/redirect';
-        }
-
-        $protocol = config('app.env') === 'local' ? 'http' : 'https';
-
-        return $protocol.'://'.trim($redirectHost, '/').'/oauth2/redirect';
+        return $redirect;
     }
 }

@@ -35,6 +35,10 @@ class NetrunnerDBController extends Controller
      */
     function login(Request $request)
     {
+        if ($request->filled('error')) {
+            return redirect()->action('PagesController@upcoming')
+                ->withErrors(['Authentication with NetrunnerDB failed.']);
+        }
         if ($request->filled('code')) {
             try {
                 $socialiteUser = Socialite::driver('netrunnerdb')->user();
@@ -304,29 +308,19 @@ class NetrunnerDBController extends Controller
     }
 
     /**
-     * Resolve redirect URI from new and legacy config keys.
+     * Resolve redirect URI from configuration.
      *
      * @return string
+     * @throws \RuntimeException
      */
     private function resolveRedirectUri()
     {
-        $redirect = config('services.netrunnerdb.redirect');
-        if (!empty($redirect)) {
-            return $redirect;
+        $redirect = trim((string) config('services.netrunnerdb.redirect'));
+        if ($redirect === '') {
+            throw new \RuntimeException('NETRUNNERDB_REDIRECT_URI is not configured.');
         }
 
-        $redirectHost = config('services.netrunnerdb.redirect_url');
-        if (empty($redirectHost)) {
-            return rtrim(config('app.url'), '/').'/oauth2/redirect';
-        }
-
-        if (strpos($redirectHost, 'http://') === 0 || strpos($redirectHost, 'https://') === 0) {
-            return rtrim($redirectHost, '/').'/oauth2/redirect';
-        }
-
-        $protocol = config('app.env') === 'local' ? 'http' : 'https';
-
-        return $protocol.'://'.trim($redirectHost, '/').'/oauth2/redirect';
+        return $redirect;
     }
 
     /**
@@ -338,24 +332,32 @@ class NetrunnerDBController extends Controller
     {
         $refreshToken = session('netrunnerdb_refresh_token');
         if (empty($refreshToken)) {
+            $this->clearTokens();
             return false;
         }
 
-        $response = $this->httpClient->request('POST', 'https://netrunnerdb.com/oauth/v2/token', [
-            'headers' => [
-                'Accept' => 'application/json',
-            ],
-            'form_params' => [
-                'grant_type' => 'refresh_token',
-                'refresh_token' => $refreshToken,
-                'client_id' => config('services.netrunnerdb.client_id'),
-                'client_secret' => config('services.netrunnerdb.client_secret'),
-                'redirect_uri' => $this->resolveRedirectUri(),
-            ],
-        ]);
+        try {
+            $response = $this->httpClient->request('POST', 'https://netrunnerdb.com/oauth/v2/token', [
+                'headers' => [
+                    'Accept' => 'application/json',
+                ],
+                'form_params' => [
+                    'grant_type' => 'refresh_token',
+                    'refresh_token' => $refreshToken,
+                    'client_id' => config('services.netrunnerdb.client_id'),
+                    'client_secret' => config('services.netrunnerdb.client_secret'),
+                    'redirect_uri' => $this->resolveRedirectUri(),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            $this->clearTokens();
+
+            return false;
+        }
 
         $payload = json_decode((string) $response->getBody(), true);
         if (!is_array($payload) || !array_key_exists('access_token', $payload)) {
+            $this->clearTokens();
             return false;
         }
 

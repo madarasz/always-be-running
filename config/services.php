@@ -48,7 +48,10 @@ return [
         'client_id' => env('NETRUNNERDB_CLIENT_ID'),
         'client_secret' => env('NETRUNNERDB_CLIENT_SECRET'),
         'redirect' => env('NETRUNNERDB_REDIRECT_URI'),
-        'redirect_url' => env('NETRUNNERDB_REDIRECT_URL'),
+        'guzzle' => [
+            'timeout' => 10.0,
+            'connect_timeout' => 5.0,
+        ],
     ],
 
 ];

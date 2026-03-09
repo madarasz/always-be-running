@@ -1,8 +1,7 @@
 /**
  * HTTP client with timing measurement for performance tests.
  */
-
-const BASE_URL = process.env.API_BASE_URL || 'http://localhost:8000';
+import { appUrl } from '../../shared/base-url';
 
 export interface TimingResult {
   url: string;
@@ -29,7 +28,7 @@ export async function timedFetch(
   path: string,
   options: RequestInit = {}
 ): Promise<TimingResult> {
-  const url = `${BASE_URL}${path}`;
+  const url = appUrl(path);
   const start = performance.now();
 
   const response = await fetch(url, {
