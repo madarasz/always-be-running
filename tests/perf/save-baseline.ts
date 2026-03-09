@@ -9,13 +9,13 @@ import { BrowserManager } from 'agent-browser/dist/browser.js';
 import { measureEndpoint, logStats, formatDuration, type PerfStats } from './helpers/perf-client.js';
 import { saveBaseline, getGitCommit, type BaselineReport } from './helpers/baseline.js';
 import { API_THRESHOLDS, PAGE_THRESHOLDS } from './thresholds.js';
+import { appUrl } from '../shared/base-url.js';
 import {
   createAuthenticatedBrowser,
   closeBrowserSafely,
 } from '../e2e/helpers/auth.js';
 
 const ITERATIONS = 10;
-const BASE_URL = process.env.API_BASE_URL || 'http://localhost:8000';
 
 async function measurePageLoad(
   browser: BrowserManager,
@@ -23,7 +23,7 @@ async function measurePageLoad(
   iterations: number
 ): Promise<{ mean: number; min: number; max: number; times: number[] }> {
   const page = browser.getPage();
-  const url = `${BASE_URL}${path}`;
+  const url = appUrl(path);
   const times: number[] = [];
 
   for (let i = 0; i < iterations; i++) {

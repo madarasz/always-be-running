@@ -45,7 +45,13 @@ return [
         'map_id' => env('GOOGLE_MAP_ID'),
     ],
     'netrunnerdb' => [
-        'redirect_url' => env('NETRUNNERDB_REDIRECT_URL'),
+        'client_id' => env('NETRUNNERDB_CLIENT_ID'),
+        'client_secret' => env('NETRUNNERDB_CLIENT_SECRET'),
+        'redirect' => env('NETRUNNERDB_REDIRECT_URI'),
+        'guzzle' => [
+            'timeout' => 10.0,
+            'connect_timeout' => 5.0,
+        ],
     ],
 
 ];

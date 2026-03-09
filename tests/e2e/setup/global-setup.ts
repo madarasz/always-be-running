@@ -1,10 +1,10 @@
-import { loginAndSaveSession, hasValidStorageState } from '../helpers/auth.js';
+import { loginAndSaveSession, hasUsableStorageState } from '../helpers/auth.js';
 
 export default async function globalSetup(): Promise<void> {
   console.log('Global setup: checking authentication state...');
 
   // Login as regular user if state is missing/stale
-  if (!hasValidStorageState('regular')) {
+  if (!(await hasUsableStorageState('regular'))) {
     console.log('Logging in as regular user...');
     await loginAndSaveSession('regular');
     console.log('Regular user session saved.');
@@ -13,7 +13,7 @@ export default async function globalSetup(): Promise<void> {
   }
 
   // Login as admin user if state is missing/stale
-  if (!hasValidStorageState('admin')) {
+  if (!(await hasUsableStorageState('admin'))) {
     console.log('Logging in as admin user...');
     await loginAndSaveSession('admin');
     console.log('Admin user session saved.');

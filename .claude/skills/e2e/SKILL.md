@@ -56,6 +56,22 @@ allowed-tools: Bash(cd tests && npm test)
    - **Negative assertions**: `expect(await el.isVisible()).toBe(false)` after `waitForLoadState`
    - **Hidden input values**: Prefer visible side effects, but `waitForFunction` is acceptable when there's no visible alternative
 
+   **Manual polling loop anti-pattern (forbidden)**:
+   - Do not write loops like `Date.now() + timeout` + `while (...)` + `waitForTimeout(...)`.
+   - Example to avoid:
+     ```typescript
+     const deadline = Date.now() + 8000;
+     while (Date.now() < deadline) {
+       if (await ready.isVisible()) return true;
+       await page.waitForTimeout(250);
+     }
+     ```
+
+   **Preferred pattern (explicit steps)**:
+   - Wait for page load once.
+   - Check blockers/negative states (e.g. login prompt) explicitly.
+   - Wait for one positive marker with `locator.waitFor({ state: 'visible', timeout })`.
+
 8. **Use Chrome DevTools MCP to inspect DOM**: Before writing locators, use `take_snapshot` or `evaluate_script` to understand actual element IDs, classes, and structure. Page controls often use `<span onclick>` not anchor tags.
 
 9. **Use the test fixture**: All tests must use `createBrowserSuite` from `test-fixture.ts`:

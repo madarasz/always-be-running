@@ -9,12 +9,12 @@ export class AdminPage extends BasePage {
     await this.navigate('/admin', { waitUntil: 'domcontentloaded' });
   }
 
-  async waitForAccessDenied() {
-    await this.accessDenied.waitFor({ state: 'visible' });
+  async waitForAccessDenied(timeoutMs: number = 10000) {
+    await this.accessDenied.waitFor({ state: 'visible', timeout: timeoutMs });
   }
 
-  async waitForAdminContent() {
-    await this.page.locator('text=Administration').waitFor({ state: 'visible' });
+  async waitForAdminContent(timeoutMs: number = 15000) {
+    await this.page.locator('text=Administration').waitFor({ state: 'visible', timeout: timeoutMs });
   }
 
   async hasAdminNavLink(): Promise<boolean> {

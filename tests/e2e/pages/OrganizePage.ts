@@ -13,19 +13,31 @@ export class OrganizePage extends BasePage {
   }
 
   async waitForLoginRequired() {
-    await this.loginRequired.waitFor({ state: 'visible' });
+    await this.loginRequired.waitFor({ state: 'visible', timeout: 10000 });
   }
 
   async waitForLoginButton() {
-    await this.loginButton.waitFor({ state: 'visible' });
+    await this.loginButton.waitFor({ state: 'visible', timeout: 10000 });
   }
 
   async hasLogoutButton(): Promise<boolean> {
     return (await this.logoutButton.count()) > 0;
   }
 
-  async waitForMyTournaments() {
-    await this.myTournamentsTitle.waitFor({ state: 'visible' });
+  async waitForMyTournaments(timeoutMs: number = 15000) {
+    await this.page.waitForLoadState('domcontentloaded', { timeout: timeoutMs });
+
+    const loginRequiredVisible = await this.loginRequired.isVisible().catch(() => false);
+    if (loginRequiredVisible) {
+      throw new Error(`Expected authenticated organize page, but login is required at ${this.getUrl()}`);
+    }
+
+    const loginButtonVisible = await this.loginButton.isVisible().catch(() => false);
+    if (loginButtonVisible) {
+      throw new Error(`Expected authenticated organize page, but login button is visible at ${this.getUrl()}`);
+    }
+
+    await this.myTournamentsTitle.waitFor({ state: 'visible', timeout: timeoutMs });
   }
 
   /**

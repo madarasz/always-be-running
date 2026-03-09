@@ -11,6 +11,7 @@
     "test:perf": "vitest run --project perf",
     "test:perf:watch": "vitest --project perf",
     "test:perf:baseline": "npx tsx perf/save-baseline.ts",
+    "test:perf:means": "npx tsx perf/report-baseline-means.ts",
     "test:no-mocks": "USE_MOCKS=false vitest run",
     "cleanup": "./e2e/fixtures/cleanup-test-data.sh"
   },

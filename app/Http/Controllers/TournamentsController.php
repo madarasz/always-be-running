@@ -70,7 +70,7 @@ class TournamentsController extends Controller
 
         // randomize temporary ID for unofficial prizes relation
         do {
-            $temp_id = rand(100000, 999999);
+            $temp_id = random_int(100000, 999999);
         } while (TournamentPrize::where('tournament_id', $temp_id)->count() > 0 || Tournament::where('id', $temp_id)->count() > 0);
 
         $page_section = 'organize';
@@ -750,9 +750,9 @@ class TournamentsController extends Controller
     public function NRTMEndpoint(Request $request) {
         if ($request->hasFile('jsonresults') && $request->file('jsonresults')->isValid()) {
             // generate code
-            $code = rand(100000, 999999);
+            $code = random_int(100000, 999999);
             while (file_exists('tjsons/nrtm/import_'.$code.'.json')) {
-                $code = rand(100000, 999999);
+                $code = random_int(100000, 999999);
             }
 
             // store file
@@ -765,6 +765,7 @@ class TournamentsController extends Controller
                 $tournament = Tournament::find($tournamentId);
 
                 if (!is_null($tournament)) { // tournament found
+                    $this->authorize('logged_in', $tournament, $request->user());
                     // move from temp
                     rename('tjsons/nrtm/import_'.$code.'.json', 'tjsons/'.$tournamentId.'.json');
                     // process file
@@ -807,8 +808,14 @@ class TournamentsController extends Controller
      */
     private function processNRTMjson($json, &$tournament, &$errors, $user) {
 
-        if (array_key_exists('players', $json)) {
-
+        if (
+            is_array($json) &&
+            array_key_exists('players', $json) &&
+            is_array($json['players']) &&
+            !empty($json['players']) &&
+            isset($json['players'][0]) &&
+            is_array($json['players'][0])
+        ) {
             // error checking
             if (!array_key_exists('corpIdentity', $json['players'][0]) &&
                 (!array_key_exists('runnerIdentity', $json['players'][0]))) {

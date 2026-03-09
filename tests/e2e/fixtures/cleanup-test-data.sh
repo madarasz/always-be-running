@@ -9,6 +9,13 @@ DB_NAME="netrunner"
 DB_USER="root"
 DB_PASS="rootsecret"
 
+# Clean up auth state files
+AUTH_DIR="$SCRIPT_DIR/../.auth"
+if [ -d "$AUTH_DIR" ]; then
+    echo "Cleaning up auth state files..."
+    find "$AUTH_DIR" -type f -delete
+fi
+
 # Clean up test artifacts (screenshots and traces)
 TEST_RESULTS_DIR="$SCRIPT_DIR/../test-results"
 if [ -d "$TEST_RESULTS_DIR" ]; then

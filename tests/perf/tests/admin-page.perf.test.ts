@@ -18,8 +18,8 @@ import {
 } from '../../e2e/helpers/auth.js';
 import { getPageThreshold } from '../thresholds.js';
 import { formatDuration } from '../helpers/perf-client.js';
+import { appUrl } from '../../shared/base-url.js';
 
-const BASE_URL = process.env.API_BASE_URL || 'http://localhost:8000';
 const ITERATIONS = 10;
 
 interface PageTiming {
@@ -32,7 +32,7 @@ async function measurePageLoad(
   path: string
 ): Promise<PageTiming> {
   const page = browser.getPage();
-  const url = `${BASE_URL}${path}`;
+  const url = appUrl(path);
 
   const start = performance.now();
 
@@ -93,7 +93,7 @@ describe('Admin Page Performance', () => {
     const page = browser.getPage();
 
     // Navigate to admin page
-    await page.goto(`${BASE_URL}/admin`, { waitUntil: 'networkidle' });
+    await page.goto(appUrl('/admin'), { waitUntil: 'networkidle' });
 
     // Verify key admin sections are rendered
     const content = await page.content();

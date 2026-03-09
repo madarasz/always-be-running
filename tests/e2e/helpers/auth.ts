@@ -2,6 +2,7 @@ import { readFileSync, mkdirSync, statSync, existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { BrowserManager } from 'agent-browser/dist/browser.js';
+import { BASE_URL, appUrl } from '../config';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirnameResolved = dirname(__filename);
@@ -33,6 +34,62 @@ export function hasValidStorageState(
     return age < maxAgeMs;
   } catch {
     return false;
+  }
+}
+
+/**
+ * Verifies that stored auth state still represents a logged-in session.
+ * This catches stale cookie files that are recent but no longer authenticated.
+ */
+export async function hasUsableStorageState(
+  userType: 'regular' | 'admin',
+  maxAgeMs: number = 24 * 60 * 60 * 1000
+): Promise<boolean> {
+  if (!hasValidStorageState(userType, maxAgeMs)) {
+    return false;
+  }
+
+  const statePath = getStorageStatePath(userType);
+  const browser = new BrowserManager();
+
+  try {
+    await browser.launch({
+      id: `auth-check-${userType}`,
+      action: 'launch',
+      headless: true,
+      executablePath: CHROME_PATH,
+    });
+    await browser.ensurePage();
+
+    const page = browser.getPage();
+    const stateData = JSON.parse(readFileSync(statePath, 'utf-8'));
+
+    if (Array.isArray(stateData.cookies) && stateData.cookies.length > 0) {
+      await page.context().addCookies(stateData.cookies);
+    }
+
+    await page.goto(appUrl('/organize'), { waitUntil: 'domcontentloaded' });
+
+    const createdTitle = page.locator('#created-title');
+    const loginRequired = page.locator('text=Login required');
+    const loginButton = page.locator('text=Login via NetrunnerDB').first();
+
+    const loginRequiredVisible = await loginRequired.isVisible().catch(() => false);
+    if (loginRequiredVisible) {
+      return false;
+    }
+
+    const loginButtonVisible = await loginButton.isVisible().catch(() => false);
+    if (loginButtonVisible) {
+      return false;
+    }
+
+    await createdTitle.waitFor({ state: 'visible', timeout: 8000 });
+    return true;
+  } catch {
+    return false;
+  } finally {
+    await closeBrowserSafely(browser);
   }
 }
 
@@ -125,7 +182,7 @@ export async function createAuthenticatedBrowser(
       await page.context().addCookies(stateData.cookies);
     }
     // Navigate to home page so the authenticated state is visible
-    await page.goto('http://localhost:8000');
+    await page.goto(BASE_URL);
     await page.waitForLoadState('domcontentloaded');
   }
 
@@ -167,7 +224,7 @@ function credentials(userType: 'regular' | 'admin') {
  * Flow:
  *   GET /oauth2/redirect → NRDB login page → fill credentials → submit
  *   → optional: NRDB authorization form → Allow
- *   → redirect back to http://localhost:8000
+ *   → redirect back to the ABR app
  */
 export async function loginUser(
   browser: BrowserManager,
@@ -180,7 +237,7 @@ export async function loginUser(
   await page.context().clearCookies();
 
   // Trigger the OAuth redirect — the app sends us to NRDB
-  await page.goto('http://localhost:8000/oauth2/redirect');
+  await page.goto(appUrl('/oauth2/redirect'));
 
   // Wait until we land on netrunnerdb.com
   try {
@@ -216,7 +273,7 @@ export async function loginUser(
 
   // Wait until we're back on our app
   try {
-    await page.waitForURL('http://localhost:8000/**', { timeout: 60000 });
+    await page.waitForURL(appUrl('/**'), { timeout: 60000 });
   } catch (e) {
     const currentUrl = page.url();
     console.error(`Final redirect failed. Current URL: ${currentUrl}`);

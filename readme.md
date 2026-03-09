@@ -32,7 +32,7 @@ docker compose exec -T mysql mysql -u root -prootsecret netrunner < seed.sql
 
 You will need the following in order to run ABR locally:
 - MySQL (preferably)
-- PHP 7.1
+- PHP 7.2+
 - PHP Composer
 - NodeJs v10, NPM v6 recommended
 - JQ - download via apt-get (Debian) or homebrew (Mac), this is NOT an npm module
@@ -73,6 +73,14 @@ Google API keys, you can create yourself.
 12. Download all the data required from NetrunnerDB. Go to [Admin section](http://localhost:8000/admin) and click the **Update Card cycles**, **Update Card packs** and **Update Identities** buttons to get the data. Do this every time a new pack comes out.
 
 13. You are done :)
+
+### Queue worker retries (Laravel 6)
+
+If you run queue workers outside `QUEUE_CONNECTION=sync`, set retries explicitly:
+
+```bash
+php artisan queue:work --tries=3
+```
 
 ## Automated Tests (Vitest + Playwright)
 

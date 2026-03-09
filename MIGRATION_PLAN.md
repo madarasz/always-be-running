@@ -830,65 +830,161 @@ cd tests && npm test
 ---
 
 ### Step 2.7: Laravel 5.8 → 6.0 (LTS)
-**Guide:** https://laravel.com/docs/6.x/upgrade
+**Guides:**
+- https://laravel.com/docs/6.x/upgrade
+- https://laravel.com/docs/6.x/releases
+- https://laravel.com/docs/6.x/socialite
+- https://www.php.net/manual/en/migration72.incompatible.php
+- https://www.php.net/manual/en/migration72.deprecated.php
+- https://www.php.net/manual/en/migration72.other-changes.php
 
 **PHP Requirement:** >= 7.2.0
 
-**Key Changes:**
-1. **Authorization**
-   - Policy changes
+**Key Changes (Official 6.0 + PHP 7.2 upgrade guides):**
+1. **High impact:**
+   - `authorizeResource` controllers require policy `viewAny` for `index`
+   - String / array helpers removed from framework (`str_*`, `array_*`)
+   - PHP 7.2 warns when `count()` is used on non-countables
 
-2. **Carbon 2.0**
-   - Date handling changes
+2. **Medium impact:**
+   - Queue worker default retries changed (`queue:work` now defaults to one try)
+   - `failed_jobs` table should exist
+   - Eloquent string primary keys should explicitly declare `$keyType = 'string'`
+   - `Input` facade removed
+   - PHP 7.2 raises undefined constant usage from `E_NOTICE` to `E_WARNING`
 
-3. **Eloquent**
-   - `BelongsTo::update()` changes
+3. **Low / contextual impact:**
+   - Email verification route/method changes (only if feature used)
+   - `BelongsTo::update()` behavior changed to ad-hoc update semantics
+   - PHP 7.2 deprecates `create_function`, `each`, `__autoload`, one-arg `parse_str`, string `assert`, `(unset)` cast, `$php_errormsg`/`track_errors`
+   - PHP 7.2 moves `mcrypt` out of core (PECL only)
 
-4. **Remove Helpers package** (if using)
-   ```bash
-   composer require laravel/helpers
-   ```
+**Repository impact assessment (2026-03-08, updated with PHP 7.2 audit):**
+- No `authorizeResource` usage found in controllers, so `viewAny` is not a blocker in current code paths.
+- No blocking `str_*` / `array_*` helper usage found in source (do **not** add `laravel/helpers` unless new usages appear).
+- Carbon 2 is already present in the current lockfile baseline.
+- Non-incrementing string-key models (`CardIdentity`, `CardPack`, `CardCycle`) should add explicit `$keyType = 'string'`.
+- `config/queue.php` references `failed_jobs`, but no `failed_jobs` migration exists yet.
+- OAuth package is legacy and vendor-patch-dependent; replace during this step.
+- **Must-fix PHP 7.2 hotspot:** `count($entry)` used on model objects in `resources/views/tournaments/partials/entries.blade.php` (non-countable warning on 7.2).
+- **Likely-safe but should harden:** external payload count checks in `app/Http/Controllers/FBController.php` (`count($djd['results'])`) and `app/Http/Controllers/TournamentsController.php` (`count($json['players'])`) should enforce array semantics.
+- Runtime/docs are still pinned to PHP 7.1 in several places (`docker/Dockerfile.php`, `readme.md`, `CLAUDE.md`) and must be aligned to 7.2 for this step.
+- First-party scans found no active usage of deprecated PHP 7.2 constructs (`create_function`, PHP `each`, `__autoload`, one-arg `parse_str`, string `assert`, `(unset)` cast, `$php_errormsg`, `track_errors`).
 
-5. **composer.json**
-   ```json
-   "laravel/framework": "^6.0",
-   "php": ">=7.2.0"
-   ```
+**Implementation (planned, revised):**
+1. **Dependency + runtime upgrade (Laravel 6 + PHP 7.2 parity)**
+   - Update `composer.json` to:
+     ```json
+     "php": ">=7.2.0",
+     "laravel/framework": "^6.0"
+     ```
+   - Update Laravel 6-compatible package constraints and run `composer update -W`.
+   - Update Docker PHP runtime from 7.1 to 7.2+ for local/CI parity.
+   - Update project docs that still mention PHP 7.1 so environment setup matches runtime reality.
+
+2. **PHP 7.2 warning hardening pass (required before full validation)**
+   - Replace non-countable checks in `resources/views/tournaments/partials/entries.blade.php` (`count($entry)` → object/isset-safe checks).
+   - Harden external payload checks (`FBController`, `TournamentsController`) to avoid count warnings when API payloads are missing/malformed.
+   - Re-run targeted grep to confirm no first-party usage of PHP 7.2 deprecated constructs.
+
+3. **Laravel 6 compatibility adjustments**
+   - Add `$keyType = 'string'` on string-PK, non-incrementing models.
+   - Add migration for `failed_jobs` table and run migrations.
+   - Make queue worker retry behavior explicit (`--tries`) in deployment/ops docs/config.
+   - Explicitly set Redis client in `config/database.php` (`predis` vs `phpredis`) to avoid environment drift.
+
+4. **OAuth replacement (critical path in this step)**
+   - Replace `oriceon/oauth-5-laravel` with `laravel/socialite`.
+   - Implement custom NetrunnerDB Socialite provider/adapter.
+   - Migrate OAuth configuration to `config/services.php` (`client_id`, `client_secret`, `redirect`).
+   - Refactor `NetrunnerDBController` OAuth internals to Socialite while preserving current behavior.
+   - Keep `/oauth2/redirect` compatibility during cutover so existing UI + tests remain stable.
+   - Remove legacy OAuth wiring and CI vendor restore hack after Socialite flow passes tests.
+
+5. **Optional positive refactors (requested, low/medium risk)**
+   - Replace `rand()` usages used for generated numeric codes in `TournamentsController` with `random_int()`.
+   - Standardize policies with conventional methods (`viewAny`, `view`, `create`, `update`, `delete`) alongside existing custom abilities.
+   - Clean stale policy map entries in `AuthServiceProvider`.
+   - Refactor known admin-page N+1/perf hotspots (`communityCount`/VIP stats path).
+
+**Files expected to change (Step 2.7):**
+- `composer.json`, `composer.lock`
+- `docker/Dockerfile.php`
+- `readme.md`, `CLAUDE.md`
+- `app/Http/Controllers/NetrunnerDBController.php`
+- `app/Http/Controllers/TournamentsController.php`
+- `app/Http/Controllers/FBController.php`
+- `routes/web.php`
+- `config/services.php`, `config/app.php`, `config/database.php`, `config/queue.php`
+- `config/oauth.php`, `config/oauth-5-laravel.php`, `app/Providers/OAuthServiceProvider.php` (retire)
+- `app/CardIdentity.php`, `app/CardPack.php`, `app/CardCycle.php`
+- `resources/views/tournaments/partials/entries.blade.php`
+- `.github/workflows/main.yml`, `.gitignore`
+- `database/migrations/*_create_failed_jobs_table.php` (new)
+
+**Validation:**
+- [ ] `composer update -W` succeeds with Laravel 6.x
+- [ ] Runtime confirms PHP 7.2 (`php -v` in Docker/CI)
+- [ ] `php artisan package:discover`, `config:clear`, `cache:clear`, `route:clear`, `view:clear` all succeed
+- [ ] `php artisan route:list` succeeds
+- [ ] No PHP 7.2 warning regressions in key flows (tournament entries view, FB import path, NRTM conclude path) under `E_ALL`
+- [ ] OAuth login/callback works with Socialite + NetrunnerDB
+- [ ] Deck sync and claim publish/delete flows still work
+- [ ] API tests pass (`npm run test:api`)
+- [ ] E2E tests pass (`npm run test:e2e`)
+
+**Notes / risks:**
+- Confirm NetrunnerDB OAuth `state` handling, scopes, refresh-token behavior, and redirect URI constraints before final cutover.
+- Keep `/oauth2/redirect` route compatibility until E2E + smoke tests are green.
+- Vendor libraries include conditional `mcrypt` and `INTL_IDNA_VARIANT_2003` fallback paths; monitor logs for deprecation noise on PHP 7.2 and only patch/bump if warnings surface in active flows.
 
 **Validation checkpoint:** Run API and E2E tests
 
 ---
 
-### OAuth Package Replacement (During Phase 2)
+### OAuth Package Replacement (Step 2.7 Critical Path)
 
-Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
+Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom NetrunnerDB provider while preserving behavior.
 
 1. **Install Socialite**
    ```bash
    composer require laravel/socialite
    ```
 
-2. **Create custom NetrunnerDB provider**
-   - File: `app/Socialite/NetrunnerDBProvider.php`
+2. **Create custom NetrunnerDB Socialite adapter**
+   - Add provider/driver wiring in app-local code (NetrunnerDB is not a first-party Socialite provider).
 
-3. **Update NetrunnerDBController.php**
+3. **Refactor `NetrunnerDBController` OAuth flow**
+   - Use Socialite redirect + callback token retrieval.
+   - Preserve login return behavior (`login_url` cookie and redirect semantics).
 
-4. **Update config/services.php**
+4. **Migrate configuration**
+   - Use `config/services.php` keys: `client_id`, `client_secret`, `redirect`.
+   - Retire legacy OAuth config/provider glue.
+
+5. **Stabilize CI + tests**
+   - Remove vendor OAuth file restore step in CI after migration.
+   - Keep `/oauth2/redirect` route compatibility until auth tests pass.
 
 ---
 
 ### Package Updates Required
+
 | Package | Current | Target (6.0) | Action |
 |---------|---------|--------------|--------|
-| laravelcollective/html | ^5.0 | ^6.0 | Update |
+| laravelcollective/html | ^5.8 | ^6.0 | Update |
 | intervention/image | ^2.3 | ^2.7 | Update |
-| oriceon/oauth-5-laravel | dev-master | - | Replace with Socialite |
-| webpatser/laravel-countries | dev-master | - | Find alternative or fork |
+| oriceon/oauth-5-laravel | 1.0.5 | - | Remove (replace with Socialite) |
+| laravel/socialite | - | Laravel 6-compatible | Add |
+| webpatser/laravel-countries | 1.5.4 | 1.5.4 (temporary) | Keep + verify compatibility |
 | doctrine/dbal | ^2.9 | ^2.10 | Update |
 
 ### Phase 2 Validation
 - [ ] All routes accessible
-- [ ] OAuth login works with new Socialite provider
+- [ ] OAuth login/callback works with Socialite custom provider
+- [ ] Deck sync and claim export/import flows still work
+- [ ] `failed_jobs` migration exists and runs
+- [ ] Queue worker retry strategy is explicitly configured (`--tries`)
 - [ ] All CRUD operations function
 - [ ] API tests pass (`npm run test:api`)
 - [ ] E2E tests pass (`npm run test:e2e`)
@@ -1150,7 +1246,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom provider:
 | 2.4 | 5.5→5.6 | 7.1.3 | Logging + hashing config, TrustProxies headers, Blade/e() encoding |
 | 2.5 | 5.6→5.7 | 7.1.3 | Blade `or` removed, cache `storage/framework/cache/data`, add `public/svg` error assets, `Route::redirect` 302 default, queue key rename (`QUEUE_CONNECTION`) |
 | 2.6 | 5.7→5.8 | 7.1.3 | Cache TTL in seconds, env parsing changes, Markdown mail path + notification channel extraction |
-| 2.7 | 5.8→6.0 | **7.2** | Policies need `viewAny`, string/array helpers removed from core, queue retry default changed |
+| 2.7 | 5.8→6.0 | **7.2** | `authorizeResource`→`viewAny` (if used), helper removal, queue retry default (`--tries`) + `failed_jobs`, OAuth migration to Socialite |
 | 3.1 | 6.0→7.0 | 7.2.5 | CORS config, Symfony 5 |
 | 3.2 | 7.0→8.0 | **7.3** | Models to app/Models/ |
 | 3.3 | 8.0→9.0 | **8.0** | Flysystem 3, Symfony Mailer |
