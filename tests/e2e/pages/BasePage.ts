@@ -1,6 +1,5 @@
 import { BrowserManager } from 'agent-browser/dist/browser.js';
-
-const BASE_URL = 'http://localhost:8000';
+import { appUrl } from '../config';
 
 export class BasePage {
   protected page: ReturnType<BrowserManager['getPage']>;
@@ -10,7 +9,7 @@ export class BasePage {
   }
 
   protected async navigate(path: string, options?: { waitUntil?: string }) {
-    await this.page.goto(`${BASE_URL}${path}`, options as any);
+    await this.page.goto(appUrl(path), options as any);
   }
 
   /**

@@ -65,13 +65,6 @@ jobs:
       - name: Install Composer dependencies
         run: docker compose exec -T php composer install --no-interaction --prefer-dist
 
-      - name: Restore custom OAuth service file
-        run: |
-          git show HEAD:vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/NetrunnerDB.php > /tmp/NetrunnerDB.php
-          docker compose exec -T php mkdir -p vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/
-          docker cp /tmp/NetrunnerDB.php abr-php:/var/www/html/vendor/lusitanian/oauth/src/OAuth/OAuth2/Service/NetrunnerDB.php
-          echo "NetrunnerDB OAuth service file restored"
-
       - name: Clear Laravel caches and set permissions
         run: |
           docker compose exec -T php php artisan config:clear

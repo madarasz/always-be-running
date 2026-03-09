@@ -93,6 +93,8 @@ return [
 
     'redis' => [
 
+        'client' => env('REDIS_CLIENT', 'predis'),
+
         'cluster' => false,
 
         'default' => [

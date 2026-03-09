@@ -11,9 +11,9 @@
     @for ($i = 0; $i < count($entries); $i++)
         @forelse ($entries[$i] as $entry)
             @if (count($entries[$i])>1 && !$relax)
-                <tr class="danger{{ $user_entry && count($entry) && $entry[$rank] == $user_entry[$rank] ? ' own-claim' : '' }}">
+                <tr class="danger{{ $user_entry && $entry[$rank] == $user_entry[$rank] ? ' own-claim' : '' }}">
                     <td class="text-right"><i class="fa fa-exclamation-triangle text-danger" title="conflict"></i> #{{ $i+1 }}</td>
-            @elseif ($user_entry && count($entry) && $entry[$rank] == $user_entry[$rank])
+            @elseif ($user_entry && $entry[$rank] == $user_entry[$rank])
                 <tr class="info own-claim">
                     <td class="text-right">#{{ $i+1 }}</td>
             @else
@@ -106,9 +106,9 @@
             @endif
             {{--Remove button--}}
             @if (($entry->type == 3 || $entry->type == 4) && (($user && ($user->admin || $user->id == $creator))
-                || ($user_entry && count($entry) && $entry->user == $user_entry->user)))
+                || ($user_entry && $entry->user == $user_entry->user)))
                     {!! Form::open(['method' => 'DELETE', 'url' => "/entries/$entry->id", 'style' => 'display:inline']) !!}
-                        @if ($user_entry && count($entry) && $entry->user == $user_entry->user)
+                        @if ($user_entry && $entry->user == $user_entry->user)
                             {{--own entry--}}
                             {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> Remove',
                                 array('type' => 'submit', 'class' => 'btn btn-danger btn-xs')) !!}

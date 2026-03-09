@@ -1,6 +1,5 @@
 import { z, ZodSchema } from 'zod';
-
-const BASE_URL = process.env.API_BASE_URL || 'http://localhost:8000';
+import { appUrl } from '../../shared/base-url';
 
 export interface ApiResponse<T> {
   data: T;
@@ -19,7 +18,7 @@ export async function fetchApi<T>(
   schema: ZodSchema<T>,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
-  const url = `${BASE_URL}${path}`;
+  const url = appUrl(path);
   const start = performance.now();
 
   const response = await fetch(url, {
@@ -59,7 +58,7 @@ export async function fetchRaw(
   path: string,
   options: RequestInit = {}
 ): Promise<{ data: unknown; status: number; duration: number }> {
-  const url = `${BASE_URL}${path}`;
+  const url = appUrl(path);
   const start = performance.now();
 
   const response = await fetch(url, {
