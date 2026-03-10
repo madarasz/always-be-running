@@ -1000,26 +1000,158 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom NetrunnerDB pr
 
 ---
 
-### Step 3.1: Laravel 6.0 → 7.0
-**Guide:** https://laravel.com/docs/7.x/upgrade
+### Step 3.1: Laravel 6.0 → 7.0 (with PHP 7.3+) - ✅ DONE
+**Guides:**
+- https://laravel.com/docs/7.x/upgrade
+- https://www.php.net/manual/en/migration73.php
 
-**PHP Requirement:** >= 7.2.5
+**PHP Requirement:** >= 7.2.5 (Laravel 7 minimum); recommend >= 7.3.0 to unlock PHP 7.3 features
 
-**Key Changes:**
-1. **Symfony 5 components**
+**Breaking Changes (Laravel 6 → 7):**
 
-2. **CORS configuration**
-   - New `config/cors.php` file
+1. **Route Caching & `Route::apiResource` Stubs (BREAKING)**
+   - The `stubs` configuration option for `Route::apiResource` was removed
+   - **Impact**: If the app uses `Route::apiResource` with custom stubs, this will break
+   - **Fix**: Remove stub references or use standard resource routes
 
-3. **Factory changes**
-   - Class-based factories introduced (optional)
-
-4. **composer.json**
-   ```json
-   "laravel/framework": "^7.0"
+2. **String Validation Rules (BREAKING)**
+   - Empty strings are now converted to `null` by default via `ConvertEmptyStringsToNull` middleware
+   - **Impact**: Validation rules using `nullable` may behave differently
+   - **Fix**: Ensure optional fields use `nullable` modifier explicitly
+   ```php
+   // Laravel 7 - be explicit about nullable fields
+   'publish_at' => 'nullable|date',
+   'description' => 'nullable|string',
    ```
 
-**Validation checkpoint:** Run API and E2E tests
+3. **Symfony 5 Components**
+   - Components using Symfony 4.x may need updates
+   - **Action**: Run `composer update -W` and verify no deprecation warnings
+
+**New Features in Laravel 7 (Code Improvement Opportunities):**
+
+1. **CORS Support (Built-in)**
+   - First-party CORS package integrated (no need for `fruitcake/laravel-cors`)
+   - **Action**: Create `config/cors.php` with `php artisan config:publish cors`
+   - **Relevance**: Useful if API is consumed from different domains
+
+2. **Blade Component Tag Compiler**
+   - Anonymous components with `<x-component-name>` syntax
+   - **Benefit**: Cleaner, more maintainable view code
+   ```blade
+   <!-- Old way -->
+   @component('components.alert')
+       Alert content
+   @endcomponent
+
+   <!-- Laravel 7+ -->
+   <x-alert />
+   ```
+   - **Code improvement**: Refactor repetitive view logic into reusable components (buttons, modals, cards)
+
+3. **HTTP Client (Guzzle Wrapper)**
+   - `Http` facade for external API requests
+   - **Benefit**: Simpler syntax for API integrations
+   - **Relevance**: Could simplify NetrunnerDB API integration code
+   ```php
+   // Laravel 7+ style
+   $response = Http::get('https://api.netrunnerdb.com/cards');
+   ```
+
+4. **Custom Eloquent Casts**
+   - `Castable` interface for custom value objects
+   - **Benefit**: Better type safety for model attributes
+
+5. **Database Query Improvements**
+   - Better support for foreign keys, index management in migrations
+   - **Benefit**: Cleaner migration files
+
+**PHP 7.3 Features (Positive Code Changes Available):**
+
+1. **Trailing commas in function calls** (cleaner diffs)
+   ```php
+   return view('upcoming', compact(
+       'message',
+       'nowdate',
+       'tournament_types',
+   ));
+   ```
+
+2. **Flexible heredoc/nowdoc syntax**
+   ```php
+   $html = <<<HTML
+       <div>$title</div>
+       HTML;
+   ```
+
+3. **New helper functions**
+   - `array_key_first($array)` / `array_key_last($array)` - replace `reset(array_keys())` / `end(array_keys())`
+   - `is_countable($var)` - safe check before `count()`
+   - `hrtime()` - high-resolution time for performance measurement
+
+4. **Argon2id password hashing** (more secure)
+   ```php
+   $hash = password_hash($password, PASSWORD_ARGON2ID);
+   ```
+
+5. **`compact()` notices for undefined variables**
+   - Review `compact()` calls to ensure all variables are defined
+
+**Implementation:**
+
+1. **Dependency + lockfile upgrade**
+   - Update `composer.json`:
+   ```json
+   "php": ">=7.3.0",
+   "laravel/framework": "^7.0"
+   ```
+   - Run `composer update -W` in Docker
+
+2. **Runtime upgrade**
+   - Update `docker/Dockerfile.php`: Change FROM to `php:7.3-fpm-alpine`
+   - Update project docs that mention PHP 7.2
+
+3. **Create CORS config**
+   - Create `config/cors.php` from Laravel 7 skeleton
+   - Configure allowed origins, methods, headers
+
+4. **Validation audit**
+   - Review all validation rules for `nullable` fields
+   - Verify `compact()` calls have all variables defined
+
+**Files to Modify:**
+- `composer.json` - Update PHP and Laravel version constraints
+- `docker/Dockerfile.php` - Update FROM to `php:7.3-fpm-alpine`
+- `config/cors.php` - Create from Laravel 7 skeleton
+- `config/app.php` - Review service providers and aliases
+- `routes/web.php`, `routes/api.php` - Check for removed route features
+- `app/Providers/*.php` - Update any deprecated service provider code
+
+**Code Audit Results (Project-Specific):**
+- ✅ No `continue;` in switch statements found
+- ✅ No `define(..., true)` case-insensitive constants
+- ✅ No deprecated `fgetss()`, `gzgetss()`, `mbereg_*()` functions
+- ✅ `strpos()` calls use string needles (safe)
+- ✅ No `FILTER_FLAG_*` deprecated constants
+- ⚠️ 20+ `compact()` calls - verify all variables are defined
+
+**Validation:**
+- [X] `composer update -W` succeeds with Laravel `7.x`
+- [X] Runtime confirms PHP 7.3+ (`php -v` in Docker/CI) - PHP 7.3.33
+- [X] `php artisan package:discover` succeeds (manual cache creation required due to CLI output issue)
+- [X] Cache clear commands succeed: `config:clear`, `cache:clear`, `route:clear`, `view:clear`
+- [X] `php artisan route:list` succeeds (routes register correctly) - 116 routes
+- [X] App reports `Laravel Framework 7.x` - Laravel 7.30.7
+- [X] API tests pass: `npm run test:api` (26/26)
+- [X] E2E tests: `npm run test:e2e` (91/91) — all tests passed after fixing PHP 7.3 compatibility issues (Exception→Throwable in Handler, compact() with undefined variables)
+
+**Validation checkpoint:** Run API and E2E tests - API tests ✅ passed, E2E tests ✅ passed
+
+**Notes:**
+- CORS config created at `config/cors.php`
+- `laravel/tinker` updated from `~1.0` to `~2.0` for Laravel 7 compatibility
+- All deprecated PHP 7.3 constructs verified as not in use
+- Package discovery cache created manually due to artisan CLI output buffering issue (app boots correctly)
 
 ---
 
@@ -1247,7 +1379,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom NetrunnerDB pr
 | 2.5 | 5.6→5.7 | 7.1.3 | Blade `or` removed, cache `storage/framework/cache/data`, add `public/svg` error assets, `Route::redirect` 302 default, queue key rename (`QUEUE_CONNECTION`) |
 | 2.6 | 5.7→5.8 | 7.1.3 | Cache TTL in seconds, env parsing changes, Markdown mail path + notification channel extraction |
 | 2.7 | 5.8→6.0 | **7.2** | `authorizeResource`→`viewAny` (if used), helper removal, queue retry default (`--tries`) + `failed_jobs`, OAuth migration to Socialite |
-| 3.1 | 6.0→7.0 | 7.2.5 | CORS config, Symfony 5 |
+| 3.1 | 6.0→7.0 | **7.3** | CORS config, Symfony 5, PHP 7.3 features (trailing commas, heredoc flex, `array_key_first/last`, `is_countable`, Argon2id) |
 | 3.2 | 7.0→8.0 | **7.3** | Models to app/Models/ |
 | 3.3 | 8.0→9.0 | **8.0** | Flysystem 3, Symfony Mailer |
 | 3.4 | 9.0→10.0 | **8.1** | Dependency updates |

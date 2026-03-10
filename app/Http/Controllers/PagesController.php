@@ -48,6 +48,8 @@ class PagesController extends Controller
         $page_section = 'upcoming';
 
         // user's default filter
+        $default_country = null;
+        $default_country_id = null;
         if ($request->user() && $request->user()->autofilter_upcoming && $request->user()->country_id) {
             $default_country = $request->user()->country->name;
             $default_country_id = array_search($default_country, $countries, true);
@@ -90,11 +92,13 @@ class PagesController extends Controller
         $page_section = 'results';
 
         // user's default filter
+        $default_country = null;
+        $default_country_id = null;
         if ($request->user() && $request->user()->autofilter_results && $request->user()->country_id) {
             $default_country = $request->user()->country->name;
             $default_country_id = array_search($default_country, $countries, true);
         }
-        return view('results', compact('registered', 'message', 'nowdate', 'tournament_types', 'countries',
+        return view('results', compact('message', 'nowdate', 'tournament_types', 'countries',
             'tournament_cardpools', 'tournament_formats', 'tournament_mwls', 'page_section', 'default_country', 'default_country_id',
             'cardpool', 'type', 'country', 'format', 'mwl', 'videos', 'matchdata', 'featured', 'nowdate'));
     }

@@ -1,5 +1,5 @@
-# PHP 7.2 with Laravel 6 compatible extensions (Alpine-based to avoid Debian EOL repos)
-FROM php:7.2-fpm-alpine
+# PHP 7.3 with Laravel 7 compatible extensions (Alpine-based to avoid Debian EOL repos)
+FROM php:7.3-fpm-alpine
 
 # Install system dependencies
 RUN apk add --no-cache \
