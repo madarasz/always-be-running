@@ -32,7 +32,7 @@ docker compose exec -T mysql mysql -u root -prootsecret netrunner < seed.sql
 
 You will need the following in order to run ABR locally:
 - MySQL (preferably)
-- PHP 7.2+
+- PHP 7.3+
 - PHP Composer
 - NodeJs v10, NPM v6 recommended
 - JQ - download via apt-get (Debian) or homebrew (Mac), this is NOT an npm module
@@ -74,7 +74,7 @@ Google API keys, you can create yourself.
 
 13. You are done :)
 
-### Queue worker retries (Laravel 6)
+### Queue worker retries (Laravel 7)
 
 If you run queue workers outside `QUEUE_CONNECTION=sync`, set retries explicitly:
 
