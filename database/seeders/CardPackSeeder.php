@@ -21,7 +21,7 @@ class CardPackSeeder extends Seeder
                     'cycle_code' => 'unknown',
                     'cycle_position' => 9999,
                     'name' => '- not yet known -',
-                    'position' => '9999',
+                    'position' => 9999,
                     'date_release' => null,
                     'usable' => 1
                 )

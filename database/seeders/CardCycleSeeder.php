@@ -19,7 +19,7 @@ class CardCycleSeeder extends Seeder
                 array(
                     'id' => 'unknown',
                     'name' => 'UNKNOWN',
-                    'position' => '9999'
+                    'position' => 9999
                 )
             )
         );

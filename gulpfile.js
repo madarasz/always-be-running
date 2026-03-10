@@ -3,6 +3,8 @@ var elixir = require('laravel-elixir');
 var gulp = require("gulp");
 var shell = require("gulp-shell");
 var clean = require('gulp-rimraf');
+var fs = require('fs');
+var path = require('path');
 var vueFile = elixir.config.production ? "vue.min.js" : "vue.js";
 
 /*
@@ -16,7 +18,7 @@ var vueFile = elixir.config.production ? "vue.min.js" : "vue.js";
  |
  */
 
-elixir(function(mix) {
+elixir(function (mix) {
     var bracketPath = 'node_modules/jquery-bracket/dist',
         timepickerPath = 'node_modules/timepicker',
         toastrPath = 'node_modules/toastr/build/';
@@ -81,3 +83,57 @@ elixir(function(mix) {
         ])
         .version(['css/all.css', 'js/all.js']);
 });
+
+/*
+ |--------------------------------------------------------------------------
+ | mix-manifest: Convert Elixir's rev-manifest.json → mix-manifest.json
+ |--------------------------------------------------------------------------
+ |
+ | Laravel's mix() helper reads public/mix-manifest.json and expects:
+ |   { "/css/all.css": "/build/css/all-<hash>.css", ... }
+ |
+ | Elixir's version task writes public/build/rev-manifest.json with:
+ |   { "css/all.css": "css/all-<hash>.css", ... }
+ |
+ | This task translates between the two formats so that mix() always
+ | serves the correct cache-busted URL after every build.
+ |
+ */
+gulp.task('mix-manifest', ['version'], function (done) {
+    var revManifestPath = path.join('public', 'build', 'rev-manifest.json');
+    var mixManifestPath = path.join('public', 'mix-manifest.json');
+
+    if (!fs.existsSync(revManifestPath)) {
+        console.warn('[mix-manifest] rev-manifest.json not found at ' + revManifestPath + '; skipping.');
+        return done();
+    }
+
+    var revManifest = JSON.parse(fs.readFileSync(revManifestPath, 'utf8'));
+    var mixManifest = {};
+
+    Object.keys(revManifest).forEach(function (originalFile) {
+        // Keys:   "css/all.css"          → "/css/all.css"
+        // Values: "css/all-<hash>.css"   → "/build/css/all-<hash>.css"
+        var key = '/' + originalFile;
+        var value = '/build/' + revManifest[originalFile];
+        mixManifest[key] = value;
+    });
+
+    fs.writeFileSync(mixManifestPath, JSON.stringify(mixManifest, null, 4) + '\n', 'utf8');
+    console.log('[mix-manifest] Written ' + mixManifestPath);
+    done();
+});
+
+/*
+|--------------------------------------------------------------------------
+| Default Task: Run full build pipeline
+|--------------------------------------------------------------------------
+|
+| Running `gulp` (with no arguments) now executes the complete pipeline:
+| 1. Elixir's version task (creates versioned CSS/JS + rev-manifest.json)
+| 2. mix-manifest task (converts rev-manifest.json → mix-manifest.json)
+|
+| This ensures cache-busting works correctly after every build.
+|
+*/
+gulp.task('default', ['version', 'mix-manifest']);
