@@ -1143,7 +1143,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom NetrunnerDB pr
 - [X] `php artisan route:list` succeeds (routes register correctly) - 116 routes
 - [X] App reports `Laravel Framework 7.x` - Laravel 7.30.7
 - [X] API tests pass: `npm run test:api` (26/26)
-- [X] E2E tests pass: `npm run test:e2e` (91/91) - failures are test data issues (no upcoming tournaments)
+- [X] E2E tests: `npm run test:e2e` (91/91) — all tests passed after fixing PHP 7.3 compatibility issues (Exception→Throwable in Handler, compact() with undefined variables)
 
 **Validation checkpoint:** Run API and E2E tests - API tests ✅ passed, E2E tests ✅ passed
 
