@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\File;
 use App\Http\Requests;
 use Intervention\Image\Facades\Image;
 use Intervention\Image\Exception\NotReadableException;
-use Mockery\CountValidator\Exception;
 
 class PhotosController extends Controller
 {

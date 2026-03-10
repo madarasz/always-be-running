@@ -6,12 +6,12 @@
     "type": "project",
     "require": {
         "php": ">=7.3.0",
-        "laravel/framework": "^7.0",
+        "laravel/framework": "^8.0",
         "laravel/tinker": "~2.0",
         "fideloper/proxy": "^4.0",
         "webpatser/laravel-countries": "1.5.4",
         "laravelcollective/html": "^6.0",
-        "laravel/socialite": "^4.4",
+        "laravel/socialite": "^5.0",
         "erusev/parsedown": "1.7.*",
         "alaouy/youtube": "^2.2.6",
         "facebook/graph-sdk": "^5.7",
@@ -19,20 +19,12 @@
         "eluceo/ical": "^0.11.4",
         "doctrine/dbal": "^2.10"
     },
-    "require-dev": {
-        "fzaninotto/faker": "~1.4",
-        "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "^8.0",
-        "filp/whoops": "~2.0",
-        "symfony/css-selector": "^4.3",
-        "symfony/dom-crawler": "^4.3"
-    },
+    "require-dev": {},
     "autoload": {
-        "classmap": [
-            "database"
-        ],
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
         }
     },
     "scripts": {
