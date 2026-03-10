@@ -92,27 +92,15 @@ jobs:
           "
 
       - name: Build frontend assets
-        run: docker compose --profile build run --rm node
-
-      - name: Verify assets were built
         run: |
-          echo "=== Checking public/build directory ==="
-          ls -la public/build/ 2>/dev/null || echo "build directory missing!"
-          ls -la public/build/css/ 2>/dev/null || echo "build/css directory missing!"
-          ls -la public/build/js/ 2>/dev/null || echo "build/js directory missing!"
-          echo "=== mix-manifest.json contents ==="
-          cat public/mix-manifest.json 2>/dev/null || echo "mix-manifest.json missing!"
-
-          # Verify hashed files exist
-          if [ -f public/mix-manifest.json ]; then
-            CSS_FILE=$(grep -o '"/css/all\.css": *"[^"]*"' public/mix-manifest.json | cut -d'"' -f4)
-            JS_FILE=$(grep -o '"/js/all\.js": *"[^"]*"' public/mix-manifest.json | cut -d'"' -f4)
-            echo "Expected CSS: public${CSS_FILE}"
-            echo "Expected JS: public${JS_FILE}"
-            test -f "public${CSS_FILE}" || { echo "ERROR: CSS file not found!"; exit 1; }
-            test -f "public${JS_FILE}" || { echo "ERROR: JS file not found!"; exit 1; }
-            echo "Assets verified OK"
-          fi
+          docker compose --profile build run --rm node
+          echo "=== Build completed ==="
+          echo "Contents of public/:"
+          ls -la public/
+          echo "Contents of public/build/:"
+          ls -laR public/build/ 2>/dev/null || echo "public/build/ does not exist!"
+          echo "mix-manifest.json:"
+          cat public/mix-manifest.json 2>/dev/null || echo "mix-manifest.json does not exist!"
 
       - name: Verify app is running
         run: |

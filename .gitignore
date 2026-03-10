@@ -25,6 +25,7 @@ public/apple-*
 public/android-*
 public/browserconfig.xml
 public/build
+public/mix-manifest.json
 tests/nightwatch/bin
 selenium-debug.log
 tests/nightwatch/reports
