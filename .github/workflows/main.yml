@@ -55,6 +55,9 @@ jobs:
       - name: Build Docker images
         run: docker compose build --build-arg BUILDKIT_INLINE_CACHE=1
 
+      - name: Build Node image for gulp
+        run: docker compose --profile build build node
+
       - name: Start Docker services
         run: |
           docker compose up -d php nginx mysql
@@ -102,12 +105,23 @@ jobs:
           echo "mix-manifest.json:"
           cat public/mix-manifest.json 2>/dev/null || echo "mix-manifest.json does not exist!"
 
+      # Fix permissions for files created by node container (root) so php container can read them
+      - name: Fix asset permissions
+        run: |
+          docker compose exec -T php chown -R www-data:www-data public/build public/mix-manifest.json 2>/dev/null || echo "Permission fix skipped"
+          docker compose exec -T php chmod -R 755 public/build public/mix-manifest.json 2>/dev/null || echo "Permission fix skipped"
+
       - name: Verify app is running
         run: |
           HTTP_CODE=$(curl -s --max-time 30 -o /dev/null -w "%{http_code}" http://localhost:8000/)
           if [ "$HTTP_CODE" != "200" ]; then
             echo "Homepage returned HTTP $HTTP_CODE"
-            docker compose logs php --tail=30
+            echo "=== PHP FPM logs ==="
+            docker compose logs php --tail=50
+            echo "=== Nginx logs ==="
+            docker compose logs nginx --tail=30
+            echo "=== Laravel storage logs ==="
+            docker compose exec -T php cat storage/logs/laravel.log 2>/dev/null | tail -50 || echo "No Laravel logs"
             exit 1
           fi
           echo "Homepage OK (HTTP $HTTP_CODE)"
