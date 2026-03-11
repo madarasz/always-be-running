@@ -330,6 +330,26 @@ Kept all other required vendor/static copy commands and ordered gulp tasks uncha
 
 ---
 
+## Iteration 8: Full CI Verification Passed
+
+### Verification Run
+- **CI Run:** [Tests #22967748181](https://github.com/madarasz/always-be-running/actions/runs/22967748181)
+- **Commit:** `ca26aa0` (`CI: remove invalid vue asset copy path`)
+
+### Outcome
+All critical steps passed in sequence:
+- Build frontend assets: ✅
+- Verify app is running: ✅
+- API tests: ✅
+- E2E tests: ✅
+
+`Check test results` was skipped because both test suites succeeded (workflow only runs that step on failures).
+
+### Final Status
+**Status:** ✅ RESOLVED
+
+---
+
 ## Summary of Changes Made
 
 | File | Changes |
@@ -359,11 +379,13 @@ Kept all other required vendor/static copy commands and ordered gulp tasks uncha
 
 6. **Build Success != Frontend Runtime Correctness:** Versioned bundles can still be broken if prerequisite copy steps are skipped. Runtime traces (`Vue is not defined`, plugin missing) are critical diagnostics.
 
+7. **Avoid hard-failing optional copy sources:** With `set -e`, a single missing directory in `cp` (like `resources/assets/vue`) aborts the entire build. Copy steps must match actual repository structure.
+
 ---
 
 ## Next Steps for Further Troubleshooting
 
-If CI still fails, investigate:
+If CI fails again in future, investigate:
 
 1. **Check CI run logs** for:
    - Whether gulp build actually completes successfully
