@@ -64,3 +64,4 @@ e2e/fixtures/test-seed.sql
 npm-debug.log
 abr*.sql
 .codemie
+docs/ci-e2e-troubleshooting-log.md

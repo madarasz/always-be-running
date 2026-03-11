@@ -127,17 +127,6 @@ jobs:
             gulp version
             gulp mix-manifest
           "
-          echo "=== Build completed ==="
-          echo "Contents of public/:"
-          ls -la public/
-          echo "Contents of public/build/:"
-          ls -laR public/build/ 2>/dev/null || echo "public/build/ does not exist!"
-          echo "Contents of public/css/:"
-          ls -la public/css/ 2>/dev/null || echo "public/css/ does not exist!"
-          echo "Contents of public/js/:"
-          ls -la public/js/ 2>/dev/null || echo "public/js/ does not exist!"
-          echo "mix-manifest.json:"
-          cat public/mix-manifest.json 2>/dev/null || echo "mix-manifest.json does not exist!"
           [ -d public/build/css ] || (echo "::error::public/build/css was not generated" && exit 1)
           [ -d public/build/js ] || (echo "::error::public/build/js was not generated" && exit 1)
           [ -f public/mix-manifest.json ] || (echo "::error::public/mix-manifest.json was not generated" && exit 1)
@@ -145,30 +134,21 @@ jobs:
       # Fix permissions for files created by node container (root) so php container can read them
       - name: Fix asset permissions
         run: |
-          docker compose exec -T php chown -R www-data:www-data public/build public/mix-manifest.json 2>/dev/null || echo "Permission fix skipped"
-          docker compose exec -T php chmod -R 755 public/build public/mix-manifest.json 2>/dev/null || echo "Permission fix skipped"
+          docker compose exec -T php chown -R www-data:www-data public/build public/mix-manifest.json
+          docker compose exec -T php chmod -R 755 public/build public/mix-manifest.json
 
       - name: Verify app is running
         run: |
           HTTP_CODE=$(curl -s --max-time 30 -o /dev/null -w "%{http_code}" http://localhost:8000/)
           if [ "$HTTP_CODE" != "200" ]; then
-            echo "Homepage returned HTTP $HTTP_CODE"
-            echo "=== PHP FPM logs ==="
-            docker compose logs php --tail=50
-            echo "=== Nginx logs ==="
-            docker compose logs nginx --tail=30
-            echo "=== Laravel storage logs ==="
-            docker compose exec -T php cat storage/logs/laravel.log 2>/dev/null | tail -50 || echo "No Laravel logs"
+            echo "::error::Homepage returned HTTP $HTTP_CODE"
             exit 1
           fi
-          echo "Homepage OK (HTTP $HTTP_CODE)"
           API_CODE=$(curl -s --max-time 10 -o /dev/null -w "%{http_code}" http://localhost:8000/api/tournaments/upcoming)
           if [ "$API_CODE" != "200" ]; then
             echo "::error::API endpoint returned HTTP $API_CODE"
-            docker compose logs php --tail=30
             exit 1
           fi
-          echo "API endpoint OK (HTTP $API_CODE)"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
