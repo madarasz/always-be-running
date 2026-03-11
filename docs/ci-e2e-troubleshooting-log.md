@@ -206,26 +206,86 @@ The `docker compose --profile build run --rm node` command runs the node service
 
 ---
 
+## Iteration 5: Correct Root Cause - Default Gulp Task Regression
+
+### Problem Observed (from CI Run #22939952856)
+- CI still fails with missing `public/build/` and missing `public/mix-manifest.json`
+- Logs show gulp runs only:
+  - `Starting 'version'...`
+  - `Starting 'mix-manifest'...`
+- Logs do **not** show:
+  - `Starting 'sass'...`
+  - `Starting 'scripts'...`
+  - `Starting 'styles'...`
+
+### Root Cause Identified
+The regression was introduced in commit `a876a68`:
+
+1. Added custom task:
+   - `gulp.task('mix-manifest', ['version'], ...)`
+2. Overrode default task:
+   - `gulp.task('default', ['version', 'mix-manifest'])`
+
+This causes `gulp` to run only versioning + manifest conversion, and skip asset compilation tasks on fresh CI workspaces.
+
+### Important Correction
+Earlier assumption about Docker Compose profiles was incomplete:
+- `docker compose run <service>` can run a profiled service when explicitly targeted.
+- So the main failure here is not profile activation; it is build-task ordering/coverage.
+
+### Solution Implemented
+**Files:** `.github/workflows/main.yml`, `gulpfile.js`
+
+1. Updated CI build step to run a deterministic ordered pipeline explicitly:
+   ```yaml
+   docker compose --profile build run --rm node sh -lc "
+     set -e
+     npm install
+     gulp prepare-dirs
+     gulp sass
+     gulp scripts
+     gulp styles
+     gulp version
+     gulp mix-manifest
+   "
+   ```
+
+2. Added hard checks immediately after build:
+   - `public/build/css` must exist
+   - `public/build/js` must exist
+   - `public/mix-manifest.json` must exist
+
+3. Made `mix-manifest` a pure conversion task (removed implicit `version` dependency) so task order is explicit.
+
+### Result
+**Status:** 🔄 In progress (changes prepared locally; CI verification pending next run)
+
+---
+
 ## Summary of Changes Made
 
 | File | Changes |
 |------|---------|
 | `.github/workflows/main.yml` | 1. Added `--profile build` flag to docker compose run<br>2. Added explicit `docker compose --profile build build node` step<br>3. Added debug output to build step to show build results<br>4. Added permissions fix step<br>5. Enhanced error logging with PHP, nginx, and Laravel logs |
+| `.github/workflows/main.yml` | 6. Replaced implicit `gulp` call with explicit ordered gulp pipeline (`prepare-dirs -> sass -> scripts -> styles -> version -> mix-manifest`)<br>7. Added fail-fast checks for `public/build/css`, `public/build/js`, and `public/mix-manifest.json` |
 | `.gitignore` | Added `public/mix-manifest.json` to prevent committing build artifacts |
 | `public/mix-manifest.json` | Removed from git tracking (deleted via `git rm --cached`) |
+| `gulpfile.js` | 1. Added custom `mix-manifest` conversion task<br>2. Made `mix-manifest` task conversion-only (no implicit `version` dependency)<br>3. Added explicit ordered build tasks for reliable CI execution |
 | `docs/ci-e2e-troubleshooting-log.md` | Created this troubleshooting log documenting all iterations |
 
 ---
 
 ## Key Learnings
 
-1. **Docker Compose Profiles:** Services with `profiles: [...]` are NOT activated by default and require explicit `--profile <name>` flag.
+1. **Docker Compose Profiles:** `docker compose up` honors profiles; `docker compose run <service>` can still run an explicitly targeted profiled service.
 
 2. **Build Artifacts in Git:** `mix-manifest.json` should NOT be committed when it references dynamically-generated files. The manifest and the build output must be generated together in the same build context.
 
 3. **Docker Volume Permissions:** Files created in one container (node) may have different ownership than what another container (php) expects. Permission fixes may be needed after cross-container file operations.
 
 4. **Debug Output:** Adding verbose logging at each step helps identify exactly where the build process fails.
+
+5. **Legacy Elixir/Gulp Pipelines Need Explicit Ordering in CI:** Relying on implicit `default` behavior is fragile after task overrides; explicit ordered task execution is safer.
 
 ---
 
@@ -240,10 +300,9 @@ If CI still fails, investigate:
    - Laravel error logs for specific exception messages
 
 2. **Potential additional fixes:**
-   - Ensure `public/build` directory exists before gulp runs
-   - Add `touch public/mix-manifest.json` before build to ensure file can be created
-   - Check if npm dependencies install correctly in Node 10 container
-   - Verify gulp tasks complete without errors
+   - Verify the new explicit ordered pipeline produces `public/build/*` and `public/mix-manifest.json`
+   - If CI still fails, capture full `npm install` + gulp output (not only failed-step logs)
+   - Consider running node build in one reusable container session to reduce variability
 
 3. **Alternative approach:** If Docker volume mounts continue to cause issues, consider:
    - Building assets inside the PHP container instead
@@ -269,6 +328,7 @@ If CI still fails, investigate:
 
 | Run ID | Commit | Status | Duration | Notes |
 |--------|--------|--------|----------|-------|
+| 22939952856 | 01def6b | ❌ Failed | 4m16s | Regression confirmed: gulp ran `version` + `mix-manifest` only; no `sass/scripts/styles`; no build artifacts generated |
 | 22926067960 | 12a1c92 | ❌ Failed | 4m10s | Build output not persisting - `public/build/` and `mix-manifest.json` don't exist after build step |
 | 22925852569 | 382c927 | ❌ Failed | 3m41s | HTTP 500 - mix-manifest.json existed but pointed to non-existent files |
 | 22925421571 | 0af6475 | ❌ Failed | 4m23s | Missing --profile build flag |

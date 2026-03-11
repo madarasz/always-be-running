@@ -96,14 +96,30 @@ jobs:
 
       - name: Build frontend assets
         run: |
-          docker compose --profile build run --rm node
+          docker compose --profile build run --rm node sh -lc "
+            set -e
+            npm install
+            gulp prepare-dirs
+            gulp sass
+            gulp scripts
+            gulp styles
+            gulp version
+            gulp mix-manifest
+          "
           echo "=== Build completed ==="
           echo "Contents of public/:"
           ls -la public/
           echo "Contents of public/build/:"
           ls -laR public/build/ 2>/dev/null || echo "public/build/ does not exist!"
+          echo "Contents of public/css/:"
+          ls -la public/css/ 2>/dev/null || echo "public/css/ does not exist!"
+          echo "Contents of public/js/:"
+          ls -la public/js/ 2>/dev/null || echo "public/js/ does not exist!"
           echo "mix-manifest.json:"
           cat public/mix-manifest.json 2>/dev/null || echo "mix-manifest.json does not exist!"
+          [ -d public/build/css ] || (echo "::error::public/build/css was not generated" && exit 1)
+          [ -d public/build/js ] || (echo "::error::public/build/js was not generated" && exit 1)
+          [ -f public/mix-manifest.json ] || (echo "::error::public/mix-manifest.json was not generated" && exit 1)
 
       # Fix permissions for files created by node container (root) so php container can read them
       - name: Fix asset permissions

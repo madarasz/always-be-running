@@ -5,6 +5,7 @@ var shell = require("gulp-shell");
 var clean = require('gulp-rimraf');
 var fs = require('fs');
 var path = require('path');
+var runSequence = require('run-sequence');
 var vueFile = elixir.config.production ? "vue.min.js" : "vue.js";
 
 /*
@@ -99,7 +100,7 @@ elixir(function (mix) {
  | serves the correct cache-busted URL after every build.
  |
  */
-gulp.task('mix-manifest', ['version'], function (done) {
+gulp.task('mix-manifest', function (done) {
     var revManifestPath = path.join('public', 'build', 'rev-manifest.json');
     var mixManifestPath = path.join('public', 'mix-manifest.json');
 
@@ -112,8 +113,8 @@ gulp.task('mix-manifest', ['version'], function (done) {
     var mixManifest = {};
 
     Object.keys(revManifest).forEach(function (originalFile) {
-        // Keys:   "css/all.css"          → "/css/all.css"
-        // Values: "css/all-<hash>.css"   → "/build/css/all-<hash>.css"
+        // Keys:   "css/all.css"          -> "/css/all.css"
+        // Values: "css/all-<hash>.css"   -> "/build/css/all-<hash>.css"
         var key = '/' + originalFile;
         var value = '/build/' + revManifest[originalFile];
         mixManifest[key] = value;
@@ -129,11 +130,34 @@ gulp.task('mix-manifest', ['version'], function (done) {
 | Default Task: Run full build pipeline
 |--------------------------------------------------------------------------
 |
-| Running `gulp` (with no arguments) now executes the complete pipeline:
-| 1. Elixir's version task (creates versioned CSS/JS + rev-manifest.json)
-| 2. mix-manifest task (converts rev-manifest.json → mix-manifest.json)
+| Running `gulp` (with no arguments) now executes the complete pipeline
+| in sequential order to ensure proper dependency handling:
+| 1. Prepare directories - Create public/css, public/js, public/build
+| 2. sass - Compile Sass to CSS
+| 3. scripts - Concatenate JS files
+| 4. styles - Concatenate CSS files (needs sass output)
+| 5. version - Version the CSS/JS files (needs styles/scripts output)
+| 6. mix-manifest - Convert rev-manifest.json -> mix-manifest.json
 |
 | This ensures cache-busting works correctly after every build.
 |
 */
-gulp.task('default', ['version', 'mix-manifest']);
+gulp.task('prepare-dirs', function (done) {
+    // Use shell to create directories (more reliable across Node versions)
+    var exec = require('child_process').exec;
+    exec('mkdir -p public/css public/js public/build public/img public/fonts', function (err) {
+        done(err);
+    });
+});
+
+gulp.task('default', function (done) {
+    runSequence(
+        'prepare-dirs',
+        'sass',
+        'scripts',
+        'styles',
+        'version',
+        'mix-manifest',
+        done
+    );
+});
