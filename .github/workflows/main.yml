@@ -99,6 +99,28 @@ jobs:
           docker compose --profile build run --rm node sh -lc "
             set -e
             npm install
+
+            # Mirror legacy Elixir copy steps so fresh CI checkouts have vendor files.
+            mkdir -p public/fonts public/img public/vue public/css resources/assets/js resources/assets/css
+            cp -R resources/assets/fonts/. public/fonts/
+            cp -R resources/assets/img/. public/img/
+            cp -R resources/assets/favicons/. public/
+            cp -R resources/assets/vue/. public/vue/
+            cp -R node_modules/bootstrap-sass/assets/fonts/. public/fonts/
+            cp node_modules/bootstrap/dist/js/bootstrap.min.js resources/assets/js/
+            cp node_modules/tether/dist/js/tether.js resources/assets/js/
+            cp node_modules/jquery-bracket/dist/jquery.bracket.min.js resources/assets/js/
+            cp node_modules/jquery-bracket/dist/jquery.bracket.min.css public/css/
+            cp node_modules/timepicker/jquery.timepicker.min.css resources/assets/css/
+            cp node_modules/timepicker/jquery.timepicker.min.js resources/assets/js/
+            cp node_modules/vue/dist/vue.js resources/assets/js/
+            cp node_modules/axios/dist/axios.min.js resources/assets/js/
+            cp node_modules/toastr/build/toastr.min.css resources/assets/css/
+            cp node_modules/toastr/build/toastr.min.js resources/assets/js/
+            cp node_modules/marked/lib/marked.umd.js resources/assets/js/marked.js
+            cp node_modules/v-autocomplete/dist/v-autocomplete.js resources/assets/js/
+            cp node_modules/vue-lazyload/vue-lazyload.js resources/assets/js/
+
             gulp prepare-dirs
             gulp sass
             gulp scripts

@@ -262,12 +262,54 @@ Earlier assumption about Docker Compose profiles was incomplete:
 
 ---
 
+## Iteration 6: Partial Frontend Runtime Breakage After Asset Build
+
+### Problem Observed (from CI Run #22965520461)
+- Asset build step passed and generated `public/build/*` and `public/mix-manifest.json`
+- App health checks passed (`/` and `/api/tournaments/upcoming` both 200)
+- But E2E tests still failed in UI-heavy flows (results filtering, tournament CRUD)
+- Screenshots showed data loaded but UI behavior/styles were degraded
+
+### Root Cause Identified
+The CI build was compiling and versioning assets, but was **not** running the legacy Elixir vendor copy stage first.
+
+Browser/trace evidence from failed tests:
+- `ReferenceError: Vue is not defined`
+- `TypeError: $(...).timepicker is not a function`
+- Missing static asset requests (fonts/images) in page traces
+
+These indicate vendor files expected in `resources/assets/js`, `resources/assets/css`, and `public/*` were not populated in the clean CI workspace before bundling.
+
+### Solution Implemented
+**File:** `.github/workflows/main.yml`
+
+Added explicit copy operations before gulp compile/version steps to mirror legacy Elixir behavior:
+
+1. Copy source static assets:
+   - `resources/assets/fonts -> public/fonts`
+   - `resources/assets/img -> public/img`
+   - `resources/assets/favicons -> public/`
+   - `resources/assets/vue -> public/vue`
+
+2. Copy vendor files from `node_modules`:
+   - Bootstrap, Tether, jQuery Bracket, Timepicker
+   - Vue, Axios, Toastr, Marked, v-autocomplete, vue-lazyload
+
+3. Then run ordered gulp pipeline:
+   - `prepare-dirs -> sass -> scripts -> styles -> version -> mix-manifest`
+
+### Result
+**Status:** 🔄 In progress (fix committed locally; CI verification pending next run)
+
+---
+
 ## Summary of Changes Made
 
 | File | Changes |
 |------|---------|
 | `.github/workflows/main.yml` | 1. Added `--profile build` flag to docker compose run<br>2. Added explicit `docker compose --profile build build node` step<br>3. Added debug output to build step to show build results<br>4. Added permissions fix step<br>5. Enhanced error logging with PHP, nginx, and Laravel logs |
 | `.github/workflows/main.yml` | 6. Replaced implicit `gulp` call with explicit ordered gulp pipeline (`prepare-dirs -> sass -> scripts -> styles -> version -> mix-manifest`)<br>7. Added fail-fast checks for `public/build/css`, `public/build/js`, and `public/mix-manifest.json` |
+| `.github/workflows/main.yml` | 8. Added explicit pre-gulp vendor/static copy stage from `resources/assets` and `node_modules` to restore missing JS/CSS/font/image inputs in CI |
 | `.gitignore` | Added `public/mix-manifest.json` to prevent committing build artifacts |
 | `public/mix-manifest.json` | Removed from git tracking (deleted via `git rm --cached`) |
 | `gulpfile.js` | 1. Added custom `mix-manifest` conversion task<br>2. Made `mix-manifest` task conversion-only (no implicit `version` dependency)<br>3. Added explicit ordered build tasks for reliable CI execution |
@@ -286,6 +328,8 @@ Earlier assumption about Docker Compose profiles was incomplete:
 4. **Debug Output:** Adding verbose logging at each step helps identify exactly where the build process fails.
 
 5. **Legacy Elixir/Gulp Pipelines Need Explicit Ordering in CI:** Relying on implicit `default` behavior is fragile after task overrides; explicit ordered task execution is safer.
+
+6. **Build Success != Frontend Runtime Correctness:** Versioned bundles can still be broken if prerequisite copy steps are skipped. Runtime traces (`Vue is not defined`, plugin missing) are critical diagnostics.
 
 ---
 
@@ -328,6 +372,7 @@ If CI still fails, investigate:
 
 | Run ID | Commit | Status | Duration | Notes |
 |--------|--------|--------|----------|-------|
+| 22965520461 | 66306a6 | ❌ Failed | 10m49s | Asset generation fixed, but frontend runtime still partial; traces show missing vendor copy stage (`Vue is not defined`, `timepicker is not a function`) |
 | 22939952856 | 01def6b | ❌ Failed | 4m16s | Regression confirmed: gulp ran `version` + `mix-manifest` only; no `sass/scripts/styles`; no build artifacts generated |
 | 22926067960 | 12a1c92 | ❌ Failed | 4m10s | Build output not persisting - `public/build/` and `mix-manifest.json` don't exist after build step |
 | 22925852569 | 382c927 | ❌ Failed | 3m41s | HTTP 500 - mix-manifest.json existed but pointed to non-existent files |
