@@ -17,6 +17,7 @@
     "marked": "^4.0.10",
     "mysql": "^2.16.0",
     "requirejs": "^2.3.6",
+    "run-sequence": "^2.2.1",
     "tether": "^1.4.4",
     "timepicker": "^1.11.12",
     "toastr": "^2.1.4",

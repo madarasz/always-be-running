@@ -1155,32 +1155,132 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom NetrunnerDB pr
 
 ---
 
-### Step 3.2: Laravel 7.0 → 8.0
+### Step 3.2: Laravel 7.0 → 8.0 - ✅ DONE
 **Guide:** https://laravel.com/docs/8.x/upgrade
+**Release Notes:** https://laravel.com/docs/8.x/releases
+**Full Research:** See [`migration_laravel_8.md`](migration_laravel_8.md) for the complete codebase-mapped analysis.
 
-**PHP Requirement:** >= 7.3.0
+**PHP Requirement:** >= 7.3.0 (already met)
 
-**Key Changes:**
-1. **Models directory (MAJOR)**
-   - Move models from `app/` to `app/Models/`
-   - Update all namespace references
+**Breaking Changes (High Impact):**
+1. **Seeder & Factory Namespaces (MAJOR)**
+   - Rename `database/seeds/` → `database/seeders/`
+   - Add `namespace Database\Seeders;` to all 8 seeder files
+   - Update `composer.json` autoload: remove `"classmap": ["database"]`, add PSR-4 mappings for `Database\Factories\` and `Database\Seeders\`
 
-2. **Factory classes**
-   - Convert to class-based factories (recommended)
+2. **Model Factories rewritten as classes (MAJOR)**
+   - `database/factories/ModelFactory.php` uses legacy `$factory->define()` syntax
+   - **Option A:** Install `laravel/legacy-factories` (quick, no factory code changes)
+   - **Option B:** Rewrite as class-based `UserFactory` (recommended — only one trivial factory)
 
-3. **Pagination views**
-   - Tailwind CSS default (keep Bootstrap with config)
+3. **Pagination defaults → Tailwind CSS (MAJOR)**
+   - App uses Bootstrap 4 — must add `Paginator::useBootstrap()` to `AppServiceProvider::boot()`
 
-4. **Route caching**
-   - Closure routes cannot be cached
+4. **`elixir()` helper removed (CRITICAL ⚠️)**
+   - Still used in `resources/views/layout/general.blade.php` — will cause fatal error
+   - Must replace with direct asset paths or custom helper before upgrading
 
-5. **composer.json**
-   ```json
-   "laravel/framework": "^8.0",
-   "php": ">=7.3.0"
-   ```
+**Breaking Changes (Low/No Impact in This Codebase):**
+- Queue `retryAfter` → `backoff`, `timeoutAt` → `retryUntil` — **no usage found**
+- Queue `allOnQueue()`/`allOnConnection()` removed — **no usage found**
+- `sendNow` mail method removed — **no usage found**
+- `Manager::$app` removed — **no custom Manager subclasses**
+- Collection `isset` behavior change — **unlikely impact**
+- `EventServiceProvider::register()` must call parent — **verify**
+- Eloquent `increment`/`decrement` now fire events — **audit model observers**
 
-**Validation checkpoint:** Run API and E2E tests
+**Dependency Updates:**
+
+| Package | Current | Target | Notes |
+|---------|---------|--------|-------|
+| `laravel/framework` | `^7.0` | `^8.0` | Core upgrade |
+| `phpunit/phpunit` | `^8.0` | `^9.0` | Required |
+| `fzaninotto/faker` | `~1.4` | **Remove** | Abandoned; replace with `fakerphp/faker` |
+| `mockery/mockery` | `0.9.*` | `^1.4` | Update for compatibility |
+| `laravel/socialite` | `^4.4` | `^5.0` | If upgrading to latest |
+
+**Recommended Improvements:**
+- Add maintenance mode pre-rendering to `public/index.php`
+- Modernize `RouteServiceProvider` to closure-based `$this->routes()` boot method (keep `$namespace` for backward compatibility)
+
+**New Features Available for Adoption (Optional):**
+1. **`app/Models/` directory convention** — ideal time to move 17 models (already planned)
+2. **Migration squashing** (`php artisan schema:dump --prune`) — 67 migration files can be consolidated
+3. **Improved rate limiting** — `RateLimiter::for()` with named limiters
+4. **Time testing helpers** — `$this->travel()` / `$this->travelTo()` in PHP tests
+5. **Job batching** — `Bus::batch()` with `then`/`catch`/`finally` callbacks
+
+**Implementation (2026-03-10):**
+1. **Dependency + lockfile upgrade**
+   - Updated `composer.json`:
+     - `laravel/framework`: `^7.0` → `^8.0`
+     - `laravel/socialite`: `^4.4` → `^5.0`
+     - `phpunit/phpunit`: `^8.0` → `^9.0`
+     - `fzaninotto/faker` removed; replaced with `fakerphp/faker: ^1.9.1`
+     - `mockery/mockery`: `0.9.*` → `^1.4`
+     - `symfony/css-selector` and `symfony/dom-crawler`: `^4.3` → `^5.0`
+   - Updated autoload: removed `classmap: ["database"]`, added PSR-4 for `Database\Factories\` and `Database\Seeders\`
+   - Ran `docker compose exec php composer update -W` → upgraded to `Laravel 8.83.29`
+
+2. **Seeder namespace migration**
+   - Created `database/seeders/` directory
+   - Copied all 8 seeders from `database/seeds/` with `namespace Database\Seeders;` added
+   - Seeders: `DatabaseSeeder`, `CardCycleSeeder`, `CardPackSeeder`, `CountriesSeeder`, `MWLSeeder`, `TournamentFormatsTableSeeder`, `TournamentTypeSeeder`, `UsersSeeder`
+
+3. **Class-based factory (clean path)**
+   - Created `database/factories/UserFactory.php` extending `Illuminate\Database\Eloquent\Factories\Factory`
+   - Added `HasFactory` trait to `App\User`
+   - Legacy `database/factories/ModelFactory.php` left in place (no longer autoloaded via classmap; PSR-4 picks up `UserFactory` only)
+
+4. **Pagination Bootstrap fix**
+   - Added `Paginator::useBootstrap()` to `AppServiceProvider::boot()` (required: default changed to Tailwind in Laravel 8)
+
+5. **Critical: `elixir()` helper removed**
+   - Replaced `elixir('css/all.css')` and `elixir('js/all.js')` in `resources/views/layout/general.blade.php` with `mix()` calls
+   - Created `public/mix-manifest.json` mapping both assets to their direct paths (Gulp pipeline outputs unversioned `public/css/all.css` and `public/js/all.js`)
+
+6. **Maintenance mode pre-rendering**
+   - Added maintenance file check to `public/index.php` (before autoload)
+   - Note: did NOT re-define `LARAVEL_START` — `bootstrap/autoload.php` already defines it on line 3
+
+7. **Cleanup**
+   - Removed dead `use Mockery\CountValidator\Exception` import from `PhotosController.php`
+
+**Files Modified (Step 3.2):**
+- `composer.json`
+- `composer.lock`
+- `app/User.php` (added `HasFactory` trait)
+- `app/Providers/AppServiceProvider.php` (added `Paginator::useBootstrap()`)
+- `app/Http/Controllers/PhotosController.php` (removed dead Mockery import)
+- `resources/views/layout/general.blade.php` (`elixir()` → `mix()`)
+- `public/index.php` (maintenance mode check)
+- `public/mix-manifest.json` (new)
+- `database/factories/UserFactory.php` (new — class-based factory)
+- `database/seeders/DatabaseSeeder.php` (new)
+- `database/seeders/CardCycleSeeder.php` (new)
+- `database/seeders/CardPackSeeder.php` (new)
+- `database/seeders/CountriesSeeder.php` (new)
+- `database/seeders/MWLSeeder.php` (new)
+- `database/seeders/TournamentFormatsTableSeeder.php` (new)
+- `database/seeders/TournamentTypeSeeder.php` (new)
+- `database/seeders/UsersSeeder.php` (new)
+
+**Validation:**
+- [X] `composer update -W` succeeds with Laravel `8.83.29`
+- [X] `php artisan package:discover` succeeds
+- [X] Cache clear commands succeed: `config:clear`, `cache:clear`, `route:clear`, `view:clear`
+- [X] `php artisan route:list` succeeds (116 routes)
+- [X] App reports `Laravel Framework 8.83.29`
+- [X] API tests pass: 127/129 pass in full suite (2 perf timeouts due to parallel resource contention only; all 10 perf tests pass in isolation)
+- [X] E2E tests pass: all E2E tests pass
+
+**Notes:**
+- The `LARAVEL_START` constant is already defined in `bootstrap/autoload.php` line 3 (legacy file present in this project). Do NOT redefine it in `public/index.php` — only add the maintenance file check there.
+- `database/seeds/` directory retained (not deleted) for historical reference; it is no longer autoloaded.
+- `database/factories/ModelFactory.php` retained; it is no longer autoloaded via classmap, so it causes no conflicts.
+- 2 perf test timeouts in the full `npm test` run are pre-existing infrastructure-level slowness (heavy parallel load during full suite); confirmed by isolated run where all 10 pass.
+
+**Validation checkpoint:** Run API and E2E tests — 127/129 ✅ (2 perf timeouts are load-related, not regressions)
 
 ---
 
@@ -1380,7 +1480,7 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom NetrunnerDB pr
 | 2.6 | 5.7→5.8 | 7.1.3 | Cache TTL in seconds, env parsing changes, Markdown mail path + notification channel extraction |
 | 2.7 | 5.8→6.0 | **7.2** | `authorizeResource`→`viewAny` (if used), helper removal, queue retry default (`--tries`) + `failed_jobs`, OAuth migration to Socialite |
 | 3.1 | 6.0→7.0 | **7.3** | CORS config, Symfony 5, PHP 7.3 features (trailing commas, heredoc flex, `array_key_first/last`, `is_countable`, Argon2id) |
-| 3.2 | 7.0→8.0 | **7.3** | Models to app/Models/ |
+| 3.2 | 7.0→8.0 | **7.3** | Seeder/Factory namespaces, Paginator Bootstrap, elixir()→mix(), fakerphp/faker |
 | 3.3 | 8.0→9.0 | **8.0** | Flysystem 3, Symfony Mailer |
 | 3.4 | 9.0→10.0 | **8.1** | Dependency updates |
 | 3.5 | 10.0→11.0 | **8.2** | Remove doctrine/dbal, streamlined config |

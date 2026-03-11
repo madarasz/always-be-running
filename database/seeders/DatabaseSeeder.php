@@ -1,0 +1,23 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $this->call(TournamentTypeSeeder::class);
+        $this->call(UsersSeeder::class);
+        $this->call(CardCycleSeeder::class);
+        $this->call(CardPackSeeder::class);
+        $this->call(CountriesSeeder::class);
+        $this->call(MWLSeeder::class);
+    }
+}
