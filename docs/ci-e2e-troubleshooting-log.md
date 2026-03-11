@@ -303,6 +303,33 @@ Added explicit copy operations before gulp compile/version steps to mirror legac
 
 ---
 
+## Iteration 7: Build Step Hard-Fail on Missing Optional Source Directory
+
+### Problem Observed (from CI Run #22966344178)
+- CI failed earlier at **Build frontend assets** (before API/E2E tests)
+- Exact failure line in workflow logs:
+   - `cp: can't stat 'resources/assets/vue/.': No such file or directory`
+
+### Root Cause Identified
+The pre-gulp copy stage introduced in Iteration 6 included:
+- `cp -R resources/assets/vue/. public/vue/`
+
+But this repository does not contain `resources/assets/vue`, so `set -e` caused the entire build step to abort immediately.
+
+### Solution Implemented
+**File:** `.github/workflows/main.yml`
+
+Removed the non-existent copy source and its target dir creation:
+- Removed `public/vue` from `mkdir -p ...`
+- Removed `cp -R resources/assets/vue/. public/vue/`
+
+Kept all other required vendor/static copy commands and ordered gulp tasks unchanged.
+
+### Result
+**Status:** 🔄 In progress (fix committed locally; CI verification pending next run)
+
+---
+
 ## Summary of Changes Made
 
 | File | Changes |
@@ -310,6 +337,7 @@ Added explicit copy operations before gulp compile/version steps to mirror legac
 | `.github/workflows/main.yml` | 1. Added `--profile build` flag to docker compose run<br>2. Added explicit `docker compose --profile build build node` step<br>3. Added debug output to build step to show build results<br>4. Added permissions fix step<br>5. Enhanced error logging with PHP, nginx, and Laravel logs |
 | `.github/workflows/main.yml` | 6. Replaced implicit `gulp` call with explicit ordered gulp pipeline (`prepare-dirs -> sass -> scripts -> styles -> version -> mix-manifest`)<br>7. Added fail-fast checks for `public/build/css`, `public/build/js`, and `public/mix-manifest.json` |
 | `.github/workflows/main.yml` | 8. Added explicit pre-gulp vendor/static copy stage from `resources/assets` and `node_modules` to restore missing JS/CSS/font/image inputs in CI |
+| `.github/workflows/main.yml` | 9. Removed invalid `resources/assets/vue` copy that hard-failed CI on clean checkouts |
 | `.gitignore` | Added `public/mix-manifest.json` to prevent committing build artifacts |
 | `public/mix-manifest.json` | Removed from git tracking (deleted via `git rm --cached`) |
 | `gulpfile.js` | 1. Added custom `mix-manifest` conversion task<br>2. Made `mix-manifest` task conversion-only (no implicit `version` dependency)<br>3. Added explicit ordered build tasks for reliable CI execution |
