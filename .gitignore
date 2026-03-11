@@ -25,6 +25,7 @@ public/apple-*
 public/android-*
 public/browserconfig.xml
 public/build
+public/mix-manifest.json
 tests/nightwatch/bin
 selenium-debug.log
 tests/nightwatch/reports
@@ -63,3 +64,4 @@ e2e/fixtures/test-seed.sql
 npm-debug.log
 abr*.sql
 .codemie
+docs/ci-e2e-troubleshooting-log.md
