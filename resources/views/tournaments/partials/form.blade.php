@@ -275,13 +275,13 @@
                 <div class="form-check">
                     <label class="form-check-label">
                         <input type="radio" class="end-date form-check-input" name="end_date_selector" id="end-date-single" value="single"
-                                {{ !$tournament->end_date && !$tournament->recur_weekly ? 'checked' : '' }}/>
+                                @checked(!$tournament->end_date && !$tournament->recur_weekly)/>
                         <span>single day event</span>
                     </label>
                 <div class="form-check">
                     <label class="form-check-label" style="width: 100%">
                         <input type="radio" class="end-date form-check-input" name="end_date_selector" id="end-date-multiple" value="multiple"
-                                {{ old('end_date', $tournament->end_date) ? 'checked' : '' }}/>
+                                @checked(old('end_date', $tournament->end_date))/>
                         multiple day event, end date:
                         <div class="input-group">
                             {!! Form::text('end_date', old('end_date', $tournament->end_date),

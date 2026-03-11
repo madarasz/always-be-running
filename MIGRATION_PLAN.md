@@ -1289,23 +1289,118 @@ Replace `oriceon/oauth-5-laravel` with Laravel Socialite + custom NetrunnerDB pr
 
 **PHP Requirement:** >= 8.0.2
 
-**Key Changes:**
-1. **PHP 8.0 minimum (UPDATE DOCKER!)**
+**PHP 8.0.x target recommendation (official PHP docs):**
+- **Target `PHP 8.0.30`** (latest/final 8.0 patch release listed on php.net releases page).
+- **Important:** PHP 8.0 is already end-of-life:
+  - Active support ended: **2022-11-26**
+  - Security support ended: **2023-11-26**
+- Practical implication: use 8.0.30 only as a short bridge to get Laravel 9 green, then move quickly to PHP 8.1/8.2.
 
-2. **Flysystem 3.x**
-   - Filesystem adapter changes
+Official references:
+- https://www.php.net/releases/
+- https://www.php.net/supported-versions.php
 
-3. **Symfony Mailer**
-   - SwiftMailer → Symfony Mailer
+**Required Changes (Official Laravel 9 upgrade guide):**
+1. **Dependencies and Composer constraints**
+   - Update:
+     - `laravel/framework` → `^9.0`
+     - `php` → `^8.0.2`
+     - `nunomaduro/collision` → `^6.1`
+     - `pusher/pusher-php-server` → `^5.0` (if installed)
+   - Replace debug package:
+     - Remove `facade/ignition`
+     - Add `spatie/laravel-ignition:^1.0`
 
-4. **Custom casts**
-   - Cast class changes
+2. **Mail stack migration (SwiftMailer removed)**
+   - Laravel 9 uses Symfony Mailer.
+   - Update app code and integrations that depended on SwiftMailer internals.
+   - If using Mailgun/Postmark transports, add required Symfony packages:
+     - `symfony/mailgun-mailer` or `symfony/postmark-mailer`
+     - `symfony/http-client`
 
-5. **composer.json**
-   ```json
-   "laravel/framework": "^9.0",
-   "php": ">=8.0.2"
-   ```
+3. **Filesystem migration (Flysystem 3)**
+   - Install adapter packages explicitly for non-local disks (S3/FTP/SFTP).
+   - Review changed behavior:
+     - write failures return `false` unless `'throw' => true`
+     - reading missing files returns `null`
+     - deleting missing files returns `true`
+   - Ensure any custom driver `Storage::extend(...)` returns `Illuminate\Filesystem\FilesystemAdapter`.
+
+4. **Behavior changes to audit in app code/tests**
+   - `belongsToMany()->firstOrCreate / updateOrCreate / firstOrNew` matching logic changed.
+   - Custom cast `set()` now runs for `null` values.
+   - Validation: unvalidated array keys are excluded from validated output.
+   - Validation rule rename: `password` → `current_password`.
+   - HTTP client default timeout is now 30 seconds.
+   - Postgres connection option rename: `schema` → `search_path`.
+   - Testing: prefer `assertModelMissing` over `assertDeleted`.
+   - Conditional method behavior updates: `when()` / `unless()`.
+
+5. **App skeleton/runtime alignment**
+   - If bringing forward framework skeleton changes, apply Laravel 9 language file structure updates (`lang/` publish behavior) and trusted proxy middleware updates.
+
+Official references:
+- https://laravel.com/docs/9.x/upgrade
+
+**Positive Code Changes Enabled by Laravel 9 + modern PHP (optional):**
+1. **Modernize Eloquent accessors/mutators** using `Illuminate\Database\Eloquent\Casts\Attribute` instead of legacy `getXAttribute` / `setXAttribute`.
+2. **Add enum route bindings** (PHP 8.1+) for safer, typed route parameters.
+3. **Use query builder full-text support** (`whereFullText`, `orWhereFullText`) where current code uses raw SQL LIKE/full-text fragments.
+4. **Adopt Blade quality-of-life directives** (`@checked`, `@selected`, `@disabled`) to reduce conditional markup noise.
+5. **Use controller route groups** (`Route::controller(...)->group(...)`) to simplify repetitive route definitions.
+6. **Enable coverage gate in CI** via `php artisan test --coverage --min=<threshold>` once PHPUnit/Xdebug coverage setup is ready.
+
+Official references:
+- https://laravel.com/docs/9.x/releases
+- https://laravel.com/docs/9.x/eloquent-mutators
+- https://laravel.com/docs/9.x/routing
+- https://laravel.com/docs/9.x/queries
+- https://laravel.com/docs/9.x/blade
+- https://laravel.com/docs/9.x/testing
+
+**Implementation Progress (2026-03-11):**
+1. **PHP 8.0 callback compatibility fix — completed**
+   - Updated sort callback to return integer comparator (required for PHP 8 behavior):
+     - `app/Http/Controllers/NetrunnerDBController.php`
+     - `sortByDateUpdate()` now uses `$b['date_update'] <=> $a['date_update']`
+
+2. **Error-suppression cleanup hardening — completed**
+   - Removed `@unlink(...)` usage in photo upload cleanup paths and replaced with explicit safe cleanup helper:
+     - `app/Http/Controllers/PhotosController.php`
+     - Added `cleanupFile($path)` with `file_exists` guard + `try/catch (\Throwable)` logging
+
+3. **Dependency blocker resolved — completed**
+   - Removed abandoned `facebook/graph-sdk:^5.7` from `composer.json` (package only supports `^5.4|^7.0`).
+   - Replaced SDK usage with app-local Graph API client implementation using Guzzle:
+     - `app/Support/Facebook/FacebookClient.php`
+     - Keeps existing `FBController` integration surface (`getGraphNode(...)`) unchanged.
+   - Updated lockfile via:
+     - `composer remove facebook/graph-sdk --no-interaction`
+   - Re-verified PHP 8 compatibility constraints:
+     - `composer why-not php 8.0.2 -t` → no blockers
+     - `composer why-not php 8.0.30` → no blockers
+
+4. **Validation run status (resolved with escalated execution)**
+   - Initial sandbox-only test runs could not access localhost (`connect EPERM 127.0.0.1:8000` / `::1:8000`).
+   - Re-ran with escalated networking against the Dockerized app:
+     - `cd tests && npm run test:api` → **26/26 passed**
+     - `cd tests && npm run test:e2e` → **91/91 passed**
+
+5. **Runtime/CI PHP raise to 8.0.30 — completed**
+   - Updated Docker PHP runtime image:
+     - `docker/Dockerfile.php`: `FROM php:7.3-fpm-alpine` → `FROM php:8.0.30-fpm-alpine`
+   - Updated GD extension configure flags for PHP 8-compatible syntax:
+     - `--with-freetype-dir` / `--with-jpeg-dir` → `--with-freetype` / `--with-jpeg`
+   - CI impact:
+     - GitHub Actions builds app runtime from `docker/Dockerfile.php`, so CI now uses PHP 8.0.30 for the app container as well.
+
+6. **Runtime bring-up and health checks — completed**
+   - `docker compose build php` completed successfully with PHP `8.0.30` base image.
+   - `docker compose up -d php nginx mysql` completed successfully.
+   - Built frontend assets (`docker compose --profile build run --rm node`) to restore `public/mix-manifest.json` and avoid runtime 500s.
+   - Verified app health before tests:
+     - `GET /` → `200`
+     - `GET /api/tournaments/upcoming` → `200`
 
 **Validation checkpoint:** Run API and E2E tests
 
