@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const esbuild = require('esbuild');
 
 const copyTargets = [
   ['resources/assets/fonts', 'public/fonts'],
@@ -70,12 +71,18 @@ const bundledJs = legacyJsBundleOrder
   })
   .join(';\n');
 
+const minifiedJs = esbuild.transformSync(bundledJs, {
+  loader: 'js',
+  minify: true,
+  legalComments: 'none',
+}).code;
+
 const jsOutputDir = path.resolve('public/js');
 const jsOutputPath = path.resolve(jsOutputDir, 'all.js');
 fs.mkdirSync(jsOutputDir, { recursive: true });
-fs.writeFileSync(jsOutputPath, bundledJs, 'utf8');
+fs.writeFileSync(jsOutputPath, minifiedJs, 'utf8');
 
-const hash = crypto.createHash('sha256').update(bundledJs).digest('hex').slice(0, 16);
+const hash = crypto.createHash('sha256').update(minifiedJs).digest('hex').slice(0, 16);
 const manifestPath = path.resolve(jsOutputDir, 'legacy-manifest.json');
 const manifest = {
   'all.js': hash,
