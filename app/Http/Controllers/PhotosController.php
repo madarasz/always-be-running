@@ -80,12 +80,8 @@ class PhotosController extends Controller
                     'user_id' => $request->user()->id
                 ]);
                 // Clean up any partially created files
-                if (file_exists($fullPath)) {
-                    @unlink($fullPath);
-                }
-                if (file_exists($thumbPath)) {
-                    @unlink($thumbPath);
-                }
+                $this->cleanupFile($fullPath);
+                $this->cleanupFile($thumbPath);
                 $created->delete();
                 return redirect()->route('tournaments.show.slug', [$tournament->id, $tournament->seoTitle()])
                     ->withErrors(['There was a problem processing your photo. Please try again or contact support if the issue persists.']);
@@ -167,12 +163,8 @@ class PhotosController extends Controller
                     'user_id' => $request->user()->id
                 ]);
                 // Clean up any partially created files
-                if (file_exists($fullPath)) {
-                    @unlink($fullPath);
-                }
-                if (file_exists($thumbPath)) {
-                    @unlink($thumbPath);
-                }
+                $this->cleanupFile($fullPath);
+                $this->cleanupFile($thumbPath);
                 $created->delete();
                 return response()->json('There was a problem processing your photo. Please try again or contact support if the issue persists.', 500);
             }
@@ -233,6 +225,22 @@ class PhotosController extends Controller
 
         // redirecting to tournament
         return response()->json('Photo deleted.');
+    }
+
+    private function cleanupFile($path)
+    {
+        if (!is_string($path) || $path === '' || !file_exists($path)) {
+            return;
+        }
+
+        try {
+            unlink($path);
+        } catch (\Throwable $e) {
+            \Log::warning('Failed to clean up temporary photo file', [
+                'path' => $path,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**

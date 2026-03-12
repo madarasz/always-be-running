@@ -1,5 +1,5 @@
-# PHP 7.3 with Laravel 7 compatible extensions (Alpine-based to avoid Debian EOL repos)
-FROM php:7.3-fpm-alpine
+# PHP 8.0.30 (Laravel 9 minimum-compatible bridge target)
+FROM php:8.0.30-fpm-alpine
 
 # Install system dependencies
 RUN apk add --no-cache \
@@ -14,7 +14,7 @@ RUN apk add --no-cache \
     unzip \
     libzip-dev \
     bash \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql mbstring gd exif pcntl bcmath zip
 
 # Install Composer 2.x

@@ -32,7 +32,7 @@ docker compose exec -T mysql mysql -u root -prootsecret netrunner < seed.sql
 
 You will need the following in order to run ABR locally:
 - MySQL (preferably)
-- PHP 7.3+
+- PHP 8.0+
 - PHP Composer
 - NodeJs v10, NPM v6 recommended
 - JQ - download via apt-get (Debian) or homebrew (Mac), this is NOT an npm module
