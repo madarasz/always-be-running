@@ -136,7 +136,7 @@ class Form
         return '<input' . static::attributes($attributes) . '>';
     }
 
-    public static function button(string $value = null, array $options = []): string
+    public static function button(?string $value = null, array $options = []): string
     {
         $text = $value ?? '';
         $options['type'] = $options['type'] ?? 'button';

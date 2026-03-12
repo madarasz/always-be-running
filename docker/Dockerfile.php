@@ -1,5 +1,5 @@
-# PHP 8.2.x (Laravel 11 minimum)
-FROM php:8.2-fpm-alpine
+# PHP 8.5.x (latest stable)
+FROM php:8.5-fpm-alpine
 
 # Install system dependencies
 RUN apk add --no-cache \
