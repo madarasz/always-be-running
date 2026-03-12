@@ -2,7 +2,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <link rel="stylesheet" href="/css/jquery.bracket.min.css">
+    @vite('resources/css/bracket.css')
 </head>
 <body>
     <style>

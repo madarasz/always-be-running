@@ -35,17 +35,17 @@ docker compose down
 
 ```bash
 # Install dependencies
-npm install && npm install -g gulp
+npm install
 php composer.phar install
 
 # Build assets (run after changing JS/CSS)
-gulp
+npm run build
 
 # Development watch mode
 npm run dev
 
 # Production build
-npm run prod
+npm run build
 
 # Start development server (http://localhost:8000)
 php artisan serve

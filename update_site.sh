@@ -2,5 +2,6 @@
 php artisan down
 git pull
 php artisan migrate
-gulp --production
+npm install
+npm run build
 php artisan up

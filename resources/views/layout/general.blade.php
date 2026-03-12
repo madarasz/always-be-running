@@ -25,8 +25,8 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
-    <link rel="stylesheet" href="{{ mix('css/all.css') }}">
-    <script type="text/javascript" src="{{ mix('js/all.js') }}"></script>
+    @vite('resources/css/app.scss')
+    <script src="/js/all.js"></script>
     @include('partials.facebook-og')
 </head>
 <body>

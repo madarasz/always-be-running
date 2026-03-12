@@ -84,10 +84,10 @@ seed() {
     docker-compose exec php php artisan db:seed
 }
 
-# Run gulp to build assets
+# Run Vite build to prepare assets
 build_assets() {
-    log_info "Building frontend assets with Gulp..."
-    docker-compose run --rm node sh -c "npm install && npm install -g gulp && gulp"
+    log_info "Building frontend assets with Vite..."
+    docker-compose run --rm node sh -c "npm install && npm run build"
 }
 
 # Run artisan commands

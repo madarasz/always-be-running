@@ -34,23 +34,21 @@ You will need the following in order to run ABR locally:
 - MySQL (preferably)
 - PHP 8.0+
 - PHP Composer
-- NodeJs v10, NPM v6 recommended
+- Node.js 20+, npm 10+ recommended
 - JQ - download via apt-get (Debian) or homebrew (Mac), this is NOT an npm module
 - imagemagick
 
 1. Clone ABR from GitHub
-2. Install npm dependencies, install npm gulp globally
+2. Install npm dependencies
 
         npm install
-        npm install -g gulp
-
 3. Install PHP dependencies
 
         php composer.phar install
 
-4. Run gulp to prepare assets (do this every time if you change JS or CSS)
+4. Build frontend assets (run after changing JS/CSS)
 
-        gulp
+        npm run build
 
 5. Configure the settings of your local environment. Rename the **.example.env** file to **.env**. Edit the DB settings to connect to your locally running DB. *Ask the main dev (madarasz / Necro) for NetrunnerDB keys*.
 Google API keys, you can create yourself.

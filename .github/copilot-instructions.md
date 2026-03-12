@@ -29,11 +29,11 @@ ABR is a Laravel 5.2 application for managing Netrunner card game tournaments. I
 ### Asset Pipeline (Critical)
 ```bash
 # Must run after any JS/CSS changes
-gulp
+npm run build
 # Or for production
-gulp --production
+npm run build
 ```
-Uses Laravel Elixir with custom gulpfile that copies Vue.js, Bootstrap, and custom assets.
+Uses Vite with Laravel's `@vite(...)` integration and a pre-build sync script for legacy static assets.
 
 ### Database Setup
 ```bash
@@ -50,8 +50,8 @@ Admin panel provides buttons to sync:
 
 ### Testing Environment
 Dual package.json setup:
-- `package.json`: Development with older Node for Elixir
-- `test-package.json`: Cypress testing with Node 14
+- `package.json`: Application/frontend dependencies (Vite + Vue 2 global components)
+- `tests/package.json`: Vitest/Playwright E2E and API test dependencies
 Switch between environments as documented in README.
 
 ## Key Integration Points
@@ -71,7 +71,7 @@ Switch between environments as documented in README.
 ### Frontend Architecture
 - Mix of server-rendered Blade templates and Vue.js components
 - Vue components in `resources/assets/js/abr-vue.js` (inline templates)
-- No build step for Vue - uses CDN version
+- Vue and supporting libraries are bundled through Vite entrypoints
 - Bootstrap 4 alpha with custom Sass compilation
 
 ## Common Development Patterns
@@ -112,11 +112,11 @@ $this->authorize('update', $tournament);
 - Controllers organized by domain (`TournamentsController`, `EntriesController`)
 - Models in root `app/` directory (Laravel 5.2 style)
 - Vue components as global components, not SFC
-- CSS/JS assets compiled via Laravel Elixir, not modern build tools
+- CSS/JS assets bundled with Vite (`resources/js/app.js`, `resources/css/app.scss`)
 - Database migrations show evolution from GoT tournaments to Netrunner
 
 ## Common Gotchas
-- Must run `gulp` after any frontend changes - no hot reload
+- Must run `npm run build` after frontend changes when validating production assets
 - OAuth tokens stored in session, can expire during development
 - Tournament conflicts auto-detected but can be manually relaxed
 - Photo/video approval required before public display

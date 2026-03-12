@@ -55,7 +55,7 @@ jobs:
       - name: Build Docker images
         run: docker compose build --build-arg BUILDKIT_INLINE_CACHE=1
 
-      - name: Build Node image for gulp
+      - name: Build Node image for frontend assets
         run: docker compose --profile build build node
 
       - name: Start Docker services
@@ -99,43 +99,15 @@ jobs:
           docker compose --profile build run --rm node sh -lc "
             set -e
             npm install
-
-            # Mirror legacy Elixir copy steps so fresh CI checkouts have vendor files.
-            mkdir -p public/fonts public/img public/css resources/assets/js resources/assets/css
-            cp -R resources/assets/fonts/. public/fonts/
-            cp -R resources/assets/img/. public/img/
-            cp -R resources/assets/favicons/. public/
-            cp -R node_modules/bootstrap-sass/assets/fonts/. public/fonts/
-            cp node_modules/bootstrap/dist/js/bootstrap.min.js resources/assets/js/
-            cp node_modules/tether/dist/js/tether.js resources/assets/js/
-            cp node_modules/jquery-bracket/dist/jquery.bracket.min.js resources/assets/js/
-            cp node_modules/jquery-bracket/dist/jquery.bracket.min.css public/css/
-            cp node_modules/timepicker/jquery.timepicker.min.css resources/assets/css/
-            cp node_modules/timepicker/jquery.timepicker.min.js resources/assets/js/
-            cp node_modules/vue/dist/vue.js resources/assets/js/
-            cp node_modules/axios/dist/axios.min.js resources/assets/js/
-            cp node_modules/toastr/build/toastr.min.css resources/assets/css/
-            cp node_modules/toastr/build/toastr.min.js resources/assets/js/
-            cp node_modules/marked/lib/marked.umd.js resources/assets/js/marked.js
-            cp node_modules/v-autocomplete/dist/v-autocomplete.js resources/assets/js/
-            cp node_modules/vue-lazyload/vue-lazyload.js resources/assets/js/
-
-            gulp prepare-dirs
-            gulp sass
-            gulp scripts
-            gulp styles
-            gulp version
-            gulp mix-manifest
+            npm run build
           "
-          [ -d public/build/css ] || (echo "::error::public/build/css was not generated" && exit 1)
-          [ -d public/build/js ] || (echo "::error::public/build/js was not generated" && exit 1)
-          [ -f public/mix-manifest.json ] || (echo "::error::public/mix-manifest.json was not generated" && exit 1)
+          [ -f public/build/manifest.json ] || (echo "::error::public/build/manifest.json was not generated" && exit 1)
 
       # Fix permissions for files created by node container (root) so php container can read them
       - name: Fix asset permissions
         run: |
-          docker compose exec -T php chown -R www-data:www-data public/build public/mix-manifest.json
-          docker compose exec -T php chmod -R 755 public/build public/mix-manifest.json
+          docker compose exec -T php chown -R www-data:www-data public/build
+          docker compose exec -T php chmod -R 755 public/build
 
       - name: Verify app is running
         run: |
