@@ -6,7 +6,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 AlwaysBeRunning (ABR) is a tournament management platform for the Netrunner card game. It handles tournament creation, player registration, results tracking, badges/achievements, and integrates with NetrunnerDB for card data and OAuth authentication.
 
-**Stack:** PHP/Laravel 9.0, MySQL, jQuery, Vue.js 2.x, Bootstrap 4, Gulp with Laravel Elixir
+**Stack:** PHP/Laravel 12.x, MySQL, jQuery, Vue.js 2.x, Bootstrap 4, Vite
 
 ## Common Commands
 
