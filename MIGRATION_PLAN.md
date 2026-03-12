@@ -1654,6 +1654,73 @@ Official references:
 
 ---
 
+### Step 3.6: Laravel 11.0 → 12.0 ✅ DONE
+**Guide:** https://laravel.com/docs/12.x/upgrade
+
+**PHP Requirement:** >= 8.2.0 (already satisfied in this repo)
+
+**Repo-specific applicability + actions (checked 2026-03-12):**
+
+1. **Core dependency bump (required)**
+   - Update framework constraint:
+     - `"laravel/framework": "^11.0"` -> `"^12.0"`
+   - Keep PHP at `^8.2` or newer.
+   - Run `composer update -W` and resolve any transitive conflicts (for example dev tools like Collision/Ignition if Composer reports blockers).
+
+2. **Carbon 3 requirement (verify)**
+   - Laravel 12 requires Carbon 3.
+   - Verify lockfile resolves `nesbot/carbon` to v3 during the framework bump.
+
+3. **Filesystem behavior change (applicability: low, but explicit decision needed)**
+   - Laravel 12 changes the default `local` disk root when not explicitly configured.
+   - ABR already defines `local` explicitly in `config/filesystems.php` as `storage_path('app')`, so behavior will stay stable unless we intentionally change it.
+   - Optional hardening step after upgrade: add/use a dedicated private disk rooted at `storage/app/private` for sensitive uploads.
+
+4. **UUID v7 change in `HasUuids` (not currently applicable)**
+   - No `HasUuids` / `HasVersion4Uuids` usage found in app models.
+   - No UUID migration columns (`uuid`, `foreignUuid`, `uuidMorphs`) found.
+   - No action required now; if UUID traits are introduced later, choose v7 vs v4 explicitly.
+
+5. **Image validation SVG behavior (not currently applicable)**
+   - No `image` validation rules or `File::image(...)` usage found in the app layer.
+   - No migration action required; if image validation rules are added later, allow SVG explicitly only when needed.
+
+6. **Concurrency + route naming changes (currently low risk)**
+   - No `Concurrency::run(...)` usage found.
+   - Named routes are sparse and no duplicate route names were found in `routes/web.php` and `routes/api.php`.
+   - No required code change, but keep route-name uniqueness check in validation.
+
+7. **Positive code changes to schedule with this upgrade**
+   - Add `#[SensitiveParameter]` to controller methods handling OAuth tokens/secrets (notably in `app/Http/Controllers/NetrunnerDBController.php`) so sensitive values are redacted from stack traces/logs.
+   - Optionally introduce an explicit `private` filesystem disk and migrate sensitive writes there.
+
+**Validation checkpoint (must pass to close Step 3.6):**
+
+1. `php artisan --version` reports Laravel 12.x
+2. `php artisan config:clear && php artisan cache:clear && php artisan route:list`
+3. `composer show nesbot/carbon` reports Carbon 3.x
+4. `cd tests && npm run test:api`
+5. `cd tests && npm run test:e2e`
+6. Smoke test OAuth login + tournament create/edit/delete + claim with deck flow
+
+**References:**
+- Laravel 12 upgrade guide: https://laravel.com/docs/12.x/upgrade
+- Laravel 12 release notes: https://laravel.com/docs/12.x/releases
+
+**Implementation log (started 2026-03-12):**
+- [X] Added Laravel 12 repo-specific migration step after Step 3.5.
+- [X] Bumped `laravel/framework` to `^12.0` and resolved Composer dependency graph.
+- [X] Verified Carbon 3 in lockfile (`nesbot/carbon 3.11.3`).
+- [X] Validation run completed on Laravel 12:
+  - `php artisan --version` -> `Laravel Framework 12.54.1`
+  - `php artisan config:clear && php artisan cache:clear && php artisan route:list` -> OK (119 routes)
+  - `cd tests && npm run test:api` -> **26/26 passed**
+  - `cd tests && npm run test:e2e` -> **91/91 passed**
+- [X] Applied first Laravel 12 hardening improvement: `#[SensitiveParameter]` on OAuth token storage method input in `NetrunnerDBController`.
+- [ ] Optional follow-up: add explicit `private` filesystem disk (`storage/app/private`) and migrate sensitive writes.
+
+---
+
 ### Package Updates Through Phase 3 (Laravel 10 -> 11)
 | Package | Current (Step 3.4) | Step 3.5 Target | Notes |
 |---------|---------------------|-----------------|-------|

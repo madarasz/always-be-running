@@ -6,7 +6,7 @@
     "type": "project",
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^11.0",
+        "laravel/framework": "^12.0",
         "laravel/tinker": "^2.8",
         "webpatser/laravel-countries": "1.5.4",
         "laravel/socialite": "^5.0",
