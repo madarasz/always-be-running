@@ -14,6 +14,8 @@ export const REGULAR_USER_STATE = join(AUTH_STATE_DIR, 'regular.json');
 export const ADMIN_USER_STATE = join(AUTH_STATE_DIR, 'admin.json');
 // Set CHROME_PATH env var to use a custom browser, otherwise bundled Chromium is used
 export const CHROME_PATH = process.env.CHROME_PATH || undefined;
+const ACTION_TIMEOUT = Number(process.env.E2E_PLAYWRIGHT_ACTION_TIMEOUT || '15000');
+const NAVIGATION_TIMEOUT = Number(process.env.E2E_PLAYWRIGHT_NAVIGATION_TIMEOUT || '30000');
 
 export function getStorageStatePath(userType: 'regular' | 'admin'): string {
   return userType === 'admin' ? ADMIN_USER_STATE : REGULAR_USER_STATE;
@@ -171,6 +173,11 @@ export async function createAuthenticatedBrowser(
     executablePath: CHROME_PATH,
   });
   await browser.ensurePage();
+  const page = browser.getPage();
+
+  // Keep failures fast and actionable: default Playwright action timeout is too high for this suite.
+  page.setDefaultTimeout(ACTION_TIMEOUT);
+  page.setDefaultNavigationTimeout(NAVIGATION_TIMEOUT);
 
   // Call beforeInit callback (e.g., for date mocking that must happen before navigation)
   if (options?.beforeInit) {
@@ -187,7 +194,6 @@ export async function createAuthenticatedBrowser(
       );
     }
     // Load cookies from storage state
-    const page = browser.getPage();
     const stateData = JSON.parse(readFileSync(statePath, 'utf-8'));
     if (stateData.cookies) {
       await page.context().addCookies(stateData.cookies);
