@@ -26,7 +26,14 @@
     <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
     @vite('resources/css/app.scss')
-    <script src="/js/all.js"></script>
+    @php
+        $legacyManifestPath = public_path('js/legacy-manifest.json');
+        $legacyManifest = file_exists($legacyManifestPath)
+            ? json_decode(file_get_contents($legacyManifestPath), true)
+            : [];
+        $legacyJsHash = $legacyManifest['all.js'] ?? null;
+    @endphp
+    <script src="{{ asset('js/all.js') }}{{ $legacyJsHash ? '?id='.$legacyJsHash : '' }}"></script>
     @include('partials.facebook-og')
 </head>
 <body>

@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const copyTargets = [
   ['resources/assets/fonts', 'public/fonts'],
@@ -74,5 +75,13 @@ const jsOutputPath = path.resolve(jsOutputDir, 'all.js');
 fs.mkdirSync(jsOutputDir, { recursive: true });
 fs.writeFileSync(jsOutputPath, bundledJs, 'utf8');
 
+const hash = crypto.createHash('sha256').update(bundledJs).digest('hex').slice(0, 16);
+const manifestPath = path.resolve(jsOutputDir, 'legacy-manifest.json');
+const manifest = {
+  'all.js': hash,
+};
+fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+
 console.log('[assets] Synced legacy static assets to public/.');
 console.log('[assets] Built legacy JS bundle at public/js/all.js');
+console.log(`[assets] Updated legacy JS manifest at public/js/legacy-manifest.json (all.js?id=${hash})`);
