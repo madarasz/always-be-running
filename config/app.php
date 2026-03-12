@@ -110,6 +110,13 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'previous_keys' => [
+        ...array_filter(array_map(
+            'trim',
+            explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
+        )),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
@@ -161,7 +168,6 @@ return [
         App\Providers\NetrunnerDBSocialiteServiceProvider::class,
 
         'Webpatser\Countries\CountriesServiceProvider',
-        Collective\Html\HtmlServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
         Alaouy\Youtube\YoutubeServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class
@@ -212,8 +218,8 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Notification' => Illuminate\Support\Facades\Notification::class,
         'Countries' => 'Webpatser\Countries\CountriesFacade',
-        'Form' => Collective\Html\FormFacade::class,
-        'Html' => Collective\Html\HtmlFacade::class,
+        'Form' => App\Support\Form::class,
+        'Html' => App\Support\Html::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'Markdown' => App\Support\Facades\Markdown::class,
         'Youtube'=> Alaouy\Youtube\Facades\Youtube::class,

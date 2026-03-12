@@ -82,20 +82,24 @@ export class UpcomingPage extends BasePage {
   }
 
   async filterByType(type: string) {
-    await this.typeFilter.selectOption(type);
+    await this.typeFilter.waitFor({ state: 'visible', timeout: 10000 });
+    await this.typeFilter.selectOption(type, { timeout: 10000 });
   }
 
   async filterByCountry(country: string) {
-    await this.countryFilter.selectOption(country);
+    await this.countryFilter.waitFor({ state: 'visible', timeout: 10000 });
+    await this.countryFilter.selectOption(country, { timeout: 10000 });
   }
 
   async clearCountryFilter() {
     // No wait needed - filter updates instantly via Vue reactivity
-    await this.countryFilter.selectOption('---');
+    await this.countryFilter.waitFor({ state: 'visible', timeout: 10000 });
+    await this.countryFilter.selectOption('---', { timeout: 10000 });
   }
 
   async filterByState(state: string) {
-    await this.stateFilter.selectOption(state);
+    await this.stateFilter.waitFor({ state: 'visible', timeout: 10000 });
+    await this.stateFilter.selectOption(state, { timeout: 10000 });
   }
 
   async toggleIncludeOnline() {
