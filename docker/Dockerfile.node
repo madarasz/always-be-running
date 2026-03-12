@@ -1,15 +1,5 @@
-# Node 10 with build tools for node-sass compilation
-FROM node:10-alpine
-
-# Install build tools required for native modules like node-sass
-RUN apk add --no-cache \
-    python2 \
-    make \
-    g++ \
-    git
+# Node image for Vite asset builds (modern LTS)
+FROM node:22-alpine
 
 # Set working directory
 WORKDIR /var/www/html
-
-# Install gulp globally
-RUN npm install -g gulp

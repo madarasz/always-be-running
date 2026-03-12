@@ -11,14 +11,52 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    services:
+      mysql:
+        image: mariadb:10.5
+        env:
+          MYSQL_DATABASE: netrunner
+          MYSQL_USER: abr
+          MYSQL_PASSWORD: secret
+          MYSQL_ROOT_PASSWORD: rootsecret
+        ports:
+          - 3307:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -prootsecret --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, fileinfo, intl, gd, pdo_mysql, bcmath, curl, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            tests/package-lock.json
+
       - name: Setup Laravel environment
         run: |
-          cp docker/.env.docker .env
+          cp .example.env .env
+          sed -i "s/^DB_HOST=.*/DB_HOST=127.0.0.1/" .env
+          sed -i "s/^DB_PORT=.*/DB_PORT=3307/" .env
+          sed -i "s/^DB_DATABASE=.*/DB_DATABASE=netrunner/" .env
+          sed -i "s/^DB_USERNAME=.*/DB_USERNAME=abr/" .env
+          sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=secret/" .env
           sed -i "s/NETRUNNERDB_CLIENT_ID=.*/NETRUNNERDB_CLIENT_ID=${{ secrets.NETRUNNERDB_CLIENT_ID }}/" .env
           sed -i "s/NETRUNNERDB_CLIENT_SECRET=.*/NETRUNNERDB_CLIENT_SECRET=${{ secrets.NETRUNNERDB_CLIENT_SECRET }}/" .env
           sed -i "s/GOOGLE_MAPS_API=.*/GOOGLE_MAPS_API=${{ secrets.GOOGLE_MAPS_API }}/" .env
@@ -32,135 +70,79 @@ jobs:
         uses: actions/cache@v4
         with:
           path: vendor
-          key: composer-${{ hashFiles('composer.lock') }}
-          restore-keys: composer-
+          key: composer-vendor-${{ runner.os }}-php82-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-vendor-${{ runner.os }}-php82-
 
-      - name: Cache root node_modules
+      - name: Cache Composer download cache
         uses: actions/cache@v4
         with:
-          path: node_modules
-          key: node-root-${{ hashFiles('package-lock.json') }}
-          restore-keys: node-root-
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: docker-${{ hashFiles('docker/Dockerfile.php', 'docker/Dockerfile.node') }}
-          restore-keys: docker-
-
-      - name: Build Docker images
-        run: docker compose build --build-arg BUILDKIT_INLINE_CACHE=1
-
-      - name: Build Node image for gulp
-        run: docker compose --profile build build node
-
-      - name: Start Docker services
-        run: |
-          docker compose up -d php nginx mysql
-          echo "Waiting for MySQL to be healthy..."
-          timeout 120 bash -c 'until docker compose exec -T mysql mysqladmin ping -h localhost -u root -prootsecret --silent; do sleep 2; done'
-          echo "MySQL is ready"
+          path: ~/.composer/cache
+          key: composer-cache-${{ runner.os }}-php82-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-cache-${{ runner.os }}-php82-
 
       - name: Install Composer dependencies
-        run: docker compose exec -T php composer install --no-interaction --prefer-dist
+        run: composer install --no-interaction --prefer-dist
 
-      - name: Clear Laravel caches and set permissions
+      - name: Build frontend assets
         run: |
-          docker compose exec -T php php artisan config:clear
-          docker compose exec -T php php artisan cache:clear
-          docker compose exec -T php php artisan view:clear
-          docker compose exec -T php chmod -R 777 storage bootstrap/cache
+          npm ci
+          npm run build
+          [ -f public/build/manifest.json ] || (echo "::error::public/build/manifest.json was not generated" && exit 1)
 
-      - name: Run database migrations
-        run: docker compose exec -T php php artisan migrate --force
+      - name: Ensure MySQL client is available
+        run: |
+          if ! command -v mysql >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y mariadb-client
+          fi
+
+      - name: Wait for MySQL and run migrations
+        run: |
+          timeout 120 bash -c 'until mysqladmin ping -h 127.0.0.1 -P 3307 -u root -prootsecret --silent; do sleep 2; done'
+          php artisan migrate --force
 
       - name: Load test seed data
-        run: |
-          gunzip -c tests/e2e/fixtures/test-seed.sql.gz | docker compose exec -T mysql mysql -u root -prootsecret netrunner
+        run: gunzip -c tests/e2e/fixtures/test-seed.sql.gz | mysql -h 127.0.0.1 -P 3307 -u root -prootsecret netrunner
 
       - name: Update tournament dates for tests
         run: |
           FUTURE_DATE=$(date -d "+30 days" +%Y.%m.%d.)
           NEXT_WEEK=$(date -d "+7 days" +%Y.%m.%d.)
           NEXT_MONTH=$(date -d "+60 days" +%Y.%m.%d.)
-          docker compose exec -T mysql mysql -u root -prootsecret netrunner -e "
+          mysql -h 127.0.0.1 -P 3307 -u root -prootsecret netrunner -e "
             UPDATE tournaments SET date = '$FUTURE_DATE' WHERE id IN (886, 2850, 3264);
             UPDATE tournaments SET date = '$NEXT_WEEK' WHERE id IN (5313, 5354, 5400, 5500);
             UPDATE tournaments SET date = '$NEXT_MONTH' WHERE id IN (5600, 5700, 5800);
             UPDATE tournaments SET featured = 1 WHERE concluded = 1 AND approved = 1 LIMIT 3;
           "
 
-      - name: Build frontend assets
+      - name: Clear Laravel caches and set permissions
         run: |
-          docker compose --profile build run --rm node sh -lc "
-            set -e
-            npm install
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan view:clear
+          chmod -R 775 storage bootstrap/cache
 
-            # Mirror legacy Elixir copy steps so fresh CI checkouts have vendor files.
-            mkdir -p public/fonts public/img public/css resources/assets/js resources/assets/css
-            cp -R resources/assets/fonts/. public/fonts/
-            cp -R resources/assets/img/. public/img/
-            cp -R resources/assets/favicons/. public/
-            cp -R node_modules/bootstrap-sass/assets/fonts/. public/fonts/
-            cp node_modules/bootstrap/dist/js/bootstrap.min.js resources/assets/js/
-            cp node_modules/tether/dist/js/tether.js resources/assets/js/
-            cp node_modules/jquery-bracket/dist/jquery.bracket.min.js resources/assets/js/
-            cp node_modules/jquery-bracket/dist/jquery.bracket.min.css public/css/
-            cp node_modules/timepicker/jquery.timepicker.min.css resources/assets/css/
-            cp node_modules/timepicker/jquery.timepicker.min.js resources/assets/js/
-            cp node_modules/vue/dist/vue.js resources/assets/js/
-            cp node_modules/axios/dist/axios.min.js resources/assets/js/
-            cp node_modules/toastr/build/toastr.min.css resources/assets/css/
-            cp node_modules/toastr/build/toastr.min.js resources/assets/js/
-            cp node_modules/marked/lib/marked.umd.js resources/assets/js/marked.js
-            cp node_modules/v-autocomplete/dist/v-autocomplete.js resources/assets/js/
-            cp node_modules/vue-lazyload/vue-lazyload.js resources/assets/js/
-
-            gulp prepare-dirs
-            gulp sass
-            gulp scripts
-            gulp styles
-            gulp version
-            gulp mix-manifest
-          "
-          [ -d public/build/css ] || (echo "::error::public/build/css was not generated" && exit 1)
-          [ -d public/build/js ] || (echo "::error::public/build/js was not generated" && exit 1)
-          [ -f public/mix-manifest.json ] || (echo "::error::public/mix-manifest.json was not generated" && exit 1)
-
-      # Fix permissions for files created by node container (root) so php container can read them
-      - name: Fix asset permissions
+      - name: Start Laravel server
         run: |
-          docker compose exec -T php chown -R www-data:www-data public/build public/mix-manifest.json
-          docker compose exec -T php chmod -R 755 public/build public/mix-manifest.json
+          php artisan serve --host=127.0.0.1 --port=8000 >/tmp/laravel-server.log 2>&1 &
+          echo $! >/tmp/laravel-server.pid
 
-      - name: Verify app is running
+      - name: Verify app and API are running
         run: |
-          HTTP_CODE=$(curl -s --max-time 30 -o /dev/null -w "%{http_code}" http://localhost:8000/)
+          timeout 60 bash -c 'until curl -s --max-time 5 -o /dev/null http://127.0.0.1:8000/; do sleep 2; done'
+          HTTP_CODE=$(curl -s --max-time 30 -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/)
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::error::Homepage returned HTTP $HTTP_CODE"
             exit 1
           fi
-          API_CODE=$(curl -s --max-time 10 -o /dev/null -w "%{http_code}" http://localhost:8000/api/tournaments/upcoming)
+          API_CODE=$(curl -s --max-time 10 -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/api/tournaments/upcoming)
           if [ "$API_CODE" != "200" ]; then
             echo "::error::API endpoint returned HTTP $API_CODE"
             exit 1
           fi
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Cache tests node_modules
-        uses: actions/cache@v4
-        with:
-          path: tests/node_modules
-          key: node-tests-${{ hashFiles('tests/package-lock.json') }}
-          restore-keys: node-tests-
 
       - name: Install test dependencies
         working-directory: tests
@@ -170,8 +152,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ hashFiles('tests/package-lock.json') }}
-          restore-keys: playwright-
+          key: playwright-${{ runner.os }}-${{ hashFiles('tests/package-lock.json') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
 
       - name: Install Playwright Chromium
         working-directory: tests
@@ -211,8 +194,9 @@ jobs:
       - name: Capture failure info
         if: always()
         run: |
-          curl -s http://localhost:8000/ -o tests/e2e/test-results/homepage-final.html 2>/dev/null || true
-          curl -s http://localhost:8000/api/tournaments/upcoming -o tests/e2e/test-results/api-upcoming.json 2>/dev/null || true
+          curl -s http://127.0.0.1:8000/ -o tests/e2e/test-results/homepage-final.html 2>/dev/null || true
+          curl -s http://127.0.0.1:8000/api/tournaments/upcoming -o tests/e2e/test-results/api-upcoming.json 2>/dev/null || true
+          cp /tmp/laravel-server.log tests/e2e/test-results/laravel-server.log 2>/dev/null || true
 
       - name: Summarize test results
         if: always()
@@ -248,9 +232,12 @@ jobs:
           retention-days: 7
           if-no-files-found: ignore
 
-      - name: Stop Docker services
+      - name: Stop Laravel server
         if: always()
-        run: docker compose down -v
+        run: |
+          if [ -f /tmp/laravel-server.pid ]; then
+            kill "$(cat /tmp/laravel-server.pid)" 2>/dev/null || true
+          fi
 
       - name: Check test results
         if: steps.api-tests.outcome == 'failure' || steps.e2e-tests.outcome == 'failure'
