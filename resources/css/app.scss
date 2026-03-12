@@ -1,0 +1,22 @@
+$font-family-sans-serif: 'Titillium Web' !default;
+
+$container-max-widths: (
+  sm: 720px,
+  md: 959px,
+  lg: 960px,
+  xl: 1140px
+);
+
+$enable-flex: true;
+@import "bootstrap/scss/bootstrap";
+
+@import "../assets/css/font-awesome.css";
+@import "../assets/css/calendar.css";
+@import "../assets/css/calendario_abr.css";
+@import "../assets/css/bootstrap-datepicker.css";
+@import "../assets/css/netrunner.css";
+@import "../assets/css/main.css";
+@import "../assets/css/ekko-lightbox.min.css";
+@import "timepicker/jquery.timepicker.min.css";
+@import "toastr/build/toastr.min.css";
+@import "../assets/css/cookieconsent.min.css";

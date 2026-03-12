@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'netrunner';
-    src:    url('../../fonts/netrunner.eot');
-    src:    url('../../fonts/netrunneriefix.eot') format('embedded-opentype'),
-    url('../../fonts/netrunner.ttf') format('truetype'),
-    url('../../fonts/netrunner.woff') format('woff'),
-    url('../../fonts/netrunner.svg') format('svg');
+    src:    url('/fonts/netrunner.eot');
+    src:    url('/fonts/netrunneriefix.eot') format('embedded-opentype'),
+    url('/fonts/netrunner.ttf') format('truetype'),
+    url('/fonts/netrunner.woff') format('woff'),
+    url('/fonts/netrunner.svg') format('svg');
     font-weight: normal;
     font-style: normal;
 }

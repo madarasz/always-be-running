@@ -1654,7 +1654,6 @@ Official references:
 
 ---
 
-<<<<<<< migration-laravel-12
 ### Step 3.6: Laravel 11.0 → 12.0 ✅ DONE
 **Guide:** https://laravel.com/docs/12.x/upgrade
 
@@ -1719,8 +1718,8 @@ Official references:
   - `cd tests && npm run test:e2e` -> **91/91 passed**
 - [X] Applied first Laravel 12 hardening improvement: `#[SensitiveParameter]` on OAuth token storage method input in `NetrunnerDBController`.
 - [ ] Optional follow-up: add explicit `private` filesystem disk (`storage/app/private`) and migrate sensitive writes.
-=======
-### Step 3.6: PHP 8.2 -> 8.5 Readiness (Official PHP Migration Guides)
+
+### Step 3.7: PHP 8.2 -> 8.5 Readiness (Official PHP Migration Guides)
 **Guides:**  
 - https://www.php.net/manual/en/migration83.php  
 - https://www.php.net/manual/en/migration84.php  
@@ -1795,7 +1794,6 @@ Official references:
    - Validation after modernization:
      - `cd tests && npm run test:api` -> **26/26 passed**
      - `cd tests && npm run test:e2e` -> **91/91 passed**
->>>>>>> migration
 
 ---
 
@@ -1818,64 +1816,133 @@ Official references:
 
 ## Phase 4: Gulp/Elixir → Vite Migration
 
-**Goal:** Modern asset pipeline with hot module replacement.
+**Goal:** Replace legacy Gulp/Elixir with Vite while keeping the current Vue-based frontend behavior (Blade + global Vue 2 components) unchanged.
 
-### Tasks
+**Decision:** Stay on Vue for frontend in this phase. Do **not** introduce Inertia or Vue 3 here; those remain follow-up work.
 
-1. **Remove old build tools**
-   ```bash
-   npm remove gulp laravel-elixir gulp-rimraf gulp-shell
-   ```
+### Tasks (Implementation Order)
 
-2. **Install Vite**
-   ```bash
-   npm install --save-dev vite laravel-vite-plugin @vitejs/plugin-vue2
-   ```
+1. **Replace build scripts and dependencies**
+   - Update `package.json`:
+     - Remove Gulp/Elixir scripts (`prod`, `dev` using gulp).
+     - Add Vite scripts:
+       ```json
+       {
+         "dev": "vite",
+         "build": "vite build"
+       }
+       ```
+   - Remove old tooling:
+     ```bash
+     npm remove gulp laravel-elixir gulp-rimraf gulp-shell run-sequence
+     ```
+   - Install new tooling:
+     ```bash
+     npm install --save-dev vite laravel-vite-plugin @vitejs/plugin-vue2 sass
+     ```
 
-3. **Create `vite.config.js`**
-   ```javascript
-   import { defineConfig } from 'vite';
-   import laravel from 'laravel-vite-plugin';
-   import vue2 from '@vitejs/plugin-vue2';
+2. **Create Vite config**
+   - Create `vite.config.mjs`:
+     ```javascript
+     import { defineConfig } from 'vite';
+     import laravel from 'laravel-vite-plugin';
+     import vue2 from '@vitejs/plugin-vue2';
 
-   export default defineConfig({
-     plugins: [
-       laravel({
-         input: ['resources/css/app.css', 'resources/js/app.js'],
-         refresh: true,
-       }),
-       vue2(),
-     ],
-   });
-   ```
+     export default defineConfig({
+       plugins: [
+         laravel({
+           input: [
+             'resources/css/app.scss',
+             'resources/js/app.js',
+             'resources/css/bracket.css',
+           ],
+           refresh: true,
+         }),
+         vue2(),
+       ],
+     });
+     ```
 
-4. **Update Blade templates**
-   ```blade
-   {{-- Before --}}
-   <link href="{{ elixir('css/all.css') }}" rel="stylesheet">
-   <script src="{{ elixir('js/all.js') }}"></script>
+3. **Create frontend entry points**
+   - Create `resources/js/app.js`:
+     - Convert legacy concatenation order into explicit imports.
+     - Set required globals (`window.$`, `window.jQuery`, `window.Vue`, `window.axios`, `window.toastr`, `window.VAutocomplete`, `window.VueLazyload`, `window.marked`).
+     - Import ABR scripts (`abr-main.js`, `abr-map.js`, `abr-table.js`, `abr-vue.js`, `tournament.table.js`, etc.) as side-effect modules.
+   - Create `resources/css/app.scss`:
+     - Include Bootstrap Sass setup (migrated from `resources/assets/sass/app.scss`).
+     - Import legacy stylesheet stack in current order (`font-awesome.css`, `calendar.css`, `calendario_abr.css`, `bootstrap-datepicker.css`, `netrunner.css`, `main.css`, `ekko-lightbox.min.css`, `cookieconsent.min.css`, plus package CSS currently injected by copy steps).
+   - Create `resources/css/bracket.css`:
+     - Import jQuery Bracket CSS for iframe layout currently served via `/css/jquery.bracket.min.css`.
 
-   {{-- After --}}
-   @vite(['resources/css/app.css', 'resources/js/app.js'])
-   ```
+4. **Update Blade asset loading**
+   - `resources/views/layout/general.blade.php`:
+     - Replace `mix('css/all.css')` and `mix('js/all.js')` with:
+       ```blade
+       @vite(['resources/css/app.scss', 'resources/js/app.js'])
+       ```
+   - `resources/views/layout/bracket.blade.php`:
+     - Replace direct `/css/jquery.bracket.min.css` with:
+       ```blade
+       @vite('resources/css/bracket.css')
+       ```
 
-5. **Convert concatenated scripts to ES modules**
-   - Create `resources/js/app.js` as entry point
-   - Import individual modules: `import './abr-main.js'`
+5. **Fix legacy CSS asset URLs that depended on concatenation output path**
+   - Update font URL references to stable absolute `/fonts/...` paths in:
+     - `resources/assets/css/font-awesome.css`
+     - `resources/assets/css/calendar.css`
+     - `resources/assets/css/netrunner.css`
+     - `resources/assets/css/main.css`
+   - Keep existing `/img/...` absolute paths unchanged.
+
+6. **Remove legacy build pipeline artifacts**
+   - Delete `gulpfile.js`.
+   - Remove `mix-manifest` assumptions (`public/mix-manifest.json`, `public/build/rev-manifest.json`) from scripts/docs.
+   - Clean obsolete `.gitignore` rules tied to copied vendor artifacts under `resources/assets/js` and `resources/assets/css`.
+
+   7. **Update Docker and CI build flow**
+   - `docker/Dockerfile.node`:
+     - Remove Node 10 + Python 2 + global gulp setup.
+     - Use modern Node image suitable for Vite.
+   - `docker-compose.yml`:
+     - Change node build command from gulp pipeline to `npm install && npm run build`.
+   - `.github/workflows/main.yml`:
+     - Replace manual copy + `gulp` steps with `npm install` + `npm run build`.
+     - Validate Vite output via `public/build/manifest.json` (instead of `public/mix-manifest.json`).
+     - Keep permission fix step but target `public/build` only.
+
+8. **Update developer documentation/scripts**
+   - Update `readme.md` manual instructions (remove `npm install -g gulp` / `gulp`, add Vite commands).
+   - Update `docker/scripts/docker-setup.sh` build step from gulp to Vite build.
+   - Keep Docker quick-start command (`docker compose --profile build run --rm node`) but ensure underlying node service runs Vite build.
 
 ### Files to Modify
-- `resources/views/layout/general.blade.php` - Update asset references
-- `gulpfile.js` → Delete after migration
-- Create `vite.config.js`
-- Create `resources/js/app.js` (entry point)
+- `package.json`
+- `vite.config.mjs` (new)
+- `resources/js/app.js` (new)
+- `resources/css/app.scss` (new)
+- `resources/css/bracket.css` (new)
+- `resources/views/layout/general.blade.php`
+- `resources/views/layout/bracket.blade.php`
+- `resources/assets/css/font-awesome.css`
+- `resources/assets/css/calendar.css`
+- `resources/assets/css/netrunner.css`
+- `resources/assets/css/main.css`
+- `gulpfile.js` (delete)
+- `.gitignore`
+- `docker/Dockerfile.node`
+- `docker-compose.yml`
+- `.github/workflows/main.yml`
+- `docker/scripts/docker-setup.sh`
+- `readme.md`
 
 ### Validation
-- [ ] `npm run dev` starts Vite dev server
-- [ ] `npm run build` produces production assets
-- [ ] All styles render correctly
-- [ ] JavaScript functionality works
-- [ ] API tests pass (`npm run test:api`)
-- [ ] E2E tests pass (`npm run test:e2e`)
+- [ ] `npm run dev` starts Vite dev server successfully.
+- [ ] `npm run build` produces `public/build/manifest.json`.
+- [ ] Main layout renders styles/scripts correctly on key pages.
+- [ ] Bracket iframe layout renders correctly with Vite-managed bracket CSS.
+- [ ] No missing font/icon/image assets (especially `/fonts/*` references).
+- [ ] API tests pass (`npm run test:api`).
+- [ ] E2E tests pass (`npm run test:e2e`).
 
 ---
 
@@ -1893,7 +1960,7 @@ Official references:
 | `app/Http/routes.php` | 2 | Migrate to `routes/web.php` |
 | `app/Http/Controllers/NetrunnerDBController.php` | 2 | Replace OAuth package |
 | `app/*.php` (models) | 2 | Move to `app/Models/` |
-| `gulpfile.js` | 4 | Replace with `vite.config.js` |
+| `gulpfile.js` | 4 | Replace with `vite.config.mjs` |
 | `resources/views/layout/general.blade.php` | 4 | Update asset references |
 | `tests/e2e/` | 1 | E2E tests (Vitest + agent-browser) |
 | `tests/api/schemas/` | 1c | Zod schemas for API contracts |

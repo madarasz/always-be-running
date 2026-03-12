@@ -71,7 +71,7 @@ services:
       mysql:
         condition: service_healthy
 
-  # Node.js for Gulp builds (custom image with build tools for node-sass)
+  # Node.js for Vite builds
   node:
     build:
       context: .
@@ -83,7 +83,7 @@ services:
       - node-modules:/var/www/html/node_modules
     networks:
       - abr-network
-    command: sh -c "npm install && gulp"
+    command: sh -c "npm install && npm run build"
     profiles:
       - build
 
