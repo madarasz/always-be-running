@@ -250,6 +250,20 @@ Expected result: significant DB load reduction and faster total completion time.
 
 Expected result: better long-term scaling and lower operational cost.
 
+## Phase 4 (single source of truth for badge rules)
+
+1. Introduce a dedicated badge rule engine/service that computes badge outcomes for a user from one canonical implementation.
+2. Make both paths call the same engine:
+   - full refresh job (batch mode)
+   - event-driven incremental updates (entries/tournaments/videos/oauth/admin actions)
+3. Keep one shared badge write path (diff + sync) to avoid behavior drift between code paths.
+4. Add regression checks that compare:
+   - legacy snapshot vs new engine output (during transition)
+   - full refresh vs incremental outcomes for sampled users
+5. Remove duplicated/legacy rule implementations from `BadgeController` after parity is proven.
+
+Expected result: correctness stability, easier maintenance, and lower risk of missing badges when optimizing performance.
+
 ## Instrumentation Recommendations
 
 Before and after each phase, capture:
@@ -260,6 +274,7 @@ Before and after each phase, capture:
 - total queries executed
 - top N slow queries
 - number of badge insertions/deletions
+- count of rule-output mismatches between full-refresh and incremental paths (for parity tracking in Phase 4)
 
 This will verify real impact and prevent regressions.
 
