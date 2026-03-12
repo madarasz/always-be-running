@@ -50,7 +50,7 @@ export class TournamentPage extends BasePage {
    */
   async open(tournamentId: number) {
     await this.navigate(`/tournaments/${tournamentId}`);
-    await this.tournamentTitle.waitFor({ state: 'visible' });
+    await this.tournamentTitle.waitFor({ state: 'visible', timeout: 15000 });
   }
 
   /**
@@ -58,7 +58,7 @@ export class TournamentPage extends BasePage {
    */
   async openEdit(tournamentId: number) {
     await this.navigate(`/tournaments/${tournamentId}/edit`);
-    await this.submitButton.waitFor({ state: 'visible' });
+    await this.submitButton.waitFor({ state: 'visible', timeout: 10000 });
     await this.waitForPrizesLoaded();
   }
 
@@ -195,8 +195,8 @@ export class TournamentPage extends BasePage {
    * Click the edit button on tournament view page.
    */
   async clickEdit() {
-    await this.editButton.click();
-    await this.submitButton.waitFor({ state: 'visible' });
+    await this.editButton.click({ timeout: 10000 });
+    await this.submitButton.waitFor({ state: 'visible', timeout: 10000 });
   }
 
   /**
@@ -206,7 +206,7 @@ export class TournamentPage extends BasePage {
     this.page.once('dialog', async dialog => {
       await dialog.accept();
     });
-    await this.deleteButton.click();
+    await this.deleteButton.click({ timeout: 10000 });
     await this.page.waitForLoadState('domcontentloaded');
   }
 

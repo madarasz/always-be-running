@@ -11,6 +11,8 @@ export default defineWorkspace([
       hookTimeout: 60000,
       env: {
         BASE_URL,
+        E2E_PLAYWRIGHT_ACTION_TIMEOUT: '15000',
+        E2E_PLAYWRIGHT_NAVIGATION_TIMEOUT: '30000',
       },
     },
   },

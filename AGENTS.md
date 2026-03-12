@@ -83,6 +83,12 @@ cd tests && npm run test:watch
 - Screenshots: `{test-name}-failure-{timestamp}.png`
 - Traces: `{test-name}-{timestamp}.zip` (open with `npx playwright show-trace trace.zip`)
 
+**Investigating latest failures (important):**
+- `tests/e2e/test-results/` contains artifacts from multiple runs; always sort by modified time to avoid reading stale failures.
+- Use `ls -lt tests/e2e/test-results | head -n 40` to inspect the newest files first.
+- Match screenshot/trace pairs by the shared numeric timestamp suffix (example: `...-failure-1773307743162.png` and `...-1773307743514.zip` from the same failure window).
+- If failures are timing-related, inspect traces from the newest batch before changing selectors or assertions.
+
 **Test structure:**
 ```
 tests/
@@ -136,3 +142,9 @@ Copy `.example.env` to `.env`. Required keys:
 ## Admin Setup
 
 After first login via NetrunnerDB, set `admin=1` in the `users` table to access Admin section. Use Admin to sync card data from NetrunnerDB.
+
+## Database Safety (Critical)
+
+- Never run destructive database reset commands (for example: `php artisan migrate:fresh`, `php artisan db:wipe`, `php artisan migrate:refresh`, or any command that drops/truncates tables) unless the user explicitly asks for it in that moment.
+- Default migration command is non-destructive: `php artisan migrate`.
+- For E2E/test data setup, load fixtures into the existing schema instead of resetting the database.

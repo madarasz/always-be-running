@@ -1603,56 +1603,71 @@ Official references:
 
 ---
 
-### Step 3.5: Laravel 10.0 → 11.0
+### Step 3.5: Laravel 10.0 → 11.0 ✅ DONE
 **Guide:** https://laravel.com/docs/11.x/upgrade
 
 **PHP Requirement:** >= 8.2.0
 
-**Key Changes:**
-1. **PHP 8.2 minimum (UPDATE DOCKER!)**
+**Repo-specific applicability + blockers (checked 2026-03-12):**
 
-2. **Streamlined application structure**
-   - Many config files optional
-   - Slimmer `bootstrap/app.php`
+1. **Hard requirements before bumping Laravel**
+   - PHP runtime must move to 8.2+ (Laravel 11 requirement).
+     - Update Docker base image in `docker/Dockerfile.php` (`php:8.1-fpm-alpine` -> `php:8.2-fpm-alpine`).
+     - Update Composer constraints in `composer.json`:
+       - `"php": "^8.1"` -> `"php": "^8.2"`
+       - `"config.platform.php": "8.1.0"` -> `"8.2.x"`
+   - Bump framework:
+     - `"laravel/framework": "^10.0"` -> `"^11.0"`
 
-3. **Remove doctrine/dbal**
-   - Use native Schema column modifiers
-   ```php
-   // Must specify all modifiers when changing columns
-   $table->integer('votes')->unsigned()->default(1)->change();
-   ```
+2. **Composer blockers found in current codebase**
+   - `laravelcollective/html v6.4.1` blocks Laravel 11 (requires `illuminate/*` up to `^10.0`).
+     - This is a **real blocker** and high-impact in ABR because Blade heavily uses `Form::` / `Html::` helpers across tournament/admin/profile views.
+     - Plan this as a dedicated sub-step: migrate helper usage to native Blade + HTML forms (or another maintained package), then remove provider/aliases from `config/app.php`.
+   - `nunomaduro/collision v7.x` conflicts with Laravel 11.
+     - Update dev dependency to Laravel 11-compatible major during Composer update.
 
-4. **Per-second rate limiting**
-   - Rate limiter syntax changes
+3. **Laravel 11 change() / DBAL impact in this repo**
+   - `doctrine/dbal` is currently required in `composer.json` and can be removed for Laravel 11.
+   - Repo has one migration using `->change()`:
+     - `database/migrations/2019_12_16_151441_modify_prize_elements_table.php`
+   - Keep all needed modifiers explicitly when changing columns (already mostly done here with `unsigned()` and `nullable()`), then verify with fresh migrate/rollback runs after removing DBAL.
 
-5. **composer.json**
-   ```json
-   "laravel/framework": "^11.0",
-   "php": ">=8.2.0"
-   ```
+4. **What is already compatible / low-risk here**
+   - Routes are already split (`routes/web.php`, `routes/api.php`), so Laravel 11 streamlined structure is optional and can be deferred.
+   - No custom implementations of `Authenticatable` / `UserProvider` were found.
+   - No custom `RateLimiter::for(...)` definitions were found; only middleware throttle strings (`throttle:60,1`) in `app/Http/Kernel.php`.
+   - No direct Sanctum/Passport/Cashier/Telescope usage in `composer.json`.
 
-6. **Replace abandoned HTML/Form package**
-   - Shift from `laravelcollective/html` to `spatie/laravel-html`.
-   - Refactor Blade form helpers to native Blade/components where needed.
-   - Remove `laravelcollective/html` once parity is verified in affected views.
+5. **Positive post-upgrade changes that fit this repo**
+   - Add `APP_PREVIOUS_KEYS` support in deployment envs for safer key rotation.
+   - Add `#[SensitiveParameter]` on methods handling OAuth tokens/secrets in `NetrunnerDBController`.
+   - Consider per-second throttling only if/when custom named limiters are introduced.
+   - Keep Laravel 10 app structure initially; optionally adopt Laravel 11 skeleton cleanup after green baseline.
 
-**Validation checkpoint:** Run API and E2E tests
+**Validation (2026-03-12):**
+- [X] `php artisan --version` -> `Laravel Framework 11.48.0`
+- [X] `php artisan config:clear && php artisan cache:clear && php artisan route:list` (route list generated, 123 lines)
+- [X] `docker compose exec -T php php artisan migrate --no-interaction` -> `Nothing to migrate.`
+  - Non-destructive migration check used (no `migrate:fresh`/schema reset).
+- [X] `cd tests && npm run test:api` -> **26/26 passed** (4/4 files)
+- [X] `cd tests && npm run test:e2e` -> **91/91 passed** (11/11 files)
 
 ---
 
-### Package Updates Through Phase 3
-| Package | 6.0 | 11.0 | Notes |
-|---------|-----|------|-------|
-| laravelcollective/html | ^6.0 | replace with spatie/laravel-html | Abandoned package; migrate forms/helpers in Step 3.5 |
-| intervention/image | ^2.7 | ^3.0 | API changes in v3 |
-| doctrine/dbal | ^2.10 | Remove | Use native Schema methods |
+### Package Updates Through Phase 3 (Laravel 10 -> 11)
+| Package | Current (Step 3.4) | Step 3.5 Target | Notes |
+|---------|---------------------|-----------------|-------|
+| laravel/framework | ^10.0 | ^11.0 | Core framework bump |
+| php (runtime + composer platform) | ^8.1 / 8.1.0 | ^8.2 / 8.2.x | Required by Laravel 11 |
+| laravelcollective/html | ^6.0 | Remove / replace | Blocks Laravel 11 via `illuminate/*` constraints |
+| doctrine/dbal | ^3.0 | Remove | Not required for Laravel 11 |
 
 ### Phase 3 Validation
-- [ ] Application boots without errors
-- [ ] PHP 8.2 features working
-- [ ] Admin panel functions
-- [ ] API tests pass (`npm run test:api` - schema contracts preserved)
-- [ ] E2E tests pass (`npm run test:e2e`)
+- [X] Application boots without errors (Laravel 11.48.0)
+- [X] PHP 8.2+ runtime working (current runtime: PHP 8.4.12 CLI, composer platform pinned to 8.2.0)
+- [X] Admin panel functions (covered by E2E auth/admin flows)
+- [X] API tests pass (`npm run test:api` - schema contracts preserved, 26/26)
+- [X] E2E tests pass (`npm run test:e2e`, 91/91)
 
 ---
 
