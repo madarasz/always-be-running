@@ -60,7 +60,7 @@ class TournamentRequest extends Request
     {
         $input = array_map(function ($value) {
             if (is_string($value)) {
-                return trim($value);
+                return function_exists('mb_trim') ? mb_trim($value) : trim($value);
             }
 
             return $value;
