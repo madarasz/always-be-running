@@ -1358,7 +1358,7 @@ Official references:
 - https://laravel.com/docs/9.x/blade
 - https://laravel.com/docs/9.x/testing
 
-**Implementation Progress (2026-03-11):**
+**Implementation Progress (2026-03-12):**
 1. **PHP 8.0 callback compatibility fix — completed**
    - Updated sort callback to return integer comparator (required for PHP 8 behavior):
      - `app/Http/Controllers/NetrunnerDBController.php`
@@ -1402,7 +1402,43 @@ Official references:
      - `GET /` → `200`
      - `GET /api/tournaments/upcoming` → `200`
 
-**Validation checkpoint:** Run API and E2E tests
+7. **Laravel 9 framework/config migration — completed**
+   - Upgraded Composer constraints and lockfile:
+     - `laravel/framework` `^8.0` → `^9.0`
+     - `php` `>=7.3.0` → `^8.0.2`
+     - Added dev packages: `nunomaduro/collision:^6.1`, `spatie/laravel-ignition:^1.0`
+     - Removed package: `fideloper/proxy`
+   - Migrated trusted proxy middleware to framework-native class:
+     - `app/Http/Middleware/TrustProxies.php` now extends `Illuminate\Http\Middleware\TrustProxies`
+   - Updated maintenance middleware class for Laravel 9:
+     - `CheckForMaintenanceMode` → `PreventRequestsDuringMaintenance` in `app/Http/Kernel.php`
+   - Migrated config files to Laravel 9-compatible structure:
+     - `config/mail.php` (mailer-based config, Symfony Mailer-compatible)
+     - `config/filesystems.php` (Flysystem 3 shape + explicit `throw` behavior)
+     - `config/database.php` (`schema` → `search_path` for PostgreSQL)
+     - `.example.env` (`MAIL_MAILER`, `MAIL_FROM_*`, `FILESYSTEM_DISK`)
+
+8. **Positive cleanup from Laravel 9 features — completed**
+   - Replaced legacy Blade checked-attribute ternaries with `@checked(...)` in tournament form radios:
+     - `resources/views/tournaments/partials/form.blade.php`
+
+9. **Validation and delivery — completed**
+   - Framework boots on Laravel 9:
+     - `php artisan --version` → `Laravel Framework 9.52.21`
+   - Framework sanity checks pass:
+     - `php artisan config:clear`
+     - `php artisan cache:clear`
+     - `php artisan route:list`
+   - Tests pass on upgraded branch:
+     - `cd tests && npm run test:api` → **26/26 passed**
+     - `cd tests && npm run test:e2e` → **91/91 passed**
+     - `cd tests && npm run test:e2e -- e2e/tests/tournament-crud.test.ts` → **4/4 passed**
+   - Branch/PR:
+     - Branch pushed: `migration-laravel-9`
+     - Commit: `e2e7828`
+     - PR: https://github.com/madarasz/always-be-running/pull/152 (from `migration-laravel-9` → `migration`)
+
+**Validation checkpoint:** ✅ Laravel 8 → 9 migration implemented and validated on branch `migration-laravel-9`
 
 ---
 
