@@ -1442,7 +1442,7 @@ Official references:
 
 ---
 
-### Step 3.4: Laravel 9.0 → 10.0 - ⚠️ IN PROGRESS
+### Step 3.4: Laravel 9.0 → 10.0 - ✅ DONE
 **Guide:** https://laravel.com/docs/10.x/upgrade
 
 **PHP Requirement:** >= 8.1.0
@@ -1631,6 +1631,11 @@ Official references:
    "php": ">=8.2.0"
    ```
 
+6. **Replace abandoned HTML/Form package**
+   - Shift from `laravelcollective/html` to `spatie/laravel-html`.
+   - Refactor Blade form helpers to native Blade/components where needed.
+   - Remove `laravelcollective/html` once parity is verified in affected views.
+
 **Validation checkpoint:** Run API and E2E tests
 
 ---
@@ -1638,7 +1643,7 @@ Official references:
 ### Package Updates Through Phase 3
 | Package | 6.0 | 11.0 | Notes |
 |---------|-----|------|-------|
-| laravelcollective/html | ^6.0 | ^6.4 or migrate to Blade | Consider native Blade components |
+| laravelcollective/html | ^6.0 | replace with spatie/laravel-html | Abandoned package; migrate forms/helpers in Step 3.5 |
 | intervention/image | ^2.7 | ^3.0 | API changes in v3 |
 | doctrine/dbal | ^2.10 | Remove | Use native Schema methods |
 

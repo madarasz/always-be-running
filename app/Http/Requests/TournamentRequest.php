@@ -63,7 +63,7 @@ class TournamentRequest extends Request
                 return trim($value);
             }
 
-            return is_null($value) ? '' : $value;
+            return $value;
         }, $this->all());
 
         // if tournament title missing, construct it
@@ -71,7 +71,7 @@ class TournamentRequest extends Request
             if (strlen((string) ($input['location_store'] ?? ''))) {
                 $input['title'] = $input['location_store'];
             } else {
-                $input['title'] = $input['location_city'];
+                $input['title'] = $input['location_city'] ?? '';
             }
             $input['title'] = $input['title'].' - '.
                 ucwords(TournamentType::findOrFail($input['tournament_type_id'])->type_name);
