@@ -36,15 +36,14 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($photo_tournaments as $tournament_id => $count)
-                                <?php $vtournament = App\Tournament::findOrFail($tournament_id); ?>
+                            @foreach($photo_tournaments as $photo_tournament)
                                 <tr>
                                     <td>
-                                        <a href="{{ $vtournament->seoUrl() }}">
-                                            {{ $vtournament->title }}
+                                        <a href="{{ '/tournaments/'.$photo_tournament->tournament_id }}">
+                                            {{ $photo_tournament->title }}
                                         </a>
                                     </td>
-                                    <td>{{ $count }}</td>
+                                    <td>{{ $photo_tournament->total }}</td>
                                 </tr>
                             @endforeach
                             </tbody>
@@ -61,18 +60,15 @@
                             </thead>
                             <tbody>
                             @if ($photo_users)
-                                @foreach($photo_users as $userid => $count)
-                                    <?php $vuser = App\User::find($userid); ?>
-                                    @if ($vuser)
+                                @foreach($photo_users as $photo_user)
                                     <tr>
                                         <td>
-                                            <a href="/profile/{{ $vuser->id }}" class="{{ $vuser->linkClass() }}">
-                                                {{ $vuser->displayUsername() }}
+                                            <a href="/profile/{{ $photo_user->id }}" class="{{ $photo_user->abr_link_class }}">
+                                                {{ $photo_user->display_name }}
                                             </a>
                                         </td>
-                                        <td>{{ $count }}</td>
+                                        <td>{{ $photo_user->total }}</td>
                                     </tr>
-                                    @endif
                                 @endforeach
                             @endif
                             </tbody>

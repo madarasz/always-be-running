@@ -44,15 +44,14 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($video_users as $userid => $count)
-                                <?php $vuser = App\User::findOrFail($userid); ?>
+                            @foreach($video_users as $video_user)
                                 <tr>
                                     <td>
-                                        <a href="/profile/{{ $vuser->id }}" class="{{ $vuser->linkClass() }}">
-                                            {{ $vuser->displayUsername() }}
+                                        <a href="/profile/{{ $video_user->id }}" class="{{ $video_user->abr_link_class }}">
+                                            {{ $video_user->display_name }}
                                         </a>
                                     </td>
-                                    <td>{{ $count }}</td>
+                                    <td>{{ $video_user->total }}</td>
                                 </tr>
                             @endforeach
                             </tbody>
@@ -77,16 +76,15 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($video_users_tagged as $userid => $count)
-                                @if ($count >= 5)
-                                <?php $vuser = App\User::findOrFail($userid); ?>
+                            @foreach($video_users_tagged as $tagged_user)
+                                @if ($tagged_user->total >= 5)
                                 <tr>
                                     <td>
-                                        <a href="/profile/{{ $vuser->id }}" class="{{ $vuser->linkClass() }}">
-                                            {{ $vuser->displayUsername() }}
+                                        <a href="/profile/{{ $tagged_user->id }}" class="{{ $tagged_user->abr_link_class }}">
+                                            {{ $tagged_user->display_name }}
                                         </a>
                                     </td>
-                                    <td>{{ $count }}</td>
+                                    <td>{{ $tagged_user->total }}</td>
                                 </tr>
                                 @endif
                             @endforeach

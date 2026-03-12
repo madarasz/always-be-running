@@ -20,8 +20,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                        @foreach($vips->sortBy(function($q) {return $q->claims->count()+$q->tournamentsCreated()->count();}, SORT_REGULAR, true) as $vip)
-                            @if ($vip->claims()->count() >= 5 || $vip->tournamentsCreated()->count() >=5)
+                        @foreach($vips->sortBy(function($q) {return $q->claims_count + $q->tournaments_created_count;}, SORT_REGULAR, true) as $vip)
+                            @if ($vip->claims_count >= 5 || $vip->tournaments_created_count >= 5)
                                 @include('admin.vip-row')
                             @endif
                         @endforeach
