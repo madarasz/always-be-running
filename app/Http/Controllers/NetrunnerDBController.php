@@ -42,7 +42,6 @@ class NetrunnerDBController extends Controller
         if ($request->filled('code')) {
             try {
                 $socialiteUser = Socialite::driver('netrunnerdb')->user();
-                $this->storeTokens($socialiteUser);
             } catch (\Exception $e) {
                 \Log::warning('NetrunnerDB OAuth callback failed: '.$e->getMessage());
 
@@ -82,6 +81,8 @@ class NetrunnerDBController extends Controller
 
             $auth_user = $this->findOrCreateUser($userData);
             Auth::login($auth_user, true);
+            // Persist OAuth tokens after Auth::login() because login migrates session.
+            $this->storeTokens($socialiteUser);
 
             // redirect back to the original page
             $login_url = $request->cookie('login_url');

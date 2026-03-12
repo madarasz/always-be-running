@@ -5,9 +5,9 @@
     "license": "proprietary",
     "type": "project",
     "require": {
-        "php": "^8.0.2",
-        "laravel/framework": "^9.0",
-        "laravel/tinker": "~2.0",
+        "php": "^8.1",
+        "laravel/framework": "^10.0",
+        "laravel/tinker": "^2.8",
         "webpatser/laravel-countries": "1.5.4",
         "laravelcollective/html": "^6.0",
         "laravel/socialite": "^5.0",
@@ -15,11 +15,11 @@
         "alaouy/youtube": "^2.2.6",
         "intervention/image": "^2.7",
         "eluceo/ical": "^0.11.4",
-        "doctrine/dbal": "^2.10"
+        "doctrine/dbal": "^3.0"
     },
     "require-dev": {
-        "nunomaduro/collision": "^6.1",
-        "spatie/laravel-ignition": "^1.0"
+        "nunomaduro/collision": "^7.0",
+        "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
         "classmap": [
@@ -45,6 +45,9 @@
     },
     "config": {
         "preferred-install": "dist",
+        "platform": {
+            "php": "8.1.0"
+        },
         "allow-plugins": {
             "kylekatarnls/update-helper": true
         }

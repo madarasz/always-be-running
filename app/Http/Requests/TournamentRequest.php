@@ -58,14 +58,20 @@ class TournamentRequest extends Request
 
     public function sanitize_data($user_id = null)
     {
-        $input = array_map('trim', $this->all());
+        $input = array_map(function ($value) {
+            if (is_string($value)) {
+                return trim($value);
+            }
+
+            return $value;
+        }, $this->all());
 
         // if tournament title missing, construct it
-        if (!strlen($input['title'])) {
-            if (strlen($input['location_store'])) {
+        if (!strlen((string) ($input['title'] ?? ''))) {
+            if (strlen((string) ($input['location_store'] ?? ''))) {
                 $input['title'] = $input['location_store'];
             } else {
-                $input['title'] = $input['location_city'];
+                $input['title'] = $input['location_city'] ?? '';
             }
             $input['title'] = $input['title'].' - '.
                 ucwords(TournamentType::findOrFail($input['tournament_type_id'])->type_name);

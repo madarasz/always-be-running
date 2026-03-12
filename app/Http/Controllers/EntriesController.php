@@ -237,8 +237,8 @@ class EntriesController extends Controller
                                      $request_rank, $request_rank_top, $top_cut) {
         return (
             !is_null($import_entry) && // if there is an import entry
-            (strcmp($import_entry->runnerIdentity->title, $runner_identity_title) == 0 || strlen($import_entry->runner_deck_identity) < 1) &&
-            (strcmp($import_entry->corpIdentity->title, $corp_identity_title) == 0 || strlen($import_entry->corp_deck_identity) < 1) &&
+            (strcmp($import_entry->runnerIdentity->title, $runner_identity_title) == 0 || strlen((string) $import_entry->runner_deck_identity) < 1) &&
+            (strcmp($import_entry->corpIdentity->title, $corp_identity_title) == 0 || strlen((string) $import_entry->corp_deck_identity) < 1) &&
             $import_entry->rank == $request_rank && (!$top_cut || $import_entry->rank_top == $request_rank_top)
         );
     }

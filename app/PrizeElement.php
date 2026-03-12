@@ -8,7 +8,10 @@ class PrizeElement extends Model
 {
     public $timestamps = true;
     protected $fillable = ['prize_id', 'quantity', 'title', 'type', 'creator', 'artist_id', 'official', 'proper', 'info'];
-    protected $dates = ['created_at', 'updated_at'];
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
     protected $appends = ['quantityString'];
 
     public function prize() {

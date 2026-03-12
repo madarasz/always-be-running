@@ -96,7 +96,7 @@ class VideosController extends Controller
         Video::findOrFail($id);
 
         // if already created
-        if (strlen($request->import_player_name) == 0 &&
+        if (strlen((string) $request->import_player_name) == 0 &&
             VideoTag::where('video_id', $id)->where('user_id', $request->user_id)->first()) {
                 return redirect()->back()->with('message', 'User was already tagged in video.');
         }
@@ -106,7 +106,7 @@ class VideosController extends Controller
         } else {
             $side = intval($request->side) == 1;
         }
-        if (strlen($request->import_player_name)) {
+        if (strlen((string) $request->import_player_name)) {
             $request->user_id = null;
         }
 
@@ -212,7 +212,7 @@ class VideosController extends Controller
 
     public function youtubeLookup($input)
     {
-        if (strlen($input) == 11) {
+        if (strlen((string) $input) == 11) {
             // video ID
             $video_id = $input;
         } else {

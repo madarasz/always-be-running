@@ -15,7 +15,12 @@ class Tournament extends Model
         'tournament_type_id', 'start_time', 'reg_time', 'cardpool_id', 'conflict', 'contact', 'import', 'location_lat', 'location_long',
         'recur_weekly', 'incomplete', 'link_facebook', 'tournament_format_id', 'end_date', 'concluded_by', 'concluded_at',
         'relax_conflicts', 'timezone', 'prize_id', 'prize_additional', 'mwl_id', 'online'];
-    protected $dates = ['created_at', 'updated_at', 'deleted_at', 'concluded_at'];
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+        'concluded_at' => 'datetime',
+    ];
     protected $hidden = ['tournament_type_id', 'tournament_format_id', 'cardpool_id', 'relax_conflicts', 'timezone', 'pivot'];
     protected $appends = ['seoUrl'];
 
@@ -232,7 +237,7 @@ class Tournament extends Model
     }
 
     public function calendarEntry() {
-        $allday = $this->online || strlen($this->start_time) == 0;
+        $allday = $this->online || strlen((string) $this->start_time) == 0;
 
         if (is_null($this->recur_weekly)) {
             // non recurring
@@ -258,7 +263,7 @@ class Tournament extends Model
             'description' => strip_tags(\Markdown::convertToHtml($this->description)),
             'description_html' => \Markdown::convertToHtml($this->description),
             'location' => $this->location_address,
-            'facebook_event' => strpos($this->link_facebook, '/events/') ? $this->link_facebook : '',
+            'facebook_event' => strpos((string) $this->link_facebook, '/events/') ? $this->link_facebook : '',
             'all_day_event' => $allday,
             'alarm_reminder' => $allday ? '-PT480M' : '-PT120M',
             'recurring' => is_null($this->recur_weekly) ? false : $days[$this->recur_weekly],
