@@ -16,12 +16,22 @@ use App\Http\Requests;
 class KTMProxy extends Controller
 {
     public function getCardpoolNames() {
-        $data = json_decode(file_get_contents('http://www.knowthemeta.com/JSON/Cardpoolnames'));
+        $rawData = file_get_contents('http://www.knowthemeta.com/JSON/Cardpoolnames');
+        if (!is_string($rawData) || !json_validate($rawData)) {
+            return response()->json(null);
+        }
+
+        $data = json_decode($rawData, true);
         return response()->json($data);
     }
 
     public function getCardpoolStat($side, $pack) {
-        $data = json_decode(file_get_contents('http://www.knowthemeta.com/JSON/Tournament/'.$side.'/'.rawurlencode($pack)));
+        $rawData = file_get_contents('http://www.knowthemeta.com/JSON/Tournament/'.$side.'/'.rawurlencode($pack));
+        if (!is_string($rawData) || !json_validate($rawData)) {
+            return response()->json(null);
+        }
+
+        $data = json_decode($rawData, true);
         return response()->json($data);
     }
 }

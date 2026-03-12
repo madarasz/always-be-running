@@ -10,8 +10,12 @@ class UserViewPresenter
             return $user->displayUsername();
         }
 
-        if (!is_null($fallbackImportName) && strlen(trim($fallbackImportName)) > 0) {
-            return $fallbackImportName;
+        $normalizedFallbackImportName = is_string($fallbackImportName)
+            ? (function_exists('mb_trim') ? mb_trim($fallbackImportName) : trim($fallbackImportName))
+            : $fallbackImportName;
+
+        if (!is_null($normalizedFallbackImportName) && strlen((string) $normalizedFallbackImportName) > 0) {
+            return $normalizedFallbackImportName;
         }
 
         if (!is_null($fallbackUserId) && strval($fallbackUserId) !== '' && intval($fallbackUserId) > 0) {

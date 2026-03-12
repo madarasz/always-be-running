@@ -1654,6 +1654,84 @@ Official references:
 
 ---
 
+### Step 3.6: PHP 8.2 -> 8.5 Readiness (Official PHP Migration Guides)
+**Guides:**  
+- https://www.php.net/manual/en/migration83.php  
+- https://www.php.net/manual/en/migration84.php  
+- https://www.php.net/manual/en/migration85.php  
+- https://www.php.net/supported-versions.php
+
+**Why this step:** Laravel 11 only requires PHP 8.2, but current latest stable PHP is 8.5 (released 2025-11-20). Running this pre-flight now reduces risk for future runtime bumps and avoids deprecations turning into hard failures later.
+
+**Repo-specific findings (scan run 2026-03-12):**
+1. **Implicitly nullable typed parameters (8.4 deprecation)**
+   - Fixed to explicit nullable types:
+     - `app/Support/Form.php:131`
+       - `public static function button(?string $value = null, array $options = []): string`
+     - `app/Support/Markdown/MarkdownRenderer.php:21`
+       - `public function __construct(?Parsedown $parser = null)`
+
+2. **No hits found for high-risk 8.3/8.4/8.5 deprecated patterns**
+   - `trigger_error(..., E_USER_ERROR)` (8.4 deprecation): no matches.
+   - Non-canonical casts `(boolean)/(integer)/(double)/(binary)` (8.5 deprecation): no matches.
+   - `assert_options(...)` (8.3 deprecation): no matches.
+   - `array_key_exists(null, ...)` pattern (8.5 deprecation): no matches.
+   - `get_class()` / `get_parent_class()` with no args (8.3 deprecation): no matches.
+   - Backtick operator in PHP code (8.5 deprecation): no matches in `app/`, `config/`, `database/`, `resources/`, `tests/`.
+
+3. **Potential runtime/config checks before switching production PHP to 8.5**
+   - Ensure no deployment config relies on removed/changed behavior:
+     - `disable_classes` INI removed in PHP 8.5.
+     - Avoid explicitly loading `opcache.so` via `zend_extension=opcache.so` on 8.5.
+   - Verify no infrastructure dependency on extensions moved out of core packaging in 8.4 (`imap`, `oci8`, `pdo_oci`, `pspell`).
+
+**Positive code changes worth adopting post-upgrade:**
+1. **Error-handling and API safety**
+   - Prefer exceptions over legacy fatal-style signaling (`E_USER_ERROR` pattern already absent).
+   - Add stricter input validation where PHP 8.5 functions now consistently throw `TypeError`/`ValueError`.
+
+2. **Small modernizations with low risk**
+   - Use `json_validate()` (PHP 8.3) where only JSON validity is needed.
+   - Use `mb_trim()` / `mb_ltrim()` / `mb_rtrim()` (PHP 8.4) to simplify multibyte-safe normalization.
+   - Use `#[\Override]` (PHP 8.3) on overridden methods to catch signature drift during future refactors.
+
+3. **Language/features to evaluate later (optional, non-blocking)**
+   - Property hooks / asymmetric visibility (PHP 8.4) in DTO-style classes.
+   - Pipe operator and `#[\NoDiscard]` (PHP 8.5) where they improve readability and correctness.
+
+**Implementation status (2026-03-12):**
+1. [X] Fixed the 2 implicit-nullable signatures above.
+2. [X] Ran full validation on current runtime:
+   - `php artisan config:clear && php artisan cache:clear && php artisan route:list`
+   - `cd tests && npm run test:api` -> **26/26 passed**
+   - `cd tests && npm run test:e2e` -> **91/91 passed**
+3. [X] Raised Docker runtime to PHP 8.5 and reran validation:
+   - `docker/Dockerfile.php` updated to `php:8.5-fpm-alpine`.
+   - Verified runtime: `docker compose exec -T php php -v` -> **PHP 8.5.3**.
+   - Validation on PHP 8.5:
+     - `docker compose exec -T php php artisan --version` -> **Laravel Framework 11.48.0**
+     - `docker compose exec -T php php artisan config:clear && php artisan cache:clear && php artisan route:list` -> passed
+     - `cd tests && npm run test:api` -> **26/26 passed**
+     - `cd tests && npm run test:e2e` -> **91/91 passed**
+   - Runtime note:
+     - PHP 8.5 emits deprecations for `PDO::MYSQL_ATTR_SSL_CA` via Laravel framework internals.  
+       To keep API JSON responses valid in Docker/test runtime, `docker/php.ini` now uses:
+       - `display_errors = Off`
+       - `display_startup_errors = Off`
+       - `log_errors = On`
+4. [X] Rolled in optional modernization changes after green baseline:
+   - Added multibyte-safe trimming fallback in request/input normalization:
+     - `app/Http/Requests/TournamentRequest.php`
+     - `app/Support/UserViewPresenter.php`
+   - Added JSON payload validation before decode for external feeds:
+     - `app/Http/Controllers/AdminController.php` (`admin_ktm_metas` cache fetch)
+     - `app/Http/Controllers/KTMProxy.php`
+   - Validation after modernization:
+     - `cd tests && npm run test:api` -> **26/26 passed**
+     - `cd tests && npm run test:e2e` -> **91/91 passed**
+
+---
+
 ### Package Updates Through Phase 3 (Laravel 10 -> 11)
 | Package | Current (Step 3.4) | Step 3.5 Target | Notes |
 |---------|---------------------|-----------------|-------|

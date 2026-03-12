@@ -190,10 +190,15 @@ class AdminController extends Controller
 
         // Know the Meta update calculation
         $ktm_metas = Cache::remember('admin_ktm_metas', 300, function () {
-            return json_decode(file_get_contents('https://alwaysberunning.net/ktm/metas.json'), true);
+            $rawMetas = file_get_contents('https://alwaysberunning.net/ktm/metas.json');
+            if (!is_string($rawMetas) || !json_validate($rawMetas)) {
+                return [];
+            }
+
+            return json_decode($rawMetas, true);
         });
         $ktm_packs = [];
-        $ktm_update = $ktm_metas[0]['lastUpdate'];
+        $ktm_update = data_get($ktm_metas, '0.lastUpdate', '2000-01-01 12:00:00');
         $ktmMetaByCardpool = collect($ktm_metas)->keyBy('cardpool');
         foreach($packs as $cycle) {
             foreach($cycle as $pack) {
