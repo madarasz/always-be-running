@@ -634,7 +634,7 @@ class NetrunnerDBController extends Controller
 
     private function sortByDateUpdate($a, $b)
     {
-        return $a['date_update'] < $b['date_update'];
+        return $b['date_update'] <=> $a['date_update'];
     }
 
     private function classifyDeck($deck, $runner_ids, $corp_ids)
@@ -652,4 +652,3 @@ class NetrunnerDBController extends Controller
         return ['side' => null, 'identity' => null];
     }
 }
-
