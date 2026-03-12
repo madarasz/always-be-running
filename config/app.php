@@ -111,9 +111,10 @@ return [
     'cipher' => 'AES-256-CBC',
 
     'previous_keys' => [
-        ...array_filter(
+        ...array_filter(array_map(
+            'trim',
             explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
-        ),
+        )),
     ],
 
     /*

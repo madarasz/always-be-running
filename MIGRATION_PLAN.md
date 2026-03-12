@@ -1603,7 +1603,7 @@ Official references:
 
 ---
 
-### Step 3.5: Laravel 10.0 → 11.0
+### Step 3.5: Laravel 10.0 → 11.0 ✅ DONE
 **Guide:** https://laravel.com/docs/11.x/upgrade
 
 **PHP Requirement:** >= 8.2.0

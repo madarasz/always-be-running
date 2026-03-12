@@ -82,6 +82,14 @@ class Form
             $value = 1;
         }
 
+        $oldKey = str_ends_with($name, '[]') ? substr($name, 0, -2) : $name;
+        $hasOldInput = session()->hasOldInput($oldKey);
+
+        if ($hasOldInput) {
+            $oldValue = old($oldKey);
+            $checked = static::isCheckboxCheckedFromOld($oldValue, $value);
+        }
+
         if ($checked) {
             $options['checked'] = true;
         }
@@ -166,6 +174,28 @@ class Form
             return (string) $options['url'];
         }
 
+        if (array_key_exists('route', $options)) {
+            $route = $options['route'];
+            if (is_array($route)) {
+                $name = array_shift($route);
+
+                return route((string) $name, $route);
+            }
+
+            return route((string) $route);
+        }
+
+        if (array_key_exists('action', $options)) {
+            $action = $options['action'];
+            if (is_array($action)) {
+                $name = array_shift($action);
+
+                return action((string) $name, $action);
+            }
+
+            return action((string) $action);
+        }
+
         return '';
     }
 
@@ -191,6 +221,29 @@ class Form
         }
 
         return (string) $value === (string) $selected;
+    }
+
+    private static function isCheckboxCheckedFromOld($oldValue, $value): bool
+    {
+        if (is_array($oldValue)) {
+            return in_array((string) $value, array_map('strval', $oldValue), true);
+        }
+
+        if (is_bool($oldValue)) {
+            return $oldValue;
+        }
+
+        if ($oldValue === null) {
+            return false;
+        }
+
+        $oldString = strtolower((string) $oldValue);
+
+        if ((string) $value === (string) $oldValue) {
+            return true;
+        }
+
+        return in_array($oldString, ['1', 'true', 'on', 'yes'], true);
     }
 
     private static function attributes(array $attributes): string
