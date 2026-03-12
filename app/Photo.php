@@ -9,7 +9,10 @@ class Photo extends Model
     public $timestamps = true;
     protected $fillable = ['title', 'tournament_id', 'user_id', 'filename', 'title', 'approved',
         'prize_id', 'prize_element_id'];
-    protected $dates = ['created_at', 'updated_at'];
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
     protected $appends = ['url', 'urlThumb'];
 
     public function tournament() {

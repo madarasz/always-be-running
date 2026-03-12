@@ -11,7 +11,10 @@ class Entry extends Model
         'corp_deck_title', 'corp_deck_id', 'corp_deck_identity', 'approved', 'user', 'tournament_id', 'import_username',
         'runner_deck_type', 'corp_deck_type', 'netrunnerdb_claim_corp', 'netrunnerdb_claim_runner', 'type',
         'broken_runner', 'broken_corp'];
-    protected $dates = ['created_at', 'updated_at'];
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
     protected $hidden = ['created_at', 'updated_at', 'netrunnerdb_claim_runner', 'netrunnerdb_claim_corp', 'type', 'approved', 'tournament_id'];
     protected $appends = ['corpDeckUrl', 'runnerDeckUrl'];
 
