@@ -248,7 +248,7 @@ class TournamentsController extends Controller
         $user = $request->user()->id;
 
         Tournament::destroy($id);
-        if (strpos($request->headers->get('referer'), 'tournaments') !== false && $tournament->creator == $user) {
+        if (strpos((string) $request->headers->get('referer'), 'tournaments') !== false && $tournament->creator == $user) {
             return redirect()->route('organize')->with('message', 'Tournament deleted.');    // deleted from tournament details page
         } else {
             return back()->with('message', 'Tournament deleted.');  // deleted from Organize or Admin page
@@ -899,7 +899,7 @@ class TournamentsController extends Controller
             }
 
             // update tournament metadata with JSON if missing
-            if (!strlen($tournament->title) && array_key_exists('name', $json)) {
+            if (!strlen((string) $tournament->title) && array_key_exists('name', $json)) {
                 $tournament->title = $json['name'];
             }
 
@@ -961,4 +961,3 @@ class TournamentsController extends Controller
         return $result;
     }
 }
-

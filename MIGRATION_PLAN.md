@@ -1442,25 +1442,164 @@ Official references:
 
 ---
 
-### Step 3.4: Laravel 9.0 → 10.0
+### Step 3.4: Laravel 9.0 → 10.0 - ⚠️ IN PROGRESS
 **Guide:** https://laravel.com/docs/10.x/upgrade
 
 **PHP Requirement:** >= 8.1.0
 
-**Key Changes:**
-1. **PHP 8.1 minimum**
-   - Use enums, readonly properties where beneficial
+**Step objective:** Upgrade framework/runtime to Laravel 10-compatible versions, apply required code breaks from official docs, then run full test suite.
 
-2. **Minimum dependency versions**
-   - Various package updates required
+**Official Laravel 10 required changes (apply in this step):**
 
-3. **composer.json**
-   ```json
-   "laravel/framework": "^10.0",
-   "php": ">=8.1.0"
-   ```
+1. **Composer / platform updates**
+   - Set:
+     ```json
+     "php": "^8.1",
+     "laravel/framework": "^10.0"
+     ```
+   - Update required package majors per official guide:
+     - `doctrine/dbal` → `^3.0`
+     - `spatie/laravel-ignition` → `^2.0`
+   - Keep Docker + CI runtime on PHP 8.1.x for parity.
 
-**Validation checkpoint:** Run API and E2E tests
+2. **Eloquent date casting break**
+   - Laravel 10 removes support for model `$dates`.
+   - Replace `$dates` with `$casts` (`'..._at' => 'datetime'`) in all affected models.
+   - Known ABR files:
+     - `app/Entry.php`
+     - `app/Photo.php`
+     - `app/Prize.php`
+     - `app/PrizeElement.php`
+     - `app/Tournament.php`
+     - `app/TournamentGroup.php`
+     - `app/Video.php`
+
+3. **Auth service provider cleanup**
+   - Remove `$this->registerPolicies();` from `AuthServiceProvider::boot()`.
+   - Laravel auto-registers policies; explicit call is no longer needed.
+
+4. **Database expression string-cast behavior**
+   - Audit any `(string) DB::raw(...)` / expression string casts.
+   - Use grammar-aware value access where needed (per upgrade guide).
+
+5. **Redis / logging compatibility checks**
+   - If using Predis, ensure `predis/predis:^2.0`.
+   - Verify custom Monolog integrations against Monolog 3 expectations.
+
+**ABR-specific preflight checks for PHP 8.1 deprecations (recommended before/with framework bump):**
+
+1. **Dependency compatibility**
+   - `docker compose run --rm php composer why-not php 8.1.0`
+   - `docker compose run --rm php composer why-not php 8.1.33`
+
+2. **Null-to-string hardening hotspots**
+   - Normalize potentially-null inputs before `strlen`, `trim`, `strpos`.
+   - Candidate files:
+     - `app/Http/Requests/TournamentRequest.php`
+     - `app/Http/Controllers/VideosController.php`
+     - `app/Tournament.php`
+     - `app/Http/Controllers/TournamentsController.php`
+     - `app/Http/Controllers/BadgeController.php`
+     - `app/Http/Controllers/EntriesController.php`
+   - Preferred patterns:
+     - `strlen((string) $value)`, `trim((string) $value)`, `strpos((string) $value, '...')`
+     - or `$value = $value ?? ''` before string functions.
+
+**Positive code changes worth doing during this step (optional but high-value):**
+
+1. **Migrate legacy middleware alias naming**
+   - Rename `Kernel::$routeMiddleware` to `Kernel::$middlewareAliases` (modern convention; behavior-preserving).
+
+2. **Continue Blade cleanup**
+   - Replace legacy conditional attribute ternaries with native directives (`@checked`, `@selected`, etc.).
+
+3. **Introduce enums for magic numeric domains**
+   - Start with tournament type IDs and format IDs in validation + view logic.
+   - Keep scope small: read-only mapping first, then request/controller usage.
+
+4. **Add strict return/param types to touched methods**
+   - Especially policies, request helpers, and small service methods modified in this step.
+
+**Implementation (2026-03-12):**
+
+1. **Composer/runtime upgrade to Laravel 10 + PHP 8.1 parity**
+   - Updated `composer.json` constraints:
+     - `php`: `^8.1`
+     - `laravel/framework`: `^10.0`
+     - `doctrine/dbal`: `^3.0`
+     - `spatie/laravel-ignition`: `^2.0`
+     - `nunomaduro/collision`: `^7.0`
+     - `laravel/tinker`: `^2.8`
+   - Added Composer platform pin for deterministic PHP 8.1-compatible resolution:
+     - `config.platform.php = 8.1.0`
+   - Regenerated lockfile via `composer update -W`.
+   - Updated Docker PHP runtime:
+     - `docker/Dockerfile.php`: `php:8.0.30-fpm-alpine` → `php:8.1-fpm-alpine`
+   - Rebuilt/restarted Docker services; verified container runtime:
+     - `php -v` → `PHP 8.1.34`
+
+2. **Laravel 10 required code breaks**
+   - Replaced model `$dates` with `$casts` datetime mappings:
+     - `app/Entry.php`
+     - `app/Photo.php`
+     - `app/Prize.php`
+     - `app/PrizeElement.php`
+     - `app/Tournament.php`
+     - `app/TournamentGroup.php`
+     - `app/Video.php`
+   - Removed explicit policy registration call:
+     - `app/Providers/AuthServiceProvider.php`: removed `$this->registerPolicies();`
+
+3. **DB expression and logging compatibility audit**
+   - Audited app code for `(string) DB::raw(...)` style usage; no occurrences found.
+   - Confirmed no custom Monolog integration code in app layer that requires Monolog 3 adaptation.
+
+4. **PHP 8.1 null-to-string hardening**
+   - Applied explicit string normalization/casts in known hotspots:
+     - `app/Http/Requests/TournamentRequest.php`
+     - `app/Http/Controllers/VideosController.php`
+     - `app/Tournament.php`
+     - `app/Http/Controllers/TournamentsController.php`
+     - `app/Http/Controllers/BadgeController.php`
+     - `app/Http/Controllers/EntriesController.php`
+   - Preflight checks:
+     - `composer why-not php 8.1.0` → no blockers
+     - `composer why-not php 8.1.33` → no blockers
+
+**Validation (2026-03-12 final rerun after session fix):**
+- [X] `php artisan --version` → `Laravel Framework 10.50.2`
+- [X] `php artisan config:clear && php artisan cache:clear && php artisan route:list`
+- [X] `cd tests && npm run test:api` → **26/26 passed**
+- [X] `cd tests && npm run test:e2e` → **91/91 passed**
+  - Full regression result: **11/11 test files passed**, **91/91 tests passed**
+  - Previously failing test now passes:
+    - `e2e/tests/tournament-entries.test.ts`:
+      - `Claim with decks > claims spot on concluded tournament with decklist and then removes it`
+  - Root cause from latest trace artifact:
+    - `/api/userdecks` returned `{"error":"NetrunnerDB session lost"}`, so claim modal kept `#submit-claim` disabled by design.
+  - Fix applied:
+    - `app/Http/Controllers/NetrunnerDBController.php`
+      - Store NRDB OAuth tokens **after** `Auth::login(...)` in callback flow, so tokens persist across session migration.
+    - `tests/e2e/helpers/auth.ts`
+      - Harden cached auth validation to call `/api/userdecks`; if it returns `error`, force fresh OAuth login in global setup.
+  - Verification:
+    - Targeted test rerun passed:
+      - `cd tests && npm run test:e2e -- e2e/tests/tournament-entries.test.ts -t "claims spot on concluded tournament with decklist and then removes it"` → **1/1 passed**
+    - Full suite rerun passed:
+      - `cd tests && npm run test:e2e` → **91/91 passed**
+
+**Validation checkpoint (must pass before Step 3.5):**
+
+1. `php artisan --version` reports Laravel 10.x
+2. `php artisan config:clear && php artisan cache:clear && php artisan route:list`
+3. `cd tests && npm run test:api`
+4. `cd tests && npm run test:e2e`
+5. Smoke test OAuth login + tournament create/edit/delete flow
+
+**References:**
+- Laravel 10 upgrade guide: https://laravel.com/docs/10.x/upgrade
+- Laravel 10 release notes (support policy + features): https://laravel.com/docs/10.x/releases
+- PHP 8.1 migration notes: https://www.php.net/manual/en/migration81.php
 
 ---
 

@@ -1,5 +1,5 @@
-# PHP 8.0.30 (Laravel 9 minimum-compatible bridge target)
-FROM php:8.0.30-fpm-alpine
+# PHP 8.1.x (Laravel 10 minimum)
+FROM php:8.1-fpm-alpine
 
 # Install system dependencies
 RUN apk add --no-cache \

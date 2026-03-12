@@ -10,7 +10,11 @@ class Prize extends Model
     use SoftDeletes;
     public $timestamps = true;
     protected $fillable = ['year', 'type', 'tournament_type_id', 'description', 'ffg_url', 'creator', 'title'];
-    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
     protected $appends = ['pictureCount', 'tournamentCount'];
 
     public function tournament_type() {

@@ -84,6 +84,17 @@ export async function hasUsableStorageState(
       return false;
     }
 
+    // Being logged into ABR is not enough for "claim with decks" flows.
+    // Validate NRDB OAuth session is still present in backend session state.
+    const userDecksResponse = await page.request.get(appUrl('/api/userdecks'));
+    if (!userDecksResponse.ok()) {
+      return false;
+    }
+    const userDecksData = await userDecksResponse.json().catch(() => null);
+    if (userDecksData && typeof userDecksData === 'object' && 'error' in userDecksData) {
+      return false;
+    }
+
     await createdTitle.waitFor({ state: 'visible', timeout: 8000 });
     return true;
   } catch {
