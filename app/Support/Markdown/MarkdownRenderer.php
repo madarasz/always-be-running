@@ -18,7 +18,7 @@ class MarkdownRenderer
      *
      * @param  \Parsedown|null  $parser
      */
-    public function __construct(Parsedown $parser = null)
+    public function __construct(?Parsedown $parser = null)
     {
         $this->parser = $parser ?: new Parsedown();
     }
