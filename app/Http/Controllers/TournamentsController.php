@@ -20,6 +20,37 @@ use Illuminate\Support\Facades\DB;
 class TournamentsController extends Controller
 {
     /**
+     * Tournament columns required by list APIs.
+     */
+    private function tournamentApiSelectColumns() {
+        return [
+            'id', 'title', 'creator', 'created_at',
+            'location_city', 'location_country', 'location_state',
+            'location_lat', 'location_long', 'location_address', 'location_store', 'location_place_id',
+            'contact', 'approved', 'link_facebook',
+            'cardpool_id', 'date', 'tournament_type_id', 'tournament_format_id', 'mwl_id',
+            'concluded', 'charity', 'end_date', 'players_number', 'top_number', 'conflict', 'import',
+            'recur_weekly', 'online'
+        ];
+    }
+
+    /**
+     * Derive CSS class without triggering per-user relation queries.
+     */
+    private function userLinkClass(User $user) {
+        if ($user->admin) {
+            return 'admin';
+        }
+        if (!is_null($user->artist_id)) {
+            return 'artist';
+        }
+        if ($user->supporter) {
+            return 'supporter';
+        }
+        return '';
+    }
+
+    /**
      * Saves new tournament.
      * @param Requests\TournamentRequest $request
      * @return redirects
@@ -283,12 +314,37 @@ class TournamentsController extends Controller
         $tournaments = Tournament::where('date', '>=', $yesterday)->where('concluded', 0)
             ->where(function($query) {
                 $query->whereNull('approved')->orWhere('approved', 1);
-            })->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])->orderBy('date', 'asc')->get();
+            })
+            ->select($this->tournamentApiSelectColumns())
+            ->with([
+                'user' => function ($query) {
+                    $query->select(['id', 'name', 'username_preferred', 'supporter', 'admin', 'artist_id']);
+                },
+                'photosCount',
+                'videosCount',
+                'registrationCount',
+                'claimCount',
+                'winner'
+            ])
+            ->orderBy('date', 'asc')
+            ->get();
         $recurring = Tournament::whereNotNull('recur_weekly')
             ->where(function($query) {
                 $query->whereNull('approved')->orWhere('approved', 1);
-            })->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])
-            ->orderBy('recur_weekly')->get();
+            })
+            ->select($this->tournamentApiSelectColumns())
+            ->with([
+                'user' => function ($query) {
+                    $query->select(['id', 'name', 'username_preferred', 'supporter', 'admin', 'artist_id']);
+                },
+                'photosCount',
+                'videosCount',
+                'registrationCount',
+                'claimCount',
+                'winner'
+            ])
+            ->orderBy('recur_weekly')
+            ->get();
 
         $endtime = microtime(true);
 
@@ -313,7 +369,18 @@ class TournamentsController extends Controller
         $this->applyLimitOffset($request, $tournaments);
 
         $tournaments = $tournaments
-            ->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])->get();
+            ->select($this->tournamentApiSelectColumns())
+            ->with([
+                'user' => function ($query) {
+                    $query->select(['id', 'name', 'username_preferred', 'supporter', 'admin', 'artist_id']);
+                },
+                'photosCount',
+                'videosCount',
+                'registrationCount',
+                'claimCount',
+                'winner'
+            ])
+            ->get();
 
         $result = $this->tournametDataFormat($tournaments);
 
@@ -380,6 +447,16 @@ class TournamentsController extends Controller
         $tournament_formats = TournamentFormat::get()->pluck('format_name', 'id');
         $mwls = Mwl::get()->pluck('name', 'id');
         $cardpool_names = CardPack::get()->pluck('name', 'id');
+        $forUserEntries = collect();
+
+        if ($forUser && count($data)) {
+            $forUserEntries = Entry::where('user', $forUser)
+                ->whereIn('tournament_id', collect($data)->pluck('id')->all())
+                ->whereNotNull('rank')
+                ->select(['tournament_id', 'broken_runner', 'broken_corp'])
+                ->get()
+                ->keyBy('tournament_id');
+        }
 
         foreach($data as &$tournament) {
 
@@ -391,7 +468,7 @@ class TournamentsController extends Controller
                 'creator_id' => $tournament->creator,
                 'creator_name' => $user ? $user->displayUsername : '[deleted]',
                 'creator_supporter' => $user ? $user->supporter : 0,
-                'creator_class' => $user ? $user->linkClass : '',
+                'creator_class' => $user ? $this->userLinkClass($user) : '',
                 'created_at' => $tournament->created_at->format('Y.m.d. H:i:s'),
                 'location' => $tournament->location(),
                 'location_lat' => $tournament->location_lat,
@@ -446,8 +523,7 @@ class TournamentsController extends Controller
 
             // for specific user, add broken flag
             if ($forUser) {
-                $entry = Entry::where('tournament_id', $tournament->id)->where('user', $forUser)
-                    ->whereNotNull('rank')->first();
+                $entry = $forUserEntries->get($tournament->id);
                 $event_data['user_claim'] = !is_null($entry);
                 // check for broken claims
                 if (!is_null($entry)) {
@@ -477,12 +553,7 @@ class TournamentsController extends Controller
             $ordering = 'asc';
         }
         // initial query
-        $tournaments = Tournament::orderBy('date', $ordering)
-            ->with(array('tournament_type' => function($query){
-                $query->select('id', 'type_name');
-            }, 'cardpool' => function($query){
-                $query->select('id', 'name');
-            }));
+        $tournaments = Tournament::orderBy('date', $ordering);
 
         // filtering
         if ($request->input('incomplete')) {
@@ -540,8 +611,12 @@ class TournamentsController extends Controller
             $tournaments = $tournaments->where('mwl_id', $request->input('mwl_id'));
         }
         if ($request->input('format')) {
-            $format_id = TournamentFormat::where('format_name', $request->input('format'))->first()->id;
-            $tournaments = $tournaments->where('tournament_format_id', $format_id); 
+            $format_id = TournamentFormat::where('format_name', $request->input('format'))->value('id');
+            if (is_null($format_id)) {
+                $tournaments = $tournaments->whereRaw('1 = 0');
+            } else {
+                $tournaments = $tournaments->where('tournament_format_id', $format_id);
+            }
         }
         if ($request->input('state')) {
             $tournaments = $tournaments->where('location_state', $request->input('state'));
@@ -553,20 +628,38 @@ class TournamentsController extends Controller
             $tournaments = $tournaments->where('conflict', $request->input('conflict'));
         }
         if (!is_null($request->input('videos'))) {  // just =1, =0 not supported
-            $videoIDs = Video::where('flag_removed', false)->pluck('tournament_id')->all();
-            $tournaments = $tournaments->whereIn('id', $videoIDs);
+            $tournaments = $tournaments->whereExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('videos')
+                    ->whereColumn('videos.tournament_id', 'tournaments.id')
+                    ->where('videos.flag_removed', false);
+            });
         }
         if ($request->input('deleted')) {
             $tournaments = $tournaments->onlyTrashed();
         }
         if ($request->input('foruser')) {
-            $tournaments = $tournaments->whereIn('id', function($query) use ($request) {
-                $query->select('tournament_id')->from(with(new Entry)->getTable())->where('user', $request->input('foruser'));
+            $tournaments = $tournaments->whereExists(function($query) use ($request) {
+                $query->select(DB::raw(1))
+                    ->from(with(new Entry)->getTable().' as entries_for_user')
+                    ->whereColumn('entries_for_user.tournament_id', 'tournaments.id')
+                    ->where('entries_for_user.user', $request->input('foruser'));
             });
         }
 
         $tournaments = $tournaments
-            ->with(['photosCount', 'videosCount', 'registrationCount', 'claimCount', 'winner'])->get();
+            ->select($this->tournamentApiSelectColumns())
+            ->with([
+                'user' => function ($query) {
+                    $query->select(['id', 'name', 'username_preferred', 'supporter', 'admin', 'artist_id']);
+                },
+                'photosCount',
+                'videosCount',
+                'registrationCount',
+                'claimCount',
+                'winner'
+            ])
+            ->get();
 
         // flatten result
         $userId = null;

@@ -16,6 +16,7 @@ use App\VideoTag;
 use App\Mwl;
 use App\PrizeElement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 use App\Http\Requests;
@@ -31,28 +32,84 @@ class AdminController extends Controller
         $nowdate = date('Y.m.d.');
         $message = session()->has('message') ? session('message') : '';
         $cycles = CardCycle::orderBy('position', 'desc')->get();
+        $packsByCycle = CardPack::orderBy('position', 'desc')->get()->groupBy('cycle_code');
         $packs = [];
         foreach ($cycles as $cycle) {
-            array_push($packs, CardPack::where('cycle_code', $cycle->id)->orderBy('position', 'desc')->get());
+            $packs[] = $packsByCycle->get($cycle->id, collect());
         }
         $count_ids = CardIdentity::count();
-        $last_id = $count_ids > 0 ? CardIdentity::orderBy('id', 'desc')->first()->title : '';
-        $count_cycles = count($cycles);
+        $lastIdentity = CardIdentity::orderBy('id', 'desc')->select('title')->first();
+        $last_id = $lastIdentity ? $lastIdentity->title : '';
+        $count_cycles = $cycles->count();
         $last_cycle = $count_cycles > 1 ? $cycles[1]->name : '';
         $count_packs = CardPack::count();
         $count_mwls = Mwl::count();
-        $last_mwl = $count_mwls > 0 ? Mwl::orderBy('id', 'desc')->first()->name : '';
-        $approved_tournaments = Tournament::where('approved', 1)->whereNull('recur_weekly')->pluck('id')->all(); // + non-recurring
-        $video_channels = Video::whereIn('tournament_id', $approved_tournaments)->where('flag_removed', false)
+        $lastMwl = Mwl::orderBy('id', 'desc')->select('name')->first();
+        $last_mwl = $lastMwl ? $lastMwl->name : '';
+
+        $video_channels = Video::where('videos.flag_removed', false)
+            ->whereExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('tournaments')
+                    ->whereColumn('tournaments.id', 'videos.tournament_id')
+                    ->where('tournaments.approved', 1)
+                    ->whereNull('tournaments.recur_weekly');
+            })
             ->select('channel_name', 'type', DB::raw('count(*) as total'))
-            ->groupBy('channel_name')->orderBy('total', 'desc')->get();
-        $video_users = Video::whereIn('tournament_id', $approved_tournaments)->where('flag_removed', false)
-            ->select('user_id', DB::raw('count(*) as total'))
-            ->groupBy('user_id')->orderBy('total', 'desc')->pluck('total', 'user_id');
-        $video_users_tagged = VideoTag::select('user_id', DB::raw('count(*) as total'))->where('user_id', '>', 0)
-            ->groupBy('user_id')->orderBy('total', 'desc')->pluck('total', 'user_id');
+            ->groupBy('channel_name', 'type')
+            ->orderBy('total', 'desc')
+            ->get();
+
+        $video_users = Video::where('videos.flag_removed', false)
+            ->whereExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('tournaments')
+                    ->whereColumn('tournaments.id', 'videos.tournament_id')
+                    ->where('tournaments.approved', 1)
+                    ->whereNull('tournaments.recur_weekly');
+            })
+            ->join('users', 'users.id', '=', 'videos.user_id')
+            ->select(
+                'users.id',
+                DB::raw("COALESCE(NULLIF(users.username_preferred, ''), users.name) as display_name"),
+                'users.supporter',
+                'users.admin',
+                'users.artist_id',
+                DB::raw('count(*) as total')
+            )
+            ->groupBy('users.id', 'users.username_preferred', 'users.name', 'users.supporter', 'users.admin', 'users.artist_id')
+            ->orderBy('total', 'desc')
+            ->get();
+        foreach ($video_users as $videoUser) {
+            $videoUser->abr_link_class = $this->userLinkClassFromFields($videoUser->admin, $videoUser->artist_id, $videoUser->supporter);
+        }
+
+        $video_users_tagged = VideoTag::where('video_tags.user_id', '>', 0)
+            ->join('users', 'users.id', '=', 'video_tags.user_id')
+            ->select(
+                'users.id',
+                DB::raw("COALESCE(NULLIF(users.username_preferred, ''), users.name) as display_name"),
+                'users.supporter',
+                'users.admin',
+                'users.artist_id',
+                DB::raw('count(*) as total')
+            )
+            ->groupBy('users.id', 'users.username_preferred', 'users.name', 'users.supporter', 'users.admin', 'users.artist_id')
+            ->orderBy('total', 'desc')
+            ->get();
+        foreach ($video_users_tagged as $taggedUser) {
+            $taggedUser->abr_link_class = $this->userLinkClassFromFields($taggedUser->admin, $taggedUser->artist_id, $taggedUser->supporter);
+        }
+
         $entry_types = $this->addEntryTypeNames(Entry::select('type', DB::raw('count(*) as total'))
-            ->whereIn('tournament_id', $approved_tournaments)->groupBy('type')->pluck('total', 'type')->toArray());
+            ->whereExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('tournaments')
+                    ->whereColumn('tournaments.id', 'entries.tournament_id')
+                    ->where('tournaments.approved', 1)
+                    ->whereNull('tournaments.recur_weekly');
+            })
+            ->groupBy('type')->pluck('total', 'type')->toArray());
         $published_count = Entry::where('runner_deck_type', 1)->count() + Entry::where('corp_deck_type', 1)->count();
         $private_count = Entry::where('runner_deck_type', 2)->count() + Entry::where('corp_deck_type', 2)->count();
         $backlink_count = Entry::where('netrunnerdb_claim_runner', '>', 0)->count() +
@@ -62,16 +119,46 @@ class AdminController extends Controller
         $unexported_count = Entry::where('runner_deck_id', '>', 0)->whereNull('netrunnerdb_claim_runner')->count() +
             Entry::where('corp_deck_id', '>', 0)->whereNull('netrunnerdb_claim_corp')->count();
         $broken_count = Entry::where('broken_runner', '>', 0)->count() + Entry::where('broken_corp', '>', 0)->count();
-        $broken_user_ids = Entry::where('broken_runner', true)->orWhere('broken_corp', true)->pluck('user')->all();
+        $broken_user_ids = Entry::where(function ($query) {
+                $query->where('broken_runner', true)->orWhere('broken_corp', true);
+            })
+            ->where('user', '>', 0)
+            ->distinct()
+            ->pluck('user')
+            ->all();
         $broken_users = User::whereIn('id', $broken_user_ids)->get();
         $photos = Photo::orderBy('id', 'desc')->limit(16)->get();
-        $photo_tournaments = Photo::whereIn('tournament_id', $approved_tournaments)
-            ->select('tournament_id', DB::raw('count(*) as total'))
-            ->groupBy('tournament_id')->orderBy('total', 'desc')->pluck('total', 'tournament_id');
-        $photo_users = Photo::whereIn('tournament_id', $approved_tournaments)
-            ->select('user_id', DB::raw('count(*) as total'))
-            ->groupBy('user_id')->orderBy('total', 'desc')->pluck('total', 'user_id');
-        $missing_videos = Video::where('flag_removed', true)->get();
+        $photo_tournaments = Photo::join('tournaments', 'tournaments.id', '=', 'photos.tournament_id')
+            ->where('tournaments.approved', 1)
+            ->whereNull('tournaments.recur_weekly')
+            ->select('tournaments.id as tournament_id', 'tournaments.title', DB::raw('count(*) as total'))
+            ->groupBy('tournaments.id', 'tournaments.title')
+            ->orderBy('total', 'desc')
+            ->get();
+        $photo_users = Photo::join('tournaments', 'tournaments.id', '=', 'photos.tournament_id')
+            ->join('users', 'users.id', '=', 'photos.user_id')
+            ->where('tournaments.approved', 1)
+            ->whereNull('tournaments.recur_weekly')
+            ->select(
+                'users.id',
+                DB::raw("COALESCE(NULLIF(users.username_preferred, ''), users.name) as display_name"),
+                'users.supporter',
+                'users.admin',
+                'users.artist_id',
+                DB::raw('count(*) as total')
+            )
+            ->groupBy('users.id', 'users.username_preferred', 'users.name', 'users.supporter', 'users.admin', 'users.artist_id')
+            ->orderBy('total', 'desc')
+            ->get();
+        foreach ($photo_users as $photoUser) {
+            $photoUser->abr_link_class = $this->userLinkClassFromFields($photoUser->admin, $photoUser->artist_id, $photoUser->supporter);
+        }
+
+        $missing_videos = Video::where('flag_removed', true)
+            ->with(['tournament' => function ($query) {
+                $query->select('id', 'date', 'title');
+            }])
+            ->get();
         $tournament_types = TournamentType::where('order', '<', 7)->orderBy('order')->pluck('type_name', 'id');
         $tournament_types->put(0,'other'); // adding 'other' to prize types
         $art_types = PrizeElement::groupBy('type')
@@ -79,32 +166,51 @@ class AdminController extends Controller
             ->pluck('type')
             ->all();
         // VIP information
-        $vips = [];
-        $vip_ids = DB::select('SELECT DISTINCT user_id FROM badge_user WHERE badge_id IN (1,2,8,9,10,11,14,15,17,18,31,39,48,56,57,59,60,61,62)');
-        $vips = User::whereIn('id', json_decode(json_encode($vip_ids), true))->with('claims', 'tournamentsCreated')->get();
+        $vipBadgeIds = [1, 2, 8, 9, 10, 11, 14, 15, 17, 18, 31, 39, 48, 56, 57, 59, 60, 61, 62];
+        $vip_ids = DB::table('badge_user')
+            ->whereIn('badge_id', $vipBadgeIds)
+            ->distinct()
+            ->pluck('user_id');
+        $vips = User::whereIn('id', $vip_ids)
+            ->with('country')
+            ->withCount(['claims', 'tournamentsCreated', 'badges'])
+            ->get();
+        $claimersCount = DB::table('tournaments')
+            ->join('entries', 'entries.tournament_id', '=', 'tournaments.id')
+            ->whereIn('tournaments.creator', $vip_ids->all())
+            ->whereIn('entries.type', [3, 4])
+            ->whereColumn('entries.user', '!=', 'tournaments.creator')
+            ->select('tournaments.creator as user_id', DB::raw('count(distinct entries.user) as claimers_count'))
+            ->groupBy('tournaments.creator')
+            ->pluck('claimers_count', 'user_id');
+        foreach ($vips as $vip) {
+            $vip->claimers_count = intval($claimersCount[$vip->id] ?? 0);
+            $vip->abr_link_class = $this->userLinkClassFromFields($vip->admin, $vip->artist_id, $vip->supporter);
+        }
 
         // Know the Meta update calculation
-        $ktm_metas = json_decode(file_get_contents('https://alwaysberunning.net/ktm/metas.json'), true);
+        $ktm_metas = Cache::remember('admin_ktm_metas', 300, function () {
+            return json_decode(file_get_contents('https://alwaysberunning.net/ktm/metas.json'), true);
+        });
         $ktm_packs = [];
         $ktm_update = $ktm_metas[0]['lastUpdate'];
+        $ktmMetaByCardpool = collect($ktm_metas)->keyBy('cardpool');
         foreach($packs as $cycle) {
             foreach($cycle as $pack) {
                 if ($pack['date_release'] > '2019-12-30') {
-                    $pack_tournaments = Tournament::where('cardpool_id', $pack->toArray()['id'])->pluck('id')->all();
-                    $update_stamp = '2000-01-01 12:00:00';
-                    foreach($ktm_metas as $meta) {
-                        if ($meta['cardpool'] == $pack['name']) {
-                            $update_stamp = $meta['lastUpdate'];
-                        }
-                    }
-                    if (count($pack_tournaments)) {
-                        $pack_entries = Entry::whereIn('type', [1, 11, 12, 13, 3, 4])->where('updated_at', '>', $update_stamp)
-                            ->whereIn('tournament_id', $pack_tournaments)->count();
-                        $pack_decks = Entry::where('type', 3)->where('updated_at', '>', $update_stamp)
-                            ->whereIn('tournament_id', $pack_tournaments)->count();
-                        if ($pack_entries) {
-                            $ktm_packs[$pack->toArray()['name']] = [$pack_entries, $pack_decks];
-                        }
+                    $update_stamp = data_get($ktmMetaByCardpool->get($pack->name), 'lastUpdate', '2000-01-01 12:00:00');
+                    $packStats = Entry::join('tournaments', 'entries.tournament_id', '=', 'tournaments.id')
+                        ->where('tournaments.cardpool_id', $pack->id)
+                        ->where('entries.updated_at', '>', $update_stamp)
+                        ->selectRaw("
+                            SUM(CASE WHEN entries.type IN (1, 11, 12, 13, 3, 4) THEN 1 ELSE 0 END) as entries_total,
+                            SUM(CASE WHEN entries.type = 3 THEN 1 ELSE 0 END) as decks_total
+                        ")
+                        ->first();
+                    $pack_entries = intval($packStats->entries_total ?? 0);
+                    $pack_decks = intval($packStats->decks_total ?? 0);
+                    if ($pack_entries) {
+                        $ktm_packs[$pack->name] = [$pack_entries, $pack_decks];
                     }
                 }
             }
@@ -352,5 +458,18 @@ class AdminController extends Controller
             }
         }
         return $result;
+    }
+
+    private function userLinkClassFromFields($admin, $artistId, $supporter) {
+        if ($admin) {
+            return 'admin';
+        }
+        if (!is_null($artistId)) {
+            return 'artist';
+        }
+        if ($supporter) {
+            return 'supporter';
+        }
+        return '';
     }
 }
