@@ -14,6 +14,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
+use SensitiveParameter;
 
 class NetrunnerDBController extends Controller
 {
@@ -287,7 +288,7 @@ class NetrunnerDBController extends Controller
      *
      * @param SocialiteUser $socialiteUser
      */
-    private function storeTokens(SocialiteUser $socialiteUser)
+    private function storeTokens(#[SensitiveParameter] SocialiteUser $socialiteUser)
     {
         session([
             'netrunnerdb_access_token' => $socialiteUser->token,
