@@ -6,7 +6,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 AlwaysBeRunning (ABR) is a tournament management platform for the Netrunner card game. It handles tournament creation, player registration, results tracking, badges/achievements, and integrates with NetrunnerDB for card data and OAuth authentication.
 
-**Stack:** PHP/Laravel 12.x, MySQL, jQuery, Vue.js 2.x, Bootstrap 4, Vite
+**Stack:** PHP 8.5 / Laravel 12.x, MySQL, jQuery, Vue.js 2.x, Bootstrap 4, Vite (Node 22 LTS toolchain)
 
 ## Common Commands
 
@@ -59,7 +59,7 @@ php artisan migrate
 
 ## Testing
 
-E2E tests use Vitest + Playwright (via agent-browser). Tests are in `tests/` with separate dependencies (Node.js 20+):
+E2E tests use Vitest + Playwright (via agent-browser). Tests are in `tests/` with separate dependencies (Node.js latest LTS recommended; Node 20+ minimum):
 
 ```bash
 # Install test dependencies

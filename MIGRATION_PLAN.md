@@ -2,19 +2,19 @@
 
 ## Overview
 
-Migrate AlwaysBeRunning from Laravel 5.2/PHP 5.5/Gulp to Laravel 11/PHP 8.2/Vite with minimal code changes, validated by E2E tests migrated from Cypress to agent-browser.
+Migration complete: AlwaysBeRunning was upgraded from Laravel 5.2/PHP 5.5/Gulp to Laravel 12/PHP 8.5/Node 22/Vite, validated by API and E2E test suites.
 
 ## Current State Summary
 
-| Component | Current | Target |
-|-----------|---------|--------|
-| Laravel | 5.2.* (EOL 2017) | 11.x |
-| PHP | >= 5.5.9 | 8.2+ |
+| Component | Legacy Baseline | Current |
+|-----------|------------------|---------|
+| Laravel | 5.2.* (EOL 2017) | 12.x |
+| PHP | >= 5.5.9 | 8.5.x runtime (8.2+ minimum constraint) |
 | Build | Gulp 3.9.1 + Elixir 5.0 | Vite |
-| Frontend | Vue 2.5.17, jQuery 2.2.3, Bootstrap 4-alpha | Vue 2.7 (keep), modernize later |
+| Frontend | Vue 2.5.17, jQuery 2.2.3, Bootstrap 4-alpha | Vue 2.x + jQuery + Bootstrap 4 on Vite |
 | E2E Tests | Cypress 7.1.0 + Cucumber | Vitest + agent-browser |
 | Routes | Single `app/Http/routes.php` (130+ routes) | `routes/web.php` + `routes/api.php` |
-| Models | In `app/` root (17 models) | Move to `app/Models/` |
+| Models | In `app/` root (17 models) | Moved under `app/Models/` |
 
 ---
 
@@ -73,7 +73,7 @@ Migrate AlwaysBeRunning from Laravel 5.2/PHP 5.5/Gulp to Laravel 11/PHP 8.2/Vite
 - **Vitest**: Fast, modern test runner with native ESM support
 - **agent-browser**: Headless browser automation from Vercel Labs
 
-See **[`.claude/skills/e2e/SKILL.md`](.claude/skills/e2e/SKILL.md)** for setup notes, page object patterns, locator rules, OAuth login helper, parameterized tests, and the Cypress → agent-browser migration table.
+See **[`.agents/skills/e2e/SKILL.md`](.agents/skills/e2e/SKILL.md)** for setup notes, page object patterns, locator rules, OAuth login helper, parameterized tests, and the Cypress → agent-browser migration table.
 
 ### Tasks
 
@@ -1719,14 +1719,14 @@ Official references:
 - [X] Applied first Laravel 12 hardening improvement: `#[SensitiveParameter]` on OAuth token storage method input in `NetrunnerDBController`.
 - [ ] Optional follow-up: add explicit `private` filesystem disk (`storage/app/private`) and migrate sensitive writes.
 
-### Step 3.7: PHP 8.2 -> 8.5 Readiness (Official PHP Migration Guides)
+### Step 3.7: PHP 8.2 -> 8.5 Readiness ✅ DONE (Official PHP Migration Guides)
 **Guides:**  
 - https://www.php.net/manual/en/migration83.php  
 - https://www.php.net/manual/en/migration84.php  
 - https://www.php.net/manual/en/migration85.php  
 - https://www.php.net/supported-versions.php
 
-**Why this step:** Laravel 11 only requires PHP 8.2, but current latest stable PHP is 8.5 (released 2025-11-20). Running this pre-flight now reduces risk for future runtime bumps and avoids deprecations turning into hard failures later.
+**Why this step:** Laravel 12 requires PHP 8.2+, but current latest stable PHP is 8.5 (released 2025-11-20). Running this pre-flight reduced risk before locking runtime and CI on PHP 8.5.
 
 **Repo-specific findings (scan run 2026-03-12):**
 1. **Implicitly nullable typed parameters (8.4 deprecation)**
@@ -1774,7 +1774,7 @@ Official references:
    - `docker/Dockerfile.php` updated to `php:8.5-fpm-alpine`.
    - Verified runtime: `docker compose exec -T php php -v` -> **PHP 8.5.3**.
    - Validation on PHP 8.5:
-     - `docker compose exec -T php php artisan --version` -> **Laravel Framework 11.48.0**
+     - `docker compose exec -T php php artisan --version` -> **Laravel Framework 12.54.1**
      - `docker compose exec -T php php artisan config:clear && php artisan cache:clear && php artisan route:list` -> passed
      - `cd tests && npm run test:api` -> **26/26 passed**
      - `cd tests && npm run test:e2e` -> **91/91 passed**
@@ -1797,24 +1797,25 @@ Official references:
 
 ---
 
-### Package Updates Through Phase 3 (Laravel 10 -> 11)
-| Package | Current (Step 3.4) | Step 3.5 Target | Notes |
-|---------|---------------------|-----------------|-------|
-| laravel/framework | ^10.0 | ^11.0 | Core framework bump |
-| php (runtime + composer platform) | ^8.1 / 8.1.0 | ^8.2 / 8.2.x | Required by Laravel 11 |
-| laravelcollective/html | ^6.0 | Remove / replace | Blocks Laravel 11 via `illuminate/*` constraints |
-| doctrine/dbal | ^3.0 | Remove | Not required for Laravel 11 |
+### Package Updates Through Phase 3 (Laravel 10 -> 12 + PHP 8.5)
+| Package | Step 3.4 Baseline | Final State | Notes |
+|---------|--------------------|-------------|-------|
+| laravel/framework | ^10.0 | ^12.0 | Core framework upgraded through 11 and 12 |
+| php (runtime) | ^8.1 | 8.5.x runtime | Docker runtime pinned to PHP 8.5 |
+| php (composer platform) | 8.1.0 | 8.2.0 | Keeps dependency graph Laravel 12-compatible while running on newer runtime |
+| laravelcollective/html | ^6.0 | removed | Laravel 11+ blocker removed in migration |
+| doctrine/dbal | ^3.0 | removed | No longer required |
 
 ### Phase 3 Validation
-- [X] Application boots without errors (Laravel 11.48.0)
-- [X] PHP 8.2+ runtime working (current runtime: PHP 8.4.12 CLI, composer platform pinned to 8.2.0)
+- [X] Application boots without errors (Laravel 12.54.1)
+- [X] PHP 8.5 runtime working (composer platform pinned to 8.2.0)
 - [X] Admin panel functions (covered by E2E auth/admin flows)
 - [X] API tests pass (`npm run test:api` - schema contracts preserved, 26/26)
 - [X] E2E tests pass (`npm run test:e2e`, 91/91)
 
 ---
 
-## Phase 4: Gulp/Elixir → Vite Migration
+## Phase 4: Gulp/Elixir → Vite Migration - ✅ DONE
 
 **Goal:** Replace legacy Gulp/Elixir with Vite while keeping the current Vue-based frontend behavior (Blade + global Vue 2 components) unchanged.
 
@@ -1936,13 +1937,13 @@ Official references:
 - `readme.md`
 
 ### Validation
-- [ ] `npm run dev` starts Vite dev server successfully.
-- [ ] `npm run build` produces `public/build/manifest.json`.
-- [ ] Main layout renders styles/scripts correctly on key pages.
-- [ ] Bracket iframe layout renders correctly with Vite-managed bracket CSS.
-- [ ] No missing font/icon/image assets (especially `/fonts/*` references).
-- [ ] API tests pass (`npm run test:api`).
-- [ ] E2E tests pass (`npm run test:e2e`).
+- [X] `npm run dev` starts Vite dev server successfully.
+- [X] `npm run build` produces `public/build/manifest.json`.
+- [X] Main layout renders styles/scripts correctly on key pages.
+- [X] Bracket iframe layout renders correctly with Vite-managed bracket CSS.
+- [X] No missing font/icon/image assets (especially `/fonts/*` references).
+- [X] API tests pass (`npm run test:api`).
+- [X] E2E tests pass (`npm run test:e2e`).
 
 ---
 
@@ -1986,6 +1987,8 @@ Official references:
 | 3.3 | 8.0→9.0 | **8.0** | Flysystem 3, Symfony Mailer |
 | 3.4 | 9.0→10.0 | **8.1** | Dependency updates |
 | 3.5 | 10.0→11.0 | **8.2** | Remove doctrine/dbal, streamlined config |
+| 3.6 | 11.0→12.0 | 8.2+ | Carbon 3 alignment, Laravel 12 compatibility updates |
+| 3.7 | PHP 8.2→8.5 | **8.5** | Runtime compatibility hardening and deprecation cleanup |
 
 **Bold** = PHP version upgrade required (update Docker image)
 
