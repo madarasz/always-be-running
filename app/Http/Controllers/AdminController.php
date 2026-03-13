@@ -235,6 +235,7 @@ class AdminController extends Controller
         $badge_type_count = Badge::count();
         $badge_count = DB::table('badge_user')->count();
         $unseen_badge_count = DB::table('badge_user')->where('seen', 0)->count();
+        $badge_refresh_run = $request->query('badge_refresh_run');
 
         $user = $request->user();
         $page_section = 'admin';
@@ -243,6 +244,7 @@ class AdminController extends Controller
             'page_section', 'video_channels', 'video_users', 'entry_types', 'published_count', 'private_count',
             'backlink_count', 'no_backlink_count', 'unexported_count', 'broken_count', 'broken_users', 'missing_videos',
             'ktm_update', 'ktm_packs', 'photos', 'photo_tournaments', 'photo_users', 'video_users_tagged', 'vips',
+            'badge_refresh_run',
             'tournament_types', 'art_types'));
     }
 
