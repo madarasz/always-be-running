@@ -107,16 +107,8 @@ jobs:
         run: gunzip -c tests/e2e/fixtures/test-seed.sql.gz | mysql -h 127.0.0.1 -P 3307 -u root -prootsecret netrunner
 
       - name: Update tournament dates for tests
-        run: |
-          FUTURE_DATE=$(date -d "+30 days" +%Y.%m.%d.)
-          NEXT_WEEK=$(date -d "+7 days" +%Y.%m.%d.)
-          NEXT_MONTH=$(date -d "+60 days" +%Y.%m.%d.)
-          mysql -h 127.0.0.1 -P 3307 -u root -prootsecret netrunner -e "
-            UPDATE tournaments SET date = '$FUTURE_DATE' WHERE id IN (886, 2850, 3264);
-            UPDATE tournaments SET date = '$NEXT_WEEK' WHERE id IN (5313, 5354, 5400, 5500);
-            UPDATE tournaments SET date = '$NEXT_MONTH' WHERE id IN (5600, 5700, 5800);
-            UPDATE tournaments SET featured = 1 WHERE concluded = 1 AND approved = 1 LIMIT 3;
-          "
+        working-directory: tests
+        run: npm run test:sync-dates
 
       - name: Clear Laravel caches and set permissions
         run: |

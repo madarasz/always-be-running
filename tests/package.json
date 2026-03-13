@@ -5,6 +5,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:sync-dates": "./e2e/fixtures/update-tournament-dates.sh",
     "test:e2e": "vitest run --project e2e",
     "test:api": "vitest run --project api",
     "test:api:watch": "vitest --project api",

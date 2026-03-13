@@ -88,6 +88,9 @@ Tests are in the `tests/` directory with their own dependencies (Node.js 20+).
 # Install test dependencies (first time)
 cd tests && npm install
 
+# Update seeded tournament dates relative to today (required for date-sensitive E2E tests)
+cd tests && npm run test:sync-dates
+
 # Run all tests (E2E + API + Performance)
 cd tests && npm test
 
@@ -109,6 +112,7 @@ cd tests && npm run test:watch
 3. Add admin credentials (ADMIN_USERNAME, ADMIN_PASSWORD)
 
 Tests run automatically via GitHub Actions on push to `master` or `migration` branches.
+CI also runs `npm run test:sync-dates` so local and CI date setup stays identical.
 
 **Debugging failed tests:**
 - Failure screenshots and Playwright traces are saved to `tests/e2e/test-results/`
