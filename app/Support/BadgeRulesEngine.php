@@ -17,7 +17,7 @@ class BadgeRulesEngine
         13, 14, 15, 93, 94, 27, 28, 29, 30, 34, 35, 36,
         49, 50, 51, 52, 53, 54, 55, 73, 74, 75, 76, 77, 78, 79, 80, 81,
     ];
-    public const TO_BADGES = [16, 17, 18, 26, 20, 37, 111];
+    public const TO_BADGES = [16, 17, 18, 26, 20, 37, 94, 111];
     public const NDB_BADGES = [21, 25, 39, 31, 32, 33, 72];
     public const VIDEO_BADGES = [47];
     public const COMMUNITY_BADGES = [48, 68];

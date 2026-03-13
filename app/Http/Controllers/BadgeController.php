@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
+use Throwable;
 
 class BadgeController extends Controller
 {
@@ -67,16 +68,20 @@ class BadgeController extends Controller
     public function refreshBadges(Request $request) {
         $this->authorize('admin', Tournament::class, $request->user());
 
-        $activeRunId = Cache::get(self::REFRESH_ACTIVE_RUN_CACHE_KEY);
-        if ($activeRunId) {
-            $activeStatus = Cache::get(self::refreshStatusCacheKey($activeRunId));
-            if ($activeStatus && in_array($activeStatus['status'] ?? '', ['queued', 'running'])) {
+        $runId = (string) Str::uuid();
+        $ttl = now()->addHours(self::REFRESH_STATUS_TTL_HOURS);
+        $claimed = Cache::add(self::REFRESH_ACTIVE_RUN_CACHE_KEY, $runId, $ttl);
+        if (!$claimed) {
+            $activeRunId = Cache::get(self::REFRESH_ACTIVE_RUN_CACHE_KEY);
+            if ($activeRunId) {
                 return redirect()->route('admin', ['badge_refresh_run' => $activeRunId])
                     ->with('message', 'Badge refresh is already running. Run ID: '.$activeRunId);
             }
+
+            return redirect()->route('admin')
+                ->with('message', 'Badge refresh is already running.');
         }
 
-        $runId = (string) Str::uuid();
         $status = [
             'run_id' => $runId,
             'status' => 'queued',
@@ -95,14 +100,22 @@ class BadgeController extends Controller
         Cache::put(
             self::refreshStatusCacheKey($runId),
             $status,
-            now()->addHours(self::REFRESH_STATUS_TTL_HOURS)
+            $ttl
         );
-        Cache::put(self::REFRESH_ACTIVE_RUN_CACHE_KEY, $runId, now()->addHours(self::REFRESH_STATUS_TTL_HOURS));
 
-        if (Config::get('queue.default') === 'sync') {
-            RefreshBadgesJob::dispatchAfterResponse($runId);
-        } else {
-            RefreshBadgesJob::dispatch($runId);
+        try {
+            if (Config::get('queue.default') === 'sync') {
+                RefreshBadgesJob::dispatchAfterResponse($runId);
+            } else {
+                RefreshBadgesJob::dispatch($runId);
+            }
+        } catch (Throwable $exception) {
+            $status['status'] = 'failed';
+            $status['finished_at'] = now()->toDateTimeString();
+            $status['error'] = $exception->getMessage();
+            Cache::put(self::refreshStatusCacheKey($runId), $status, $ttl);
+            self::releaseActiveRefreshRun($runId);
+            throw $exception;
         }
 
         return redirect()->route('admin', ['badge_refresh_run' => $runId])
@@ -208,13 +221,11 @@ class BadgeController extends Controller
         $badges = $result['badges'];
         $this->refreshUserBadges($userId, $badges);
         if ($result['has_featured_tournament']) {
-            $alreadyHasFeatured = DB::table('badge_user')
-                ->where('user_id', $userId)
-                ->where('badge_id', 63)
-                ->exists();
-            if (!$alreadyHasFeatured) {
-                DB::table('badge_user')->insert(['user_id' => $userId, 'badge_id' => 63, 'seen' => 0]);
-            }
+            DB::table('badge_user')->insertOrIgnore([
+                'user_id' => $userId,
+                'badge_id' => 63,
+                'seen' => 0,
+            ]);
         }
     }
 
