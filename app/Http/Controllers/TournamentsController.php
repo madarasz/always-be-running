@@ -949,8 +949,8 @@ class TournamentsController extends Controller
                 }
 
                 // get identities, newer versions first
-                $corp = CardIdentity::where('title', 'LIKE', '%' . $swiss['corpIdentity'] . '%')->orderBy('id', 'desc')->first();
-                $runner = CardIdentity::where('title', 'LIKE', '%' . $swiss['runnerIdentity'] . '%')->orderBy('id', 'desc')->first();
+                $corp = $this->findIdentityByTitle($swiss['corpIdentity'], false);
+                $runner = $this->findIdentityByTitle($swiss['runnerIdentity'], true);
                 $existing = Entry::where('tournament_id', $tournament->id)->where('rank', $swiss['rank'])->first();
 
                 // error handling
@@ -1011,6 +1011,65 @@ class TournamentsController extends Controller
         ((is_null($existing) || strcmp($runner->title, $existing->runnerIdentity->title) != 0 ||
                 strcmp($corp->title, $existing->corpIdentity->title) != 0) || // matching based on ID title(!)
             (!$top_cut || is_null($existing) || $existing->rank_top != $request_rank_top));    // top cut rank matches
+    }
+
+    /**
+     * Finds the newest matching identity by title, with tolerant normalization for
+     * quote variants and whitespace differences.
+     */
+    private function findIdentityByTitle($title, $isRunner) {
+        if (!is_string($title) || !strlen(trim($title))) {
+            return null;
+        }
+
+        $title = trim($title);
+        $runnerValue = $isRunner ? 1 : 0;
+
+        // Fast path: exact title match.
+        $exact = CardIdentity::where('runner', $runnerValue)->where('title', $title)->orderBy('id', 'desc')->first();
+        if (!is_null($exact)) {
+            return $exact;
+        }
+
+        // Legacy behavior: substring title match.
+        $like = CardIdentity::where('runner', $runnerValue)->where('title', 'LIKE', '%' . $title . '%')->orderBy('id', 'desc')->first();
+        if (!is_null($like)) {
+            return $like;
+        }
+
+        // Fallback: normalize punctuation/whitespace and compare textually.
+        $normalizedTitle = $this->normalizeIdentityTitle($title);
+        $candidates = CardIdentity::where('runner', $runnerValue)->orderBy('id', 'desc')->get();
+        foreach ($candidates as $candidate) {
+            $normalizedCandidate = $this->normalizeIdentityTitle($candidate->title);
+            if ($normalizedCandidate === $normalizedTitle) {
+                return $candidate;
+            }
+            if (str_contains($normalizedCandidate, $normalizedTitle) || str_contains($normalizedTitle, $normalizedCandidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    private function normalizeIdentityTitle($title) {
+        $normalized = trim((string) $title);
+        $normalized = strtr($normalized, [
+            '“' => '"',
+            '”' => '"',
+            '„' => '"',
+            '‟' => '"',
+            '’' => "'",
+            '‘' => "'",
+            '‚' => "'",
+            '‛' => "'",
+            '`' => "'",
+            '´' => "'",
+        ]);
+        $normalized = preg_replace('/\s+/u', ' ', $normalized);
+
+        return mb_strtolower($normalized, 'UTF-8');
     }
 
     /**
