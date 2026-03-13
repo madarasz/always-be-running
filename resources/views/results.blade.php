@@ -115,37 +115,12 @@
                     </div>
                 </form>
             </div>
-            {{--Stats--}}
-            <div class="bracket">
-                <h5>
-                    <i class="fa fa-bar-chart" aria-hidden="true"></i>
-                    Statistics<br/>
-                    <div id="stat-packname" class="small-text text-xs-center p-b-1 p-t-1" v-if="statsLoaded">
-                        <span v-if="!statError">@{{ currentPack.title }}<br/>@{{ currentPack.mwl }}</span>
-                        <span v-else>@{{ filterCardpool }}</span>
-                    </div>
-                </h5>
-                <div class="text-xs-center">
-                    {{--runner ID chart--}}
-                    <div class="loader-chart stat-load" v-if="!statsLoaded">loading</div>
-                    <div id="stat-chart-runner" :class="statError ? 'hidden-xs-up' : ''"></div>
-                    <div class="small-text p-b-1" v-if="statError">no stats available</div>
-                    <div class="small-text p-b-1">runner IDs</div>
-                    {{--corp ID chart--}}
-                    <div class="loader-chart stat-load" v-if="!statsLoaded">loading</div>
-                    <div id="stat-chart-corp" :class="statError ? 'hidden-xs-up' : ''"></div>
-                    <div class="small-text p-b-1" v-if="statError">no stats available</div>
-                    <div class="small-text">corp IDs</div>
-                </div>
-                <h5 class="text-xs-right p-t-1"><small>provided by <a href="http://www.knowthemeta.com">KnowTheMeta</a></small></h5>
-            </div>
             {{--Featured--}}
             @if (isset($featured) && count($featured))
                 @include('tournaments.partials.featured-results')
             @endif
         </div>
     </div>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
 
         Vue.use(VueLazyload, {
@@ -181,12 +156,6 @@
                 filterFormat: @if ($format !== null) '{{ $format }}' @else '---' @endif,
                 filterVideo: @if ($videos !== null) true @else false @endif,
                 filterMatchdata: @if ($matchdata !== null) true @else false @endif,
-                packs: [],
-                currentPack: {},
-                metaStatsRunner: [],
-                metaStatsCorp: [],
-                statsLoaded: false,
-                statError: false,
                 offset: 100,
                 limit: getCookie('pager-results-option') ? getCookie('pager-results-option') * 2 : 100,
                 offsetIterator: 1000,
@@ -196,8 +165,6 @@
                 this.getResultsData(this.limit, 0)
                 this.positionFilters()
                 this.updateUrlWithFilters()
-                google.charts.load('current', {'packages':['corechart']})
-                google.charts.setOnLoadCallback(this.initCharts)
             },
             computed: {
                 resultsFilteredCount: function() {
@@ -252,7 +219,6 @@
                     if (this.resultsData.length < this.resultsCount) this.getMoreResultsData()
                     this.toConcludeFiltered = this.filterDataSet(this.toConcludeData)
                     this.updateUrlWithFilters()
-                    this.switchIdStats()
                 },
                 filterDataSet: function(data) {
                     if (this.filterCardpool !== '---') data = data.filter(x => x.cardpool === this.filterCardpool)
@@ -275,53 +241,6 @@
                     if (this.filterMatchdata) newUrl += 'matchdata=true&'
                     window.history.pushState("Results", "Results - " + this.filterCardpool + " - " + this.filterType + " - " + this.filterCountry, newUrl.slice(0, -1))
                 },
-                switchIdStats: function() {
-                    if (this.filterCardpool == '---') {
-                        this.currentPack = this.packs[0] // get latest stat
-                        this.statError = false
-                        this.getMetaStats(this.currentPack.file)
-                    } else {
-                        this.currentPack = this.packs.find(x => x.cardpool == this.filterCardpool)
-                        if (this.currentPack) {
-                            this.statError = false
-                            this.getMetaStats(this.currentPack.file)
-                        }
-                        else {
-                            this.statError = true
-                            this.statsLoaded = true    
-                            $("div[dir='ltr']").hide() // hide any leftover charts, don't know why 
-                        }
-                    }
-                },
-                initCharts: function() {
-                    $.ajax({
-                        url: 'https://alwaysberunning.net/ktm/metas.json',
-                        dataType: "json",
-                        async: true,
-                        success: function (data) {
-                            resultsPage.packs = data
-                            resultsPage.currentPack = data[0]
-                            resultsPage.switchIdStats()
-                        }
-                    })
-                },
-                getMetaStats: function(metafile) {
-                    resultsPage.statsLoaded = false
-                    $.ajax({
-                        url: 'https://alwaysberunning.net/ktm/' + metafile,
-                        dataType: "json",
-                        async: true,
-                        success: function (data) {
-                            resultsPage.metaStatsRunner = data.identities.runner.map(x => { return { title: x.title, allStandingCount: x.used, faction: x.faction }})
-                            resultsPage.metaStatsCorp = data.identities.corp.map(x => { return { title: x.title, allStandingCount: x.used, faction: x.faction }})     
-                            resultsPage.statsLoaded = true
-                            Vue.nextTick(function() {
-                                drawResultStats('stat-chart-runner', resultsPage.metaStatsRunner, 0.04)
-                                drawResultStats('stat-chart-corp', resultsPage.metaStatsCorp, 0.04) 
-                            })
-                        }
-                    })
-                },
                 positionFilters: function () {
                     if (window.matchMedia( "(min-width: 992px)").matches) {
                         // lg-size
@@ -334,14 +253,9 @@
             }
         });
 
-        // redraw charts on window resize
+        // keep filters in the right column position on resize
         $(window).resize(function(){
-            if (resultsPage.statsLoaded) {
-                drawResultStats('stat-chart-runner', resultsPage.metaStatsRunner, 0.04)
-                drawResultStats('stat-chart-corp', resultsPage.metaStatsCorp, 0.04)
-            }
             resultsPage.positionFilters()
         })
     </script>
 @stop
-
