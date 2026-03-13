@@ -255,7 +255,7 @@
                 <div class="input-group">
                     {!! Form::text('date', old('date', $tournament->date),
                                  ['class' => 'form-control', 'required' => '', 'placeholder' => 'YYYY.MM.DD.', 'onchange' => 'mwlAdjust()']) !!}
-                    <div class="input-group-addon" id="datepicker-icon">
+                    <div class="input-group-addon" id="datepicker-icon" role="button" tabindex="0" onclick="return openDatePicker('#date', false, event)">
                         <i class="fa fa-calendar" aria-hidden="true"></i>
                     </div>
                 </div>
@@ -275,19 +275,26 @@
                 <div class="form-check">
                     <label class="form-check-label">
                         <input type="radio" class="end-date form-check-input" name="end_date_selector" id="end-date-single" value="single"
+                                onchange="recurCheck(); syncEndDateInputState();"
                                 @checked(!$tournament->end_date && !$tournament->recur_weekly)/>
                         <span>single day event</span>
                     </label>
                 <div class="form-check">
                     <label class="form-check-label" style="width: 100%">
                         <input type="radio" class="end-date form-check-input" name="end_date_selector" id="end-date-multiple" value="multiple"
+                                onchange="recurCheck(); syncEndDateInputState();"
                                 @checked(old('end_date', $tournament->end_date))/>
                         multiple day event, end date:
-                        <div class="input-group">
-                            {!! Form::text('end_date', old('end_date', $tournament->end_date),
-                                     ['class' => 'form-control', 'required' => '', 'placeholder' => 'YYYY.MM.DD.', 'id' => 'end_date', 'disabled' => '']) !!}
-                            <div class="input-group-addon" id="datepicker-icon-end">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                        <div style="position: relative">
+                            <div id="overlay-end-date" class="overlay" style="top: 0; bottom: 0">
+                                <div>only for multiple day event</div>
+                            </div>
+                            <div class="input-group">
+                                {!! Form::text('end_date', old('end_date', $tournament->end_date),
+                                         ['class' => 'form-control', 'required' => '', 'placeholder' => 'YYYY.MM.DD.', 'id' => 'end_date', 'disabled' => '']) !!}
+                                <div class="input-group-addon" id="datepicker-icon-end" role="button" tabindex="0" onclick="return openDatePicker('#end_date', true, event)">
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                </div>
                             </div>
                         </div>
                     </label>
@@ -295,6 +302,7 @@
                 <div class="form-check">
                     <label class="form-check-label" style="width: 100%">
                         <input type="radio" class="end-date form-check-input" name="end_date_selector" id="end-date-recur" value="recurring"
+                                onchange="recurCheck(); syncEndDateInputState();"
                                 {{ old('recur_weekly', $tournament->recur_weekly) ? 'checked' : 'disabled' }}/>
                         weekly recurrence
                         @include('partials.popover', ['direction' => 'right', 'content' =>
@@ -414,49 +422,162 @@
         mwlSelector.val(value).change();
     }
 
+    function normalizeDateValue(inputElement) {
+        if (!inputElement || !inputElement.value) {
+            return;
+        }
+        if (/^\d{4}-\d{2}-\d{2}$/.test(inputElement.value)) {
+            inputElement.value = inputElement.value.replace(/-/g, '.') + '.';
+        }
+    }
+
+    function toNativeDateValue(value) {
+        if (!value) {
+            return '';
+        }
+        var normalized = value.replace(/\.$/, '');
+        if (/^\d{4}\.\d{2}\.\d{2}$/.test(normalized)) {
+            return normalized.replace(/\./g, '-');
+        }
+        return value;
+    }
+
+    function openNativeDatePicker(input) {
+        if (!input) {
+            return;
+        }
+
+        var rect = input.getBoundingClientRect();
+        var proxy = document.createElement('input');
+        proxy.type = 'date';
+        proxy.tabIndex = -1;
+        proxy.setAttribute('aria-hidden', 'true');
+        proxy.style.position = 'fixed';
+        proxy.style.left = rect.left + 'px';
+        proxy.style.top = rect.top + 'px';
+        proxy.style.width = Math.max(rect.width, 1) + 'px';
+        proxy.style.height = Math.max(rect.height, 1) + 'px';
+        proxy.style.opacity = '0.001';
+        proxy.style.pointerEvents = 'auto';
+        proxy.style.background = 'transparent';
+        proxy.style.border = '0';
+        proxy.style.padding = '0';
+        proxy.style.margin = '0';
+        proxy.style.zIndex = '2147483647';
+        proxy.value = toNativeDateValue(input.value);
+        document.body.appendChild(proxy);
+
+        var cleaned = false;
+        function cleanupProxy() {
+            if (cleaned) {
+                return;
+            }
+            cleaned = true;
+            proxy.onchange = null;
+            proxy.onblur = null;
+            if (proxy.parentNode) {
+                proxy.parentNode.removeChild(proxy);
+            }
+        }
+
+        proxy.onchange = function finalizeNativeDateSelection() {
+            if (proxy.value) {
+                input.value = proxy.value;
+                normalizeDateValue(input);
+            }
+            cleanupProxy();
+        };
+        proxy.onblur = cleanupProxy;
+
+        try {
+            proxy.focus({ preventScroll: true });
+            if (typeof proxy.showPicker === 'function') {
+                proxy.showPicker();
+            } else {
+                proxy.click();
+            }
+        } catch (error) {
+            proxy.focus({ preventScroll: true });
+            proxy.click();
+        }
+    }
+
+    function openDatePicker(selector, forceMultipleEndDate, clickEvent) {
+        if (clickEvent) {
+            clickEvent.preventDefault();
+            clickEvent.stopPropagation();
+        }
+
+        var input = document.querySelector(selector);
+        if (!input) {
+            return false;
+        }
+
+        if (forceMultipleEndDate) {
+            var multipleRadio = document.getElementById('end-date-multiple');
+            if (multipleRadio) {
+                multipleRadio.checked = true;
+            }
+            if (typeof recurCheck === 'function') {
+                recurCheck();
+            }
+            syncEndDateInputState();
+            // Fallback: ensure control is mutable before opening picker.
+            input.removeAttribute('disabled');
+        }
+
+        if (input.disabled || input.readOnly) {
+            return false;
+        }
+
+        openNativeDatePicker(input);
+        return false;
+    }
+
+    function syncEndDateInputState() {
+        var endDateInput = document.getElementById('end_date');
+        var multipleRadio = document.getElementById('end-date-multiple');
+        var endDateOverlay = document.getElementById('overlay-end-date');
+        if (!endDateInput || !multipleRadio) {
+            return;
+        }
+
+        var isMultiple = multipleRadio.checked;
+        endDateInput.disabled = !isMultiple;
+        endDateInput.required = isMultiple;
+
+        if (endDateOverlay) {
+            if (isMultiple) {
+                endDateOverlay.classList.add('hidden-xs-up');
+            } else {
+                endDateOverlay.classList.remove('hidden-xs-up');
+            }
+        }
+    }
+
     function initDatePicker() {
-        $('#date').datepicker({
-            autoclose: true,
-            format: 'yyyy.mm.dd.',
-            orientation: 'bottom',
-            todayHighlight: true,
-            weekStart: 1 //TODO: custom
-        });
-        $('#end_date').datepicker({
-            autoclose: true,
-            format: 'yyyy.mm.dd.',
-            orientation: 'bottom',
-            todayHighlight: true,
-            weekStart: 1 //TODO: custom
-        });
+        if ($.fn.timepicker) {
+            $('#reg_time').timepicker({ 'scrollDefault': '9:30AM', 'timeFormat': 'H:i', 'show2400': true });
+            $('#start_time').timepicker({ 'scrollDefault': '10:00AM', 'timeFormat': 'H:i', 'show2400': true });
+        }
 
-        $('#reg_time').timepicker({ 'scrollDefault': '9:30AM', 'timeFormat': 'H:i', 'show2400': true });
-        $('#start_time').timepicker({ 'scrollDefault': '10:00AM', 'timeFormat': 'H:i', 'show2400': true });
-
-        // clicking icon should also show datepicker
-        $('#datepicker-icon').click(function(){
-            $('#date').trigger('focus.datepicker.data-api');
-        });
-        $('#datepicker-icon-end').click(function(){
-            document.getElementById('end-date-multiple').checked = true;
-            $('#end_date').trigger('focus.datepicker.data-api');
-        });
         $('#end_date').click(function(){
             document.getElementById('end-date-multiple').checked = true;
         });
         $('#recur_weekly').click(function(){
             document.getElementById('end-date-recur').checked = true;
             recurCheck();
+            syncEndDateInputState();
         });
         $('.end-date').click(function() {
             recurCheck();
+            syncEndDateInputState();
         });
+        syncEndDateInputState();
     }
 
     async function initializeMap() {
         try {
-            initDatePicker();
-
             // Load the Maps, Places, and Marker libraries
             const { Map } = await google.maps.importLibrary("maps");
             const { Autocomplete, PlacesService, PlacesServiceStatus } = await google.maps.importLibrary("places");
@@ -508,6 +629,9 @@
             console.error("Please ensure GOOGLE_MAP_ID is set in your .env file");
         }
     }
+
+    // Initialize pickers independently from map loading.
+    initDatePicker();
 
     // Call initializeMap when the page loads
     initializeMap();
