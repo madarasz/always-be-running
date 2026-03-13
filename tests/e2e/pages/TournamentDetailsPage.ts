@@ -20,6 +20,13 @@ export class TournamentDetailsPage extends BasePage {
   readonly address = this.page.locator('#address');
   readonly regTime = this.page.locator('#reg-time');
   readonly startTime = this.page.locator('#start-time');
+  readonly contact = this.page.locator('#contact');
+  readonly decklistMandatory = this.page.locator('#decklist-mandatory');
+  readonly decklistNotMandatory = this.page.locator('#decklist-not-mandatory');
+  readonly tournamentDescription = this.page.locator('#tournament-description');
+  readonly facebookLink = this.page.locator('a:has-text("Facebook")');
+  readonly prizesBracket = this.page.locator('.bracket').filter({ hasText: 'Prizes' });
+  readonly unofficialPrizesContainer = this.page.locator('#unofficial-prizes');
 
   // Map
   readonly showMapButton = this.page.locator('#button-show-map');
@@ -204,6 +211,60 @@ export class TournamentDetailsPage extends BasePage {
 
   async getMwl(): Promise<string> {
     return (await this.mwl.textContent() || '').trim();
+  }
+
+  async getFormat(): Promise<string> {
+    return (await this.tournamentFormat.textContent() || '').trim();
+  }
+
+  async getRegTime(): Promise<string> {
+    return (await this.regTime.textContent() || '').trim();
+  }
+
+  async getStartTime(): Promise<string> {
+    return (await this.startTime.textContent() || '').trim();
+  }
+
+  async getStore(): Promise<string> {
+    return (await this.store.textContent() || '').trim();
+  }
+
+  async getAddress(): Promise<string> {
+    return (await this.address.textContent() || '').trim();
+  }
+
+  async getContact(): Promise<string> {
+    return (await this.contact.textContent() || '').trim();
+  }
+
+  async getDescriptionText(): Promise<string> {
+    return (await this.tournamentDescription.textContent() || '').trim();
+  }
+
+  async hasFacebookLink(): Promise<boolean> {
+    const count = await this.facebookLink.count();
+    if (count === 0) return false;
+    return await this.facebookLink.first().isVisible();
+  }
+
+  async getFacebookLinkHref(): Promise<string> {
+    return (await this.facebookLink.first().getAttribute('href')) || '';
+  }
+
+  async isDecklistMandatory(): Promise<boolean> {
+    return (await this.decklistMandatory.count()) > 0;
+  }
+
+  async isDecklistNotMandatory(): Promise<boolean> {
+    return (await this.decklistNotMandatory.count()) > 0;
+  }
+
+  async getPrizeSectionText(): Promise<string> {
+    return (await this.prizesBracket.first().textContent() || '').trim();
+  }
+
+  async getUnofficialPrizesText(): Promise<string> {
+    return (await this.unofficialPrizesContainer.textContent() || '').trim();
   }
 
   async hasClaimButtons(): Promise<boolean> {

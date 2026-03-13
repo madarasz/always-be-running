@@ -65,6 +65,9 @@ E2E tests use Vitest + Playwright (via agent-browser). Tests are in `tests/` wit
 # Install test dependencies
 cd tests && npm install
 
+# Update seeded tournament dates relative to current date (required for date-sensitive E2E tests)
+cd tests && npm run test:sync-dates
+
 # Run all E2E tests
 cd tests && npm test
 
@@ -73,6 +76,7 @@ cd tests && npm run test:watch
 ```
 
 **Test credentials:** Copy `tests/e2e/.env.template` to `tests/e2e/.env` and fill in NetrunnerDB test user credentials.
+**Date-sensitive fixtures:** Run `cd tests && npm run test:sync-dates` after loading `tests/e2e/fixtures/test-seed.sql.gz`. CI runs the same script.
 
 **Test fixture:** All tests must use `createBrowserSuite` from `tests/e2e/helpers/test-fixture.ts`:
 - Automatic tracing for each test

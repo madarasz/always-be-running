@@ -18,6 +18,7 @@ export class UpcomingPage extends BasePage {
   readonly pagerBack = this.page.locator('#discover-table-controls-back');
   readonly pagerOptions = this.page.locator('#discover-table-options');
   readonly pagerAll = this.page.locator('#discover-table-options .control-paging').filter({ hasText: 'all' });
+  readonly recurringPagerAll = this.page.locator('#recur-table-options .control-paging').filter({ hasText: 'all' });
   readonly flagButton = this.page.locator('#discover-table-options .control-flag');
   readonly textButton = this.page.locator('#discover-table-options .control-text');
   readonly showingFrom = this.page.locator('#discover-table-number-from');
@@ -114,6 +115,10 @@ export class UpcomingPage extends BasePage {
     await this.pagerAll.click();
   }
 
+  async clickRecurringAllPager() {
+    await this.recurringPagerAll.click();
+  }
+
   async switchToTextMode() {
     await this.textButton.click();
   }
@@ -129,13 +134,23 @@ export class UpcomingPage extends BasePage {
   async getTournamentRowData(row: ReturnType<typeof this.upcomingTableRows.first>) {
     const cells = row.locator('td');
     return {
-      title: await cells.nth(0).textContent(),
-      date: await cells.nth(1).textContent(),
-      location: await cells.nth(2).textContent(),
-      cardpool: await cells.nth(3).textContent(),
-      type: await cells.nth(4).textContent(),
-      regs: await cells.nth(5).textContent(),
+      title: (await cells.nth(0).innerText()).trim(),
+      date: (await cells.nth(1).innerText()).trim(),
+      location: (await cells.nth(2).innerText()).trim(),
+      cardpool: (await cells.nth(3).innerText()).trim(),
+      type: (await cells.nth(4).innerText()).trim(),
+      regs: (await cells.nth(5).innerText()).trim(),
     };
+  }
+
+  async getUpcomingRowByTitle(title: string) {
+    return this.upcomingTableRows.filter({ hasText: title }).first();
+  }
+
+  async getUpcomingRowDataByTitle(title: string) {
+    const row = await this.getUpcomingRowByTitle(title);
+    await row.waitFor({ state: 'visible', timeout: 10000 });
+    return this.getTournamentRowData(row);
   }
 
   async hasCountryFlag(): Promise<boolean> {
@@ -229,10 +244,20 @@ export class UpcomingPage extends BasePage {
   async getRecurringRowData(row: ReturnType<typeof this.recurringTableRows.first>) {
     const cells = row.locator('td');
     return {
-      title: await cells.nth(0).textContent(),
-      location: await cells.nth(1).textContent(),
-      day: await cells.nth(2).textContent(),
+      title: (await cells.nth(0).innerText()).trim(),
+      location: (await cells.nth(1).innerText()).trim(),
+      day: (await cells.nth(2).innerText()).trim(),
     };
+  }
+
+  async getRecurringRowByTitle(title: string) {
+    return this.recurringTableRows.filter({ hasText: title }).first();
+  }
+
+  async getRecurringRowDataByTitle(title: string) {
+    const row = await this.getRecurringRowByTitle(title);
+    await row.waitFor({ state: 'visible', timeout: 10000 });
+    return this.getRecurringRowData(row);
   }
 
   /**
@@ -242,6 +267,11 @@ export class UpcomingPage extends BasePage {
   async hasTournamentInTable(title: string): Promise<boolean> {
     // Look for a row containing the title
     const matchingRow = this.upcomingTableRows.filter({ hasText: title });
+    return (await matchingRow.count()) > 0;
+  }
+
+  async hasRecurringTournamentInTable(title: string): Promise<boolean> {
+    const matchingRow = this.recurringTableRows.filter({ hasText: title });
     return (await matchingRow.count()) > 0;
   }
 }

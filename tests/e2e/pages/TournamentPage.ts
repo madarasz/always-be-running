@@ -7,10 +7,24 @@ export interface TournamentDetails {
   title: string;
   type?: string;  // e.g., 'GNK / seasonal', 'community tournament'
   format?: string;  // e.g., 'standard', 'startup'
-  date: string;  // Format: YYYY.MM.DD.
+  date?: string;  // Format: YYYY.MM.DD.
+  endDate?: string;  // Format: YYYY.MM.DD.
+  recurringDay?: string;  // e.g. Tuesday
   online?: boolean;
   location?: string;  // Location search query (uses Google Places Autocomplete)
+  cardpool?: string;
+  mwl?: string;
+  decklistMandatory?: boolean;
+  contact?: string;
+  facebookLink?: string;
   description?: string;
+  regTime?: string;  // Format: HH:MM
+  startTime?: string;  // Format: HH:MM
+  officialPrizeKit?: string;
+  unofficialPrize?: {
+    titleOrArtist: string;
+    quantity: string;
+  };
 }
 
 export class TournamentPage extends BasePage {
@@ -19,10 +33,26 @@ export class TournamentPage extends BasePage {
   readonly typeSelect = this.page.locator('select[name="tournament_type_id"]');
   readonly formatSelect = this.page.locator('select[name="tournament_format_id"]');
   readonly cardpoolSelect = this.page.locator('select[name="cardpool_id"]');
+  readonly mwlSelect = this.page.locator('select[name="mwl_id"]');
   readonly dateInput = this.page.locator('input[name="date"]');
+  readonly endDateInput = this.page.locator('input[name="end_date"]');
+  readonly endDateMultipleRadio = this.page.locator('#end-date-multiple');
+  readonly recurringRadio = this.page.locator('#end-date-recur');
+  readonly recurringDaySelect = this.page.locator('select[name="recur_weekly"]');
   readonly onlineCheckbox = this.page.locator('input#online');
   readonly locationSearchInput = this.page.locator('input[name="location_search"]');
+  readonly decklistCheckbox = this.page.locator('input#decklist');
+  readonly contactInput = this.page.locator('input[name="contact"]');
+  readonly facebookLinkInput = this.page.locator('input[name="link_facebook"]');
   readonly descriptionInput = this.page.locator('textarea[name="description"]');
+  readonly regTimeInput = this.page.locator('input[name="reg_time"]');
+  readonly startTimeInput = this.page.locator('input[name="start_time"]');
+  readonly prizeSelect = this.page.locator('select[name="prize_id"]');
+  readonly unofficialPrizeInput = this.page.locator('input.v-autocomplete-input');
+  readonly unofficialPrizeList = this.page.locator('.v-autocomplete-list');
+  readonly unofficialPrizeQuantityInput = this.page.locator('input[placeholder="quantity"]');
+  readonly addUnofficialPrizeButton = this.page.locator('button:has(#button-add-unofficial)');
+  readonly addedUnofficialPrizeTable = this.page.locator('#form-tournament table');
   readonly concludedCheckbox = this.page.locator('input#concluded');
   readonly playersNumberInput = this.page.locator('input[name="players_number"]');
   readonly topNumberSelect = this.page.locator('select[name="top_number"]');
@@ -69,22 +99,50 @@ export class TournamentPage extends BasePage {
     await this.titleInput.fill(details.title);
 
     if (details.type) {
-      await this.typeSelect.selectOption({ label: details.type });
+      await this.selectOptionByPartialLabel(this.typeSelect, details.type);
+    }
+
+    if (details.cardpool) {
+      await this.selectOptionByPartialLabel(this.cardpoolSelect, details.cardpool);
+    }
+
+    if (details.mwl) {
+      await this.selectOptionByPartialLabel(this.mwlSelect, details.mwl);
     }
 
     if (details.format) {
-      await this.formatSelect.selectOption({ label: details.format });
+      await this.selectOptionByPartialLabel(this.formatSelect, details.format);
     }
 
-    // Date - click to focus, fill, then click elsewhere to close datepicker
-    await this.dateInput.click();
-    await this.dateInput.fill(details.date);
-    await this.titleInput.click();
+    if (details.date) {
+      // Date - click to focus, fill, then click elsewhere to close datepicker
+      await this.dateInput.click();
+      await this.dateInput.fill(details.date);
+      await this.titleInput.click();
+    }
 
-    if (details.online) {
+    if (details.endDate) {
+      await this.endDateMultipleRadio.check();
+      await this.endDateInput.waitFor({ state: 'visible', timeout: 5000 });
+      await this.endDateInput.fill(details.endDate);
+      await this.titleInput.click();
+    }
+
+    if (details.recurringDay) {
+      await this.recurringRadio.waitFor({ state: 'visible', timeout: 5000 });
+      await this.recurringRadio.check();
+      await this.selectOptionByPartialLabel(this.recurringDaySelect, details.recurringDay);
+    }
+
+    if (details.online === true) {
       const isChecked = await this.onlineCheckbox.isChecked();
       if (!isChecked) {
         await this.onlineCheckbox.check();
+      }
+    } else if (details.online === false) {
+      const isChecked = await this.onlineCheckbox.isChecked();
+      if (isChecked) {
+        await this.onlineCheckbox.uncheck();
       }
     }
 
@@ -92,8 +150,45 @@ export class TournamentPage extends BasePage {
       await this.searchLocation(details.location);
     }
 
+    if (details.decklistMandatory === true) {
+      const isChecked = await this.decklistCheckbox.isChecked();
+      if (!isChecked) {
+        await this.decklistCheckbox.check();
+      }
+    } else if (details.decklistMandatory === false) {
+      const isChecked = await this.decklistCheckbox.isChecked();
+      if (isChecked) {
+        await this.decklistCheckbox.uncheck();
+      }
+    }
+
+    if (details.contact) {
+      await this.contactInput.fill(details.contact);
+    }
+
+    if (details.facebookLink) {
+      await this.facebookLinkInput.fill(details.facebookLink);
+    }
+
     if (details.description) {
       await this.descriptionInput.fill(details.description);
+    }
+
+    if (details.regTime) {
+      await this.regTimeInput.fill(details.regTime);
+    }
+
+    if (details.startTime) {
+      await this.startTimeInput.fill(details.startTime);
+    }
+
+    if (details.officialPrizeKit) {
+      await this.waitForPrizesLoaded(15000);
+      await this.selectOptionByPartialLabel(this.prizeSelect, details.officialPrizeKit);
+    }
+
+    if (details.unofficialPrize) {
+      await this.addUnofficialPrize(details.unofficialPrize.titleOrArtist, details.unofficialPrize.quantity);
     }
   }
 
@@ -145,6 +240,54 @@ export class TournamentPage extends BasePage {
       selector,
       { timeout }
     );
+  }
+
+  /**
+   * Select option by partial text (case-insensitive).
+   */
+  async selectOptionByPartialLabel(select: ReturnType<typeof this.page.locator>, partialLabel: string) {
+    await select.waitFor({ state: 'visible', timeout: 10000 });
+    const value = await select.evaluate((el, needle) => {
+      const selectElement = el as HTMLSelectElement;
+      const normalizedNeedle = String(needle).trim().toLowerCase();
+      for (const option of Array.from(selectElement.options)) {
+        const optionLabel = option.textContent?.trim().toLowerCase() || '';
+        if (optionLabel.includes(normalizedNeedle)) {
+          return option.value;
+        }
+      }
+      return null;
+    }, partialLabel);
+
+    if (!value) {
+      throw new Error(`Could not find option containing "${partialLabel}"`);
+    }
+
+    await select.selectOption({ value });
+  }
+
+  /**
+   * Add an unofficial prize in the create/edit form.
+   */
+  async addUnofficialPrize(titleOrArtist: string, quantity: string) {
+    const [titlePart, artistPart] = titleOrArtist.split(/\s+by\s+/i);
+    const searchText = (titlePart || titleOrArtist).trim();
+
+    await this.unofficialPrizeInput.waitFor({ state: 'visible', timeout: 15000 });
+    await this.unofficialPrizeInput.fill(searchText);
+
+    const selectedItem = this.page.locator('.v-autocomplete-list .v-autocomplete-list-item').first();
+    await selectedItem.waitFor({ state: 'visible', timeout: 10000 });
+    await selectedItem.click();
+
+    await this.unofficialPrizeQuantityInput.fill(quantity);
+    await this.addUnofficialPrizeButton.click();
+
+    await this.addedUnofficialPrizeTable
+      .locator('tr')
+      .filter({ hasText: artistPart ? artistPart : searchText })
+      .first()
+      .waitFor({ state: 'visible', timeout: 10000 });
   }
 
   /**
