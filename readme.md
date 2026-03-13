@@ -28,13 +28,20 @@ docker compose exec -T mysql mysql -u root -prootsecret netrunner < seed.sql
 2. Add NetrunnerDB OAuth keys (ask main dev)
 3. Add Google Maps API keys
 
+### Runtime Versions (Current)
+
+- Laravel: 12.x
+- PHP: 8.5.x in Docker (`docker/Dockerfile.php`), with `^8.2` minimum in `composer.json`
+- Node.js: latest LTS (Docker build image is Node 22)
+- Frontend tooling: Vite, Vue
+
 ### Manual Installation (Linux/Mac)
 
 You will need the following in order to run ABR locally:
 - MySQL (preferably)
-- PHP 8.0+
+- PHP 8.5 recommended (8.2 minimum supported by composer constraints)
 - PHP Composer
-- Node.js 20+, npm 10+ recommended
+- Node.js latest LTS (Node 22 recommended), npm 10+
 - JQ - download via apt-get (Debian) or homebrew (Mac), this is NOT an npm module
 - imagemagick
 
@@ -72,17 +79,9 @@ Google API keys, you can create yourself.
 
 13. You are done :)
 
-### Queue worker retries (Laravel 7)
-
-If you run queue workers outside `QUEUE_CONNECTION=sync`, set retries explicitly:
-
-```bash
-php artisan queue:work --tries=3
-```
-
 ## Automated Tests (Vitest + Playwright)
 
-Tests are in the `tests/` directory with their own dependencies (Node.js 20+).
+Tests are in the `tests/` directory with their own dependencies (Node.js latest LTS recommended; Node 20+ minimum).
 
 ```bash
 # Install test dependencies (first time)
@@ -99,7 +98,7 @@ cd tests && npm run test:e2e      # Browser E2E tests
 cd tests && npm run test:api      # API schema validation tests
 cd tests && npm run test:perf     # Performance baseline tests
 
-# Save performance baseline (before migration)
+# Save or refresh performance baseline
 cd tests && npm run test:perf:baseline
 
 # Run tests in watch mode
@@ -111,7 +110,7 @@ cd tests && npm run test:watch
 2. Add NetrunnerDB test user credentials (REGULAR_USERNAME, REGULAR_PASSWORD)
 3. Add admin credentials (ADMIN_USERNAME, ADMIN_PASSWORD)
 
-Tests run automatically via GitHub Actions on push to `master` or `migration` branches.
+Tests run automatically via GitHub Actions on push and pull request workflows.
 CI also runs `npm run test:sync-dates` so local and CI date setup stays identical.
 
 **Debugging failed tests:**
