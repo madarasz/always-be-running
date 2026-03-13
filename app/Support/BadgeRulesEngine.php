@@ -18,7 +18,7 @@ class BadgeRulesEngine
         49, 50, 51, 52, 53, 54, 55, 73, 74, 75, 76, 77, 78, 79, 80, 81,
     ];
     public const TO_BADGES = [16, 17, 18, 26, 20, 37, 94, 111];
-    public const NDB_BADGES = [21, 25, 39, 31, 32, 33, 72];
+    public const NDB_BADGES = [21, 25, 39, 31, 32, 33, 72, 160];
     public const VIDEO_BADGES = [47];
     public const COMMUNITY_BADGES = [48, 68];
     public const SENSIE_BADGES = [64];
@@ -389,6 +389,10 @@ class BadgeRulesEngine
         // ABR birthday badge
         if ((!is_null($user->created_at)) && ($user->created_at->format('Y-m-d') <= (date('Y') - 1).date('-m-d'))) {
             $badges[72] = true;
+        }
+        // 9-year ABR anniversary badge
+        if ((!is_null($user->created_at)) && ($user->created_at->format('Y-m-d') <= (date('Y') - 9).date('-m-d'))) {
+            $badges[160] = true;
         }
 
         if (Video::where('user_id', $userId)->where('flag_removed', false)->count() >= 5) { $badges[47] = true; }
