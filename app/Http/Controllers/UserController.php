@@ -25,6 +25,11 @@ class UserController extends Controller
      */
     public function profile(Request $request, $id)
     {
+        // Default values for public/other-user profile views.
+        $page_section = 'profile';
+        $countries = collect();
+        $factions = collect();
+
         // own profile
         if (Auth::check()) {
             $request_id = Auth::user()->id;
