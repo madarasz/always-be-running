@@ -224,9 +224,13 @@ class Tournament extends Model
 
     public function getTimezone() {
         if (is_null($this->timezone) && !$this->online) { // not online tournament
+            $timestamp = strtotime((string) $this->date);
+            if ($timestamp === false) {
+                $timestamp = time();
+            }
             // request timezone from google maps api
             $tzRequest = file_get_contents("https://maps.googleapis.com/maps/api/timezone/json?location=".
-                $this->location_lat.','. $this->location_long.'&timestamp='.time($this->date).'&key='.config('services.google.backend_api'));
+                $this->location_lat.','. $this->location_long.'&timestamp='.$timestamp.'&key='.config('services.google.backend_api'));
             try {
                 $timezoneString = json_decode($tzRequest, true)['timeZoneId'];
                 // save to DB
