@@ -141,7 +141,7 @@ tests/
 Copy `.example.env` to `.env`. Required keys:
 - Database: `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`
 - NetrunnerDB OAuth: `NETRUNNERDB_CLIENT_ID`, `NETRUNNERDB_CLIENT_SECRET` (ask main dev)
-- Google APIs: `GOOGLE_MAP_ID`, `GOOGLE_FRONTEND_API`, `GOOGLE_BACKEND_API`, `GOOGLE_MAPS_API`
+- Google APIs: `GOOGLE_MAP_ID`, `GOOGLE_FRONTEND_API`, `GOOGLE_BACKEND_API`
 
 ## Admin Setup
 

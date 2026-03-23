@@ -120,7 +120,7 @@ E2E tests run automatically on every push to `master`/`migration`/`migration-e2e
 **Setup required:**
 - GitHub Secrets: E2E_REGULAR_USERNAME, E2E_REGULAR_PASSWORD, E2E_ADMIN_USERNAME, E2E_ADMIN_PASSWORD
 - GitHub Secrets: NETRUNNERDB_CLIENT_ID, NETRUNNERDB_CLIENT_SECRET
-- GitHub Secrets: GOOGLE_MAPS_API, GOOGLE_FRONTEND_API
+- GitHub Secrets: GOOGLE_FRONTEND_API, GOOGLE_BACKEND_API
 
 **Files:**
 - `.github/workflows/main.yml` — Workflow definition
