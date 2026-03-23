@@ -134,7 +134,7 @@ When a tournament's creator has been deleted, `$tournament->user` returns `null`
 
 **Improvements Made**:
 1. Auth test: Changed "can access admin page" to check navbar Admin link (faster, avoids page load timeout)
-2. Added `GOOGLE_MAPS_API` secret to Laravel .env and e2e .env
+2. Added `GOOGLE_MAPS_API` secret to Laravel .env and e2e .env (obsolete)
 3. Updated tournament 5354 to use future date for featured tournaments test
 4. Added retry logic (2 attempts) to OAuth login for flaky CI runs
 5. Fixed null user in tournament detail header.blade.php

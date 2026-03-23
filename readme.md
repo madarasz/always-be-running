@@ -26,7 +26,22 @@ docker compose exec -T mysql mysql -u root -prootsecret netrunner < seed.sql
 **Environment setup:**
 1. Copy `docker/.env.docker` to `.env`
 2. Add NetrunnerDB OAuth keys (ask main dev)
-3. Add Google Maps API keys
+3. Add Google API keys (see below)
+
+**Google API Keys Setup (Local Development):**
+
+Create two API keys in [Google Cloud Console](https://console.cloud.google.com) → APIs & Services → Credentials:
+
+1. **`GOOGLE_FRONTEND_API`** (for Maps JS in browser):
+   - Enable: **Maps JavaScript API**
+   - Application restrictions: **HTTP referrers**
+   - Add referrers: `localhost:8000/*`, `127.0.0.1:8000/*`
+
+2. **`GOOGLE_BACKEND_API`** (for server-side PHP):
+   - Enable: **YouTube Data API v3**, **Geocoding API**, **Time Zone API**
+   - Application restrictions: **None** (for local dev)
+
+3. **`GOOGLE_MAP_ID`**: Create a Map ID in Google Cloud Console → Google Maps Platform → Map Management
 
 ### Runtime Versions (Current)
 

@@ -64,8 +64,8 @@ describe('GET /api/entries', () => {
 
     if (data.length > 1) {
       for (let i = 1; i < data.length; i++) {
-        const prevRank = data[i - 1].rank_top ?? data[i - 1].rank_swiss;
-        const currRank = data[i].rank_top ?? data[i].rank_swiss;
+        const prevRank = data[i - 1].rank_swiss;
+        const currRank = data[i].rank_swiss;
         expect(currRank).toBeGreaterThanOrEqual(prevRank);
       }
     }

@@ -166,7 +166,6 @@ class VideosController extends Controller
 
     public function twitchLookup($input)
     {
-
         if (is_numeric($input)) {
             // input is ID
             $video_id = $input;
@@ -179,31 +178,51 @@ class VideosController extends Controller
             }
         }
 
-        // Create a stream
-        $opts = array(
-            'http' => array(
-                'method' => "GET",
-                'header' => "Accept: application/vnd.twitchtv.v5+json\r\n" .
-                    "Client-ID:" . config('services.twitch.client_id') . "\r\n"
-            )
-        );
-        $context = stream_context_create($opts);
-
-        // Open the file using the HTTP headers set above
+        // Get app access token (Helix API requires OAuth bearer token)
+        $tokenOpts = [
+            'http' => [
+                'method' => 'POST',
+                'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
+                'content' => http_build_query([
+                    'client_id' => config('services.twitch.client_id'),
+                    'client_secret' => config('services.twitch.client_secret'),
+                    'grant_type' => 'client_credentials',
+                ]),
+            ],
+        ];
         try {
-            $data = json_decode(file_get_contents('https://api.twitch.tv/kraken/videos/' . $video_id, false, $context), true);
+            $tokenData = json_decode(file_get_contents('https://id.twitch.tv/oauth2/token', false, stream_context_create($tokenOpts)), true);
+        } catch (\Exception $e) {
+            return false;
+        }
+        if (empty($tokenData['access_token'])) {
+            return false;
+        }
+
+        // Fetch video metadata from Helix API
+        $opts = [
+            'http' => [
+                'method' => 'GET',
+                'header' => "Client-ID: " . config('services.twitch.client_id') . "\r\n" .
+                            "Authorization: Bearer " . $tokenData['access_token'] . "\r\n",
+            ],
+        ];
+        try {
+            $data = json_decode(file_get_contents('https://api.twitch.tv/helix/videos?id=' . $video_id, false, stream_context_create($opts)), true);
         } catch (\Exception $e) {
             return false;
         }
 
-        if ($data) {
+        if (!empty($data['data'])) {
+            $video = $data['data'][0];
+            $thumbnail = str_replace(['%{width}', '%{height}'], ['320', '180'], $video['thumbnail_url']);
             return [
                 'video_id' => $video_id,
-                'video_title' => $data['title'],
-                'thumbnail_url' => $data['thumbnails']['medium'][0]['url'],
-                'channel_name' => $data['channel']['display_name'],
-                'length' => $this->secsToLength($data['length']),
-                'type' => 2
+                'video_title' => $video['title'],
+                'thumbnail_url' => $thumbnail,
+                'channel_name' => $video['user_name'],
+                'length' => $this->twitchDurationToLength($video['duration']),
+                'type' => 2,
             ];
         } else {
             return false;
@@ -275,6 +294,17 @@ class VideosController extends Controller
             }
         }
         return back()->with('message', 'Missing videos flagged: '.$count);
+    }
+
+    private function twitchDurationToLength($duration)
+    {
+        if (preg_match('/(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?/', $duration, $matches)) {
+            $hours = isset($matches[1]) && $matches[1] !== '' ? intval($matches[1]) : 0;
+            $mins  = isset($matches[2]) && $matches[2] !== '' ? intval($matches[2]) : 0;
+            $secs  = isset($matches[3]) && $matches[3] !== '' ? intval($matches[3]) : 0;
+            return $this->formatLength($hours, $mins, $secs);
+        }
+        return null;
     }
 
     private function secsToLength($seconds)

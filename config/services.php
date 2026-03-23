@@ -36,12 +36,11 @@ return [
     ],
     'twitch' => [
         'client_id' => env('TWITCH_CLIENT_ID'),
+        'client_secret' => env('TWITCH_CLIENT_SECRET'),
     ],
     'google' => [
         'frontend_api' => env('GOOGLE_FRONTEND_API'),
         'backend_api' => env('GOOGLE_BACKEND_API'),
-        'maps_api' => env('GOOGLE_MAPS_API'),
-        'youtube_api' => env('GOOGLE_YOUTUBE_API'),
         'map_id' => env('GOOGLE_MAP_ID'),
     ],
     'netrunnerdb' => [
