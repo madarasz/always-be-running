@@ -17,7 +17,7 @@
     "cleanup": "./e2e/fixtures/cleanup-test-data.sh"
   },
   "devDependencies": {
-    "agent-browser": "^0.13.0",
+    "agent-browser": "^0.26.0",
     "tsx": "^4.21.0",
     "vitest": "^2.0.0",
     "zod": "^3.23.0"
