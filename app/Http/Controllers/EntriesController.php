@@ -258,8 +258,11 @@ class EntriesController extends Controller
 
         if ($other_deck) {     // claiming with someone else's deck
             $result = app('App\Http\Controllers\NetrunnerDBController')->getDeckInfo($other_deck);
+            if (array_key_exists('error', $result)) {
+                throw new \Exception('Could not load deck: '.$result['error']);
+            }
             if ($result['side'] !== $side) {
-                throw new \Exception($side.' deck ID must point to a corp deck');
+                throw new \Exception($side.' deck ID must point to a '.$side.' deck');
             }
         } else {    // claiming with own deck
             $result = json_decode(stripslashes($request_deck), true);

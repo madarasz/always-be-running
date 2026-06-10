@@ -182,6 +182,9 @@ class NetrunnerDBController extends Controller
 
         // query deck
         $response = json_decode(file_get_contents($URL.$deckid), true);
+        if (empty($response['data'])) {
+            return ['error' => 'deck not found or not publicly accessible', 'side' => ''];
+        }
         $runner_ids = CardIdentity::where('runner', 1)->get()->pluck('id')->all();
         $corp_ids = CardIdentity::where('runner', 0)->get()->pluck('id')->all();
         $info = $this->classifyDeck($response['data'][0], $runner_ids, $corp_ids);
