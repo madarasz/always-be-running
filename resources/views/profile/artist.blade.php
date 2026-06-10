@@ -1,4 +1,4 @@
-<div class="bracket" v-if="editMode">
+<div class="bracket" v-if="editMode" v-cloak>
     <h5>
         <i class="fa fa-paint-brush" aria-hidden="true"></i>
         Artist
